@@ -49,3 +49,11 @@ The broker will take the following information:
 1. Wallet
 2. Relayer address
 3. Node address
+
+### Authentication
+
+Authentication for LND happens on the server side. We will generate a client cert (tls.cert) and a private server key (tls.key). Only the LND_BTC instance needs to know about both keys.
+
+Our clients/servers will then use the tls.key + a macaroon to make requests to all LND instances. All services will have some form of TLS/SSL for client/server communication.
+
+NOTE: Specifically w/ LND, macaroon auth will fail if the db/macaroons are not created at the same time, so we need to wipe out the macaroons in the /secure/ folder before each new run.
