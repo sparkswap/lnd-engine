@@ -1,0 +1,28 @@
+{
+  "name": "lnd-engine",
+  "version": "0.1.0",
+  "description": "Kinesis engine for LND",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kinesis-exchange/lnd-engine.git"
+  },
+  "keywords": [
+    "lnd",
+    "kinesis",
+    "exchange",
+    "bitcoin",
+    "btc",
+    "ltc",
+    "litecoin"
+  ],
+  "author": "Danny Paz <dan.pazuchowski@gmail.com> (http://www.dannypaz.com)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kinesis-exchange/lnd-engine/issues"
+  },
+  "homepage": "https://github.com/kinesis-exchange/lnd-engine#readme"
+}
