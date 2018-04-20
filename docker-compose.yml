@@ -65,7 +65,7 @@ services:
       - NETWORK=simnet
       - CHAIN=bitcoin
       - DEBUG=info
-      - RPC_LISTEN=0.0.0.0:10101
+      - RPC_LISTEN=0.0.0.0:10009
       - LISTEN=0.0.0.0:10111
       - REST_LISTEN=0.0.0.0:8101
       - DATA_DIR=/data
@@ -79,7 +79,7 @@ services:
       - 'secure:/secure/'
       - 'lnd:/data'
     expose:
-      - '10101'
+      - '10009'
       - '10111'
       - '8101'
     entrypoint: ["./start-lnd.sh"]
