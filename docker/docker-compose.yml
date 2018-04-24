@@ -13,7 +13,7 @@ version: '3'
 services:
   btcd:
     build:
-      context: ./docker
+      context: ./
       dockerfile: btcd/Dockerfile
     volumes:
       - shared:/rpc
@@ -51,7 +51,7 @@ services:
 
   lnd_btc:
     build:
-      context: ./docker
+      context: ./
       dockerfile: lnd/Dockerfile
     environment:
       - RPC_USER=kuser
