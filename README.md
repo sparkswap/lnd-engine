@@ -2,6 +2,10 @@
 
 Kinesis engine for LND
 
+<img src="https://kines.is/logo.png" alt="Kinesis Exchange" width="550">
+
+[![CircleCI](https://circleci.com/gh/kinesis-exchange/lnd-engine.svg?style=svg&circle-token=47c81b3a717f062885f159dfded078e134413db1)](https://circleci.com/gh/kinesis-exchange/lnd-engine)
+
 ### Description
 
 
