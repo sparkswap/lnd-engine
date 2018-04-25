@@ -1,12 +1,12 @@
 DIR=$(basename "$PWD")
 
-ps-lnd:
+ps:
 	(cd docker/lnd-engine && docker-compose -p $DIR ps)
 
-down-lnd:
+down:
 	(cd docker/lnd-engine && docker-compose -p $DIR down)
 
-up-lnd:
+up:
 	(cd docker/lnd-engine && docker-compose -p $DIR up -d)
 
-.PHONY: ps-lnd down-lnd up-lnd
+.PHONY: ps down up
