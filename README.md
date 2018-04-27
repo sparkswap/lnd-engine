@@ -25,15 +25,15 @@ In order to run the docker containers from npm you will need to add the followin
 
 ```
 {
-    "config": {
-        "project_name": "your project name",
-    },
-    ...
-    "scripts": {
-        "lnd-up": "npm explore lnd-engine -- docker-compose -p $npm_package_config_project_name -f docker/docker-compose.yml up -d",
-        "lnd-down": "npm explore lnd-engine -- docker-compose -p $npm_package_config_project_name -f docker/docker-compose.yml down",
-        "lnd-ps": "npm explore lnd-engine -- docker-compose -p $npm_package_config_project_name -f docker/docker-compose.yml ps"
-    }
+  "config": {
+    "project_name": "your project name",
+  },
+  ...
+  "scripts": {
+    "lnd-up": "npm explore lnd-engine -- docker-compose -p $npm_package_config_project_name -f docker/docker-compose.yml up -d",
+    "lnd-down": "npm explore lnd-engine -- docker-compose -p $npm_package_config_project_name -f docker/docker-compose.yml down",
+    "lnd-ps": "npm explore lnd-engine -- docker-compose -p $npm_package_config_project_name -f docker/docker-compose.yml ps"
+  }
 }
 ```
 
@@ -43,3 +43,8 @@ In order to run the docker containers from npm you will need to add the followin
 npm i
 npm test
 ```
+
+then inside of the `docker` folder, run `docker-compose up -d`
+
+You can then access the repl through `docker-compose run repl npm run c`
+
