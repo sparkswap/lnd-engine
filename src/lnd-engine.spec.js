@@ -26,7 +26,7 @@ describe('lnd-engine', () => {
     LndEngine.__set__('fs', { existsSync: (param) => true })
     LndEngine.__set__('loadService', (param) => {
       expect(param).to.include('.proto')
-      return { Lightning: lightning }
+      return { lnrpc: { Lightning: lightning } }
     })
     LndEngine.__set__('generateCredentials', credSpy)
 
