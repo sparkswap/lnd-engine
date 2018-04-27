@@ -11,7 +11,7 @@ version: '3'
 ################################################################################
 
 services:
-  lnd_engine_repl:
+  repl:
     image: node:8
     working_dir: '/home/app'
     volumes:

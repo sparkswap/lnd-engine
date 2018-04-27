@@ -6,9 +6,9 @@ const repl = require('repl')
 const { LndEngine } = require('../src')
 
 // Set vars here for console
-const LND_HOST = '0.0.0.0:10009'
-const TLS_CERT_PATH = '/secure/tls.cert'
-const MACAROON_PATH = '/secure/admin.macaroon'
+const LND_HOST = process.env.LND_HOST || 'localhost:10009'
+const TLS_CERT_PATH = process.env.TLS_CERT_PATH || '/secure/tls.cert'
+const MACAROON_PATH = process.env.MACAROON_PATH || '/secure/admin.macaroon'
 
 const replServer = repl.start({
   prompt: 'LND (engine) > '

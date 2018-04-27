@@ -23,7 +23,8 @@ function generateCredentials (tlsCertPath, macaroonPath) {
   const tls = readFileSync(tlsCertPath)
   const macaroon = readFileSync(macaroonPath)
 
-  const metadata = new grpc.Metadata().add('macaroon', macaroon.toString('hex'))
+  const metadata = new grpc.Metadata()
+  metadata.add('macaroon', macaroon.toString('hex'))
 
   const macaroonCredentials = grpc.credentials.createFromMetadataGenerator((_, cb) => cb(null, metadata))
   const sslCredentials = grpc.credentials.createSsl(tls)

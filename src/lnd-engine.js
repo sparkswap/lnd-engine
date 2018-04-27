@@ -5,6 +5,7 @@ const { loadService } = require('./grpc-util')
 const { generateCredentials } = require('./lnd-credentials')
 
 const { LND_HOST, TLS_CERT_PATH, MACAROON_PATH } = process.env
+const operational = require('./operational')
 
 /**
  * Constructor for creating an interface to an LND Engine.
@@ -23,6 +24,9 @@ class LndEngine {
     this.macaroonPath = macaroonPath || MACAROON_PATH
     this.protoPath = path.resolve('./proto/lnd-rpc.proto')
     this.credentials = generateCredentials(this.tlsCertPath, this.macaroonPath)
+
+    // Apply Mixins
+    Object.assign(this, operational)
 
     // TODO: Allow this to be editable. This is related to how we generate
     //   ssl certs for the lnd instances (see docker/)
