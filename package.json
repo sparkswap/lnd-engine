@@ -6,7 +6,8 @@
   "scripts": {
     "pretest": "standard",
     "format": "standard --fix",
-    "test": "NODE_PATH=. mocha 'src/**/*.spec.js'"
+    "test": "NODE_PATH=. mocha 'src/**/*.spec.js'",
+    "build": "bash ./scripts/build.sh"
   },
   "repository": {
     "type": "git",
