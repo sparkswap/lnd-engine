@@ -1,3 +1,3 @@
-const lndEngine = require('./src/lnd-engine')
+const lndEngine = require('./src')
 
 module.exports = lndEngine
