@@ -7,7 +7,7 @@ const GRPC_OPTIONS = {
   longsAsStrings: true
 }
 
-async function loadService (path) {
+function loadService (path) {
   return grpc.load(path, PROTO_FILE_TYPE, GRPC_OPTIONS)
 }
 

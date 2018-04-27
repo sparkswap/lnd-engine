@@ -16,7 +16,7 @@ const { readFileSync } = require('fs')
  * @param {String} tlsCertPath
  * @param {String} lndMacaroonPath
  */
-async function generateCredentials (tlsCertPath, macaroonPath) {
+function generateCredentials (tlsCertPath, macaroonPath) {
   if (!tlsCertPath) throw new Error('Engine Error: No tls cert path specified')
   if (!macaroonPath) throw new Error('Engine Error: No macaroon path specified')
 

@@ -34,7 +34,8 @@ class LndEngine {
     if (!this.host) throw new Error('LND_ENGINE error: no host is specified')
     if (!fs.existsSync(this.protoPath)) throw new Error('LND-ENGINE error: Proto file not found')
 
-    this.LndRpc = loadService(this.protoPath)
+    this.descriptor = loadService(this.protoPath)
+    this.LndRpc = this.descriptor.lnrpc
     this.client = new this.LndRpc.Lightning(this.host, this.credentials, this.serviceOptions)
   }
 }

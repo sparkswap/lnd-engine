@@ -7,20 +7,20 @@ const LndEngine = rewire(lndPath)
 
 describe('lnd-engine', () => {
   let host
-  let logger
   let tlsCertPath
   let macaroonPath
   let engine
+  let logger
 
-  let credSpy = sinon.spy()
+  const credSpy = sinon.spy()
 
   let lightning = sinon.stub()
 
   beforeEach(() => {
     host = 'fakehost'
-    logger = 'logger'
     tlsCertPath = '/certpath/tls.cert'
     macaroonPath = '/macaroonpath/admin.macaroon'
+    logger = 'logger'
 
     LndEngine.__set__('path', { resolve: (param) => param })
     LndEngine.__set__('fs', { existsSync: (param) => true })
@@ -53,7 +53,6 @@ describe('lnd-engine', () => {
       LndEngine.__set__('LND_HOST', host)
       LndEngine.__set__('TLS_CERT_PATH', tlsCertPath)
       LndEngine.__set__('MACAROON_PATH', macaroonPath)
-      LndEngine.__set__('console', logger)
 
       engine = new LndEngine()
     })
@@ -63,7 +62,7 @@ describe('lnd-engine', () => {
     })
 
     it('sets a logger', () => {
-      expect(engine.logger).to.eql(logger)
+      expect(engine.logger).to.eql(console)
     })
 
     it('sets a tlsCertPath', () => {
