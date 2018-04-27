@@ -1,8 +1,5 @@
-const lndEngine = require('./lnd-engine')
-const { getInfo } = require('./operational')
+const LndEngine = require('./lnd-engine')
 
 module.exports = {
-  // This will contain all the methods
-  lndEngine,
-  getInfo: getInfo.bind(lndEngine)
+  LndEngine
 }

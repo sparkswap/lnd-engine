@@ -1,28 +1,34 @@
 const grpc = require('grpc')
 const { readFileSync } = require('fs')
 
-// ex: /secure/tls.cert
-// ex: /secure/admin.macaroon
-const { TLS_CERT_PATH, LND_MACAROON_PATH } = process.env
+/**
+ * Generates credentials for authentication to the LND rpc server.
+ *
+ * The followig steps need to occur to generate the correct credentials for an LND instance:
+ * 1. Read the LND public key
+ * 2. Read the admin.macaroon (this is created in LND)
+ * 3. Create grpc metadata w/ the macaroon
+ * 4. Create grpc ssl credentials w/ public key
+ * 5. combine metadata and ssl into channel credentials
+ *
+ * @see docker
+ * @see https://github.com/lightningnetwork/lnd/blob/master/docs/macaroons.md
+ * @param {String} tlsCertPath
+ * @param {String} lndMacaroonPath
+ */
+async function generateCredentials (tlsCertPath, macaroonPath) {
+  if (!tlsCertPath) throw new Error('Engine Error: No tls cert path specified')
+  if (!macaroonPath) throw new Error('Engine Error: No macaroon path specified')
 
-// Check that these files exist or exit
-// Make sure the paths are setup correctly for testing
+  const tls = readFileSync(tlsCertPath)
+  const macaroon = readFileSync(macaroonPath)
 
-async function generateCredentials () {
-  // Create auth credentials w/ macaroon (decentralized token bearer specific to LND) and
-  // w/ use of lnd ssl cert
-  const macaroonCreds = grpc.credentials.createFromMetadataGenerator((_args, callback) => {
-    const macaroon = readFileSync(LND_MACAROON_PATH)
-    const metadata = new grpc.Metadata()
-    metadata.add('macaroon', macaroon.toString('hex'))
-    callback(null, metadata)
-  })
+  const metadata = new grpc.Metadata().add('macaroon', macaroon.toString('hex'))
 
-  const lndCert = readFileSync(TLS_CERT_PATH)
-  const sslCreds = grpc.credentials.createSsl(lndCert)
-  const credentials = grpc.credentials.combineChannelCredentials(sslCreds, macaroonCreds)
+  const macaroonCredentials = grpc.credentials.createFromMetadataGenerator((_, cb) => cb(null, metadata))
+  const sslCredentials = grpc.credentials.createSsl(tls)
 
-  return credentials
+  return grpc.credentials.combineChannelCredentials(sslCredentials, macaroonCredentials)
 }
 
 module.exports = {
