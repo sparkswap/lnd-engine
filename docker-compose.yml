@@ -15,7 +15,7 @@ services:
     image: node:8
     working_dir: '/home/app'
     volumes:
-      - '../:/home/app'
+      - './:/home/app'
       - 'secure:/secure/'
     environment:
       # - GRPC_VERBOSITY=INFO
@@ -30,7 +30,7 @@ services:
 
   btcd:
     build:
-      context: ./
+      context: ./docker
       dockerfile: btcd/Dockerfile
     volumes:
       - shared:/rpc
@@ -67,7 +67,7 @@ services:
 
   lnd_btc:
     build:
-      context: ./
+      context: ./docker
       dockerfile: lnd/Dockerfile
     environment:
       - RPC_USER=kuser

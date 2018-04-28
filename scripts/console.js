@@ -20,3 +20,4 @@ const engineOptions = {
 }
 
 replServer.context.Engine = new LndEngine(LND_HOST, engineOptions)
+replServer.context.commands = Object.keys(replServer.context)

@@ -15,9 +15,10 @@ You must have ssh/private access to the lnd-engine to be able to download these 
 
 ```
 {
-    "dependencies": {
-        "lnd-engine": "kinesis-exchange/lnd-engine"
-    }
+  "dependencies": {
+    ...
+    "lnd-engine": "kinesis-exchange/lnd-engine"
+  }
 }
 ```
 
@@ -26,13 +27,13 @@ In order to run the docker containers from npm you will need to add the followin
 ```
 {
   "config": {
-    "project_name": "your project name",
+    "project_name": "your project name"
   },
   ...
   "scripts": {
-    "lnd-up": "npm explore lnd-engine -- docker-compose -p $npm_package_config_project_name -f docker/docker-compose.yml up -d",
-    "lnd-down": "npm explore lnd-engine -- docker-compose -p $npm_package_config_project_name -f docker/docker-compose.yml down",
-    "lnd-ps": "npm explore lnd-engine -- docker-compose -p $npm_package_config_project_name -f docker/docker-compose.yml ps"
+    "lnd-up": "npm explore lnd-engine -- docker-compose -p $npm_package_config_project_name up -d",
+    "lnd-down": "npm explore lnd-engine -- docker-compose -p $npm_package_config_project_name down",
+    "lnd-ps": "npm explore lnd-engine -- docker-compose -p $npm_package_config_project_name ps"
   }
 }
 ```
