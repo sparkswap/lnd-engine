@@ -3,8 +3,6 @@ const fs = require('fs')
 
 const { loadService } = require('./grpc-util')
 const { generateCredentials } = require('./lnd-credentials')
-
-const { LND_HOST, TLS_CERT_PATH, MACAROON_PATH } = process.env
 const operational = require('./operational')
 
 /**
@@ -18,10 +16,10 @@ const operational = require('./operational')
  */
 class LndEngine {
   constructor (host, { logger, tlsCertPath, macaroonPath } = {}) {
-    this.host = host || LND_HOST
+    this.host = host || process.env.LND_HOST
     this.logger = logger || console
-    this.tlsCertPath = tlsCertPath || TLS_CERT_PATH
-    this.macaroonPath = macaroonPath || MACAROON_PATH
+    this.tlsCertPath = tlsCertPath || process.env.TLS_CERT_PATH
+    this.macaroonPath = macaroonPath || process.env.MACAROON_PATH
     this.protoPath = path.resolve('./proto/lnd-rpc.proto')
     this.credentials = generateCredentials(this.tlsCertPath, this.macaroonPath)
 

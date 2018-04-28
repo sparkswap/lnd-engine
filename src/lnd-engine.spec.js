@@ -50,9 +50,11 @@ describe('lnd-engine', () => {
 
   describe('defaults', () => {
     beforeEach(function () {
-      LndEngine.__set__('LND_HOST', host)
-      LndEngine.__set__('TLS_CERT_PATH', tlsCertPath)
-      LndEngine.__set__('MACAROON_PATH', macaroonPath)
+      sinon.stub(process, 'env').value({
+        LND_HOST: host,
+        TLS_CERT_PATH: tlsCertPath,
+        MACAROON_PATH: macaroonPath
+      })
 
       engine = new LndEngine()
     })
@@ -81,7 +83,7 @@ describe('lnd-engine', () => {
     })
 
     it('throws an error for a missing LND_HOST', () => {
-      LndEngine.__set__('LND_HOST', null)
+      sinon.stub(process, 'env').value({ LND_HOST: undefined })
       expect(() => new LndEngine()).to.throw('LND_ENGINE error: no host is specified')
     })
   })
