@@ -11,9 +11,26 @@ version: '3'
 ################################################################################
 
 services:
+  repl:
+    image: node:8
+    working_dir: '/home/app'
+    volumes:
+      - './:/home/app'
+      - 'secure:/secure/'
+    environment:
+      # - GRPC_VERBOSITY=INFO
+      # - GRPC_TRACE=all
+      - NODE_PATH=.
+      - LND_HOST=lnd_btc:10009
+      - TLS_CERT_PATH=/secure/tls.cert
+      - MACAROON_PATH=/secure/admin.macaroon
+      - GRPC_SSL_CIPHER_SUITES=HIGH+ECDSA
+    networks:
+      - lnd
+
   btcd:
     build:
-      context: ./
+      context: ./docker
       dockerfile: btcd/Dockerfile
     volumes:
       - shared:/rpc
@@ -48,10 +65,9 @@ services:
           - rpcserver
     entrypoint: ["./start-btcd.sh"]
 
-
   lnd_btc:
     build:
-      context: ./
+      context: ./docker
       dockerfile: lnd/Dockerfile
     environment:
       - RPC_USER=kuser
@@ -83,7 +99,6 @@ services:
       - '10111'
       - '8101'
     entrypoint: ["./start-lnd.sh"]
-
 
 volumes:
   secure:

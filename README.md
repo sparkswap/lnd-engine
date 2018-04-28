@@ -15,8 +15,37 @@ You must have ssh/private access to the lnd-engine to be able to download these 
 
 ```
 {
-    "dependencies": {
-        "lnd-engine": "kinesis-exchange/lnd-engine"
-    }
+  "dependencies": {
+    ...
+    "lnd-engine": "kinesis-exchange/lnd-engine"
+  }
 }
 ```
+
+In order to run the docker containers from npm you will need to add the following lines to your `scripts` section in your `package.json` file:
+
+```
+{
+  "config": {
+    "project_name": "your project name"
+  },
+  ...
+  "scripts": {
+    "lnd-up": "npm explore lnd-engine -- docker-compose -p $npm_package_config_project_name up -d",
+    "lnd-down": "npm explore lnd-engine -- docker-compose -p $npm_package_config_project_name down",
+    "lnd-ps": "npm explore lnd-engine -- docker-compose -p $npm_package_config_project_name ps"
+  }
+}
+```
+
+#### Getting Started
+
+```
+npm i
+npm test
+```
+
+then inside of the `docker` folder, run `docker-compose up -d`
+
+You can then access the repl through `docker-compose run repl npm run c`
+
