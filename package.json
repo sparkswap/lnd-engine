@@ -12,7 +12,7 @@
   "scripts": {
     "pretest": "npm run format",
     "format": "standard --fix",
-    "test": "NODE_PATH=. mocha 'src/**/*.spec.js'",
+    "test": "NODE_PATH=. nyc mocha 'src/**/*.spec.js'",
     "build": "bash ./scripts/build.sh",
     "console": "node ./scripts/console.js",
     "c": "npm run console"
@@ -40,6 +40,7 @@
     "chai": "4.1.2",
     "dirty-chai": "2.0.1",
     "mocha": "5.1.1",
+    "nyc": "11.7.1",
     "rewire": "4.0.1",
     "sinon": "4.5.0",
     "sinon-chai": "3.0.0",
