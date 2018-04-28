@@ -23,7 +23,7 @@ services:
       - NODE_PATH=.
       - LND_HOST=lnd_btc:10009
       - TLS_CERT_PATH=/secure/tls.cert
-      - MACAROON_PATH=/secure/admin.macaroon
+      - MACAROON_PATH=/secure/lnd-engine-admin.macaroon
       - GRPC_SSL_CIPHER_SUITES=HIGH+ECDSA
     networks:
       - lnd
@@ -74,8 +74,9 @@ services:
       - RPC_PASS=kpass
       - RPC_HOST=blockchain
       - RPC_CERT_PATH=/rpc/rpc.cert
-      - ADMIN_MACAROON=/secure/admin.macaroon
-      - READ_ONLY_MACAROON=/secure/readonly.macaroon
+      - ADMIN_MACAROON=/secure/lnd-engine-admin.macaroon
+      - READ_ONLY_MACAROON=/secure/lnd-engine-readonly.macaroon
+      - INVOICE_MACAROON=/secure/lnd-engine-invoice.macaroon
       - TLS_CERT_PATH=/secure/tls.cert
       - TLS_KEY_PATH=/secure/tls.key
       - NETWORK=simnet
