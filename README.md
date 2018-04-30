@@ -22,20 +22,23 @@ You must have ssh/private access to the lnd-engine to be able to download these 
 }
 ```
 
-In order to run the docker containers from npm you will need to add the following lines to your `scripts` section in your `package.json` file:
+Then you can extends (Docker 2) you implementation to use the following containers:
 
 ```
-{
-  "config": {
-    "project_name": "your project name"
-  },
-  ...
-  "scripts": {
-    "lnd-up": "npm explore lnd-engine -- docker-compose -p $npm_package_config_project_name up -d",
-    "lnd-down": "npm explore lnd-engine -- docker-compose -p $npm_package_config_project_name down",
-    "lnd-ps": "npm explore lnd-engine -- docker-compose -p $npm_package_config_project_name ps"
-  }
-}
+lnd_btc:
+  extends:
+    file: ./node_modules/lnd-engine/docker-compose.yml
+    service: lnd_btc
+
+btcd:
+  extends:
+    file: ./node_modules/lnd-engine/docker-compose.yml
+    service: btcd
+
+lnd_repl:
+  extends:
+    file: ./node_modules/lnd-engine/docker-compose.yml
+    service: repl
 ```
 
 #### Getting Started

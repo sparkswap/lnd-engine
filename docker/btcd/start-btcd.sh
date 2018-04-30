@@ -3,6 +3,9 @@
 # exit from script if error was raised.
 set -e
 
+# Copy certs to the shared file
+cp /secure/rpc.cert /shared
+
 PARAMS=$(echo \
     "--$NETWORK" \
     "--debuglevel=$DEBUG" \

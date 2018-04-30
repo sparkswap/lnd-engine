@@ -14,16 +14,16 @@ services:
   repl:
     image: node:8
     working_dir: '/home/app'
+    depends_on:
+      - btcd
+      - lnd_btc
     volumes:
       - './:/home/app'
-      - 'secure:/secure/'
+      - 'shared:/shared/'
     environment:
       # - GRPC_VERBOSITY=INFO
       # - GRPC_TRACE=all
       - NODE_PATH=.
-      - LND_HOST=lnd_btc:10009
-      - TLS_CERT_PATH=/secure/tls.cert
-      - MACAROON_PATH=/secure/lnd-engine-admin.macaroon
       - GRPC_SSL_CIPHER_SUITES=HIGH+ECDSA
     networks:
       - lnd
@@ -33,7 +33,7 @@ services:
       context: ./docker
       dockerfile: btcd/Dockerfile
     volumes:
-      - shared:/rpc
+      - shared:/shared
       - bitcoin:/data
     environment:
       - RPC_USER=kuser
@@ -42,8 +42,8 @@ services:
       - DEBUG=info
       - DATA_DIR=/data
       - LOG_DIR=/data
-      - RPC_KEY=/rpc/rpc.key
-      - RPC_CERT=/rpc/rpc.cert
+      - RPC_KEY=/secure/rpc.key
+      - RPC_CERT=/shared/rpc.cert
       - RPC_LISTEN=0.0.0.0
       # This is set dynamically in the startup scripts
       # TODO: figure out how to dynamically set this variable and prevent it from
@@ -69,16 +69,18 @@ services:
     build:
       context: ./docker
       dockerfile: lnd/Dockerfile
+    depends_on:
+      - btcd
     environment:
       - RPC_USER=kuser
       - RPC_PASS=kpass
       - RPC_HOST=blockchain
-      - RPC_CERT_PATH=/rpc/rpc.cert
-      - ADMIN_MACAROON=/secure/lnd-engine-admin.macaroon
-      - READ_ONLY_MACAROON=/secure/lnd-engine-readonly.macaroon
-      - INVOICE_MACAROON=/secure/lnd-engine-invoice.macaroon
-      - TLS_CERT_PATH=/secure/tls.cert
-      - TLS_KEY_PATH=/secure/tls.key
+      - RPC_CERT_PATH=/shared/rpc.cert
+      - ADMIN_MACAROON=/shared/lnd-engine-admin.macaroon
+      - READ_ONLY_MACAROON=/shared/lnd-engine-readonly.macaroon
+      - INVOICE_MACAROON=/shared/lnd-engine-invoice.macaroon
+      - TLS_CERT_PATH=/shared/lnd-engine-tls.cert
+      - TLS_KEY_PATH=/secure/lnd-engine-tls.key
       - NETWORK=simnet
       - CHAIN=bitcoin
       - DEBUG=info
@@ -88,12 +90,10 @@ services:
       - DATA_DIR=/data
       - LOG_DIR=/data
       - NODE=btcd
-      - SECURE_DIRECTORY=/secure
     networks:
       - lnd
     volumes:
-      - 'shared:/rpc'
-      - 'secure:/secure/'
+      - 'shared:/shared'
       - 'lnd:/data'
     expose:
       - '10009'
@@ -102,7 +102,6 @@ services:
     entrypoint: ["./start-lnd.sh"]
 
 volumes:
-  secure:
   shared:
   bitcoin:
   lnd:
