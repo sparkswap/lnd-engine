@@ -22,7 +22,7 @@ You must have ssh/private access to the lnd-engine to be able to download these 
 }
 ```
 
-Then you can extends (Docker 2) you implementation to use the following containers:
+Then you can use `extends` (Docker 2) to add the engine to your current docker stack:
 
 ```
 lnd_btc:
@@ -48,7 +48,4 @@ npm i
 npm test
 ```
 
-then inside of the `docker` folder, run `docker-compose up -d`
-
-You can then access the repl through `docker-compose run repl npm run c`
-
+You can access the repl through `docker-compose run repl npm run c` and view all available commands with `commands`
