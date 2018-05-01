@@ -10,10 +10,11 @@
     ]
   },
   "scripts": {
+    "preinstall": "bash ./scripts/preinstall.sh",
+    "postinstall": "bash ./scripts/postinstall.sh",
     "pretest": "npm run format",
-    "format": "standard --fix",
     "test": "NODE_PATH=. nyc mocha 'src/**/*.spec.js'",
-    "build": "bash ./scripts/build.sh",
+    "format": "standard --fix",
     "start": "node ./scripts/console.js"
   },
   "repository": {
