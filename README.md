@@ -9,6 +9,12 @@ The following repo contains 2 modules that make up a `Kinesis Engine`:
 1. NPM module w/ LND abstraction layer (located in `src`)
 2. Dockerfiles for all containers needed for the LND Engine to work correctly
 
+Our current docker setup consists of the following containers:
+
+- roasbeef/BTCD - Headless daemon to interact with blockchain (no wallet in this package)
+- LND - Lightning Network Daemon + Wallet
+- repl - an interactive shell for using the lnd-engine stack
+
 #### Installation via NPM
 
 You must have ssh/private access to the lnd-engine to be able to download these files. Add the following reference to your `package.json`:
@@ -40,3 +46,5 @@ npm test
 ```
 
 You can access the repl through `docker-compose run repl npm run c` and view all available commands with `commands`
+
+
