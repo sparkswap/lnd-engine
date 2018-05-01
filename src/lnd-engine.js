@@ -4,7 +4,19 @@ const fs = require('fs')
 const { loadService } = require('./grpc-util')
 const { generateCredentials } = require('./lnd-credentials')
 
-const { LND_HOST, TLS_CERT_PATH, MACAROON_PATH } = process.env
+// Defaults for the LND Engine
+// These are currently set at build time in the services Dockerfile, so they are not
+// customizable at the moment, however as a TODO, we should allow this to be configured
+// through ENV
+//
+// TODO: Allow this to be editable. This is related to how we generate
+//   ssl certs for the lnd instances (see docker/)
+const LND_HOST = 'lnd_btc:10009'
+const TLS_CERT_PATH = '/shared/lnd-engine-tls.cert'
+const MACAROON_PATH = '/shared/lnd-engine-admin.macaroon'
+const SSL_TARGET = 'lnd_btc'
+const LND_PROTO_FILE_PATH = './proto/lnd-rpc.proto'
+
 const operational = require('./operational')
 
 /**
@@ -22,17 +34,15 @@ class LndEngine {
     this.logger = logger || console
     this.tlsCertPath = tlsCertPath || TLS_CERT_PATH
     this.macaroonPath = macaroonPath || MACAROON_PATH
-    this.protoPath = path.resolve('./proto/lnd-rpc.proto')
+    this.protoPath = path.resolve(LND_PROTO_FILE_PATH)
     this.credentials = generateCredentials(this.tlsCertPath, this.macaroonPath)
 
     // Apply Mixins
     Object.assign(this, operational)
 
-    // TODO: Allow this to be editable. This is related to how we generate
-    //   ssl certs for the lnd instances (see docker/)
     this.serviceOptions = {
-      'grpc.ssl_target_name_override': 'lnd_btc',
-      'grpc.default_authority': 'lnd_btc'
+      'grpc.ssl_target_name_override': SSL_TARGET,
+      'grpc.default_authority': SSL_TARGET
     }
 
     if (!this.host) throw new Error('LND_ENGINE error: no host is specified')
