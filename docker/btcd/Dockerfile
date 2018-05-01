@@ -12,7 +12,7 @@ WORKDIR $GOPATH/src/github.com/roasbeef/btcd
 RUN glide install
 RUN go install . ./cmd/...
 
-RUN mkdir "/secure" "/shared" "/root/.btcd" "/root/.btcctl"
+RUN mkdir "/secure" "/root/.btcd" "/root/.btcctl"
 RUN touch "/root/.btcd/btcd.conf"
 
 # Manually generate certificate and add all domains, it is needed to connect

@@ -22,24 +22,15 @@ You must have ssh/private access to the lnd-engine to be able to download these 
 }
 ```
 
-Then you can use `extends` (Docker 2) to add the engine to your current docker stack:
+Then add the following commands to your `package.json`:
 
 ```
-lnd_btc:
-  extends:
-    file: ./node_modules/lnd-engine/docker-compose.yml
-    service: lnd_btc
-
-btcd:
-  extends:
-    file: ./node_modules/lnd-engine/docker-compose.yml
-    service: btcd
-
-lnd_repl:
-  extends:
-    file: ./node_modules/lnd-engine/docker-compose.yml
-    service: repl
+    "lup": "npm explore lnd-engine -- docker-compose -p $npm_package_config_project_name up -d",
+    "ld": "npm explore lnd-engine -- docker-compose -p $npm_package_config_project_name down -v",
+    "lps": "npm explore lnd-engine -- docker-compose -p $npm_package_config_project_name ps"
 ```
+
+NOTE: If you are trying to use `lnd-engine` locally, you may need to blow away your projects `npm-shrinkwrap` file to avoid caching of the incorrect repo.
 
 #### Getting Started
 

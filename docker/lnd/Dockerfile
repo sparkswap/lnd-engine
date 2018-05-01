@@ -39,9 +39,7 @@ RUN openssl req -new -sha256 -key $TLS_KEY -out $TLS_CSR -subj '/CN=lnd_btc/O=ln
 RUN openssl req -x509 -sha256 -days 36500 -key $TLS_KEY -in $TLS_CSR -out $TLS_CERT
 RUN rm $TLS_CSR
 
-# Create a volume to house pregenerated RPC credentials. This will be
-# shared with any lnd, btcctl containers so they can securely query btcd's RPC
-# server.
+# Create a volume to house lnd certs/keys.
 # You should NOT do this before certificate generation!
 # Otherwise manually generated certificate will be overridden with shared
 # mounted volume! For more info read dockerfile "VOLUME" documentation.

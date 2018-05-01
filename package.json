@@ -14,8 +14,7 @@
     "format": "standard --fix",
     "test": "NODE_PATH=. nyc mocha 'src/**/*.spec.js'",
     "build": "bash ./scripts/build.sh",
-    "console": "node ./scripts/console.js",
-    "c": "npm run console"
+    "start": "node ./scripts/console.js"
   },
   "repository": {
     "type": "git",
