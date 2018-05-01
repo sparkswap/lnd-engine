@@ -1,8 +1,9 @@
-const path = require('path')
 const fs = require('fs')
 
 const { loadService } = require('./grpc-util')
 const { generateCredentials } = require('./lnd-credentials')
+
+const LND_PROTO_FILE_PATH = require.resolve('../proto/lnd-rpc.proto')
 
 // Defaults for the LND Engine
 // These are currently set at build time in the services Dockerfile, so they are not
@@ -15,7 +16,6 @@ const LND_HOST = 'lnd_btc:10009'
 const TLS_CERT_PATH = '/shared/lnd-engine-tls.cert'
 const MACAROON_PATH = '/shared/lnd-engine-admin.macaroon'
 const SSL_TARGET = 'lnd_btc'
-const LND_PROTO_FILE_PATH = './proto/lnd-rpc.proto'
 
 const operational = require('./operational')
 
@@ -34,7 +34,7 @@ class LndEngine {
     this.logger = logger || console
     this.tlsCertPath = tlsCertPath || TLS_CERT_PATH
     this.macaroonPath = macaroonPath || MACAROON_PATH
-    this.protoPath = path.resolve(LND_PROTO_FILE_PATH)
+    this.protoPath = LND_PROTO_FILE_PATH
     this.credentials = generateCredentials(this.tlsCertPath, this.macaroonPath)
 
     // Apply Mixins
@@ -48,7 +48,7 @@ class LndEngine {
     if (!this.host) throw new Error('LND_ENGINE error: no host is specified')
     if (!fs.existsSync(this.protoPath)) throw new Error('LND-ENGINE error: Proto file not found')
 
-    this.descriptor = loadService(this.protoPath)
+    this.descriptor = loadService(LND_PROTO_FILE_PATH)
     this.LndRpc = this.descriptor.lnrpc
     this.client = new this.LndRpc.Lightning(this.host, this.credentials, this.serviceOptions)
   }
