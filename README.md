@@ -15,6 +15,16 @@ Our current docker setup consists of the following containers:
 - LND - Lightning Network Daemon + Wallet
 - repl - an interactive shell for using the lnd-engine stack
 
+#### Getting Started
+
+```
+npm i
+npm run build
+npm test
+```
+
+You can access the repl through `docker-compose run repl npm run c` and view all available commands with `commands`
+
 #### Installation via NPM
 
 You must have ssh/private access to the lnd-engine to be able to download these files. Add the following reference to your `package.json`:
@@ -38,14 +48,6 @@ Then add the following commands to your `package.json`:
 
 NOTE: If you are trying to use `lnd-engine` locally, you may need to blow away your projects `npm-shrinkwrap` file to avoid caching of the incorrect repo.
 
-#### Getting Started
-
-```
-npm i
-npm test
-```
-
-You can access the repl through `docker-compose run repl npm run c` and view all available commands with `commands`
 
 ### IMPORTANT ABOUT SSL:
 
