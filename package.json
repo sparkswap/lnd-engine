@@ -7,6 +7,9 @@
     "env": [
       "mocha",
       "chai"
+    ],
+    "ignore": [
+      "docs/*"
     ]
   },
   "scripts": {
@@ -15,7 +18,9 @@
     "pretest": "npm run format",
     "test": "NODE_PATH=. nyc mocha 'src/**/*.spec.js'",
     "format": "standard --fix",
-    "start": "node ./scripts/console.js"
+    "start": "node ./scripts/console.js",
+    "doc": "jsdoc src -d docs",
+    "postdoc": "http-server docs"
   },
   "repository": {
     "type": "git",
@@ -39,6 +44,8 @@
   "devDependencies": {
     "chai": "4.1.2",
     "dirty-chai": "2.0.1",
+    "http-server": "0.11.1",
+    "jsdoc": "3.5.5",
     "mocha": "5.1.1",
     "nyc": "11.7.1",
     "rewire": "4.0.1",
