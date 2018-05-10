@@ -14,9 +14,6 @@ services:
   repl:
     image: node:8
     working_dir: '/home/app'
-    depends_on:
-      - btcd
-      - lnd_btc
     volumes:
       - './:/home/app'
       - 'shared:/shared/'
@@ -69,8 +66,6 @@ services:
     build:
       context: ./docker
       dockerfile: lnd/Dockerfile
-    depends_on:
-      - btcd
     environment:
       - RPC_USER=kuser
       - RPC_PASS=kpass
