@@ -7,7 +7,7 @@
  */
 async function addInvoice (params) {
   return new Promise((resolve, reject) => {
-    this.client.addInvoice(params, (err, res) => {
+    this.lnd.addInvoice(params, (err, res) => {
       if (err) return reject(err)
       return resolve(res)
     })

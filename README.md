@@ -89,3 +89,8 @@ tcpdump port 10009 and '(tcp-syn|tcp-ack)!=0'
 curl --cacert /secure/tls.cert https://lnd_btc:10009 -v
 ```
 
+### Wallet Setup
+
+1. we need to create a wallet for LND
+2. we need to create an address that we can send coins to
+

@@ -7,7 +7,7 @@
  */
 async function getInfo () {
   return new Promise((resolve, reject) => {
-    this.client.getInfo({}, (err, res) => {
+    this.lnd.getInfo({}, (err, res) => {
       if (err) return reject(err)
       return resolve(res)
     })

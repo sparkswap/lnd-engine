@@ -8,11 +8,9 @@ cp /secure/lnd-engine-tls.cert /shared
 
 # USING THIS OPTION BECAUSE WERE BAD
 # BUT THIS WILL NEED TO BE REMOVED FOR TESTNET
-echo 'LND has --noencryptwallet set. MAKE SURE TO REMOVE THIS'
 echo "Using LND w/ env options: CHAIN:$CHAIN NETWORK:$NETWORK NODE:$NODE"
 
 exec lnd \
-    --noencryptwallet \
     --adminmacaroonpath="$ADMIN_MACAROON" \
     --readonlymacaroonpath="$READ_ONLY_MACAROON" \
     --tlscertpath="$TLS_CERT_PATH" \

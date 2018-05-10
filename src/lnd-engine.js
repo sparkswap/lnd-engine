@@ -5,19 +5,8 @@ const { generateCredentials } = require('./lnd-credentials')
 
 const LND_PROTO_FILE_PATH = require.resolve('../proto/lnd-rpc.proto')
 
-// Defaults for the LND Engine
-// These are currently set at build time in the services Dockerfile, so they are not
-// customizable at the moment, however as a TODO, we should allow this to be configured
-// through ENV
-//
-// TODO: Allow this to be editable. This is related to how we generate
-//   ssl certs for the lnd instances (see docker/)
-const LND_HOST = 'lnd_btc:10009'
-const TLS_CERT_PATH = '/shared/lnd-engine-tls.cert'
-const MACAROON_PATH = '/shared/lnd-engine-admin.macaroon'
-const SSL_TARGET = 'lnd_btc'
-
 const operational = require('./operational')
+const wallet = require('./wallet')
 
 /**
  * Constructor for creating an interface to an LND Engine.
@@ -30,19 +19,27 @@ const operational = require('./operational')
  */
 class LndEngine {
   constructor (host, { logger, tlsCertPath, macaroonPath } = {}) {
-    this.host = host || LND_HOST
+    // Defaults for the LND Engine are hardcoded below.
+    //
+    // These are variables are also set at build time in the services Dockerfile, so they are not
+    // customizable (at the moment)
+    //
+    // TODO: Allow these variables to be configured through ENV
+    this.hostName = 'lnd_btc'
+    this.host = host || `${this.hostName}:10009`
     this.logger = logger || console
-    this.tlsCertPath = tlsCertPath || TLS_CERT_PATH
-    this.macaroonPath = macaroonPath || MACAROON_PATH
+    this.tlsCertPath = tlsCertPath || '/shared/lnd-engine-tls.cert'
+    this.macaroonPath = macaroonPath || '/shared/lnd-engine-admin.macaroon'
     this.protoPath = LND_PROTO_FILE_PATH
     this.credentials = generateCredentials(this.tlsCertPath, this.macaroonPath)
 
     // Apply Mixins
     Object.assign(this, operational)
+    Object.assign(this, wallet)
 
     this.serviceOptions = {
-      'grpc.ssl_target_name_override': SSL_TARGET,
-      'grpc.default_authority': SSL_TARGET
+      'grpc.ssl_target_name_override': this.hostName,
+      'grpc.default_authority': this.hostName
     }
 
     if (!this.host) throw new Error('LND_ENGINE error: no host is specified')
@@ -50,7 +47,7 @@ class LndEngine {
 
     this.descriptor = loadService(LND_PROTO_FILE_PATH)
     this.LndRpc = this.descriptor.lnrpc
-    this.client = new this.LndRpc.Lightning(this.host, this.credentials, this.serviceOptions)
+    this.lnd = new this.LndRpc.Lightning(this.host, this.credentials, this.serviceOptions)
   }
 }
 
