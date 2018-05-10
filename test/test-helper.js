@@ -14,16 +14,18 @@ const rewire = require('rewire')
 chai.use(sinonChai)
 chai.use(dirtyChai)
 
+let sandbox = sinon.createSandbox()
+
 beforeEach(function () {
-  this.sandbox = sinon.sandbox.create()
+  sandbox = sinon.createSandbox()
 })
 
 afterEach(function () {
-  this.sandbox.restore()
+  sandbox.restore()
 })
 
 module.exports = {
   chai,
-  sinon,
+  sinon: sandbox,
   rewire
 }
