@@ -30,6 +30,31 @@ const engineOptions = {
   macaroonPath: MACAROON_PATH // overrides default
 }
 
+replServer.defineCommand('wtf', {
+  help: 'Provides an introduction to usage patterns for the repl',
+  action () {
+    console.log(`You can access a predefined Engine (${LND_HOST}) by using the 'Engine' object:`)
+    console.log('')
+    console.log('EXAMPLE: `Engine.getInfo().then(res => console.log(res))`')
+    console.log('')
+    console.log('You also have access to the LND Constuctor where you can define your own engine')
+    console.log('at a specified host.')
+    console.log('')
+    console.log('EXAMPLE: `const engine = new LndEngine(myHost, myOptions)`')
+    console.log('')
+    console.log('Please refer to documentation for constructor usages.')
+    console.log('Please refer to ./scripts/console.js for repl implementation.')
+    return this.displayPrompt()
+  }
+})
+
+replServer.defineCommand('commands', {
+  help: 'Provides a list of all available global variables',
+  action () {
+    console.log(Object.keys(this.context))
+    return this.displayPrompt()
+  }
+})
+
 replServer.context.LndEngine = LndEngine
 replServer.context.Engine = new LndEngine(LND_HOST, engineOptions)
-replServer.context.commands = Object.keys(replServer.context)

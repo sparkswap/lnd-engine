@@ -14,6 +14,4 @@ curl -o ./proto/lnd-rpc.proto $LND_PROTO_URL
 # (this is POSIX compliant as the versions of sed differ between OSes)
 sed 's|^import \"google/api/annotations.proto\";||' ./proto/lnd-rpc.proto > /tmp/file.$$ && mv /tmp/file.$$ ./proto/lnd-rpc.proto
 
-# Rest of the installation process
-npm rebuild grpc --target_arch=x64 --target_platform=linux --target_libc=glibc
 npm test

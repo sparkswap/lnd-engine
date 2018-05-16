@@ -25,28 +25,37 @@ npm test
 
 You can access the repl through `docker-compose run repl npm run c` and view all available commands with `commands`
 
-#### Installation via NPM
+#### Development Installation
 
-You must have ssh/private access to the lnd-engine to be able to download these files. Add the following reference to your `package.json`:
+In order to use the lnd-engine in your project, follow the steps below:
 
-```
-{
-  "dependencies": {
-    ...
-    "lnd-engine": "kinesis-exchange/lnd-engine"
-  }
-}
-```
+Copy the docker files from this repo and put them into a `docker` folder at the root of your project (this assumes that your `docker-compose` file is also at the root of your project directory. Then, add the following references to your `docker-compose` file.
 
-Then add the following commands to your `package.json`:
+NOTE: This code is ONLY supported in docker versions 2.x. Docker 3 does not support `extends` and is incompatible with the lnd-engine
 
 ```
-    "lup": "npm explore lnd-engine -- docker-compose -p $npm_package_config_project_name up -d",
-    "ld": "npm explore lnd-engine -- docker-compose -p $npm_package_config_project_name down -v",
-    "lps": "npm explore lnd-engine -- docker-compose -p $npm_package_config_project_name ps"
-```
+# These services are imported from the lnd-engine
+repl:
+  extends:
+    file: ./docker/lnd-docker-compose.yml
+    service: repl
 
-NOTE: If you are trying to use `lnd-engine` locally, you may need to blow away your projects `npm-shrinkwrap` file to avoid caching of the incorrect repo.
+lnd_btc:
+  build:
+    context: ./docker
+  depends_on:
+    - btcd
+  extends:
+    file: ./docker/lnd-docker-compose.yml
+    service: lnd_btc
+
+btcd:
+  build:
+    context: ./docker
+  extends:
+    file: ./docker/lnd-docker-compose.yml
+    service: btcd
+```
 
 
 ### IMPORTANT ABOUT SSL:

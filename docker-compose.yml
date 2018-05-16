@@ -11,19 +11,19 @@ version: '2.4'
 ################################################################################
 
 services:
-  repl:
-    image: node:8
+  lnd_repl:
+    build:
+      context: ./
+      dockerfile: docker/lnd-repl/Dockerfile
     working_dir: '/home/app'
     volumes:
-      - './:/home/app'
       - 'shared:/shared/'
     environment:
-      # - GRPC_VERBOSITY=INFO
-      # - GRPC_TRACE=all
       - NODE_PATH=.
       - GRPC_SSL_CIPHER_SUITES=HIGH+ECDSA
     networks:
       - lnd
+    entrypoint: bash -c 'node ./scripts/console.js'
 
   btcd:
     build:
