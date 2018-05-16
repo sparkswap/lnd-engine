@@ -18,7 +18,7 @@
     "coverage": "nyc npm run test",
     "format": "standard --fix",
     "format-no-fail": "standard --fix; exit 0",
-    "start": "node ./scripts/console.js",
+    "start": "",
     "ci-test": "npm run format && npm run test-engine"
   },
   "repository": {
