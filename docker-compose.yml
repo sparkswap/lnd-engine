@@ -17,10 +17,16 @@ services:
       dockerfile: docker/lnd-repl/Dockerfile
     working_dir: '/home/app'
     volumes:
+      - './src:/home/app/src'
       - 'shared:/shared/'
     environment:
+      - GRPC_VERBOSITY=INFO
+      - GRPC_TRACE=all
       - NODE_PATH=.
       - GRPC_SSL_CIPHER_SUITES=HIGH+ECDSA
+      - LND_HOST=lnd_btc:10009
+      - TLS_CERT_PATH=/shared/lnd-engine-tls.cert
+      - MACAROON_PATH=/shared/lnd-engine-admin.macaroon
     networks:
       - lnd
     entrypoint: bash -c 'node ./scripts/console.js'

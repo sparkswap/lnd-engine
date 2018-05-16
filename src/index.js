@@ -24,7 +24,7 @@ class LndEngine {
     this.macaroonPath = macaroonPath || MACAROON_PATH
     this.protoPath = LND_PROTO_FILE_PATH
 
-    this.client = generateLndClient(this.protoPath)
+    this.client = generateLndClient(this.host, this.protoPath, this.tlsCertPath, this.macaroonPath)
 
     Object.assign(this, actions)
   }
