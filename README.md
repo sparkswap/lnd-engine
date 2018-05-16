@@ -35,11 +35,6 @@ NOTE: This code is ONLY supported in docker versions 2.x. Docker 3 does not supp
 
 ```
 # These services are imported from the lnd-engine
-repl:
-  extends:
-    file: ./docker/lnd-docker-compose.yml
-    service: repl
-
 lnd_btc:
   build:
     context: ./docker
@@ -55,6 +50,17 @@ btcd:
   extends:
     file: ./docker/lnd-docker-compose.yml
     service: btcd
+```
+
+Then add the following to your gitignore file:
+
+```
+# lnd-engine docker files
+docker/lnd
+docker/btcd
+docker/lnd-repl
+docker/lnd-docker-compose.yml
+docker/*.md
 ```
 
 
