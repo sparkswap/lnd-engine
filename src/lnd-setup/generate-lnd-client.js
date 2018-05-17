@@ -22,21 +22,11 @@ const LND_CLIENT_OPTIONS = {
 }
 
 /**
- * Generates credentials for authentication to the LND rpc server.
+ * Generates credentials for authentication to the LND rpc server
  *
- * The followig steps need to occur to generate the correct credentials for an LND instance:
- * 1. Read the LND public key
- * 2. Read the admin.macaroon (this is created in LND)
- * 3. Create grpc metadata w/ the macaroon
- * 4. Create grpc ssl credentials w/ public key
- * 5. combine metadata and ssl into channel credentials
- *
- * @see docker
  * @see https://github.com/lightningnetwork/lnd/blob/master/docs/macaroons.md
  * @param {String} tlsCertPath
  * @param {String} lndMacaroonPath
- * @throws {Error} tls cert path is not defined
- * @throws {Error} proto file not found
  */
 function generateCredentials (tlsCertPath, macaroonPath) {
   if (!fs.existsSync(tlsCertPath)) throw new Error(`LND-ENGINE error - tls cert file not found at path: ${tlsCertPath}`)
