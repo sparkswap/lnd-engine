@@ -1,9 +1,14 @@
 /**
+ * Get Info
+ * @module src/lnd-actions/get-info
+ */
+
+/**
  * Gets the Relayer's identity_pubkey from the LND api
  *
- * TODO: Might need to modify this call to except a parameter instead of grabbing
- * the relayer's payto
- * @returns {String} identityPubkey
+ * @function
+ * @see {@link http://api.lightning.community/#getInfo}
+ * @return {String} identityPubkey
  */
 function getInfo () {
   return new Promise((resolve, reject) => {
