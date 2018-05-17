@@ -1,7 +1,13 @@
 /**
  * Add Invoice
+ * @module src/lnd-actions/add-invoice
+ */
+
+/**
+ * Add Invoice
  *
- * @see lightning#addInvoice http://api.lightning.community/#addinvoice
+ * @function
+ * @see {@link http://api.lightning.community/#addinvoice}
  * @param {Object} params
  * @returns {Promise} addInvoice
  */

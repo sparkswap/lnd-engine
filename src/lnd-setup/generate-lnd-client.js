@@ -1,21 +1,37 @@
+/**
+ * Lnd Client Module
+ * @module src/lnd-setup/generate-lnd-client
+ */
+
 const grpc = require('grpc')
 const fs = require('fs')
 
+/**
+ * @constant
+ * @type {String}
+ * @default
+ */
 const GRPC_FILE_TYPE = 'proto'
 
-// These service options are tied directly to the SSL certs that are generated for
-// the engines LND service.
-//
-// NOTE: This needs to be a mutable object because grpc will attempt to add
-// default properties to it
+/**
+ * These service options are tied directly to the SSL certs that are generated for
+ * the engines LND service.
+ *
+ * @constant
+ * @type {Object}
+ * @default
+ */
 const GRPC_OPTIONS = {
   convertFieldsToCamelCase: true,
   binaryAsBase64: true,
   longsAsStrings: true
 }
 
-// NOTE: This needs to be a mutable object because grpc will attempt to add
-// default properties to it
+/**
+ * @constant
+ * @type {Object}
+ * @default
+ */
 const LND_CLIENT_OPTIONS = {
   'grpc.ssl_target_name_override': 'lnd_btc',
   'grpc.default_authority': 'lnd_btc'
@@ -24,9 +40,12 @@ const LND_CLIENT_OPTIONS = {
 /**
  * Generates credentials for authentication to the LND rpc server
  *
+ * @function
+ * @private
  * @see https://github.com/lightningnetwork/lnd/blob/master/docs/macaroons.md
  * @param {String} tlsCertPath
  * @param {String} lndMacaroonPath
+ * @return {grpc.credentials}
  */
 function generateCredentials (tlsCertPath, macaroonPath) {
   if (!fs.existsSync(tlsCertPath)) throw new Error(`LND-ENGINE error - tls cert file not found at path: ${tlsCertPath}`)
@@ -47,8 +66,10 @@ function generateCredentials (tlsCertPath, macaroonPath) {
 /**
  * Generates a proto definition for a specified proto file path
  *
+ * @function
+ * @private
  * @param {String} path - lnd protofile path
- * @return {grpc#proto}
+ * @return {grpc.Object}
  * @throws {Error} proto file not found
  */
 function loadProto (path) {
@@ -61,9 +82,10 @@ function loadProto (path) {
  *
  * Generates a proto definition for a specified proto file path
  *
+ * @function
  * @param {String} host - lnd host address
  * @param {String} protoFilePath - lnd protobuf file path
- * @return {grpc#Client}
+ * @return {grpc.Client}
  */
 function generateLndClient (host, protoPath, tlsCertPath, macaroonPath) {
   console.debug(`Generating proto for host: ${host}`)
