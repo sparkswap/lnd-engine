@@ -31,14 +31,14 @@ describe('lnd-engine index', () => {
     })
 
     it('throws an error if a path doesn\'t exist', () => {
-      expect(() => loadProto()).to.throw('LND-ENGINE error: Proto file not found')
+      expect(() => loadProto()).to.throw('LND-ENGINE error - Proto file not found at path: undefined')
     })
 
     it('loads a proto file', () => {
-      const host = 'localhost:1337'
+      const protoPath = 'localhost:1337'
       const revert = LndEngine.__set__('fs', { existsSync: sinon.stub().returns(true) })
-      loadProto(host)
-      expect(grpcLoadStub).to.have.been.calledWith(host, grpcFileType, grpcOptions)
+      loadProto(protoPath)
+      expect(grpcLoadStub).to.have.been.calledWith(protoPath, grpcFileType, grpcOptions)
       revert()
     })
   })
