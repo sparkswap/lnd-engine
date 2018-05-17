@@ -31,7 +31,7 @@ describe('lnd-engine index', () => {
     it('sets a default tlsCertPath', () => expect(engine.tlsCertPath).to.eql(tlsPath))
     it('sets a default macaroonPath', () => expect(engine.macaroonPath).to.eql(macaroonPath))
     it('sets a default protoPath', () => expect(engine.protoPath).to.eql(protoFilePath))
-    it('generates an lnd client', () => expect(clientStub).to.have.been.calledWith(protoFilePath))
+    it('generates an lnd client', () => expect(clientStub).to.have.been.calledWith(lndHost, protoFilePath, tlsPath, macaroonPath))
   })
 
   describe('constructor values', () => {

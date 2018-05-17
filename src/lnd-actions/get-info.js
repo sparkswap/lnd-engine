@@ -5,7 +5,7 @@
  * the relayer's payto
  * @returns {String} identityPubkey
  */
-async function getInfo () {
+function getInfo () {
   return new Promise((resolve, reject) => {
     this.client.getInfo({}, (err, res) => {
       if (err) return reject(err)

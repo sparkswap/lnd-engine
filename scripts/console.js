@@ -14,12 +14,11 @@
  */
 const repl = require('repl')
 
-const { LndEngine } = require('../src')
+const LndEngine = require('../src')
 
-// Set vars here for console
-const LND_HOST = process.env.LND_HOST || 'lnd_btc:10009'
-const TLS_CERT_PATH = process.env.TLS_CERT_PATH || '/shared/lnd-engine-tls.cert'
-const MACAROON_PATH = process.env.MACAROON_PATH || '/shared/lnd-engine-admin.macaroon'
+const LND_HOST = process.env.LND_HOST
+const TLS_CERT_PATH = process.env.TLS_CERT_PATH
+const MACAROON_PATH = process.env.MACAROON_PATH
 
 const replServer = repl.start({
   prompt: 'LND (engine) > '

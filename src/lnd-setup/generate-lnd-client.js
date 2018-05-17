@@ -2,34 +2,31 @@ const grpc = require('grpc')
 const fs = require('fs')
 
 const GRPC_FILE_TYPE = 'proto'
+
 // These service options are tied directly to the SSL certs that are generated for
 // the engines LND service.
-const GRPC_OPTIONS = Object.freeze({
+//
+// NOTE: This needs to be a mutable object because grpc will attempt to add
+// default properties to it
+const GRPC_OPTIONS = {
   convertFieldsToCamelCase: true,
   binaryAsBase64: true,
   longsAsStrings: true
-})
-const LND_CLIENT_OPTIONS = Object.freeze({
+}
+
+// NOTE: This needs to be a mutable object because grpc will attempt to add
+// default properties to it
+const LND_CLIENT_OPTIONS = {
   'grpc.ssl_target_name_override': 'lnd_btc',
   'grpc.default_authority': 'lnd_btc'
-})
+}
 
 /**
- * Generates credentials for authentication to the LND rpc server.
+ * Generates credentials for authentication to the LND rpc server
  *
- * The followig steps need to occur to generate the correct credentials for an LND instance:
- * 1. Read the LND public key
- * 2. Read the admin.macaroon (this is created in LND)
- * 3. Create grpc metadata w/ the macaroon
- * 4. Create grpc ssl credentials w/ public key
- * 5. combine metadata and ssl into channel credentials
- *
- * @see docker
  * @see https://github.com/lightningnetwork/lnd/blob/master/docs/macaroons.md
  * @param {String} tlsCertPath
  * @param {String} lndMacaroonPath
- * @throws {Error} tls cert path is not defined
- * @throws {Error} proto file not found
  */
 function generateCredentials (tlsCertPath, macaroonPath) {
   if (!fs.existsSync(tlsCertPath)) throw new Error(`LND-ENGINE error - tls cert file not found at path: ${tlsCertPath}`)
@@ -55,7 +52,7 @@ function generateCredentials (tlsCertPath, macaroonPath) {
  * @throws {Error} proto file not found
  */
 function loadProto (path) {
-  if (!fs.existsSync(path)) throw new Error('LND-ENGINE error: Proto file not found')
+  if (!fs.existsSync(path)) throw new Error(`LND-ENGINE error - Proto file not found at path: ${path}`)
 
   return grpc.load(path, GRPC_FILE_TYPE, GRPC_OPTIONS)
 }
@@ -68,11 +65,13 @@ function loadProto (path) {
  * @param {String} protoFilePath - lnd protobuf file path
  * @return {grpc#Client}
  */
-function generateLndClient (host) {
-  const { lnrpc } = loadProto(this.protoPath)
-  const credentials = generateCredentials(this.tlsCertPath, this.macaroonPath)
+function generateLndClient (host, protoPath, tlsCertPath, macaroonPath) {
+  console.debug(`Generating proto for host: ${host}`)
 
-  return lnrpc.Lightning(host, credentials, LND_CLIENT_OPTIONS)
+  const { lnrpc } = loadProto(protoPath)
+  const credentials = generateCredentials(tlsCertPath, macaroonPath)
+
+  return new lnrpc.Lightning(host, credentials, LND_CLIENT_OPTIONS)
 }
 
 module.exports = generateLndClient
