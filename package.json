@@ -2,7 +2,7 @@
   "name": "lnd-engine",
   "version": "0.1.0",
   "description": "Kinesis engine for LND",
-  "main": "index.js",
+  "main": "src/index.js",
   "standard": {
     "env": [
       "mocha",
@@ -15,12 +15,16 @@
   "scripts": {
     "prebuild": "bash ./scripts/prebuild.sh",
     "build": "bash ./scripts/build.sh",
-    "pretest": "npm run format",
-    "test": "NODE_PATH=. nyc mocha 'src/**/*.spec.js'",
+    "pretest": "npm run format-no-fail",
+    "test": "npm run test-engine",
+    "test-engine": "NODE_PATH=. mocha 'src/**/*.spec.js'",
+    "coverage": "nyc npm run test",
     "format": "standard --fix",
-    "start": "node ./scripts/console.js",
     "doc": "jsdoc src -d docs",
-    "postdoc": "http-server docs"
+    "postdoc": "http-server docs",
+    "format-no-fail": "standard --fix; exit 0",
+    "start": "",
+    "ci-test": "npm run format && npm run test-engine"
   },
   "repository": {
     "type": "git",
@@ -47,13 +51,13 @@
     "http-server": "0.11.1",
     "jsdoc": "3.5.5",
     "mocha": "5.1.1",
-    "nyc": "11.7.1",
+    "nyc": "11.7.3",
     "rewire": "4.0.1",
-    "sinon": "4.5.0",
+    "sinon": "5.0.7",
     "sinon-chai": "3.0.0",
     "standard": "11.0.1"
   },
   "dependencies": {
-    "grpc": "1.10.1"
+    "grpc": "1.11.3"
   }
 }

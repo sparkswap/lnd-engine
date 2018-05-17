@@ -1,9 +1,8 @@
 /**
- * Kinesis test helper
+ * LND-Engine test helper
  *
  * NOTE: This file is specifically loaded before all tests so that we
  * can globally require some files.
- *
  */
 const sinon = require('sinon')
 const chai = require('chai')
@@ -14,16 +13,14 @@ const rewire = require('rewire')
 chai.use(sinonChai)
 chai.use(dirtyChai)
 
-beforeEach(function () {
-  this.sandbox = sinon.sandbox.create()
-})
+let sandbox = sinon.createSandbox()
 
 afterEach(function () {
-  this.sandbox.restore()
+  sandbox.restore()
 })
 
 module.exports = {
   chai,
-  sinon,
+  sinon: sandbox,
   rewire
 }

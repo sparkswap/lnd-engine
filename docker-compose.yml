@@ -1,4 +1,4 @@
-version: '3'
+version: '2.4'
 
 ################################################################################
 #
@@ -11,22 +11,25 @@ version: '3'
 ################################################################################
 
 services:
-  repl:
-    image: node:8
+  lnd_repl:
+    build:
+      context: ./
+      dockerfile: docker/lnd-repl/Dockerfile
     working_dir: '/home/app'
-    depends_on:
-      - btcd
-      - lnd_btc
     volumes:
-      - './:/home/app'
+      - './src:/home/app/src'
       - 'shared:/shared/'
     environment:
-      # - GRPC_VERBOSITY=INFO
-      # - GRPC_TRACE=all
+      - GRPC_VERBOSITY=INFO
+      - GRPC_TRACE=all
       - NODE_PATH=.
       - GRPC_SSL_CIPHER_SUITES=HIGH+ECDSA
+      - LND_HOST=lnd_btc:10009
+      - TLS_CERT_PATH=/shared/lnd-engine-tls.cert
+      - MACAROON_PATH=/shared/lnd-engine-admin.macaroon
     networks:
       - lnd
+    entrypoint: bash -c 'node ./scripts/console.js'
 
   btcd:
     build:
@@ -69,8 +72,6 @@ services:
     build:
       context: ./docker
       dockerfile: lnd/Dockerfile
-    depends_on:
-      - btcd
     environment:
       - RPC_USER=kuser
       - RPC_PASS=kpass
