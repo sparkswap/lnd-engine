@@ -1,8 +1,3 @@
-/**
- * LndEngine
- * @module src/index
- */
-
 const actions = require('./lnd-actions')
 const { generateLndClient } = require('./lnd-setup')
 const LND_PROTO_FILE_PATH = require.resolve('../proto/lnd-rpc.proto')

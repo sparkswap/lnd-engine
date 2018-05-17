@@ -7,6 +7,7 @@ const grpc = require('grpc')
 const fs = require('fs')
 
 /**
+ * @global
  * @constant
  * @type {String}
  * @default
@@ -17,6 +18,7 @@ const GRPC_FILE_TYPE = 'proto'
  * These service options are tied directly to the SSL certs that are generated for
  * the engines LND service.
  *
+ * @global
  * @constant
  * @type {Object}
  * @default
@@ -28,6 +30,7 @@ const GRPC_OPTIONS = {
 }
 
 /**
+ * @global
  * @constant
  * @type {Object}
  * @default
