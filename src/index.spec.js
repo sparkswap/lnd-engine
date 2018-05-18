@@ -1,6 +1,5 @@
 const path = require('path')
-const { chai, rewire, sinon } = require('test/test-helper')
-const { expect } = chai
+const { expect, rewire, sinon } = require('test/test-helper')
 
 const LndEngine = rewire(path.resolve('src', 'index'))
 
