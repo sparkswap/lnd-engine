@@ -20,8 +20,8 @@ services:
       - './src:/home/app/src'
       - 'shared:/shared/'
     environment:
-      - GRPC_VERBOSITY=INFO
-      - GRPC_TRACE=all
+      # - GRPC_VERBOSITY=INFO
+      # - GRPC_TRACE=all
       - NODE_PATH=.
       - GRPC_SSL_CIPHER_SUITES=HIGH+ECDSA
       - LND_HOST=lnd_btc:10009
