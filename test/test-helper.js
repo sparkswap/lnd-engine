@@ -10,6 +10,8 @@ const sinonChai = require('sinon-chai')
 const dirtyChai = require('dirty-chai')
 const rewire = require('rewire')
 
+const { expect } = chai
+
 chai.use(sinonChai)
 chai.use(dirtyChai)
 
@@ -22,5 +24,6 @@ afterEach(function () {
 module.exports = {
   chai,
   sinon: sandbox,
-  rewire
+  rewire,
+  expect
 }
