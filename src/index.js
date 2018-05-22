@@ -53,11 +53,24 @@ class LndEngine {
 
     this.client = generateLndClient(this.host, this.protoPath, this.tlsCertPath, this.macaroonPath)
 
-    this.wallet = wallet(this)
-    this.invoices = invoices(this)
-    this.info = info(this)
-    this.health = health(this)
-    this.balance = balance(this)
+    this.wallet = this.register(wallet)
+    this.invoices = this.register(invoices)
+    this.info = this.register(info)
+    this.health = this.register(health)
+    this.balance = this.register(balance)
+  }
+
+  /**
+   * Provides a method to deep-copy an object with a certain engine
+   *
+   * @param {JS Module} mod - module
+   * @return {Object} methods
+   */
+  register (mod) {
+    return Object.keys(mod).reduce((acc, key) => {
+      acc[key] = mod[key].bind(this)
+      return acc
+    }, {})
   }
 }
 
