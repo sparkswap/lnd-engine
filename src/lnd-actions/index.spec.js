@@ -9,7 +9,8 @@ describe('actions index', () => {
     'wallet',
     'info',
     'balance',
-    'health'
+    'health',
+    'channels'
   ]
 
   it('registers all actions', () => {
