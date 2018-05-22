@@ -1,6 +1,6 @@
 /**
- * New Address
- * @module src/lnd-actions/new-address
+ * Wallet
+ * @module src/lnd-actions/wallet
  */
 
 /**
@@ -34,4 +34,6 @@ function newAddress () {
   })
 }
 
-module.exports = newAddress
+module.exports = {
+  newAddress
+}
