@@ -1,24 +1,31 @@
 const path = require('path')
 const { expect, rewire, sinon } = require('test/test-helper')
 
-const newAddress = rewire(path.resolve(__dirname, 'new-address'))
+const wallet = rewire(path.resolve(__dirname, 'wallet'))
 
 describe('wallet', () => {
   describe('new-address', () => {
     let newAddressStub
     let client
+    let logger
+
+    const newAddress = wallet.__get__('newAddress')
 
     beforeEach(() => {
       newAddressStub = sinon.stub()
       client = {
         newAddress: newAddressStub
       }
-      newAddress.__set__('client', client)
+      logger = {
+        debug: sinon.stub()
+      }
+      wallet.__set__('client', client)
+      wallet.__set__('logger', logger)
     })
 
     it('makes a call to lnd for wallet balance', () => {
       newAddress()
-      const type = newAddress.__get__('DEFAULT_ADDRESS_TYPE')
+      const type = wallet.__get__('DEFAULT_ADDRESS_TYPE')
       expect(newAddressStub).to.have.been.calledOnce()
       expect(newAddressStub).to.have.been.calledWith(sinon.match({ type }))
     })

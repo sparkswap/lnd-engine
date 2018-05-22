@@ -5,11 +5,11 @@ const actions = rewire(path.resolve(__dirname))
 
 describe('actions index', () => {
   const currentActions = [
-    'addInvoice',
-    'getInfo',
-    'invoiceStatus',
-    'newAddress',
-    'walletBalance'
+    'invoices',
+    'wallet',
+    'info',
+    'balance',
+    'health'
   ]
 
   it('registers all actions', () => {
