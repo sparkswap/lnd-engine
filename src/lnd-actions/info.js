@@ -14,7 +14,11 @@ function publicKey () {
   return new Promise((resolve, reject) => {
     this.client.getInfo({}, (err, res) => {
       if (err) return reject(err)
-      const { identity_pubkey: pubKey } = res
+
+      this.logger.log('Received response from lnd: ', res)
+
+      const { identityPubkey: pubKey } = res
+
       return resolve(pubKey)
     })
   })

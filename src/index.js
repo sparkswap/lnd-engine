@@ -1,4 +1,10 @@
-const actions = require('./lnd-actions')
+const {
+  invoices,
+  wallet,
+  health,
+  info,
+  balance
+} = require('./lnd-actions')
 const { generateLndClient } = require('./lnd-setup')
 const LND_PROTO_FILE_PATH = require.resolve('../proto/lnd-rpc.proto')
 
@@ -47,7 +53,11 @@ class LndEngine {
 
     this.client = generateLndClient(this.host, this.protoPath, this.tlsCertPath, this.macaroonPath)
 
-    Object.assign(this, actions)
+    this.wallet = wallet(this)
+    this.invoices = invoices(this)
+    this.info = info(this)
+    this.health = health(this)
+    this.balance = balance(this)
   }
 }
 

@@ -12,30 +12,47 @@
  */
 function walletBalance () {
   return new Promise((resolve, reject) => {
-    this.client.walletBalance({}, (err, response) => {
+    this.client.walletBalance({}, (err, res) => {
       if (err) return reject(err)
-      return resolve(response)
+
+      this.logger.log('Received response from lnd: ', res)
+
+      return resolve(res)
     })
   })
 }
 
+/**
+ * Total balance of unspent funds
+ * @returns {String} total
+ */
 async function total () {
-  const { total } = await walletBalance()
-  return total
+  const { totalBalance } = await walletBalance.call(this)
+  return totalBalance
 }
 
-async function uncommitted () {
-  const { uncommitted } = await walletBalance()
-  return uncommitted
+/**
+ * Balance of unconfirmed unspent funds
+ * @returns {String} total
+ */
+async function unconfirmed () {
+  const { unconfirmedBalance } = await walletBalance.call(this)
+  return unconfirmedBalance
 }
 
-async function committed () {
-  const { committed } = await walletBalance()
-  return committed
+/**
+ * Balance of confirmed unspent funds
+ * @returns {String} total
+ */
+async function confirmed () {
+  const { confirmedBalance } = await walletBalance.call(this)
+  return confirmedBalance
 }
 
 module.exports = {
   total,
-  uncommitted,
-  committed
+  unconfirmed,
+  confirmed,
+  uncommitted: confirmed,
+  committed: unconfirmed
 }

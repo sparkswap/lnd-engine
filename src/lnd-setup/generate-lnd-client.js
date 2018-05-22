@@ -91,8 +91,6 @@ function loadProto (path) {
  * @return {grpc.Client}
  */
 function generateLndClient (host, protoPath, tlsCertPath, macaroonPath) {
-  console.debug(`Generating proto for host: ${host}`)
-
   const { lnrpc } = loadProto(protoPath)
   const credentials = generateCredentials(tlsCertPath, macaroonPath)
 
