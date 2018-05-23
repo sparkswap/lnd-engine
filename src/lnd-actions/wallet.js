@@ -3,6 +3,8 @@
  * @module src/lnd-actions/wallet
  */
 
+const { deadline } = require('../grpc-utils')
+
 /**
  * Segregated Witness address type. Referred to as nested-pay-to-witness-key-hash (np2wkh)
  *
@@ -21,7 +23,7 @@ const DEFAULT_ADDRESS_TYPE = 0 // np2wkh
  */
 function newAddress () {
   return new Promise((resolve, reject) => {
-    this.client.newAddress({ type: DEFAULT_ADDRESS_TYPE }, (err, res) => {
+    this.client.newAddress({ type: DEFAULT_ADDRESS_TYPE }, { deadline: deadline() }, (err, res) => {
       if (err) return reject(err)
 
       this.logger.debug('Received response from lnd: ', res)

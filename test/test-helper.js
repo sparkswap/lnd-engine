@@ -9,6 +9,7 @@ const chai = require('chai')
 const sinonChai = require('sinon-chai')
 const dirtyChai = require('dirty-chai')
 const rewire = require('rewire')
+const timekeeper = require('timekeeper')
 const chaiAsPromised = require('chai-as-promised')
 
 const { expect } = chai
@@ -27,5 +28,6 @@ module.exports = {
   chai,
   sinon: sandbox,
   rewire,
-  expect
+  expect,
+  timekeeper
 }
