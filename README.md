@@ -104,3 +104,18 @@ tcpdump port 10009 and '(tcp-syn|tcp-ack)!=0'
 curl --cacert /secure/tls.cert https://lnd_btc:10009 -v
 ```
 
+# API
+
+- Engine.invoices.create
+- Engine.invoices.status
+- Engine.invoices.all
+- Engine.invoices.pending
+- Engine.wallet.newAddress
+- Engine.info.publicKey
+- Engine.health.isOK
+- Engine.balance.total
+- Engine.balance.unconfirmed
+- Engine.balance.confirmed
+- Engine.balance.uncommitted
+- Engine.balance.committed
+

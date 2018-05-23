@@ -1,6 +1,6 @@
 /**
- * New Address
- * @module src/lnd-actions/new-address
+ * Wallet
+ * @module src/lnd-actions/wallet
  */
 
 /**
@@ -24,8 +24,7 @@ function newAddress () {
     this.client.newAddress({ type: DEFAULT_ADDRESS_TYPE }, (err, res) => {
       if (err) return reject(err)
 
-      // TODO: configurable logger
-      console.log('received response from lnd: ', res)
+      this.logger.debug('Received response from lnd: ', res)
 
       const { address } = res
 
@@ -34,4 +33,4 @@ function newAddress () {
   })
 }
 
-module.exports = newAddress
+module.exports = { newAddress }

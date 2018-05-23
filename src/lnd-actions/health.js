@@ -1,22 +1,27 @@
 /**
- * Get Info
- * @module src/lnd-actions/get-info
+ * Health
+ * @module src/lnd-actions/health
  */
 
 /**
- * Gets the Relayer's identity_pubkey from the LND api
+ * Queries LND for a successful response
  *
  * @function
  * @see {@link http://api.lightning.community/#getInfo}
  * @return {String} identityPubkey
  */
-function getInfo () {
+function isOK () {
   return new Promise((resolve, reject) => {
     this.client.getInfo({}, (err, res) => {
       if (err) return reject(err)
-      return resolve(res)
+
+      this.logger.debug('Received response from lnd: ', res)
+
+      return resolve(true)
     })
   })
 }
 
-module.exports = getInfo
+module.exports = {
+  isOK
+}
