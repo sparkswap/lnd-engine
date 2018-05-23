@@ -10,11 +10,13 @@ const sinonChai = require('sinon-chai')
 const dirtyChai = require('dirty-chai')
 const rewire = require('rewire')
 const timekeeper = require('timekeeper')
+const chaiAsPromised = require('chai-as-promised')
 
 const { expect } = chai
 
 chai.use(sinonChai)
 chai.use(dirtyChai)
+chai.use(chaiAsPromised)
 
 let sandbox = sinon.createSandbox()
 
