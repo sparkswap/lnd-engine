@@ -1,4 +1,11 @@
 /**
+ * Channels
+ * @module src/lnd-actions/channels
+ */
+
+const { deadline } = require('../grpc-utils')
+
+/**
  * Open a channel w/ LND
  *
  * @param {String} publicKey - lnd public key to open channel with
@@ -11,7 +18,7 @@ function open (publicKey, fundingAmount) {
   }
 
   return new Promise((resolve, reject) => {
-    this.client.openChannelSync(params, (err, res) => {
+    this.client.openChannelSync(params, { deadline: deadline() }, (err, res) => {
       if (err) return reject(err)
 
       this.logger.debug('Received response from lnd: ', res)

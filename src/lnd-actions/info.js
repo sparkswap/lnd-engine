@@ -3,6 +3,8 @@
  * @module src/lnd-actions/info
  */
 
+const { deadline } = require('../grpc-utils')
+
 /**
  * Queries LND for its public key
  *
@@ -12,7 +14,7 @@
  */
 function publicKey () {
   return new Promise((resolve, reject) => {
-    this.client.getInfo({}, (err, res) => {
+    this.client.getInfo({}, { deadline: deadline() }, (err, res) => {
       if (err) return reject(err)
 
       this.logger.debug('Received response from lnd: ', res)

@@ -3,6 +3,8 @@
  * @module src/lnd-actions/invoice
  */
 
+const { deadline } = require('../grpc-utils')
+
 /**
  * Creates an invoice on lnd
  *
@@ -21,7 +23,7 @@ function create (memo, expiry, value) {
   }
 
   return new Promise((resolve, reject) => {
-    this.client.addInvoice(params, (err, res) => {
+    this.client.addInvoice(params, { deadline: deadline() }, (err, res) => {
       if (err) return reject(err)
 
       this.logger.debug('Received response from lnd: ', res)
@@ -43,7 +45,7 @@ function create (memo, expiry, value) {
  */
 function status (rHash) {
   return new Promise((resolve, reject) => {
-    this.client.lookupInvoice({ rHash }, (err, res) => {
+    this.client.lookupInvoice({ rHash }, { deadline: deadline() }, (err, res) => {
       if (err) return reject(err)
 
       this.logger.debug('Received response from lnd: ', res)
@@ -61,7 +63,7 @@ function status (rHash) {
  */
 function listInvoices (pendingOnly) {
   return new Promise((resolve, reject) => {
-    this.client.listInvoices({ pendingOnly }, (err, res) => {
+    this.client.listInvoices({ pendingOnly }, { deadline: deadline() }, (err, res) => {
       if (err) return reject(err)
 
       this.logger.debug('Received response from lnd: ', res)
