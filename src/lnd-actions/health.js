@@ -15,7 +15,7 @@ function isOK () {
     this.client.getInfo({}, (err, res) => {
       if (err) return reject(err)
 
-      this.logger.log('Received response from lnd: ', res)
+      this.logger.debug('Received response from lnd: ', res)
 
       return resolve(true)
     })

@@ -4,21 +4,31 @@
  */
 
 /**
- * Creates an invoice
+ * Creates an invoice on lnd
  *
  * @function
  * @see {@link http://api.lightning.community/#addinvoice}
- * @param {Object} params
- * @returns {Promise} addInvoice
+ * @param {String} [memo='']
+ * @param {Int64} expiry invoice expiry in seconds
+ * @param {Int64} value
+ * @returns {Promise<String>} rHash
  */
-function create (params) {
+function create (memo, expiry, value) {
+  const params = {
+    memo,
+    expiry,
+    value
+  }
+
   return new Promise((resolve, reject) => {
     this.client.addInvoice(params, (err, res) => {
       if (err) return reject(err)
 
       this.logger.debug('Received response from lnd: ', res)
 
-      return resolve(res)
+      const { rHash } = res
+
+      return resolve(rHash)
     })
   })
 }
@@ -38,6 +48,7 @@ function status (rHash) {
 
       this.logger.debug('Received response from lnd: ', res)
 
+      // TODO: Figure out what fields to return
       return resolve(res)
     })
   })
@@ -55,6 +66,7 @@ function listInvoices (pendingOnly) {
 
       this.logger.debug('Received response from lnd: ', res)
 
+      // TODO: Figure out if we should return less info
       return resolve(res)
     })
   })

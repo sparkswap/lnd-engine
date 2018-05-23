@@ -14,7 +14,7 @@ function open (publicKey, fundingAmount) {
     this.client.openChannelSync(params, (err, res) => {
       if (err) return reject(err)
 
-      this.logger.log('Received response from lnd: ', res)
+      this.logger.debug('Received response from lnd: ', res)
 
       // TODO: Remove this because it is unneeded?
       // specifically, I think we'll have to make another call to get the channel
