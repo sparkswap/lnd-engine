@@ -3,7 +3,8 @@ const {
   wallet,
   health,
   info,
-  balance
+  balance,
+  peers
 } = require('./lnd-actions')
 const { generateLndClient } = require('./lnd-setup')
 const LND_PROTO_FILE_PATH = require.resolve('../proto/lnd-rpc.proto')
@@ -58,6 +59,7 @@ class LndEngine {
     this.info = this.register(info)
     this.health = this.register(health)
     this.balance = this.register(balance)
+    this.peers = this.register(peers)
   }
 
   /**
