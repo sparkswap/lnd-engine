@@ -1,9 +1,0 @@
-Engine.peers.connect('02c9256ed7819decb9fb2659623a587c2a741fca9b264cef6b9136bf325a18bc1c', 'docker.for.mac.host.internal:28492').then(console.log).catch(console.error)
-
-lncli connect \
-  --tlscertpath="/shared/lnd-engine-tls.cert" \
-  --macaroonpath="/shared/lnd-engine-admin.macaroon" \
-  02c9256ed7819decb9fb2659623a587c2a741fca9b264cef6b9136bf325a18bc1c@docker.for.mac.host.internal
-
-
-exec lncli --tlscertpath="/shared/lnd-engine-tls.local.cert" --macaroonpath="/shared/lnd-engine-admin.macaroon" connect 02c9256ed7819decb9fb2659623a587c2a741fca9b264cef6b9136bf325a18bc1c@docker.for.mac.host.internal
