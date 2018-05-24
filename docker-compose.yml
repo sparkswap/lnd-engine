@@ -80,7 +80,7 @@ services:
       - ADMIN_MACAROON=/shared/lnd-engine-admin.macaroon
       - READ_ONLY_MACAROON=/shared/lnd-engine-readonly.macaroon
       - INVOICE_MACAROON=/shared/lnd-engine-invoice.macaroon
-      - TLS_CERT_PATH=/shared/lnd-engine-tls.cert
+      - TLS_CERT_PATH=/shared/lnd-engine-tls.local.cert
       - TLS_KEY_PATH=/secure/lnd-engine-tls.key
       - NETWORK=simnet
       - CHAIN=bitcoin

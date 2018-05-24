@@ -5,6 +5,7 @@ set -e
 
 # Copy certs to the shared file
 cp /secure/lnd-engine-tls.cert /shared
+cp /secure/lnd-engine-tls.local.cert /shared
 
 # USING THIS OPTION BECAUSE WERE BAD
 # BUT THIS WILL NEED TO BE REMOVED FOR TESTNET
