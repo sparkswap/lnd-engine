@@ -54,7 +54,7 @@ services:
       - "MINING_ADDRESS=$MINING_ADDRESS"
     expose:
       - '8333' # mainnet p2p
-      - '8444' # mainnet rpc
+      - '8334' # mainnet rpc
       - '18333' # testnet p2p
       - '18334' # testnet rpc
       - '18555' # simnet p2p
