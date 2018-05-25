@@ -35,4 +35,4 @@ function newAddress () {
   })
 }
 
-module.exports = { newAddress }
+module.exports = newAddress

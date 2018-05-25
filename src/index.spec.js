@@ -50,36 +50,4 @@ describe('lnd-engine index', () => {
     it('sets a tlsCertPath', () => expect(engine.tlsCertPath).to.eql(customTlsCertPath))
     it('sets a macaroonPath', () => expect(engine.macaroonPath).to.eql(customMacaroonPath))
   })
-
-  describe('actions', () => {
-    let engine
-
-    beforeEach(() => {
-      engine = new LndEngine()
-    })
-
-    it('sets wallet actions', () => expect(engine.wallet).to.not.be.undefined())
-    it('sets invoices actions', () => expect(engine.invoices).to.not.be.undefined())
-    it('sets info actions', () => expect(engine.info).to.not.be.undefined())
-    it('sets health actions', () => expect(engine.health).to.not.be.undefined())
-    it('sets balance actions', () => expect(engine.balance).to.not.be.undefined())
-  })
-
-  describe('register', () => {
-    let engine
-    let testModule
-    let testFunctionStub
-
-    beforeEach(() => {
-      testFunctionStub = sinon.stub()
-      testModule = {
-        testFunction: testFunctionStub
-      }
-      engine = new LndEngine()
-    })
-
-    it('returns a key value object of functions', () => {
-      expect(engine.register(testModule)).to.have.keys('testFunction')
-    })
-  })
 })
