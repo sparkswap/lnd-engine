@@ -1,23 +1,44 @@
-FROM golang:1.9
+FROM golang:1.10-alpine as builder
 
+LABEL owner="Olaoluwa Osuntokun <laolu@lightning.network>"
 LABEL maintainer="Danny Paz <kinesis.exchange>"
 
-# Grab and install the latest version of roasbeef's fork of btcd and all
-# related dependencies.
-RUN go get -u github.com/Masterminds/glide
-RUN go get -d github.com/roasbeef/btcd
+# Install build dependencies such as git and glide.
+RUN apk add --no-cache \
+    git \
+&&  go get -u github.com/Masterminds/glide
 
 WORKDIR $GOPATH/src/github.com/roasbeef/btcd
 
-RUN glide install
-RUN go install . ./cmd/...
+# Grab and install the latest version of roasbeef's fork of btcd and all
+# related dependencies.
+RUN git clone https://github.com/roasbeef/btcd . \
+&&  glide install \
+&&  go install . ./cmd/...
 
-RUN mkdir "/secure" "/root/.btcd" "/root/.btcctl"
-RUN touch "/root/.btcd/btcd.conf"
+# Start a new image
+FROM alpine as final
 
+# Copy the compiled binaries from the builder image.
+COPY --from=builder /go/bin/addblock /bin/
+COPY --from=builder /go/bin/btcctl /bin/
+COPY --from=builder /go/bin/btcd /bin/
+COPY --from=builder /go/bin/findcheckpoint /bin/
+COPY --from=builder /go/bin/gencerts /bin/
+
+COPY "btcd/start-btcctl.sh" .
+COPY "btcd/start-btcd.sh" .
+
+RUN apk add --no-cache \
+    bash \
+    ca-certificates \
+&&  mkdir "/secure" "/root/.btcd" "/root/.btcctl" \
+&&  touch "/root/.btcd/btcd.conf" \
+&&  chmod +x start-btcctl.sh \
+&&  chmod +x start-btcd.sh \
 # Manually generate certificate and add all domains, it is needed to connect
 # "btcctl" and "lnd" to "btcd" over docker links.
-RUN "/go/bin/gencerts" --host="*" --directory="/secure" --force
+&& "/bin/gencerts" --host="*" --directory="/secure" --force
 
 # Create a volume to house pregenerated RPC credentials. This will be
 # shared with any lnd, btcctl containers so they can securely query btcd's RPC
@@ -26,10 +47,4 @@ RUN "/go/bin/gencerts" --host="*" --directory="/secure" --force
 # Otherwise manually generated certificate will be overridden with shared
 # mounted volume! For more info read dockerfile "VOLUME" documentation.
 VOLUME ["/secure"]
-
-COPY "btcd/start-btcctl.sh" .
-COPY "btcd/start-btcd.sh" .
-
-RUN chmod +x start-btcctl.sh
-RUN chmod +x start-btcd.sh
 
