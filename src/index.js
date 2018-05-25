@@ -5,6 +5,7 @@ const isAvailable = require('./is-available')
 const getTotalBalance = require('./get-total-balance')
 const getConfirmedBalanace = require('./get-confirmed-balance')
 const getUnconfirmedBalance = require('./get-unconfirmed-balance')
+const createChannel = require('./create-channel')
 
 const { generateLndClient } = require('./lnd-setup')
 const LND_PROTO_FILE_PATH = require.resolve('../proto/lnd-rpc.proto')
@@ -55,16 +56,16 @@ class LndEngine {
     this.client = generateLndClient(this.host, this.protoPath, this.tlsCertPath, this.macaroonPath)
 
     this.getTotalBalance = getTotalBalance.bind(this)
-    this.getUnconfirmedBalance = getUnconfirmedBalance.bind(this)
     this.getConfirmedBalanace = getConfirmedBalanace.bind(this)
-    this.getUncommittedBalance = this.getConfirmedBalance
+    this.getUnconfirmedBalance = getUnconfirmedBalance.bind(this)
     this.getCommittedBalance = this.getUnconfirmedBalance
+    this.getUncommittedBalance = this.getConfirmedBalance
 
     this.getInvoice = getInvoice.bind(this)
     this.getInvoices = getInvoices.bind(this)
     this.getPublicKey = getPublicKey.bind(this)
 
-    // this.createChannel = createChannel.bind(this)
+    this.createChannel = createChannel.bind(this)
 
     this.isAvailable = isAvailable.bind(this)
   }

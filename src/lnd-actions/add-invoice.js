@@ -22,7 +22,7 @@ function addInvoice (memo, expiry, value, { client }) {
   return new Promise((resolve, reject) => {
     client.addInvoice(params, { deadline: deadline() }, (err, res) => {
       if (err) return reject(err)
-      return resolve(rHash)
+      return resolve(res)
     })
   })
 }
