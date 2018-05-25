@@ -1,4 +1,4 @@
-const { walletBalance } = require('./lnd-actions')
+const { walletBalance } = require('../lnd-actions')
 
 /**
  * Balance of unconfirmed unspent funds

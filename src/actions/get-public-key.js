@@ -1,4 +1,4 @@
-const { getInfo } = require('./lnd-actions')
+const { getInfo } = require('../lnd-actions')
 
 /**
  * Returns the lnd instance's public key

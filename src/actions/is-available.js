@@ -1,4 +1,4 @@
-const { getInfo } = require('./lnd-actions')
+const { getInfo } = require('../lnd-actions')
 
 /**
  * Queries LND for a successful response

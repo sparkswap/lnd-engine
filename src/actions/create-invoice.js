@@ -1,4 +1,4 @@
-const { addInvoice } = require('./lnd-actions')
+const { addInvoice } = require('../lnd-actions')
 
 /**
  * Creates an invoice

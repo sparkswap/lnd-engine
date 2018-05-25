@@ -12,10 +12,6 @@ function lookupInvoice (rHash, { client }) {
   return new Promise((resolve, reject) => {
     client.lookupInvoice({ rHash }, { deadline: deadline() }, (err, res) => {
       if (err) return reject(err)
-
-      this.logger.debug('Received response from lnd: ', res)
-
-      // TODO: Figure out what fields to return
       return resolve(res)
     })
   })

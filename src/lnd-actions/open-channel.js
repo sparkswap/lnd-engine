@@ -7,14 +7,14 @@ const { deadline } = require('../grpc-utils')
  * @param {String} fundingAmount - the amount to fund the channel w/
  * @return {Promise}
  */
-function openChannel (publicKey, fundingAmount) {
+function openChannel (publicKey, fundingAmount, { client }) {
   const params = {
-    nodePubKey: publicKey,
+    nodePubkey: publicKey,
     localFundingAmount: fundingAmount
   }
 
   return new Promise((resolve, reject) => {
-    this.client.openChannelSync(params, { deadline: deadline() }, (err, res) => {
+    client.openChannelSync(params, { deadline: deadline() }, (err, res) => {
       if (err) return reject(err)
       return resolve(res)
     })

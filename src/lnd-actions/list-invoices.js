@@ -11,10 +11,6 @@ function listInvoices (pendingOnly, { client }) {
   return new Promise((resolve, reject) => {
     client.listInvoices({ pendingOnly }, { deadline: deadline() }, (err, res) => {
       if (err) return reject(err)
-
-      this.logger.debug('Received response from lnd: ', res)
-
-      // TODO: Figure out if we should return less info
       return resolve(res)
     })
   })

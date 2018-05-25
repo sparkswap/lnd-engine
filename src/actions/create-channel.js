@@ -1,4 +1,4 @@
-const { connectPeer, openChannel } = require('./lnd-actions')
+const { connectPeer, openChannel } = require('../lnd-actions')
 
 /**
  * Executes a connection and opens a channel w/ another lnd instance
@@ -8,8 +8,8 @@ const { connectPeer, openChannel } = require('./lnd-actions')
  * @param {String} fundingAmount - int64 string
  */
 async function createChannel (host, publicKey, fundingAmount) {
-  await connectPeer(publicKey, host, { client: this.client })
-  await openChannel(publicKey, fundingAmount)
+  await connectPeer(publicKey, host, { client: this.client, logger: this.logger })
+  await openChannel(publicKey, fundingAmount, { client: this.client })
   return true
 }
 

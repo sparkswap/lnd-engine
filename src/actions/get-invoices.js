@@ -1,4 +1,4 @@
-const { listInvoices } = require('./lnd-actions')
+const { listInvoices } = require('../lnd-actions')
 
 /**
  * Returns a list of all invoices on the engine instance
