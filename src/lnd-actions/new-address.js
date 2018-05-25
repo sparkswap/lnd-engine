@@ -1,8 +1,3 @@
-/**
- * Wallet
- * @module src/lnd-actions/wallet
- */
-
 const { deadline } = require('../grpc-utils')
 
 /**
@@ -21,15 +16,11 @@ const DEFAULT_ADDRESS_TYPE = 0 // np2wkh
  * @see {@link http://api.lightning.community/#newAddress}
  * @return {String} address
  */
-function newAddress () {
+function newAddress ({ client }) {
   return new Promise((resolve, reject) => {
-    this.client.newAddress({ type: DEFAULT_ADDRESS_TYPE }, { deadline: deadline() }, (err, res) => {
+    client.newAddress({ type: DEFAULT_ADDRESS_TYPE }, { deadline: deadline() }, (err, res) => {
       if (err) return reject(err)
-
-      this.logger.debug('Received response from lnd: ', res)
-
       const { address } = res
-
       return resolve(address)
     })
   })

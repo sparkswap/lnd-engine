@@ -1,8 +1,3 @@
-/**
- * Balance
- * @module src/lnd-actions/balance
- */
-
 const { deadline } = require('../grpc-utils')
 
 /**
@@ -12,13 +7,10 @@ const { deadline } = require('../grpc-utils')
  * @see {@link http://api.lightning.community/#walletBalance}
  * @return {Promise}
  */
-function walletBalance () {
+function walletBalance ({ client }) {
   return new Promise((resolve, reject) => {
-    this.client.walletBalance({}, { deadline: deadline() }, (err, res) => {
+    client.walletBalance({}, { deadline: deadline() }, (err, res) => {
       if (err) return reject(err)
-
-      this.logger.log('Received response from lnd: ', res)
-
       return resolve(res)
     })
   })

@@ -116,11 +116,12 @@ getCommittedBalance
 
 createNewAddress()
 createInvoice()
-createChannel()
+createChannel(host, publicKey)
 
-getPublicKey
-getInvoice
-getInvoices
+getPublicKey()
+getInvoice(rHash)
+getInvoices({ pendingOnly: true })
+getInvoices()
 
 isAvailable
 ```
