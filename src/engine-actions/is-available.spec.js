@@ -16,8 +16,8 @@ describe('getTotalBalance', () => {
     isAvailable.__set__('client', clientStub)
   })
 
-  beforeEach(() => {
-    res = isAvailable()
+  beforeEach(async () => {
+    res = await isAvailable()
   })
 
   it('makes a call to lnd to see if it succeeds or not', () => {
