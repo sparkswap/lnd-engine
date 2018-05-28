@@ -7,7 +7,6 @@ describe('createNewAddress', () => {
   let newAddressStub
   let clientStub
   let addressResponse
-  let address
   let res
 
   beforeEach(() => {
