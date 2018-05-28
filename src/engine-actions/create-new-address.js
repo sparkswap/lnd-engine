@@ -6,7 +6,7 @@ const { newAddress } = require('../lnd-actions')
  * @return {String} address
  */
 async function createNewAddress () {
-  const { address } = await newAddress({ client: this.client })
+  const address = await newAddress({ client: this.client })
   return address
 }
 

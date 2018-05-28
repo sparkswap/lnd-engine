@@ -11,8 +11,7 @@ describe('createNewAddress', () => {
   let res
 
   beforeEach(() => {
-    address = '1234'
-    addressResponse = { address }
+    addressResponse = '1234'
     newAddressStub = sinon.stub().returns(addressResponse)
     clientStub = sinon.stub()
 
@@ -29,6 +28,6 @@ describe('createNewAddress', () => {
   })
 
   it('returns a wallet address', () => {
-    expect(res).to.be.eql(address)
+    expect(res).to.be.eql(addressResponse)
   })
 })
