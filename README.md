@@ -104,6 +104,3 @@ More Info: [lncli issue](https://github.com/mably/lncli-web/issues/121) && [ciph
 ### Troubleshooting the Engine
 
 For any GRPC instance you can use `GRPC_VERBOSITY=DEBUG` and `GRPC_TRACE=all` to log all actions during a grpc request. The contained `docker-compose` files have these variables 'commented out'.
-
-
-
