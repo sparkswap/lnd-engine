@@ -97,8 +97,9 @@ services:
     volumes:
       - 'shared:/shared'
       - 'lnd:/data'
-    ports:
-      - '10111:10111'
+    # ONLY USED DURING DEV TO PREVENT SETTING PORTS ON HOST
+    # ports:
+    #   - '10111:10111'
     expose:
       - '10009'
       - '10111'
