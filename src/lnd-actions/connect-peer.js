@@ -27,7 +27,6 @@ function connectPeer (publicKey, host, { client, logger }) {
 
   return new Promise((resolve, reject) => {
     client.connectPeer({ addr }, { deadline: deadline() }, (err, res) => {
-      console.log('here')
       if (alreadyConnected(err)) {
         logger.info(`Peer already connected: ${publicKey}`)
         return resolve()
