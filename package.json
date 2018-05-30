@@ -23,7 +23,7 @@
     "docs": "jsdoc -c .jsdoc.json",
     "postdoc": "http-server docs",
     "format-no-fail": "standard --fix; exit 0",
-    "start": "",
+    "fund": "bash ./scripts/fund.sh",
     "ci-test": "npm run format && npm run test-engine"
   },
   "repository": {

@@ -3,17 +3,23 @@ FROM golang:1.10-alpine as builder
 LABEL owner="Olaoluwa Osuntokun <lightning.engineering>"
 LABEL maintainer="Danny Paz <kinesis.exchange>"
 
+# Set the version of LND used in this image to prevent breaking changes
+ARG LND_VERSION='v0.4.2-beta'
+
 # Force Go to use the cgo based DNS resolver. This is required to ensure DNS
 # queries required to connect to linked containers succeed.
 ENV GODEBUG netdns=cgo
+
 
 # Install dependencies and install/build lnd.
 RUN apk add --no-cache \
     git \
     make \
-    openssl \
-&&  go get -d github.com/lightningnetwork/lnd \
-&&  cd $GOPATH/src/github.com/lightningnetwork/lnd \
+    openssl
+
+WORKDIR $GOPATH/src/github.com/lightningnetwork/lnd
+
+RUN git clone --branch ${LND_VERSION} https://github.com/lightningnetwork/lnd . \
 &&  make \
 &&  make install
 
