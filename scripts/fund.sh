@@ -1,9 +1,24 @@
-set -e
+#!/usr/bin/env bash
 
+##########################################
+#
+# This file contains logic to fund a wallet on SIMNET w/ the default LND setup for the relayer.
+#
+# Information in this script is based off the LND docker setup:
+# https://github.com/lightningnetwork/lnd/tree/master/docker
+#
+# NOTE: This script is incomplete because of the `--noencryptwallet` flag that is
+#       included in the lnd_btc container. If this flag was removed, we would need to
+#       create a wallet w/ pass and nmemonic
+#
+##########################################
+
+set -e -u
+
+echo "Generating a new wallet address"
 echo "Engine.createNewAddress().then(console.log)" | docker-compose run lnd_repl
 
-
-echo -n "Give me the mining address ok: "
+echo -n "Copy and paste the mining address: "
 read answer
 
 # Given the address generated above, we can now restart btcd to mine
