@@ -1,17 +1,21 @@
-const invoices = require('./invoices')
-const wallet = require('./wallet')
-const health = require('./health')
-const info = require('./info')
-const balance = require('./balance')
-const channels = require('./channels')
-const peers = require('./peers')
+const addInvoice = require('./add-invoice')
+const connectPeer = require('./connect-peer')
+const getInfo = require('./get-info')
+const listInvoices = require('./list-invoices')
+const listPeers = require('./list-peers')
+const lookupInvoice = require('./lookup-invoice')
+const newAddress = require('./new-address')
+const openChannel = require('./open-channel')
+const walletBalance = require('./wallet-balance')
 
 module.exports = {
-  invoices,
-  wallet,
-  info,
-  balance,
-  health,
-  channels,
-  peers
+  addInvoice,
+  connectPeer,
+  getInfo,
+  listInvoices,
+  listPeers,
+  lookupInvoice,
+  newAddress,
+  openChannel,
+  walletBalance
 }

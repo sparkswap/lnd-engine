@@ -31,6 +31,7 @@ ARG TLS_CERT='/secure/lnd-engine-tls.cert'
 ARG TLS_CSR='/secure/lnd-engine-csr.csr'
 
 # Certs that are generated for using the lncli locally
+ARG LOCAL_TLS_KEY='/secure/lnd-engine-tls.key'
 ARG LOCAL_TLS_CERT='/secure/lnd-engine-tls.local.cert'
 ARG LOCAL_TLS_CSR='/secure/lnd-engine-csr.local.csr'
 

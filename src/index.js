@@ -1,11 +1,4 @@
-const {
-  invoices,
-  wallet,
-  health,
-  info,
-  balance,
-  peers
-} = require('./lnd-actions')
+const actions = require('./engine-actions')
 const { generateLndClient } = require('./lnd-setup')
 const LND_PROTO_FILE_PATH = require.resolve('../proto/lnd-rpc.proto')
 
@@ -54,25 +47,7 @@ class LndEngine {
 
     this.client = generateLndClient(this.host, this.protoPath, this.tlsCertPath, this.macaroonPath)
 
-    this.wallet = this.register(wallet)
-    this.invoices = this.register(invoices)
-    this.info = this.register(info)
-    this.health = this.register(health)
-    this.balance = this.register(balance)
-    this.peers = this.register(peers)
-  }
-
-  /**
-   * Provides a method to deep-copy an object with a certain engine
-   *
-   * @param {JS Module} mod - module
-   * @return {Object} methods
-   */
-  register (mod) {
-    return Object.keys(mod).reduce((acc, key) => {
-      acc[key] = mod[key].bind(this)
-      return acc
-    }, {})
+    Object.assign(this, actions)
   }
 }
 

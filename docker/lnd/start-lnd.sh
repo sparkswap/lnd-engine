@@ -31,4 +31,5 @@ exec lnd \
     "--$NODE.rpcuser"="$RPC_USER" \
     "--$NODE.rpcpass"="$RPC_PASS" \
     --debuglevel="$DEBUG" \
+    --externalip=$EXTERNAL_ADDRESS \
     "$@"
