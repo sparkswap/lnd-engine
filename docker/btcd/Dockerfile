@@ -14,7 +14,8 @@ WORKDIR $GOPATH/src/github.com/btcsuite/btcd
 
 
 # Grab and install the latest version of btcd
-RUN git clone --branch ${BTCD_VERSION} https://github.com/btcsuite/btcd . \
+RUN git clone https://github.com/btcsuite/btcd . \
+&& git checkout ${BTCD_VERSION} \
 &&  glide install \
 &&  go install . ./cmd/...
 
