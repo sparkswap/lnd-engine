@@ -3,6 +3,8 @@ FROM golang:1.10-alpine as builder
 LABEL owner="Olaoluwa Osuntokun <laolu@lightning.network>"
 LABEL maintainer="Danny Paz <kinesis.exchange>"
 
+ARG BTCD_VERSION='bc09449'
+
 # Install build dependencies such as git and glide.
 RUN apk add --no-cache \
     git \
@@ -10,8 +12,9 @@ RUN apk add --no-cache \
 
 WORKDIR $GOPATH/src/github.com/btcsuite/btcd
 
+
 # Grab and install the latest version of btcd
-RUN git clone https://github.com/btcsuite/btcd . \
+RUN git clone --branch ${BTCD_VERSION} https://github.com/btcsuite/btcd . \
 &&  glide install \
 &&  go install . ./cmd/...
 
