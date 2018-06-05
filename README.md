@@ -74,6 +74,7 @@ getInvoice(rHash)
 getInvoices(opts) // opts = { pendingOnly: true }
 getInvoices()
 isAvailable()
+isInvoicePaid()
 ```
 
 ### IMPORTANT ABOUT SSL and NODEJS:
