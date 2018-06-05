@@ -9,6 +9,7 @@ const createChannel = require('./create-channel')
 const createInvoice = require('./create-invoice')
 const createNewAddress = require('./create-new-address')
 const isAvailable = require('./is-available')
+const isInvoicePaid = require('./is-invoice-paid')
 
 module.exports = {
   getInvoice,
@@ -21,5 +22,6 @@ module.exports = {
   createChannel,
   createInvoice,
   getPeers,
-  createNewAddress
+  createNewAddress,
+  isInvoicePaid
 }
