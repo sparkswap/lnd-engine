@@ -10,15 +10,15 @@ describe('createInvoice', () => {
   let addInvoiceStub
   let clientStub
   let invoiceResponse
-  let rHash
+  let paymentRequest
   let res
 
   beforeEach(() => {
     memo = 'MEMO'
     expiry = '2000'
     value = '100'
-    rHash = '1234'
-    invoiceResponse = { rHash }
+    paymentRequest = '1234'
+    invoiceResponse = { paymentRequest }
     addInvoiceStub = sinon.stub().returns(invoiceResponse)
     clientStub = sinon.stub()
 
@@ -34,7 +34,7 @@ describe('createInvoice', () => {
     expect(addInvoiceStub).to.have.been.calledWith(memo, expiry, value, sinon.match({ client: clientStub }))
   })
 
-  it('returns an rHash', () => {
-    expect(res).to.be.eql(rHash)
+  it('returns a paymentRequest hash', () => {
+    expect(res).to.be.eql(paymentRequest)
   })
 })
