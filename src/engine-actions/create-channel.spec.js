@@ -20,7 +20,7 @@ describe('createChannel', () => {
     connectPeerStub = sinon.stub()
     openChannelStub = sinon.stub()
     clientStub = sinon.stub()
-    loggerStub = { info: sinon.stub() }
+    loggerStub = { debug: sinon.stub() }
 
     createChannel.__set__('connectPeer', connectPeerStub)
     createChannel.__set__('openChannel', openChannelStub)
