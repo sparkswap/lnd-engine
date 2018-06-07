@@ -31,7 +31,8 @@ PARAMS=$(echo \
 if [[ -n "$MINING_ADDRESS" ]]; then
     PARAMS="$PARAMS --miningaddr=$MINING_ADDRESS"
 elif [[ "$NETWORK" == "simnet" ]]; then
-    PARAMS="$PARAMS --miningaddr=SW8yPHHVAeedS5JMsACPuARdb3AxidHUkv"
+    PROOF_OF_BURN_ADDRESS='sb1qcpeeeyuwfvguh6nudsquxww88dlefkrvns2wjd'
+    PARAMS="$PARAMS --miningaddr=$PROOF_OF_BURN_ADDRESS"
 fi
 
 exec btcd $PARAMS
