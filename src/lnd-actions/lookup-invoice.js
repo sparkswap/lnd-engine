@@ -13,13 +13,10 @@ const { deadline } = require('../grpc-utils')
  * @return {Bool} response.settled
  */
 function lookupInvoice (paymentHash, { client }) {
-  const rHashStr = paymentHash.toString('hex')
-
   return new Promise((resolve, reject) => {
-    client.lookupInvoice({ rHashStr }, { deadline: deadline() }, (err, res) => {
+    client.lookupInvoice({ rHashStr: paymentHash }, { deadline: deadline() }, (err, res) => {
       if (err) return reject(err)
-      const { memo, value, settledDate, settled } = res
-      return resolve({ memo, value, settledDate, settled })
+      return resolve(res)
     })
   })
 }

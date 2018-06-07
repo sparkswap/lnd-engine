@@ -4,7 +4,7 @@ const { expect, rewire, sinon } = require('test/test-helper')
 const getInvoice = rewire(path.resolve(__dirname, 'get-invoice'))
 
 describe('getInvoice', () => {
-  let invoiceHash
+  let invoiceResponse
   let lookupInvoiceStub
   let clientStub
   let res
@@ -14,10 +14,15 @@ describe('getInvoice', () => {
   let paymentRequest
 
   beforeEach(() => {
-    invoiceHash = '1234'
+    invoiceResponse = {
+      memo: 'hello',
+      value: 100,
+      settledDate: undefined,
+      settled: false
+    }
     paymentHash = '2345'
     paymentRequest = '3456'
-    lookupInvoiceStub = sinon.stub().returns(invoiceHash)
+    lookupInvoiceStub = sinon.stub().returns(invoiceResponse)
     decodePayReqStub = sinon.stub().returns(paymentHash)
     clientStub = sinon.stub()
     logger = {
@@ -43,6 +48,6 @@ describe('getInvoice', () => {
   })
 
   it('returns the result', () => {
-    expect(res).to.be.eql(invoiceHash)
+    expect(res).to.be.eql(invoiceResponse)
   })
 })

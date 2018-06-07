@@ -17,10 +17,15 @@ const {
  */
 async function getInvoice (paymentRequestHash) {
   this.logger.debug('Making request to decode payment request')
+
   const paymentHash = await decodePaymentRequest(paymentRequestHash, { client: this.client })
+
   this.logger.debug('Received payment hash from lnd', paymentHash)
   this.logger.debug('Looking up invoice by paymentHash', paymentHash)
-  return lookupInvoice(paymentHash, { client: this.client })
+
+  const { memo, value, settledDate, settled } = await lookupInvoice(paymentHash, { client: this.client })
+
+  return { memo, value, settledDate, settled }
 }
 
 module.exports = getInvoice
