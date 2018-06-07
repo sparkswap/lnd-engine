@@ -11,7 +11,7 @@ describe('getPaymentRequestDetails', () => {
 
   beforeEach(() => {
     paymentRequestString = '1234asdf'
-    decodePaymentRequestStub = sinon.stub().returns({value: 100})
+    decodePaymentRequestStub = sinon.stub().resolves({numSatoshis: 100, paymentHash: 'asdf'})
     clientStub = sinon.stub()
 
     getPaymentRequestDetails.__set__('decodePaymentRequest', decodePaymentRequestStub)
@@ -27,6 +27,6 @@ describe('getPaymentRequestDetails', () => {
   })
 
   it('returns the result', () => {
-    expect(res).to.be.eql({value: 100})
+    expect(res).to.be.eql({value: 100, paymentHash: 'asdf'})
   })
 })

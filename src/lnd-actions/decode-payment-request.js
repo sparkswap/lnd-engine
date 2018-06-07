@@ -12,8 +12,7 @@ function decodePaymentRequest (paymentRequest, { client }) {
   return new Promise((resolve, reject) => {
     client.decodePayReq({ payReq: paymentRequest }, { deadline: deadline() }, (err, res) => {
       if (err) return reject(err)
-      const { paymentHash, numSatoshis } = res
-      return resolve({paymentHash, numSatoshis})
+      return resolve(res)
     })
   })
 }
