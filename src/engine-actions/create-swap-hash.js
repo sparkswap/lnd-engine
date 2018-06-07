@@ -1,5 +1,11 @@
 const { addInvoice } = require('../lnd-actions')
 
+// default expiry for swap hashes is 3600 seconds - 1 hour.
+// TODO: should we change that?
+const SWAP_EXPIRY = '3600'
+const MEMO_PREFIX = 'kinesis:'
+
+
 /**
  * Creates a swap hash to prepare for a swap
  *
@@ -8,10 +14,8 @@ const { addInvoice } = require('../lnd-actions')
  * @returns {String} rHash hash of invoice from lnd
  */
 async function createSwapHash (orderId, value) {
-  // default expiry for swap hashes is 3600 seconds - 1 hour.
-  // TODO: should we change that?
-  const expiry = '3600'
-  const memo = `kinesis:${orderId}`
+  const expiry = SWAP_EXPIRY
+  const memo = `${MEMO_PREFIX}${orderId}`
   const { rHash } = await addInvoice(memo, expiry, value, { client: this.client })
   return rHash
 }
