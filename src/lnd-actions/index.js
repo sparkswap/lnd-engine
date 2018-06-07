@@ -7,7 +7,7 @@ const lookupInvoice = require('./lookup-invoice')
 const newAddress = require('./new-address')
 const openChannel = require('./open-channel')
 const walletBalance = require('./wallet-balance')
-const decodePayReq = require('./decode-pay-req')
+const decodePaymentRequest = require('./decode-payment-request')
 
 module.exports = {
   addInvoice,
@@ -19,5 +19,5 @@ module.exports = {
   newAddress,
   openChannel,
   walletBalance,
-  decodePayReq
+  decodePaymentRequest
 }

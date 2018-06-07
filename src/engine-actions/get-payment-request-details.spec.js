@@ -5,16 +5,16 @@ const getPaymentRequestDetails = rewire(path.resolve(__dirname, 'get-payment-req
 
 describe('getPaymentRequestDetails', () => {
   let paymentRequestString
-  let decodePayReqStub
+  let decodePaymentRequestStub
   let clientStub
   let res
 
   beforeEach(() => {
     paymentRequestString = '1234asdf'
-    decodePayReqStub = sinon.stub().returns({value: 100})
+    decodePaymentRequestStub = sinon.stub().returns({value: 100})
     clientStub = sinon.stub()
 
-    getPaymentRequestDetails.__set__('decodePayReq', decodePayReqStub)
+    getPaymentRequestDetails.__set__('decodePaymentRequest', decodePaymentRequestStub)
     getPaymentRequestDetails.__set__('client', clientStub)
   })
 
@@ -23,7 +23,7 @@ describe('getPaymentRequestDetails', () => {
   })
 
   it('gets decoded payment request details', () => {
-    expect(decodePayReqStub).to.have.been.calledWith(paymentRequestString, sinon.match({ client: clientStub }))
+    expect(decodePaymentRequestStub).to.have.been.calledWith(paymentRequestString, sinon.match({ client: clientStub }))
   })
 
   it('returns the result', () => {
