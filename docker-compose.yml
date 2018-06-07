@@ -51,7 +51,7 @@ services:
       # This is set dynamically in the startup scripts
       # TODO: figure out how to dynamically set this variable and prevent it from
       # triggering warnings
-      - "MINING_ADDRESS=$MINING_ADDRESS"
+      - MINING_ADDRESS=SW8yPHHVAeedS5JMsACPuARdb3AxidHUkv
     expose:
       - '8333' # mainnet p2p
       - '8334' # mainnet rpc

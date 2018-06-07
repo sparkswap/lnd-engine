@@ -4,7 +4,11 @@
 set -e
 
 # Copy certs to the shared file
-cp /secure/rpc.cert /shared
+[[ -e /secure/rpc.cert ]] && cp /secure/rpc.cert /shared
+
+if [[ "$NETWORK" == "simnet" ]]; then
+    crond -L /jobs/cron.log
+fi
 
 PARAMS=$(echo \
     "--$NETWORK" \

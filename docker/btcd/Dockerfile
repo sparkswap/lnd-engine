@@ -32,6 +32,13 @@ COPY --from=builder /go/bin/gencerts /bin/
 COPY "btcd/start-btcctl.sh" .
 COPY "btcd/start-btcd.sh" .
 
+# Add a cron job to be used for simnet funding
+RUN mkdir "/jobs"
+RUN touch "/jobs/cron.log"
+COPY "btcd/funding-cron.txt" /jobs/funding-cron.txt
+RUN chmod 755 /jobs/funding-cron.txt
+RUN /usr/bin/crontab /jobs/funding-cron.txt
+
 RUN apk add --no-cache \
     bash \
     ca-certificates \
