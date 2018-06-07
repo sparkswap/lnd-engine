@@ -1,7 +1,7 @@
 const { addInvoice } = require('../lnd-actions')
 
 /**
- * Creates a swap hash
+ * Creates a swap hash to prepare for a swap
  *
  * @param {String} orderId order ID for the swap hash
  * @param {Number} value
