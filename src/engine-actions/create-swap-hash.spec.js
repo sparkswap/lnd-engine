@@ -5,7 +5,6 @@ const createSwapHash = rewire(path.resolve(__dirname, 'create-swap-hash'))
 
 describe('createSwapHash', () => {
   let orderId
-  let expiry
   let value
   let addInvoiceStub
   let clientStub
