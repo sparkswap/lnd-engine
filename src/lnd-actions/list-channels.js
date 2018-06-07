@@ -1,11 +1,11 @@
 const { deadline } = require('../grpc-utils')
 
 /**
- * Returns a list of invoices
+ * Returns a list of active channels
  *
- * @param {Boolean} pendingOnly if true, returns only pending invoices
- * @param {Object} opts
  * @param {grpc#client} opts.client
+ *
+ * @return {Promise<Array>} channels
  */
 function listChannels ({ client }) {
   return new Promise((resolve, reject) => {
