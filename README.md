@@ -67,6 +67,7 @@ getConfirmedBalanace()
 getUncommittedBalance()
 getCommittedBalance()
 createNewAddress()
+createSwapHash(orderId, amountInSatoshis)
 createInvoice()
 createChannel(host, publicKey, fundingAmount)
 getPublicKey()
@@ -75,6 +76,7 @@ getInvoices(opts) // opts = { pendingOnly: true }
 getInvoices()
 isAvailable()
 isInvoicePaid()
+getPaymentRequestDetails()
 ```
 
 ### IMPORTANT ABOUT SSL and NODEJS:
