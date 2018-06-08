@@ -9,12 +9,12 @@ const { listChannels } = require('../lnd-actions')
 
  * @return {Boolean} if a channel with sufficient funds exists
  */
-async function isBalanceSufficient (destination, value, options = {outbound: true}) {
+async function isBalanceSufficient (destination, minValue, options = {outbound: true}) {
   const { outbound } = options
   const activeChannels = await listChannels({ client: this.client })
   const balance = outbound ? 'localBalance' : 'remoteBalance'
 
-  return activeChannels.filter(channel => channel.remotePubkey === destination).some(channel => channel[balance] >= value)
+  return activeChannels.filter(channel => channel.remotePubkey === destination).some(channel => channel[balance] >= minValue)
 }
 
 module.exports = isBalanceSufficient
