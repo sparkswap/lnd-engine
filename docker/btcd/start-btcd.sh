@@ -11,6 +11,7 @@ if [[ "$NETWORK" == "simnet" ]]; then
     crond -L /jobs/cron.log
 fi
 
+
 PARAMS=$(echo \
     "--$NETWORK" \
     "--debuglevel=$DEBUG" \
@@ -18,9 +19,9 @@ PARAMS=$(echo \
     "--rpcpass=$RPC_PASS" \
     "--datadir=$DATA_DIR" \
     "--logdir=$LOG_DIR" \
+    "--rpclisten=$RPC_LISTEN" \
     "--rpccert=$RPC_CERT" \
     "--rpckey=$RPC_KEY" \
-    "--rpclisten=$RPC_LISTEN" \
     "--txindex"
 )
 
