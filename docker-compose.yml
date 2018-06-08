@@ -61,15 +61,11 @@ services:
       - '18556' # simnet rpc
       - '28901' # segnet p2p
       - '28902' # segnet rpc
-    ports:
-      - '8333:8333' # mainnet p2p
-      - '8334:8334' # mainnet rpc
-      - '18333' # testnet p2p
-      - '18334' # testnet rpc
-      - '18555:18555' # simnet p2p
-      - '18556:18556' # simnet rpc
-      - '28901:28901' # segnet p2p
-      - '28902:28902' # segnet rpc
+    networks:
+     lnd:
+       aliases:
+         - blockchain
+         - rpcserver
     entrypoint: ["./start-btcd.sh"]
 
   lnd_btc:
@@ -79,7 +75,7 @@ services:
     environment:
       - RPC_USER=kuser
       - RPC_PASS=kpass
-      - RPC_HOST=docker.for.mac.host.internal
+      - RPC_HOST=blockchain
       - RPC_CERT_PATH=/shared/rpc.cert
       - ADMIN_MACAROON=/shared/lnd-engine-admin.macaroon
       - READ_ONLY_MACAROON=/shared/lnd-engine-readonly.macaroon
