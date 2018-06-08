@@ -5,12 +5,11 @@ const { listChannels } = require('../lnd-actions')
  *
  * @param {string} destination is the remotePubkey
  * @param {Integer} value is the minimum value that needs to be in the channel
- * @param {Object} options, outbound is defaulted to true, outbound is true if checking outbound channels, false if inbound,
+ * @param {boolean} [options.outbound=true] outbound is true if checking outbound channels, false if inbound
 
- * @return {Boolean} if a channel with sufficient funds exists
+ * @return {Promise<Boolean>} if a channel with sufficient funds exists
  */
-async function isBalanceSufficient (destination, minValue, options = {outbound: true}) {
-  const { outbound } = options
+async function isBalanceSufficient (destination, minValue, { outbound = true } = {}) {
   const activeChannels = await listChannels({ client: this.client })
   const balance = outbound ? 'localBalance' : 'remoteBalance'
 

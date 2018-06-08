@@ -118,4 +118,13 @@ describe('isBalanceSufficient', () => {
     const res = await isBalanceSufficient(destination, value, { outbound })
     expect(res).to.be.eql(false)
   })
+
+  it('defaults to check the outbound channel', async () => {
+    const newChannels = [{localBalance: 100, remoteBalance: 10, remotePubkey: 'asdf'}]
+    listChannelsStub = sinon.stub().resolves(newChannels)
+    revertListChannelsStub = isBalanceSufficient.__set__('listChannels', listChannelsStub)
+
+    const res = await isBalanceSufficient(destination, value)
+    expect(res).to.be.eql(true)
+  })
 })
