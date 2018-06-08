@@ -62,10 +62,10 @@ services:
       - '28901' # segnet p2p
       - '28902' # segnet rpc
     networks:
-     lnd:
-       aliases:
-         - blockchain
-         - rpcserver
+      lnd:
+        aliases:
+          - blockchain
+          - rpcserver
     entrypoint: ["./start-btcd.sh"]
 
   lnd_btc:
