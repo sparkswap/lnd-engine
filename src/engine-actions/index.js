@@ -1,4 +1,3 @@
-const getInvoice = require('./get-invoice')
 const getInvoices = require('./get-invoices')
 const getPublicKey = require('./get-public-key')
 const getTotalBalance = require('./get-total-balance')
@@ -14,7 +13,6 @@ const getPaymentRequestDetails = require('./get-payment-request-details')
 const isBalanceSufficient = require('./is-balance-sufficient')
 
 module.exports = {
-  getInvoice,
   getInvoices,
   getPublicKey,
   isAvailable,

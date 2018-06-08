@@ -1,13 +1,20 @@
-const getInvoice = require('./get-invoice')
+const {
+  decodePaymentRequest,
+  lookupInvoice
+} = require('../lnd-actions')
 
 /**
  * Looks up whether or not an invoice has been paid
  *
- * @param {String} paymentRequest - an invoice's payment request
+ * @see {lnd-actions#lookupinvoice}
+ * @see {lnd-actions#decodePaymentRequest}
+ * @param {String} paymentRequestHash
  * @returns {Boolean} true if the invoice is settled, false if not
  */
-async function isInvoicePaid (paymentRequest) {
-  const { settled } = await getInvoice(paymentRequest, { client: this.client })
+async function isInvoicePaid (paymentRequestHash) {
+  const { paymentHash } = await decodePaymentRequest(paymentRequestHash, { client: this.client })
+  const { settled } = await lookupInvoice(paymentHash, { client: this.client })
+
   return settled
 }
 
