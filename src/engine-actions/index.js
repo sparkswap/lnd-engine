@@ -11,6 +11,7 @@ const createNewAddress = require('./create-new-address')
 const isAvailable = require('./is-available')
 const isInvoicePaid = require('./is-invoice-paid')
 const getPaymentRequestDetails = require('./get-payment-request-details')
+const isBalanceSufficient = require('./is-balance-sufficient')
 
 module.exports = {
   getInvoice,
@@ -25,5 +26,6 @@ module.exports = {
   getPeers,
   createNewAddress,
   isInvoicePaid,
-  getPaymentRequestDetails
+  getPaymentRequestDetails,
+  isBalanceSufficient
 }

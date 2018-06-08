@@ -32,6 +32,13 @@ COPY --from=builder /go/bin/gencerts /bin/
 COPY "btcd/start-btcctl.sh" .
 COPY "btcd/start-btcd.sh" .
 
+# Add a cron job to be used for simnet funding
+RUN mkdir "/jobs"
+RUN touch "/jobs/cron.log"
+COPY "btcd/funding-cron.txt" /jobs/funding-cron.txt
+RUN chmod 755 /jobs/funding-cron.txt
+RUN /usr/bin/crontab /jobs/funding-cron.txt
+
 RUN apk add --no-cache \
     bash \
     ca-certificates \
@@ -41,7 +48,7 @@ RUN apk add --no-cache \
 &&  chmod +x start-btcd.sh \
 # Manually generate certificate and add all domains, it is needed to connect
 # "btcctl" and "lnd" to "btcd" over docker links.
-&& "/bin/gencerts" --host="*" --directory="/secure" --force
+&& "/bin/gencerts" --host="docker.for.mac.host.internal" --host="*" --directory="/secure" --force
 
 # Create a volume to house pregenerated RPC credentials. This will be
 # shared with any lnd, btcctl containers so they can securely query btcd's RPC
