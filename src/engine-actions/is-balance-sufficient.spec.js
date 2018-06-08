@@ -4,7 +4,6 @@ const { expect, rewire, sinon } = require('test/test-helper')
 const isBalanceSufficient = rewire(path.resolve(__dirname, 'is-balance-sufficient'))
 
 describe('isBalanceSufficient', () => {
-  let params
   let value
   let outbound
   let listChannelsStub
@@ -17,11 +16,6 @@ describe('isBalanceSufficient', () => {
     destination = 'asdf'
     value = 100
     outbound = true
-    params = {
-      destination,
-      value,
-      outbound
-    }
     clientStub = sinon.stub()
     isBalanceSufficient.__set__('client', clientStub)
   })
@@ -34,7 +28,7 @@ describe('isBalanceSufficient', () => {
     channels = [{localBalance: 10, remoteBalance: 100, remotePubkey: destination}]
     listChannelsStub = sinon.stub().resolves(channels)
     revertListChannelsStub = isBalanceSufficient.__set__('listChannels', listChannelsStub)
-    await isBalanceSufficient(params)
+    await isBalanceSufficient(destination, value, { outbound })
     expect(listChannelsStub).to.have.been.calledWith(sinon.match({ client: clientStub }))
   })
 
@@ -43,7 +37,7 @@ describe('isBalanceSufficient', () => {
     listChannelsStub = sinon.stub().resolves(newChannels)
     revertListChannelsStub = isBalanceSufficient.__set__('listChannels', listChannelsStub)
 
-    const res = await isBalanceSufficient(params)
+    const res = await isBalanceSufficient(destination, value, { outbound })
     expect(res).to.be.eql(false)
   })
 
@@ -52,7 +46,7 @@ describe('isBalanceSufficient', () => {
     listChannelsStub = sinon.stub().resolves(newChannels)
     revertListChannelsStub = isBalanceSufficient.__set__('listChannels', listChannelsStub)
 
-    const res = await isBalanceSufficient(params)
+    const res = await isBalanceSufficient(destination, value, { outbound })
     expect(res).to.be.eql(false)
   })
 
@@ -61,7 +55,7 @@ describe('isBalanceSufficient', () => {
     listChannelsStub = sinon.stub().resolves(newChannels)
     revertListChannelsStub = isBalanceSufficient.__set__('listChannels', listChannelsStub)
 
-    const res = await isBalanceSufficient(params)
+    const res = await isBalanceSufficient(destination, value, { outbound })
     expect(res).to.be.eql(true)
   })
 
@@ -69,8 +63,7 @@ describe('isBalanceSufficient', () => {
     const newChannels = [{localBalance: 100, remoteBalance: 10, remotePubkey: 'asdf'}]
     listChannelsStub = sinon.stub().resolves(newChannels)
     revertListChannelsStub = isBalanceSufficient.__set__('listChannels', listChannelsStub)
-    params.outbound = false
-    const res = await isBalanceSufficient(params)
+    const res = await isBalanceSufficient(destination, value, { outbound: false })
     expect(res).to.be.eql(false)
   })
 
@@ -78,8 +71,7 @@ describe('isBalanceSufficient', () => {
     const newChannels = [{localBalance: 100, remoteBalance: 100, remotePubkey: 'asdf'}]
     listChannelsStub = sinon.stub().resolves(newChannels)
     revertListChannelsStub = isBalanceSufficient.__set__('listChannels', listChannelsStub)
-    params.outbound = false
-    const res = await isBalanceSufficient(params)
+    const res = await isBalanceSufficient(destination, value, { outbound: false })
     expect(res).to.be.eql(true)
   })
 
@@ -90,7 +82,7 @@ describe('isBalanceSufficient', () => {
     ]
     listChannelsStub = sinon.stub().resolves(newChannels)
     revertListChannelsStub = isBalanceSufficient.__set__('listChannels', listChannelsStub)
-    const res = await isBalanceSufficient(params)
+    const res = await isBalanceSufficient(destination, value, { outbound })
     expect(res).to.be.eql(true)
   })
 
@@ -101,7 +93,7 @@ describe('isBalanceSufficient', () => {
     ]
     listChannelsStub = sinon.stub().resolves(newChannels)
     revertListChannelsStub = isBalanceSufficient.__set__('listChannels', listChannelsStub)
-    const res = await isBalanceSufficient(params)
+    const res = await isBalanceSufficient(destination, value, { outbound })
     expect(res).to.be.eql(false)
   })
 
@@ -112,7 +104,7 @@ describe('isBalanceSufficient', () => {
     ]
     listChannelsStub = sinon.stub().resolves(newChannels)
     revertListChannelsStub = isBalanceSufficient.__set__('listChannels', listChannelsStub)
-    const res = await isBalanceSufficient(params)
+    const res = await isBalanceSufficient(destination, value, { outbound })
     expect(res).to.be.eql(true)
   })
 
@@ -123,7 +115,7 @@ describe('isBalanceSufficient', () => {
     ]
     listChannelsStub = sinon.stub().resolves(newChannels)
     revertListChannelsStub = isBalanceSufficient.__set__('listChannels', listChannelsStub)
-    const res = await isBalanceSufficient(params)
+    const res = await isBalanceSufficient(destination, value, { outbound })
     expect(res).to.be.eql(false)
   })
 })

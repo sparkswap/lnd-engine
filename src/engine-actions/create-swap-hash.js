@@ -15,7 +15,6 @@ const SWAP_EXPIRY = '3600'
  */
 const MEMO_PREFIX = 'kinesis:'
 
-
 /**
  * Creates a swap hash to prepare for a swap
  *
