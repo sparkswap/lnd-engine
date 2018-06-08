@@ -18,7 +18,7 @@ const {
 async function getInvoice (paymentRequestHash) {
   this.logger.debug('Making request to decode payment request')
 
-  const paymentHash = await decodePaymentRequest(paymentRequestHash, { client: this.client })
+  const { paymentHash } = await decodePaymentRequest(paymentRequestHash, { client: this.client })
 
   this.logger.debug('Received payment hash from lnd', paymentHash)
   this.logger.debug('Looking up invoice by paymentHash', paymentHash)
