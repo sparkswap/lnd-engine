@@ -23,7 +23,7 @@ describe('getInvoice', () => {
     paymentHash = '2345'
     paymentRequest = '3456'
     lookupInvoiceStub = sinon.stub().returns(invoiceResponse)
-    decodePayReqStub = sinon.stub().returns(paymentHash)
+    decodePayReqStub = sinon.stub().returns({ paymentHash })
     clientStub = sinon.stub()
     logger = {
       debug: sinon.stub()
