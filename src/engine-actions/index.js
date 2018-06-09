@@ -11,6 +11,8 @@ const createNewAddress = require('./create-new-address')
 const createSwapHash = require('./create-swap-hash')
 const isAvailable = require('./is-available')
 const isInvoicePaid = require('./is-invoice-paid')
+const getPaymentRequestDetails = require('./get-payment-request-details')
+const isBalanceSufficient = require('./is-balance-sufficient')
 
 module.exports = {
   getInvoice,
@@ -24,6 +26,8 @@ module.exports = {
   createInvoice,
   getPeers,
   createNewAddress,
-  createSwapHash,
-  isInvoicePaid
+  isInvoicePaid,
+  getPaymentRequestDetails,
+  isBalanceSufficient,
+  createSwapHash
 }

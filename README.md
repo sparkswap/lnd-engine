@@ -76,6 +76,8 @@ getInvoices(opts) // opts = { pendingOnly: true }
 getInvoices()
 isAvailable()
 isInvoicePaid()
+getPaymentRequestDetails()
+isBalanceSufficient()
 ```
 
 ### IMPORTANT ABOUT SSL and NODEJS:
