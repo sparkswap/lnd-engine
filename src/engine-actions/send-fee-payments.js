@@ -32,8 +32,8 @@ const REFUND_MEMO_PREFIX = 'REFUND:'
  */
 async function sendFeePayments (feePaymentRequest, depositPaymentRequest, options = {}) {
   const [feeResult, depositResult] = await Promise.all(
-    sendPayment(feePaymentRequest),
-    sendPayment(depositPaymentRequest)
+    sendPayment(feePaymentRequest, { client: this.client }),
+    sendPayment(depositPaymentRequest, { client: this.client })
   )
 
   const { paymentError: feeError } = feeResult
@@ -43,8 +43,8 @@ async function sendFeePayments (feePaymentRequest, depositPaymentRequest, option
   if (depositError) throw new Error(depositError)
 
   const [fee, deposit] = await Promise.all(
-    decodePaymentRequest(feePaymentRequest),
-    decodePaymentRequest(depositPaymentRequest)
+    decodePaymentRequest(feePaymentRequest, { client: this.client }),
+    decodePaymentRequest(depositPaymentRequest, { client: this.client })
   )
 
   const { numSatoshis: feeRefundValue, description: feeDescription } = fee
