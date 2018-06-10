@@ -9,6 +9,7 @@ const openChannel = require('./open-channel')
 const walletBalance = require('./wallet-balance')
 const decodePaymentRequest = require('./decode-payment-request')
 const listChannels = require('./list-channels')
+const sendPayment = require('./send-payment')
 
 module.exports = {
   addInvoice,
@@ -21,5 +22,6 @@ module.exports = {
   openChannel,
   walletBalance,
   decodePaymentRequest,
-  listChannels
+  listChannels,
+  sendPayment
 }
