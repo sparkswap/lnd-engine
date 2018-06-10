@@ -33,10 +33,10 @@ const REFUND_MEMO_PREFIX = 'REFUND:'
 async function sendFeePayments (feePaymentRequest, depositPaymentRequest, options = {}) {
   this.logger.debug('Sending payments for fee/deposit')
 
-  const [feeResult, depositResult] = await Promise.all(
+  const [feeResult, depositResult] = await Promise.all([
     sendPayment(feePaymentRequest, { client: this.client }),
     sendPayment(depositPaymentRequest, { client: this.client })
-  )
+  ])
 
   this.logger.debug('Fee result: ', feeResult)
   this.logger.debug('Deposit result: ', depositResult)
@@ -47,20 +47,20 @@ async function sendFeePayments (feePaymentRequest, depositPaymentRequest, option
   if (feeError) throw new Error(feeError)
   if (depositError) throw new Error(depositError)
 
-  const [fee, deposit] = await Promise.all(
+  const [fee, deposit] = await Promise.all([
     decodePaymentRequest(feePaymentRequest, { client: this.client }),
     decodePaymentRequest(depositPaymentRequest, { client: this.client })
-  )
+  ])
 
   const { numSatoshis: feeRefundValue, description: feeDescription } = fee
   const { numSatoshis: depositRefundValue, description: depositDescription } = deposit
 
   const expiry = options.expiry || DEFAULT_INVOICE_EXPIRY
 
-  const [feeRefund, depositRefund] = await Promise.all(
+  const [feeRefund, depositRefund] = await Promise.all([
     addInvoice(`${REFUND_MEMO_PREFIX} ${feeDescription}`, expiry, feeRefundValue, { client: this.client }),
     addInvoice(`${REFUND_MEMO_PREFIX} ${depositDescription}`, expiry, depositRefundValue, { client: this.client })
-  )
+  ])
 
   return [feeRefund, depositRefund]
 }
