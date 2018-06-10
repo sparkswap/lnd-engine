@@ -31,10 +31,15 @@ const REFUND_MEMO_PREFIX = 'REFUND:'
  * @return {<Array<feerefund, depositrefund>} returns a matching pair of fee/deposit refund invoices
  */
 async function sendFeePayments (feePaymentRequest, depositPaymentRequest, options = {}) {
+  this.logger.debug('Sending payments for fee/deposit')
+
   const [feeResult, depositResult] = await Promise.all(
     sendPayment(feePaymentRequest, { client: this.client }),
     sendPayment(depositPaymentRequest, { client: this.client })
   )
+
+  this.logger.debug('Fee result: ', feeResult)
+  this.logger.debug('Deposit result: ', depositResult)
 
   const { paymentError: feeError } = feeResult
   const { paymentError: depositError } = depositResult
