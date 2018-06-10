@@ -13,8 +13,6 @@ function openChannel (publicKey, fundingAmount, { client }) {
     localFundingAmount: fundingAmount
   }
 
-  console.log(params)
-
   return new Promise((resolve, reject) => {
     client.openChannelSync(params, { deadline: deadline() }, (err, res) => {
       if (err) return reject(err)

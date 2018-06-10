@@ -5,12 +5,16 @@ const { deadline } = require('../grpc-utils')
  *
  * @function
  * @see {@link http://api.lightning.community/#lookupInvoice}
- * @param {String} rHash - invoice request hash
+ * @param {String} paymentHash
  * @return {Object} response
+ * @return {String} response.memo
+ * @return {Number} response.value
+ * @return {Date} response.settledDate
+ * @return {Bool} response.settled
  */
-function lookupInvoice (rHash, { client }) {
+function lookupInvoice (paymentHash, { client }) {
   return new Promise((resolve, reject) => {
-    client.lookupInvoice({ rHash }, { deadline: deadline() }, (err, res) => {
+    client.lookupInvoice({ rHashStr: paymentHash }, { deadline: deadline() }, (err, res) => {
       if (err) return reject(err)
       return resolve(res)
     })

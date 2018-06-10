@@ -10,11 +10,11 @@ const { connectPeer, openChannel } = require('../lnd-actions')
 async function createChannel (host, publicKey, fundingAmount) {
   // TODO check the funding defaults (usually 20000 satosh) and fail before contacting
   // LND
-  this.logger.info(`Attempting to create channel with ${host}`)
+  this.logger.debug(`Attempting to create channel with ${host}`)
   await connectPeer(publicKey, host, { client: this.client, logger: this.logger })
-  this.logger.info(`Successfully connected to peer: ${host}`)
+  this.logger.debug(`Successfully connected to peer: ${host}`)
   await openChannel(publicKey, fundingAmount, { client: this.client })
-  this.logger.info(`Successfully opened channel with: ${host}`)
+  this.logger.debug(`Successfully opened channel with: ${host}`)
   return true
 }
 
