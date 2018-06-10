@@ -66,18 +66,16 @@ getUnconfirmedBalance()
 getConfirmedBalanace()
 getUncommittedBalance()
 getCommittedBalance()
+getPublicKey()
+getPaymentRequestDetails()
 createNewAddress()
 createSwapHash(orderId, amountInSatoshis)
 createInvoice()
 createChannel(host, publicKey, fundingAmount)
-getPublicKey()
-getInvoice(rHash)
-getInvoices(opts) // opts = { pendingOnly: true }
-getInvoices()
 isAvailable()
 isInvoicePaid()
-getPaymentRequestDetails()
 isBalanceSufficient()
+sendFeePayments(feeInvoice, depositInvoice)
 ```
 
 ### IMPORTANT ABOUT SSL and NODEJS:
