@@ -75,7 +75,7 @@ createChannel(host, publicKey, fundingAmount)
 isAvailable()
 isInvoicePaid()
 isBalanceSufficient()
-sendFeePayments(feeInvoice, depositInvoice)
+payInvoice(invoiceRequest)
 ```
 
 ### IMPORTANT ABOUT SSL and NODEJS:

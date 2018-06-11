@@ -12,7 +12,7 @@ const isAvailable = require('./is-available')
 const isInvoicePaid = require('./is-invoice-paid')
 const getPaymentRequestDetails = require('./get-payment-request-details')
 const isBalanceSufficient = require('./is-balance-sufficient')
-const sendFeePayments = require('./send-fee-payments')
+const payInvoice = require('./pay-invoice')
 
 module.exports = {
   getInvoices,
@@ -29,5 +29,5 @@ module.exports = {
   getPaymentRequestDetails,
   isBalanceSufficient,
   createSwapHash,
-  sendFeePayments
+  payInvoice
 }

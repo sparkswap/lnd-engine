@@ -39,7 +39,7 @@ async function payInvoice (paymentRequest, options = {}) {
 
   this.logger.debug('Payment successfully made', { paymentRequest })
 
-  const { numSatoshis: requestValue, desciprtion: requestDescription } = await decodePaymentRequest(paymentRequest, { client: this.client })
+  const { numSatoshis: requestValue, description: requestDescription } = await decodePaymentRequest(paymentRequest, { client: this.client })
 
   const expiry = options.expiry || DEFAULT_INVOICE_EXPIRY
 
