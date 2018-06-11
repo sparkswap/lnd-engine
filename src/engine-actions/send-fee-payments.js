@@ -21,49 +21,33 @@ const DEFAULT_INVOICE_EXPIRY = 120
 const REFUND_MEMO_PREFIX = 'REFUND:'
 
 /**
- * Given a pair of fee/deposit payment request, we pay those invoices and return
- * refund invoices w/ the fee/deposit amount
+ * Given a payment request, it pays the invoices and returns a refund invoice
  *
- * @param {String} fee payment request hash
- * @param {String} deposit payment request hash
+ * @param {String} paymentRequest
  * @param {Object} options
  * @param {Number} expiry expiration of refund invoices
- * @return {<Array<String, String>} returns a matching pair of fee/deposit refund payment requests
+ * @return {String} refundPaymentRequest
  */
-async function sendFeePayments (feePaymentRequest, depositPaymentRequest, options = {}) {
-  const [feeResult, depositResult] = await Promise.all([
-    sendPayment(feePaymentRequest, { client: this.client }),
-    sendPayment(depositPaymentRequest, { client: this.client })
-  ])
 
-  this.logger.debug('Fee result: ', feeResult)
-  this.logger.debug('Deposit result: ', depositResult)
+async function payInvoice (paymentRequest, options = {}) {
+  const { paymentError } = await sendPayment(paymentRequest, { client: this.client })
 
-  const { paymentError: feeError } = feeResult
-  const { paymentError: depositError } = depositResult
+  if (paymentError) {
+    this.logger.error('Failed to pay invoice', { paymentRequest })
+    throw new Error(paymentError)
+  }
 
-  if (feeError) throw new Error(feeError)
-  if (depositError) throw new Error(depositError)
+  this.logger.debug('Payment successfully made', { paymentRequest })
 
-  const [fee, deposit] = await Promise.all([
-    decodePaymentRequest(feePaymentRequest, { client: this.client }),
-    decodePaymentRequest(depositPaymentRequest, { client: this.client })
-  ])
-
-  const { numSatoshis: feeValue, description: feeDescription } = fee
-  const { numSatoshis: depositValue, description: depositDescription } = deposit
+  const { numSatoshis: requestValue, desciprtion: requestDescription } = await decodePaymentRequest(paymentRequest, { client: this.client })
 
   const expiry = options.expiry || DEFAULT_INVOICE_EXPIRY
 
-  const [feeRefund, depositRefund] = await Promise.all([
-    addInvoice(`${REFUND_MEMO_PREFIX} ${feeDescription}`, expiry, feeValue, { client: this.client }),
-    addInvoice(`${REFUND_MEMO_PREFIX} ${depositDescription}`, expiry, depositValue, { client: this.client })
-  ])
+  this.logger.debug('Attempting to create invoice', { expiry, requestValue })
 
-  const { paymentRequest: feeRefundPaymentRequest } = feeRefund
-  const { paymentRequest: depositRefundPaymentRequest } = depositRefund
+  const { paymentRequest: refundPaymentRequest } = await addInvoice(`${REFUND_MEMO_PREFIX} ${requestDescription}`, expiry, requestValue, { client: this.client })
 
-  return [feeRefundPaymentRequest, depositRefundPaymentRequest]
+  return refundPaymentRequest
 }
 
-module.exports = sendFeePayments
+module.exports = payInvoice
