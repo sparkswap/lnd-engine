@@ -45,6 +45,9 @@ async function payInvoice (paymentRequest, options = {}) {
 
   this.logger.debug('Attempting to create invoice', { expiry, requestValue })
 
+  // TODO: Use the settled value from an invoice lookup instead of the value from a decoded
+  // payment request
+  // see: https://trello.com/c/wzxVUNZl/288-check-fee-refund-values-on-relayer
   const { paymentRequest: refundPaymentRequest } = await addInvoice(`${REFUND_MEMO_PREFIX} ${requestDescription}`, expiry, requestValue, { client: this.client })
 
   return refundPaymentRequest
