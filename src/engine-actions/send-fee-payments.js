@@ -28,20 +28,12 @@ const REFUND_MEMO_PREFIX = 'REFUND:'
  * @param {String} deposit payment request hash
  * @param {Object} options
  * @param {Number} expiry expiration of refund invoices
- * @return {<Array<feerefund, depositrefund>} returns a matching pair of fee/deposit refund invoices
+ * @return {<Array<String, String>} returns a matching pair of fee/deposit refund payment requests
  */
 async function sendFeePayments (feePaymentRequest, depositPaymentRequest, options = {}) {
-  const [fee, deposit] = await Promise.all([
-    decodePaymentRequest(feePaymentRequest, { client: this.client }),
-    decodePaymentRequest(depositPaymentRequest, { client: this.client })
-  ])
-
-  const { numSatoshis: feeValue, description: feeDescription } = fee
-  const { numSatoshis: depositValue, description: depositDescription } = deposit
-
   const [feeResult, depositResult] = await Promise.all([
-    sendPayment(feePaymentRequest, feeValue, { client: this.client }),
-    sendPayment(depositPaymentRequest, depositValue, { client: this.client })
+    sendPayment(feePaymentRequest, { client: this.client }),
+    sendPayment(depositPaymentRequest, { client: this.client })
   ])
 
   this.logger.debug('Fee result: ', feeResult)
@@ -53,6 +45,13 @@ async function sendFeePayments (feePaymentRequest, depositPaymentRequest, option
   if (feeError) throw new Error(feeError)
   if (depositError) throw new Error(depositError)
 
+  const [fee, deposit] = await Promise.all([
+    decodePaymentRequest(feePaymentRequest, { client: this.client }),
+    decodePaymentRequest(depositPaymentRequest, { client: this.client })
+  ])
+
+  const { numSatoshis: feeValue, description: feeDescription } = fee
+  const { numSatoshis: depositValue, description: depositDescription } = deposit
 
   const expiry = options.expiry || DEFAULT_INVOICE_EXPIRY
 
@@ -61,7 +60,10 @@ async function sendFeePayments (feePaymentRequest, depositPaymentRequest, option
     addInvoice(`${REFUND_MEMO_PREFIX} ${depositDescription}`, expiry, depositValue, { client: this.client })
   ])
 
-  return [feeRefund, depositRefund]
+  const { paymentRequest: feeRefundPaymentRequest } = feeRefund
+  const { paymentRequest: depositRefundPaymentRequest } = depositRefund
+
+  return [feeRefundPaymentRequest, depositRefundPaymentRequest]
 }
 
 module.exports = sendFeePayments
