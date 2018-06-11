@@ -9,9 +9,9 @@ const { deadline } = require('../grpc-utils')
  * @param {String} destString - destination public key
  * @return {Promise}
  */
-function sendPayment (paymentRequest, { client }) {
+function sendPayment (paymentRequest, amt, { client }) {
   return new Promise((resolve, reject) => {
-    client.sendPaymentSync({ paymentRequest }, { deadline: deadline() }, (err, res) => {
+    client.sendPaymentSync({ paymentRequest, amt }, { deadline: deadline() }, (err, res) => {
       if (err) return reject(err)
       return resolve(res)
     })

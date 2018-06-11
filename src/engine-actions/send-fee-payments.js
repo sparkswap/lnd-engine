@@ -31,9 +31,17 @@ const REFUND_MEMO_PREFIX = 'REFUND:'
  * @return {<Array<feerefund, depositrefund>} returns a matching pair of fee/deposit refund invoices
  */
 async function sendFeePayments (feePaymentRequest, depositPaymentRequest, options = {}) {
+  const [fee, deposit] = await Promise.all([
+    decodePaymentRequest(feePaymentRequest, { client: this.client }),
+    decodePaymentRequest(depositPaymentRequest, { client: this.client })
+  ])
+
+  const { numSatoshis: feeValue, description: feeDescription } = fee
+  const { numSatoshis: depositValue, description: depositDescription } = deposit
+
   const [feeResult, depositResult] = await Promise.all([
-    sendPayment(feePaymentRequest, { client: this.client }),
-    sendPayment(depositPaymentRequest, { client: this.client })
+    sendPayment(feePaymentRequest, feeValue, { client: this.client }),
+    sendPayment(depositPaymentRequest, depositValue, { client: this.client })
   ])
 
   this.logger.debug('Fee result: ', feeResult)
@@ -45,19 +53,12 @@ async function sendFeePayments (feePaymentRequest, depositPaymentRequest, option
   if (feeError) throw new Error(feeError)
   if (depositError) throw new Error(depositError)
 
-  const [fee, deposit] = await Promise.all([
-    decodePaymentRequest(feePaymentRequest, { client: this.client }),
-    decodePaymentRequest(depositPaymentRequest, { client: this.client })
-  ])
-
-  const { numSatoshis: feeRefundValue, description: feeDescription } = fee
-  const { numSatoshis: depositRefundValue, description: depositDescription } = deposit
 
   const expiry = options.expiry || DEFAULT_INVOICE_EXPIRY
 
   const [feeRefund, depositRefund] = await Promise.all([
-    addInvoice(`${REFUND_MEMO_PREFIX} ${feeDescription}`, expiry, feeRefundValue, { client: this.client }),
-    addInvoice(`${REFUND_MEMO_PREFIX} ${depositDescription}`, expiry, depositRefundValue, { client: this.client })
+    addInvoice(`${REFUND_MEMO_PREFIX} ${feeDescription}`, expiry, feeValue, { client: this.client }),
+    addInvoice(`${REFUND_MEMO_PREFIX} ${depositDescription}`, expiry, depositValue, { client: this.client })
   ])
 
   return [feeRefund, depositRefund]
