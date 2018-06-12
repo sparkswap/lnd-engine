@@ -1,25 +1,27 @@
 const path = require('path')
 const { expect, rewire, sinon } = require('test/test-helper')
 
-const getPaymentRequestDetails = rewire(path.resolve(__dirname, 'get-payment-request-details'))
+const getInvoiceValue = rewire(path.resolve(__dirname, 'get-invoice-value'))
 
-describe('getPaymentRequestDetails', () => {
+describe('getInvoiceValue', () => {
   let paymentRequestString
   let decodePaymentRequestStub
   let clientStub
   let res
+  let expectedValue
 
   beforeEach(() => {
     paymentRequestString = '1234asdf'
-    decodePaymentRequestStub = sinon.stub().resolves({numSatoshis: 100, paymentHash: 'asdf'})
+    expectedValue = 100
+    decodePaymentRequestStub = sinon.stub().resolves({ numSatoshis: expectedValue })
     clientStub = sinon.stub()
 
-    getPaymentRequestDetails.__set__('decodePaymentRequest', decodePaymentRequestStub)
-    getPaymentRequestDetails.__set__('client', clientStub)
+    getInvoiceValue.__set__('decodePaymentRequest', decodePaymentRequestStub)
+    getInvoiceValue.__set__('client', clientStub)
   })
 
   beforeEach(async () => {
-    res = await getPaymentRequestDetails(paymentRequestString)
+    res = await getInvoiceValue(paymentRequestString)
   })
 
   it('gets decoded payment request details', () => {
@@ -27,6 +29,6 @@ describe('getPaymentRequestDetails', () => {
   })
 
   it('returns the result', () => {
-    expect(res).to.be.eql({value: 100, paymentHash: 'asdf'})
+    expect(res).to.be.eql(expectedValue)
   })
 })
