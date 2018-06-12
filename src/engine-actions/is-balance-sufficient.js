@@ -14,7 +14,7 @@ async function isBalanceSufficient (destinationPublicKey, minValue, { outbound =
 
   const { channels } = await listChannels({ client: this.client })
 
-  if (channels && channels.length === 0) {
+  if (!channels || (channels && channels.length === 0)) {
     this.logger.debug('No channels are available', { destinationPublicKey })
     return false
   }
