@@ -76,6 +76,7 @@ isAvailable()
 isInvoicePaid()
 isBalanceSufficient()
 payInvoice(invoiceRequest)
+payChannel(channelId, destination, invoiceRequest)
 ```
 
 ### IMPORTANT ABOUT SSL and NODEJS:
