@@ -14,8 +14,6 @@ const {
 async function payChannel (channelId, destinationPublicKey, paymentRequest) {
   const { hops = [] } = await queryRoutes(destinationPublicKey, { client: this.client })
 
-  if (!hops) throw new Error('Unable to find any routes for payChannel')
-
   // Channel ID should be unique, so there is only one id ever returned from hops.find
   const route = hops.find(h => h.chanId === channelId)
 
