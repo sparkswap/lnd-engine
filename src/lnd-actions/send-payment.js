@@ -6,7 +6,6 @@ const { deadline } = require('../grpc-utils')
  * @function
  * @see {@link http://api.lightning.community/#sendPaymentSync}
  * @param {String} paymentRequest
- * @param {String} destString - destination public key
  * @return {Promise}
  */
 function sendPayment (paymentRequest, { client }) {
