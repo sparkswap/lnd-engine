@@ -24,9 +24,17 @@ async function executeSwap (counterpartyPubKey, swapHash, inbound, outbound) {
     getInfo({ client: this.client})
   ])
 
+  console.log('graph')
+  console.log(graph)
+
   // find paths
   const outboundPath = findPaths(graph.edges, identityPubkey, counterpartyPubKey, outbound.symbol, outbound.amount)
+  console.log('outboundPath')
+  console.log(outboundPath)
+
   const inboundPath = findPaths(graph.edges, counterpartyPubkey, identityPubKey, inbound.symbol, inbound.amount)
+  console.log('inboundPath')
+  console.log(inboundPath)
 
   if(!outboundPath || !inboundPath) {
     throw new Error(`Can't find a route between ${identityPubkey} and ${counterpartyPubkey} to swap ${outbound.amount} ${outbound.symbol} for ${inbound.amount} ${inbound.symbol}`)
