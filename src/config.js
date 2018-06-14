@@ -1,16 +1,16 @@
 /**
  * @constant
- * @type {Number}
+ * @type {String}
  * @default
  */
-const LTC_FEE_PER_KW = 7667
+const LTC_FEE_PER_KW = '7667'
 
 /**
  * @constant
- * @type {Number}
+ * @type {String}
  * @default
  */
-const BTC_FEE_PER_KW = 6667
+const BTC_FEE_PER_KW = '6667'
 
 /**
  * @constant

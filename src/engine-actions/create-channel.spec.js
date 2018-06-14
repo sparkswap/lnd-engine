@@ -9,38 +9,55 @@ describe('createChannel', () => {
   let fundingAmount
   let connectPeerStub
   let openChannelStub
+  let updateChannelStub
+  let channelPoint
   let clientStub
   let loggerStub
+  let symbol
   let res
 
   beforeEach(() => {
     host = '127.0.0.1:10111'
     pubKey = '1234'
     fundingAmount = '100'
+    symbol = 'BTC'
+    channelPoint = sinon.stub()
     connectPeerStub = sinon.stub()
-    openChannelStub = sinon.stub()
+    openChannelStub = sinon.stub().returns(channelPoint)
+    updateChannelStub = sinon.stub()
     clientStub = sinon.stub()
     loggerStub = { debug: sinon.stub() }
 
     createChannel.__set__('connectPeer', connectPeerStub)
     createChannel.__set__('openChannel', openChannelStub)
+    createChannel.__set__('updateChannelPolicy', updateChannelStub)
     createChannel.__set__('client', clientStub)
     createChannel.__set__('logger', loggerStub)
   })
 
-  beforeEach(async () => {
-    res = await createChannel(host, pubKey, fundingAmount)
+  describe('creating a channel', () => {
+    beforeEach(async () => {
+      res = await createChannel(host, pubKey, fundingAmount, symbol)
+    })
+
+    it('connects to a lnd host', () => {
+      expect(connectPeerStub).to.have.been.calledWith(pubKey, host, sinon.match({ client: clientStub, logger: loggerStub }))
+    })
+
+    it('opens a channel', () => {
+      expect(openChannelStub).to.have.been.calledWith(pubKey, fundingAmount, sinon.match({ client: clientStub }))
+    })
+
+    it('updates a channel', () => {
+      expect(updateChannelStub).to.have.been.calledWith()
+    })
+
+    it('returns true for successful channel creation', () => {
+      expect(res).to.be.true()
+    })
   })
 
-  it('connects to a lnd host', () => {
-    expect(connectPeerStub).to.have.been.calledWith(pubKey, host, sinon.match({ client: clientStub, logger: loggerStub }))
-  })
-
-  it('opens a channel', () => {
-    expect(openChannelStub).to.have.been.calledWith(pubKey, fundingAmount, sinon.match({ client: clientStub }))
-  })
-
-  it('returns true for successful channel creation', () => {
-    expect(res).to.be.true()
+  it('throws an error if symbol is not supported', () => {
+    return expect(createChannel(host, pubKey, fundingAmount, 'DAN')).to.eventually.be.rejectedWith('Symbol is not currently supported')
   })
 })

@@ -14,8 +14,5 @@ async function updateChannelPolicy (chanPoint, feeRate, { client }) {
     })
   })
 }
-funding_txid_bytes 	bytes 	optional 	Txid of the funding transaction
-funding_txid_str 	string 	optional 	Hex-encoded string representing the funding transaction
-output_index 	uint32 	optional 	The index of the output of the funding transaction
 
 module.exports = updateChannelPolicy
