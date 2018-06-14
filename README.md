@@ -77,6 +77,7 @@ isInvoicePaid()
 isBalanceSufficient()
 payInvoice(invoiceRequest)
 prepareSwap(swapHash, inbound, outbound)
+executeSwap(counterpartyPubKey, swapHash, inbound, outbound)
 ```
 
 ### IMPORTANT ABOUT SSL and NODEJS:
