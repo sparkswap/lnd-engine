@@ -1,3 +1,5 @@
+const { describeGraph } = require('../lnd-actions')
+
 /**
  * Executes a swap as the initiating node
  *
@@ -13,7 +15,16 @@
  */
 async function executeSwap (counterpartyPubKey, swapHash, inbound, outbound) {
   this.logger.info(`Executing swap for ${swapHash} with ${counterpartyPubKey}`, { inbound, outbound })
-  // TODO
+
+  // get all routes
+  const graph = await describeGraph({ client: this.client })
+
+  console.log(graph)
+
+  // TODO: construct a route that works
+
+  // TODO: send to route
+
   return
 }
 
