@@ -1,5 +1,5 @@
 const { listChannels } = require('../lnd-actions')
-const { Big } = require('big.js')
+const { Big } = require('../utils')
 /**
  * Returns a boolean, true if there is an active channel between caller and remote parties that sufficient funds for an order, false if not
  *
