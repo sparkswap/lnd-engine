@@ -37,7 +37,7 @@ async function createChannel (host, publicKey, fundingAmount, symbol) {
 
   const feeRate = SUPPORTED_SYMBOLS[symbol] === 'BTC' ? BTC_FEE_PER_KW : LTC_FEE_PER_KW
 
-  await updateChannelPolicy(chanPoint, feeRate)
+  await updateChannelPolicy(chanPoint, feeRate, { client: this.client })
 
   return true
 }
