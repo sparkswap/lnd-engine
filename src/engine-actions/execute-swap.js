@@ -158,8 +158,11 @@ function getBandwidthHints (channels, identityPubkey) {
 }
 
 // naive path finding - find any path that works
-async function findPaths (edges, hints, fromPubKey, toPubKey, symbol, amount, visited = []) {
+function findPaths (edges, hints, fromPubKey, toPubKey, symbol, amount, visited = []) {
   const candidates = findOutboundChannels(edges, fromPubKey, symbol, amount, visited)
+
+  console.log('candidates')
+  console.log(candidates)
 
   const endOfPath = candidates.find((channel) => {
     if (channel.toPubKey === toPubKey) {
@@ -196,7 +199,7 @@ async function findPaths (edges, hints, fromPubKey, toPubKey, symbol, amount, vi
  * @param  {Array<String>}         visited    Array of channels that we have already traversed
  * @return {Array<InternalChannelEdge>}       Array of channel edges that work
  */
-async function findOutboundChannels (edges, hints, fromPubKey, symbol, amount, visited = []) {
+function findOutboundChannels (edges, hints, fromPubKey, symbol, amount, visited = []) {
   return edges.reduce((filtered, { node1Pub, node2Pub, capacity, node1Policy, node2Policy, channelId }) => {
     // don't retrace
     if (visited.includes(channelId)) {
