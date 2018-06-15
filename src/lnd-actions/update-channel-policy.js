@@ -19,7 +19,7 @@ async function updateChannelPolicy (chanPoint, baseFeeMsat, { client }) {
       if (err) return reject(err)
       return resolve(res)
     })
-  })
+  )
 }
 
 module.exports = updateChannelPolicy
