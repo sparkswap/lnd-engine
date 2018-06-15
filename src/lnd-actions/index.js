@@ -11,6 +11,7 @@ const decodePaymentRequest = require('./decode-payment-request')
 const listChannels = require('./list-channels')
 const sendPayment = require('./send-payment')
 const describeGraph = require('./describe-graph')
+const sendToRoute = require('./send-to-route')
 
 module.exports = {
   addInvoice,
@@ -25,5 +26,6 @@ module.exports = {
   decodePaymentRequest,
   listChannels,
   sendPayment,
-  describeGraph
+  describeGraph,
+  sendToRoute
 }
