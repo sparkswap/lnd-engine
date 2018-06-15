@@ -61,6 +61,7 @@
     "timekeeper": "2.1.2"
   },
   "dependencies": {
+    "big.js": "5.1.2",
     "grpc": "1.11.3"
   }
 }
