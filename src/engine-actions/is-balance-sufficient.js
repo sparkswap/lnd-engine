@@ -28,8 +28,13 @@ async function isBalanceSufficient (destinationPublicKey, minValue, { outbound =
 
   console.log('activeChannels are', activeChannels)
   console.log('destinationPublicKey', destinationPublicKey)
+  console.log('balance', balance)
+  console.log('realmin', minValue)
   const activeChannelsFromDestination = activeChannels.filter(ac => ac.remotePubkey === destinationPublicKey)
   console.log('activeChannelsFromDestination', activeChannelsFromDestination)
+  activeChannelsFromDestination.forEach((chan) => {
+    console.log(chan[balance])
+  })
   console.log('minValue', activeChannelsFromDestination.some(channel => channel[balance] >= minValue))
   return activeChannelsFromDestination.some(channel => channel[balance] >= minValue)
 }
