@@ -1,4 +1,11 @@
 /**
+ * @constant
+ * @type {Number}
+ * @default
+ */
+const DEFAULT_TIMELOCK_DELTA = 9
+
+/**
  *
  * @param {Object} channelPoint
  * @param {String} channelPoint.fundingTxidBytes
@@ -8,7 +15,7 @@
  */
 async function updateChannelPolicy (chanPoint, feeRate, { client }) {
   return new Promise((resolve, reject) => {
-    client.updateChannelPolicy({ chanPoint, feeRate }, (err, res) => {
+    client.updateChannelPolicy({ chanPoint, feeRate, timeLockDelta: DEFAULT_TIMELOCK_DELTA }, (err, res) => {
       if (err) return reject(err)
       return resolve(res)
     })
