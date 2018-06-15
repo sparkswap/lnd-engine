@@ -48,14 +48,14 @@ async function executeSwap (counterpartyPubKey, swapHash, inbound, outbound) {
   }
 
   // construct a valid route
-  const route = routeFromPath(outbound.amount, Big(DEFAULT_CLTV_DELTA).plus(blockHeight), outboundPath.concat(inboundPath)) 
+  const route = routeFromPath(outbound.amount, Big(DEFAULT_CLTV_DELTA).plus(blockHeight), outboundPath.concat(inboundPath))
 
   console.log('route', route)
   console.log(route)
 
-  const { paymentError, paymentPreimage } await sendToRoute(swapHash, route, { client: this.client })
+  const { paymentError, paymentPreimage } = await sendToRoute(swapHash, route, { client: this.client })
 
-  if(paymentError) {
+  if (paymentError) {
     throw new Error(`Error from LND while sending to route: ${paymentError}`)
   }
 
@@ -69,7 +69,7 @@ async function executeSwap (counterpartyPubKey, swapHash, inbound, outbound) {
  * @param  {Array<InternalChannelEdge>} path Array of channel edges in order for the full path
  * @return {Object}      Route
  */
-function routeFromPath(amountToSend, finalCLTV, path) {
+function routeFromPath (amountToSend, finalCLTV, path) {
   const amountToSendMsat = Big(amountToSend).times(1000)
 
   // we want to traverse the path in reverse so we can
@@ -89,7 +89,7 @@ function routeFromPath(amountToSend, finalCLTV, path) {
     }
 
     // first in back track is our final destination
-    if(index === 0) {
+    if (index === 0) {
       // last hop: no fees
       hop.FeeMsat = '0'
     } else {
@@ -98,11 +98,11 @@ function routeFromPath(amountToSend, finalCLTV, path) {
 
     // last in the back track (i.e. our first hop in the route)
     // should not increment values, as we already have our final state
-    if(index < hops.length - 1) {
+    if (index < hops.length - 1) {
       // update the current amount so we have enough funds to forward
       currentAmountMsat = currentAmountMsat.plus(hop.FeeMsat)
       // update the current cltv to have enough expiry
-      currentCLTV = currentCLTV.plus(policy.timeLockDelta)
+      currentCLTV = currentCLTV.plus(channel.policy.timeLockDelta)
     }
 
     return hop
@@ -122,7 +122,7 @@ function routeFromPath(amountToSend, finalCLTV, path) {
  * @param  {LND~RoutePolicy} policy Routing Policy for the hop
  * @return {String}        Int64 of the amount of the fee in millisatoshis
  */
-function computeFee(amount, policy) {
+function computeFee (amount, policy) {
   const baseFee = Big(policy.feeBaseMsat)
   const feeRate = Big(policy.feeRateMilliMsat)
 
@@ -140,7 +140,7 @@ function computeFee(amount, policy) {
  * @param  {String} identityPubkey   Our Public Key
  * @return {Object}                  Key value of channel IDs and available balance by source public key
  */
-function getBandwidthHints(channels, identityPubkey) {
+function getBandwidthHints (channels, identityPubkey) {
   const activeChannels = channels.filter(c => c.active)
 
   const hints = {}
@@ -162,7 +162,7 @@ async function findPaths (edges, hints, fromPubKey, toPubKey, symbol, amount, vi
   const candidates = findOutboundChannels(edges, fromPubKey, symbol, amount, visited)
 
   const endOfPath = candidates.find((channel) => {
-    if(channel.toPubKey === toPubKey) {
+    if (channel.toPubKey === toPubKey) {
       return true
     }
   })
@@ -217,8 +217,8 @@ async function findOutboundChannels (edges, hints, fromPubKey, symbol, amount, v
      * If we have bandwidth hints for this channel we should use them, otherwise fall back to capacity
      * @param  {Object} hints[channelId] Hints for balance on each side of this channel
      */
-    if(hints[channelId]) {
-      if(Big(hints[channelId][fromPubKey]).lt(amount)) {
+    if (hints[channelId]) {
+      if (Big(hints[channelId][fromPubKey]).lt(amount)) {
         return filtered
       }
     } else {
@@ -248,7 +248,7 @@ async function findOutboundChannels (edges, hints, fromPubKey, symbol, amount, v
  * @param  {LND~RoutePolicy} node2Policy Route policy of the other node in the channel
  * @return {String}                      `BTC` or `LTC`
  */
-function getChannelSymbol(node1Policy, node2Policy) {
+function getChannelSymbol (node1Policy, node2Policy) {
   if (node1Policy.feeRateMilliMsat === LTC_FEE_PER_KW && node2Policy.feeRateMilliMsat === LTC_FEE_PER_KW) {
     return 'LTC'
   } else if (node1Policy.feeRateMilliMsat === BTC_FEE_PER_KW && node2Policy.feeRateMilliMsat === BTC_FEE_PER_KW) {
