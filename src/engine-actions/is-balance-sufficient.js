@@ -36,8 +36,8 @@ async function isBalanceSufficient (destinationPublicKey, minValue, { outbound =
     console.log(chan[balance])
     console.log(Big(chan[balance]))
   })
-  console.log('minValue', activeChannelsFromDestination.some(channel => Big(channel[balance]) >= Big(minValue)))
-  return activeChannelsFromDestination.some(channel => Big(channel[balance]) >= Big(minValue))
+  console.log('minValue', activeChannelsFromDestination.some(channel => Big(channel[balance]).gte(minValue)))
+  return activeChannelsFromDestination.some(channel => Big(channel[balance]).gte(minValue))
 }
 
 module.exports = isBalanceSufficient
