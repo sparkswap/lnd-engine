@@ -13,9 +13,9 @@ const DEFAULT_TIMELOCK_DELTA = 9
  * @param {String} channelPoint.outputIndex
  * @returns {Promise}
  */
-async function updateChannelPolicy (chanPoint, feeRate, { client }) {
-  return new Promise((resolve, reject) => {
-    client.updateChannelPolicy({ chanPoint, baseFeeMsat: feeRate, timeLockDelta: DEFAULT_TIMELOCK_DELTA }, (err, res) => {
+async function updateChannelPolicy (chanPoint, baseFeeMsat, { client }) {
+  return new Promise((resolve, reject) =>
+    client.updateChannelPolicy({ chanPoint, baseFeeMsat, feeRate: 1, timeLockDelta: DEFAULT_TIMELOCK_DELTA }, (err, res) => {
       if (err) return reject(err)
       return resolve(res)
     })
