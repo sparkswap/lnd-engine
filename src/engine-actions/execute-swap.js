@@ -134,6 +134,12 @@ function computeFee(amount, policy) {
   return baseFee.plus(variableFee).toString()
 }
 
+/**
+ * Construct an object with specific bandwidth for channels that we are party to
+ * @param  {Array<Channel>} channels List of channels we are party to
+ * @param  {String} identityPubkey   Our Public Key
+ * @return {Object}                  Key value of channel IDs and available balance by source public key
+ */
 function getBandwidthHints(channels, identityPubkey) {
   const activeChannels = channels.filter(c => c.active)
 
@@ -151,7 +157,7 @@ function getBandwidthHints(channels, identityPubkey) {
   return hints
 }
 
-// naive path finding
+// naive path finding - find any path that works
 async function findPaths (edges, hints, fromPubKey, toPubKey, symbol, amount, visited = []) {
   const candidates = findOutboundChannels(edges, fromPubKey, symbol, amount, visited)
 
@@ -161,12 +167,15 @@ async function findPaths (edges, hints, fromPubKey, toPubKey, symbol, amount, vi
     }
   })
 
+  // we found our target pubkey, so return
   if (endOfPath) return [ endOfPath ]
 
+  // loop over the candidate channels to find the rest of the path
   const paths = candidates.map(candidate => {
     const localVisited = visited.slice()
     localVisited.push(candidate.channelId)
 
+    // find the rest of the path
     return [ candidate, ...findPaths(edges, hints, candidate.toPubKey, toPubKey, symbol, amount, localVisited) ].filter(segment => !!segment)
   }).filter(path => {
     const lastSegment = path[path.length - 1]
@@ -177,6 +186,16 @@ async function findPaths (edges, hints, fromPubKey, toPubKey, symbol, amount, vi
   return paths[0]
 }
 
+/**
+ * Find all channels from a given node that meet the other criteria
+ * @param  {Array<LND~ChannelEdge} edges      Channel edges available in the graph
+ * @param  {Object}                hints      Key value of channel bandwidth hints from `getBandwidthHints`
+ * @param  {String}                fromPubKey Public key of the source node
+ * @param  {String}                symbol     `BTC` or `LTC` -  symbol of the currency we're using
+ * @param  {String}                amount     Int64 amount that the channel should carry
+ * @param  {Array<String>}         visited    Array of channels that we have already traversed
+ * @return {Array<InternalChannelEdge>}       Array of channel edges that work
+ */
 async function findOutboundChannels (edges, hints, fromPubKey, symbol, amount, visited = []) {
   return edges.reduce((filtered, { node1Pub, node2Pub, capacity, node1Policy, node2Policy, channelId }) => {
     // don't retrace
@@ -190,17 +209,7 @@ async function findOutboundChannels (edges, hints, fromPubKey, symbol, amount, v
     }
 
     // not the right symbol
-    let channelSymbol
-    if (node1Policy.feeRateMilliMsat === LTC_FEE_PER_KW && node2Policy.feeRateMilliMsat === LTC_FEE_PER_KW) {
-      channelSymbol = 'LTC'
-    } else if (node1Policy.feeRateMilliMsat === BTC_FEE_PER_KW && node2Policy.feeRateMilliMsat === BTC_FEE_PER_KW) {
-      channelSymbol = 'BTC'
-    } else {
-      throw new Error('Channel is on unidentified blockchain')
-    }
-
-    // not for our symbol
-    if (channelSymbol !== symbol) {
+    if (getChannelSymbol(node1Policy, node2Policy) !== symbol) {
       return filtered
     }
 
@@ -219,21 +228,34 @@ async function findOutboundChannels (edges, hints, fromPubKey, symbol, amount, v
       }
     }
 
-    let toPubKey
-    let policy
-
-    if(node1Pub === fromPubKey) {
-      toPubKey = node2Pub
-      policy = node2Policy
-    } else {
-      toPubKey = node1Pub
-      policy = node1Policy
+    const channel = {
+      fromPubKey,
+      capacity,
+      channelId,
+      toPubKey: node1Pub === fromPubKey ? node2Pub : node1Pub,
+      policy: node1Pub === fromPubKey ? node2Policy : node1Policy
     }
 
-    filtered.push({ fromPubKey, toPubKey, capacity, channelId, policy })
+    filtered.push(channel)
 
     return filtered
   }, [])
+}
+
+/**
+ * Get the blockchain of the channel based on policy hints
+ * @param  {LND~RoutePolicy} node1Policy Route policy of one of the nodes in the channel
+ * @param  {LND~RoutePolicy} node2Policy Route policy of the other node in the channel
+ * @return {String}                      `BTC` or `LTC`
+ */
+function getChannelSymbol(node1Policy, node2Policy) {
+  if (node1Policy.feeRateMilliMsat === LTC_FEE_PER_KW && node2Policy.feeRateMilliMsat === LTC_FEE_PER_KW) {
+    return 'LTC'
+  } else if (node1Policy.feeRateMilliMsat === BTC_FEE_PER_KW && node2Policy.feeRateMilliMsat === BTC_FEE_PER_KW) {
+    return 'BTC'
+  } else {
+    throw new Error('Channel is on unidentified blockchain')
+  }
 }
 
 module.exports = executeSwap
