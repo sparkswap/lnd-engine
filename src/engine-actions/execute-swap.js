@@ -48,7 +48,8 @@ async function executeSwap (counterpartyPubKey, swapHash, inbound, outbound) {
   }
 
   // construct a valid route
-  const route = routeFromPath(outbound.amount, Big(DEFAULT_CLTV_DELTA).plus(blockHeight), outboundPath.concat(inboundPath))
+  // TODO: need to construct two routes and then stitch them together, not treat as one big route
+  const route = routeFromPath(inbound.amount, Big(DEFAULT_CLTV_DELTA).plus(blockHeight), outboundPath.concat(inboundPath))
 
   console.log('route', route)
   console.log(route)
@@ -203,16 +204,19 @@ function findOutboundChannels (edges, hints, fromPubKey, symbol, amount, visited
   return edges.reduce((filtered, { node1Pub, node2Pub, capacity, node1Policy, node2Policy, channelId }) => {
     // don't retrace
     if (visited.includes(channelId)) {
+      console.log('already saw', channelId)
       return filtered
     }
 
     // neither node is ours
     if (node1Pub !== fromPubKey && node2Pub !== fromPubKey) {
+      console.log('doesnt match pubkey', node1Pub, node2Pub, fromPubKey)
       return filtered
     }
 
     // not the right symbol
     if (getChannelSymbol(node1Policy, node2Policy) !== symbol) {
+      console.log('wrong symbol', symbol)
       return filtered
     }
 
@@ -222,11 +226,13 @@ function findOutboundChannels (edges, hints, fromPubKey, symbol, amount, visited
      */
     if (hints[channelId]) {
       if (Big(hints[channelId][fromPubKey]).lt(amount)) {
+        console.log('not enough bandwidth', hints[channelId][fromPubKey], amount)
         return filtered
       }
     } else {
       // not enough capacity
       if (Big(capacity).lt(amount)) {
+        console.log('not enough capacity', capacity, amount)
         return filtered
       }
     }
@@ -238,6 +244,8 @@ function findOutboundChannels (edges, hints, fromPubKey, symbol, amount, visited
       toPubKey: node1Pub === fromPubKey ? node2Pub : node1Pub,
       policy: node1Pub === fromPubKey ? node2Policy : node1Policy
     }
+
+    console.log('found an outbound path', channel)
 
     filtered.push(channel)
 
