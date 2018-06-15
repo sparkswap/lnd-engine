@@ -14,7 +14,6 @@
 async function executeSwap (counterpartyPubKey, swapHash, inbound, outbound) {
   this.logger.info(`Executing swap for ${swapHash} with ${counterpartyPubKey}`, { inbound, outbound })
   // TODO
-  return
 }
 
 module.exports = executeSwap

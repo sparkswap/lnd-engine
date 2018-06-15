@@ -14,7 +14,7 @@ describe('isBalanceSufficient', () => {
 
   beforeEach(() => {
     destination = 'asdf'
-    value = 100
+    value = '100'
     outbound = true
     clientStub = sinon.stub()
     isBalanceSufficient.__set__('client', clientStub)
@@ -25,7 +25,7 @@ describe('isBalanceSufficient', () => {
   })
 
   it('looks up the invoice by invoice hash', async () => {
-    channels = [{active: true, localBalance: 10, remoteBalance: 100, remotePubkey: destination}]
+    channels = [{active: true, localBalance: '10', remoteBalance: '100', remotePubkey: destination}]
     listChannelsStub = sinon.stub().resolves({ channels })
     revertListChannelsStub = isBalanceSufficient.__set__('listChannels', listChannelsStub)
     await isBalanceSufficient(destination, value, { outbound })
@@ -33,7 +33,7 @@ describe('isBalanceSufficient', () => {
   })
 
   it('returns false if there are no channels with the remotePubkey', async () => {
-    const newChannels = [{active: true, localBalance: 10, remoteBalance: 100, remotePubkey: 'banana'}]
+    const newChannels = [{active: true, localBalance: '10', remoteBalance: '100', remotePubkey: 'banana'}]
     listChannelsStub = sinon.stub().resolves({ channels: newChannels })
     revertListChannelsStub = isBalanceSufficient.__set__('listChannels', listChannelsStub)
 
@@ -42,7 +42,7 @@ describe('isBalanceSufficient', () => {
   })
 
   it('returns false if the localBalance for the outbound channel is not sufficient', async () => {
-    const newChannels = [{active: true, localBalance: 10, remoteBalance: 100, remotePubkey: 'asdf'}]
+    const newChannels = [{active: true, localBalance: '10', remoteBalance: '100', remotePubkey: 'asdf'}]
     listChannelsStub = sinon.stub().resolves({ channels: newChannels })
     revertListChannelsStub = isBalanceSufficient.__set__('listChannels', listChannelsStub)
 
@@ -51,7 +51,7 @@ describe('isBalanceSufficient', () => {
   })
 
   it('returns true if the localBalance for the outbound channel is sufficient', async () => {
-    const newChannels = [{active: true, localBalance: 100, remoteBalance: 100, remotePubkey: 'asdf'}]
+    const newChannels = [{active: true, localBalance: '100', remoteBalance: '100', remotePubkey: 'asdf'}]
     listChannelsStub = sinon.stub().resolves({ channels: newChannels })
     revertListChannelsStub = isBalanceSufficient.__set__('listChannels', listChannelsStub)
 
@@ -60,7 +60,7 @@ describe('isBalanceSufficient', () => {
   })
 
   it('returns false if the remoteBalance for the inbound channel is sufficient', async () => {
-    const newChannels = [{active: true, localBalance: 100, remoteBalance: 10, remotePubkey: 'asdf'}]
+    const newChannels = [{active: true, localBalance: '100', remoteBalance: '10', remotePubkey: 'asdf'}]
     listChannelsStub = sinon.stub().resolves({ channels: newChannels })
     revertListChannelsStub = isBalanceSufficient.__set__('listChannels', listChannelsStub)
     const res = await isBalanceSufficient(destination, value, { outbound: false })
@@ -68,7 +68,7 @@ describe('isBalanceSufficient', () => {
   })
 
   it('returns true if the remoteBalance for the inbound channel is sufficient', async () => {
-    const newChannels = [{active: true, localBalance: 100, remoteBalance: 100, remotePubkey: 'asdf'}]
+    const newChannels = [{active: true, localBalance: '100', remoteBalance: '100', remotePubkey: 'asdf'}]
     listChannelsStub = sinon.stub().resolves({ channels: newChannels })
     revertListChannelsStub = isBalanceSufficient.__set__('listChannels', listChannelsStub)
     const res = await isBalanceSufficient(destination, value, { outbound: false })
@@ -76,7 +76,7 @@ describe('isBalanceSufficient', () => {
   })
 
   it('returns false if a valid channel is not active', async () => {
-    const newChannels = [{active: false, localBalance: 100, remoteBalance: 100, remotePubkey: 'asdf'}]
+    const newChannels = [{active: false, localBalance: '100', remoteBalance: '100', remotePubkey: 'asdf'}]
     listChannelsStub = sinon.stub().resolves({ channels: newChannels })
     revertListChannelsStub = isBalanceSufficient.__set__('listChannels', listChannelsStub)
     const res = await isBalanceSufficient(destination, value, { outbound: false })
@@ -85,8 +85,8 @@ describe('isBalanceSufficient', () => {
 
   it('returns true if any channels with the destination key have sufficient funds', async () => {
     const newChannels = [
-      {active: true, localBalance: 10, remoteBalance: 10, remotePubkey: 'asdf'},
-      {active: true, localBalance: 100, remoteBalance: 10, remotePubkey: 'asdf'}
+      {active: true, localBalance: '10', remoteBalance: '10', remotePubkey: 'asdf'},
+      {active: true, localBalance: '100', remoteBalance: '10', remotePubkey: 'asdf'}
     ]
     listChannelsStub = sinon.stub().resolves({ channels: newChannels })
     revertListChannelsStub = isBalanceSufficient.__set__('listChannels', listChannelsStub)
@@ -96,8 +96,8 @@ describe('isBalanceSufficient', () => {
 
   it('returns false if none of the channels with the destination key have sufficient funds', async () => {
     const newChannels = [
-      {active: true, localBalance: 10, remoteBalance: 10, remotePubkey: 'asdf'},
-      {active: true, localBalance: 10, remoteBalance: 10, remotePubkey: 'asdf'}
+      {active: true, localBalance: '10', remoteBalance: '10', remotePubkey: 'asdf'},
+      {active: true, localBalance: '10', remoteBalance: '10', remotePubkey: 'asdf'}
     ]
     listChannelsStub = sinon.stub().resolves({ channels: newChannels })
     revertListChannelsStub = isBalanceSufficient.__set__('listChannels', listChannelsStub)
@@ -107,8 +107,8 @@ describe('isBalanceSufficient', () => {
 
   it('returns true if none of the channels with the destination key have sufficient funds', async () => {
     const newChannels = [
-      {active: true, localBalance: 10, remoteBalance: 10, remotePubkey: 'banana'},
-      {active: true, localBalance: 100, remoteBalance: 10, remotePubkey: 'asdf'}
+      {active: true, localBalance: '10', remoteBalance: '10', remotePubkey: 'banana'},
+      {active: true, localBalance: '100', remoteBalance: '10', remotePubkey: 'asdf'}
     ]
     listChannelsStub = sinon.stub().resolves({ channels: newChannels })
     revertListChannelsStub = isBalanceSufficient.__set__('listChannels', listChannelsStub)
@@ -118,8 +118,8 @@ describe('isBalanceSufficient', () => {
 
   it('returns false if none of the channels with the destination key have sufficient funds', async () => {
     const newChannels = [
-      {active: true, localBalance: 100, remoteBalance: 10, remotePubkey: 'banana'},
-      {active: true, localBalance: 10, remoteBalance: 10, remotePubkey: 'asdf'}
+      {active: true, localBalance: '100', remoteBalance: '10', remotePubkey: 'banana'},
+      {active: true, localBalance: '10', remoteBalance: '10', remotePubkey: 'asdf'}
     ]
     listChannelsStub = sinon.stub().resolves({ channels: newChannels })
     revertListChannelsStub = isBalanceSufficient.__set__('listChannels', listChannelsStub)
@@ -128,7 +128,7 @@ describe('isBalanceSufficient', () => {
   })
 
   it('defaults to check the outbound channel', async () => {
-    const newChannels = [{active: true, localBalance: 100, remoteBalance: 10, remotePubkey: 'asdf'}]
+    const newChannels = [{active: true, localBalance: '100', remoteBalance: '10', remotePubkey: 'asdf'}]
     listChannelsStub = sinon.stub().resolves({ channels: newChannels })
     revertListChannelsStub = isBalanceSufficient.__set__('listChannels', listChannelsStub)
 
