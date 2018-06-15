@@ -1,5 +1,5 @@
 const { listChannels } = require('../lnd-actions')
-
+const { Big } = require('big.js')
 /**
  * Returns a boolean, true if there is an active channel between caller and remote parties that sufficient funds for an order, false if not
  *
@@ -34,9 +34,10 @@ async function isBalanceSufficient (destinationPublicKey, minValue, { outbound =
   console.log('activeChannelsFromDestination', activeChannelsFromDestination)
   activeChannelsFromDestination.forEach((chan) => {
     console.log(chan[balance])
+    console.log(Big(chan[balance]))
   })
-  console.log('minValue', activeChannelsFromDestination.some(channel => channel[balance] >= minValue))
-  return activeChannelsFromDestination.some(channel => channel[balance] >= minValue)
+  console.log('minValue', activeChannelsFromDestination.some(channel => Big(channel[balance]) >= Big(minValue)))
+  return activeChannelsFromDestination.some(channel => Big(channel[balance]) >= Big(minValue))
 }
 
 module.exports = isBalanceSufficient
