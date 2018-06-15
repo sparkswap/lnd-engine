@@ -41,7 +41,7 @@ async function createChannel (host, publicKey, fundingAmount, symbol) {
 
   this.logger.debug(`Received txid type ${txidType}`)
 
-  const chanPoint = { [txidType]: chanPointRes[txidType] }
+  const chanPoint = { [txidType]: chanPointRes[txidType], outputIndex: chanPointRes.outputIndex }
 
   this.logger.debug('Updating channel point: ', chanPoint)
 
