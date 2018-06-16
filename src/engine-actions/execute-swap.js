@@ -180,7 +180,14 @@ function findPaths (edges, hints, fromPubKey, toPubKey, symbol, amount, visited 
     localVisited.push(candidate.channelId)
 
     // find the rest of the path
-    return [ candidate, ...findPaths(edges, hints, candidate.toPubKey, toPubKey, symbol, amount, localVisited) ].filter(segment => !!segment)
+    console.log('findPaths', findPaths(edges, hints, candidate.toPubKey, toPubKey, symbol, amount, localVisited))
+    const restOfPath = findPaths(edges, hints, candidate.toPubKey, toPubKey, symbol, amount, localVisited)
+
+    if (restOfPath) {
+      return [ candidate, ...restOfPath ]
+    }
+
+    return [ candidate ]
   }).filter(path => {
     const lastSegment = path[path.length - 1]
     return lastSegment.toPubKey === toPubKey
@@ -227,6 +234,8 @@ function findOutboundChannels (edges, hints, fromPubKey, symbol, amount, visited
      * @param  {Object} hints[channelId] Hints for balance on each side of this channel
      */
     if (hints[channelId]) {
+      console.log('got hints for ', channelId)
+      console.log(hints[channelId][fromPubKey], amount)
       if (Big(hints[channelId][fromPubKey]).lt(amount)) {
         console.log('not enough bandwidth', hints[channelId][fromPubKey], amount)
         return filtered
