@@ -12,6 +12,7 @@ const listChannels = require('./list-channels')
 const sendPayment = require('./send-payment')
 const describeGraph = require('./describe-graph')
 const sendToRoute = require('./send-to-route')
+const updateChannelPolicy = require('./update-channel-policy')
 
 module.exports = {
   addInvoice,
@@ -27,5 +28,6 @@ module.exports = {
   listChannels,
   sendPayment,
   describeGraph,
-  sendToRoute
+  sendToRoute,
+  updateChannelPolicy
 }
