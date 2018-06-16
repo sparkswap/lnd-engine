@@ -44,7 +44,7 @@ describe('execute-swap', () => {
     it('calculates the total time lock', () => {
       const route = routeFromPath(amountToSend, finalCLTV, path)
 
-      expect(route).to.have.property('totalTimeLock', 154)
+      expect(route).to.have.property('totalTimeLock', 164)
     })
 
     it('calculates the total fees', () => {

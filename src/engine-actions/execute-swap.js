@@ -53,6 +53,7 @@ async function executeSwap (counterpartyPubKey, swapHash, inbound, outbound) {
 
   console.log('route', route)
 
+  console.log('executing swap for hash', swapHash)
   const { paymentError, paymentPreimage } = await sendToRoute(swapHash, route, { client: this.client })
 
   if (paymentError) {
@@ -80,32 +81,32 @@ function routeFromPath (amountToSend, finalCLTV, path) {
   let currentCLTV = Big(finalCLTV)
 
   const hops = backtrack.map((channel, index) => {
+    const hop = {
+      chanId: channel.channelId,
+      chanCapacity: channel.capacity,
+      expiry: Number(currentCLTV), // expiry is a uint32, so needs to be a number
+      amtToForwardMsat: currentAmountMsat.toString()
+    }
+
     let feeMsat
-    let timeLockDelta
 
     // first in back track is our final destination
     if (index === 0) {
-      // last hop: no fees, no extra time lock
+      // last hop: no fees
       feeMsat = '0'
-      timeLockDelta = 0
     } else {
       feeMsat = computeFee(currentAmountMsat, channel.policy)
-      timeLockDelta = channel.policy.timeLockDelta
     }
+
+    hop.feeMsat = feeMsat
 
     // update the current amount so we have enough funds to forward
     currentAmountMsat = currentAmountMsat.plus(feeMsat)
 
     // update the current cltv to have enough expiry
-    currentCLTV = currentCLTV.plus(timeLockDelta)
+    currentCLTV = currentCLTV.plus(channel.policy.timeLockDelta)
 
-    return {
-      chanId: channel.channelId,
-      chanCapacity: channel.capacity,
-      expiry: Number(currentCLTV), // expiry is a uint32, so needs to be a number
-      amtToForwardMsat: currentAmountMsat.minus(feeMsat).toString(),
-      feeMsat
-    }
+    return hop
   }).reverse()
 
   return {
