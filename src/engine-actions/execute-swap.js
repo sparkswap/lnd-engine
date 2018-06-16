@@ -160,7 +160,7 @@ function getBandwidthHints (channels, identityPubkey) {
 
 // naive path finding - find any path that works
 function findPaths (edges, hints, fromPubKey, toPubKey, symbol, amount, visited = []) {
-  const candidates = findOutboundChannels(edges, fromPubKey, symbol, amount, visited)
+  const candidates = findOutboundChannels(edges, hints, fromPubKey, symbol, amount, visited)
 
   console.log('candidates')
   console.log(candidates)
@@ -185,6 +185,8 @@ function findPaths (edges, hints, fromPubKey, toPubKey, symbol, amount, visited 
     const lastSegment = path[path.length - 1]
     return lastSegment.toPubKey === toPubKey
   })
+
+  console.log('got paths', paths)
 
   // if we have anything, return it
   return paths[0]
