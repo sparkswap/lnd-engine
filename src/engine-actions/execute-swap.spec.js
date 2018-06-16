@@ -266,10 +266,10 @@ describe('execute-swap', () => {
       expect(getChannelSymbol(node1Policy, node1Policy)).to.be.equal('BTC')
     })
 
-    it('throw for an unidentified error', () => {
+    it('returns empty string for unidentified', () => {
       node2Policy.feeRateMilliMsat = '1000'
 
-      expect(() => { getChannelSymbol(node1Policy, node2Policy) }).to.throw()
+      expect(getChannelSymbol(node1Policy, node2Policy)).to.be.equal('')
     })
   })
 })

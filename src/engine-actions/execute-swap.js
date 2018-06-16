@@ -276,7 +276,7 @@ function getChannelSymbol (node1Policy, node2Policy) {
   } else if (node1Policy.feeRateMilliMsat === BTC_FEE_PER_KW && node2Policy.feeRateMilliMsat === BTC_FEE_PER_KW) {
     return 'BTC'
   } else {
-    throw new Error('Channel is on unidentified blockchain')
+    return ''
   }
 }
 
