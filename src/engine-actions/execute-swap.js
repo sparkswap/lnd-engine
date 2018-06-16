@@ -52,7 +52,6 @@ async function executeSwap (counterpartyPubKey, swapHash, inbound, outbound) {
   const route = routeFromPath(inbound.amount, Big(DEFAULT_CLTV_DELTA).plus(blockHeight), outboundPath.concat(inboundPath))
 
   console.log('route', route)
-  console.log(route)
 
   const { paymentError, paymentPreimage } = await sendToRoute(swapHash, route, { client: this.client })
 
@@ -104,8 +103,8 @@ function routeFromPath (amountToSend, finalCLTV, path) {
       chanId: channel.channelId,
       chanCapacity: channel.capacity,
       expiry: Number(currentCLTV), // expiry is a uint32, so needs to be a number
-      AmtToForwardMsat: currentAmountMsat.minus(feeMsat).toString(),
-      FeeMsat: feeMsat
+      amtToForwardMsat: currentAmountMsat.minus(feeMsat).toString(),
+      feeMsat
     }
   }).reverse()
 

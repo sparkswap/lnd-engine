@@ -91,15 +91,15 @@ describe('execute-swap', () => {
     it('includes the amount to forward in the hop', () => {
       const route = routeFromPath(amountToSend, finalCLTV, path)
 
-      expect(route.hops[0]).to.have.property('AmtToForwardMsat', '1000000000')
-      expect(route.hops[1]).to.have.property('AmtToForwardMsat', '1000000000')
+      expect(route.hops[0]).to.have.property('amtToForwardMsat', '1000000000')
+      expect(route.hops[1]).to.have.property('amtToForwardMsat', '1000000000')
     })
 
     it('includes the fee in the hop', () => {
       const route = routeFromPath(amountToSend, finalCLTV, path)
 
-      expect(route.hops[0]).to.have.property('FeeMsat', '7669000')
-      expect(route.hops[1]).to.have.property('FeeMsat', '0')
+      expect(route.hops[0]).to.have.property('feeMsat', '7669000')
+      expect(route.hops[1]).to.have.property('feeMsat', '0')
     })
   })
 
@@ -196,10 +196,10 @@ describe('execute-swap', () => {
 
   describe('findPaths', () => {
     let findPaths
-    let findOutboundChannels
     let edges
     let hints
     let fromPubKey
+    let toPubKey
     let symbol
     let amount
     let visited
