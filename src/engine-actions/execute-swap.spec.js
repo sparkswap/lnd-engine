@@ -4,6 +4,134 @@ const { expect, rewire, sinon } = require('test/test-helper')
 const executeSwap = rewire(path.resolve(__dirname, 'execute-swap'))
 
 describe('execute-swap', () => {
+  describe('routeFromPath', () => {
+    let routeFromPath
+    let amountToSend
+    let finalCLTV
+    let path
+
+    beforeEach(() => {
+      routeFromPath = executeSwap.__get__('routeFromPath')
+
+      amountToSend = '1000000'
+      finalCLTV = 144
+      path = [
+        {
+          fromPubKey: 'mypub',
+          toPubKey: 'theirpub',
+          channelId: '1234',
+          capacity: '10000008',
+          policy: {
+            feeBaseMsat: '2000',
+            feeRateMilliMsat: '7667',
+            timeLockDelta: 10
+          }
+        },
+        {
+          fromPubKey: 'theirpub',
+          toPubKey: 'anotherpub',
+          channelId: '4321',
+          capacity: '20000000',
+          policy: {
+            feeBaseMsat: '2000',
+            feeRateMilliMsat: '7667',
+            timeLockDelta: 10
+          }
+        }
+      ]
+    })
+
+    it('calculates the total time lock', () => {
+      const route = routeFromPath(amountToSend, finalCLTV, path)
+
+      expect(route).to.have.property('totalTimeLock', 154)
+    })
+
+    it('calculates the total fees', () => {
+      const route = routeFromPath(amountToSend, finalCLTV, path)
+
+      expect(route).to.have.property('totalFeesMsat', '7669000')
+    })
+
+    it('calculates the total amount to send', () => {
+      const route = routeFromPath(amountToSend, finalCLTV, path)
+
+      expect(route).to.have.property('totalAmtMsat', '1007669000')
+    })
+
+    it('constructs hops', () => {
+      const route = routeFromPath(amountToSend, finalCLTV, path)
+
+      expect(route).to.have.property('hops')
+      expect(route.hops).to.be.an('array')
+      expect(route.hops).to.have.lengthOf(2)
+    })
+
+    it('includes channel id in the hop', () => {
+      const route = routeFromPath(amountToSend, finalCLTV, path)
+
+      expect(route.hops[0]).to.have.property('chanId', '1234')
+      expect(route.hops[1]).to.have.property('chanId', '4321')
+    })
+
+    it('includes channel capacity in the hop', () => {
+      const route = routeFromPath(amountToSend, finalCLTV, path)
+
+      expect(route.hops[0]).to.have.property('chanCapacity', '10000008')
+      expect(route.hops[1]).to.have.property('chanCapacity', '20000000')
+    })
+
+    it('includes expiry in the hop', () => {
+      const route = routeFromPath(amountToSend, finalCLTV, path)
+
+      expect(route.hops[0]).to.have.property('expiry', 154)
+      expect(route.hops[1]).to.have.property('expiry', 144)
+    })
+
+    it('includes the amount to forward in the hop', () => {
+      const route = routeFromPath(amountToSend, finalCLTV, path)
+
+      expect(route.hops[0]).to.have.property('AmtToForwardMsat', '1000000000')
+      expect(route.hops[1]).to.have.property('AmtToForwardMsat', '1000000000')
+    })
+
+    it('includes the fee in the hop', () => {
+      const route = routeFromPath(amountToSend, finalCLTV, path)
+
+      expect(route.hops[0]).to.have.property('FeeMsat', '7669000')
+      expect(route.hops[1]).to.have.property('FeeMsat', '0')
+    })
+  })
+
+  describe('computeFee', () => {
+    let computeFee
+    let amount
+    let policy
+
+    beforeEach(() => {
+      computeFee = executeSwap.__get__('computeFee')
+
+      amount = '1000000'
+      policy = {
+        feeBaseMsat: '1000',
+        feeRateMilliMsat: '1000'
+      }
+    })
+
+    it('computes the fee', () => {
+      const fee = computeFee(amount, policy)
+
+      expect(fee).to.be.eql('2000')
+    })
+
+    it('rounds up', () => {
+      amount = '1000100'
+      const fee = computeFee(amount, policy)
+
+      expect(fee).to.be.eql('2001')
+    })
+  })
+
   describe('getBandwidthHints', () => {
     let getBandwidthHints
     let channels

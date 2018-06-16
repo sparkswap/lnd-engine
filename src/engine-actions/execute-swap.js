@@ -81,37 +81,37 @@ function routeFromPath (amountToSend, finalCLTV, path) {
   let currentCLTV = Big(finalCLTV)
 
   const hops = backtrack.map((channel, index) => {
-    const hop = {
-      chanId: channel.channelId,
-      chanCapacity: channel.capacity,
-      expiry: currentCLTV.toString(),
-      AmtToForwardMsat: currentAmountMsat.toString(),
-      FeeMsat: null
-    }
+    let feeMsat
+    let timeLockDelta
 
     // first in back track is our final destination
     if (index === 0) {
-      // last hop: no fees
-      hop.FeeMsat = '0'
+      // last hop: no fees, no extra time lock
+      feeMsat = '0'
+      timeLockDelta = 0
     } else {
-      hop.FeeMsat = computeFee(currentAmountMsat, channel.policy)
+      feeMsat = computeFee(currentAmountMsat, channel.policy)
+      timeLockDelta = channel.policy.timeLockDelta
     }
 
-    // last in the back track (i.e. our first hop in the route)
-    // should not increment values, as we already have our final state
-    if (index < hops.length - 1) {
-      // update the current amount so we have enough funds to forward
-      currentAmountMsat = currentAmountMsat.plus(hop.FeeMsat)
-      // update the current cltv to have enough expiry
-      currentCLTV = currentCLTV.plus(channel.policy.timeLockDelta)
-    }
+    // update the current amount so we have enough funds to forward
+    currentAmountMsat = currentAmountMsat.plus(feeMsat)
 
-    return hop
+    // update the current cltv to have enough expiry
+    currentCLTV = currentCLTV.plus(timeLockDelta)
+
+    return {
+      chanId: channel.channelId,
+      chanCapacity: channel.capacity,
+      expiry: Number(currentCLTV), // expiry is a uint32, so needs to be a number
+      AmtToForwardMsat: currentAmountMsat.minus(feeMsat).toString(),
+      FeeMsat: feeMsat
+    }
   }).reverse()
 
   return {
     hops: hops,
-    totalTimeLock: currentCLTV.toString(),
+    totalTimeLock: Number(currentCLTV), // timelock is a uint32, so needs to be a number
     totalAmtMsat: currentAmountMsat.toString(),
     totalFeesMsat: currentAmountMsat.minus(amountToSendMsat).toString()
   }
@@ -219,8 +219,9 @@ function findOutboundChannels (edges, hints, fromPubKey, symbol, amount, visited
     }
 
     // not the right symbol
-    if (getChannelSymbol(node1Policy, node2Policy) !== symbol) {
-      console.log('wrong symbol', symbol)
+    const channelSymbol = getChannelSymbol(node1Policy, node2Policy)
+    if (channelSymbol !== symbol) {
+      console.log('wrong symbol', channelSymbol, symbol)
       return filtered
     }
 
@@ -266,6 +267,8 @@ function findOutboundChannels (edges, hints, fromPubKey, symbol, amount, visited
  * @return {String}                      `BTC` or `LTC`
  */
 function getChannelSymbol (node1Policy, node2Policy) {
+  console.log('node1Policy', node1Policy)
+  console.log('node2Policy', node2Policy)
   if (node1Policy.feeRateMilliMsat === LTC_FEE_PER_KW && node2Policy.feeRateMilliMsat === LTC_FEE_PER_KW) {
     return 'LTC'
   } else if (node1Policy.feeRateMilliMsat === BTC_FEE_PER_KW && node2Policy.feeRateMilliMsat === BTC_FEE_PER_KW) {
