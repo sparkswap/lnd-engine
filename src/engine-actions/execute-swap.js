@@ -144,18 +144,13 @@ function computeFee (amount, policy) {
 function getBandwidthHints (channels, identityPubkey) {
   const activeChannels = channels.filter(c => c.active)
 
-  const hints = {}
-
-  activeChannels.forEach(channel => {
-    const hint = {}
-
-    hint[identityPubkey] = channel.localBalance
-    hint[channel.remotePubkey] = channel.remoteBalance
-
-    hints[channel.chanId] = hint
-  })
-
-  return hints
+  return activeChannels.reduce((hints, channel) => {
+    hints[channel.chanId] = {
+      [identityPubkey]: channel.localBalance,
+      [channel.remotePubkey]: channel.remoteBalance
+    }
+    return hints
+  }, {})
 }
 
 // naive path finding - find any path that works

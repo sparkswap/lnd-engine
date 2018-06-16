@@ -4,6 +4,68 @@ const { expect, rewire, sinon } = require('test/test-helper')
 const executeSwap = rewire(path.resolve(__dirname, 'execute-swap'))
 
 describe('execute-swap', () => {
+  describe('getBandwidthHints', () => {
+    let getBandwidthHints
+    let channels
+    let pubkey
+
+    beforeEach(() => {
+      getBandwidthHints = executeSwap.__get__('getBandwidthHints')
+
+      pubkey = 'mypubkey'
+
+      channels = [
+        {
+          chanId: 'chan1',
+          remotePubkey: 'anotherpubkey',
+          localBalance: '1000000',
+          remoteBalance: '90',
+          active: true
+        },
+        {
+          chanId: 'chan2',
+          remotePubkey: 'theirpubkey',
+          active: true,
+          localBalance: '87777',
+          remoteBalance: '56556'
+        }
+      ]
+    })
+
+    it('produces hints for every channel we are party to', () => {
+      const hints = getBandwidthHints(channels, pubkey)
+
+      expect(Object.keys(hints)).to.have.lengthOf(2)
+    })
+
+    it('skips channels that are inactive', () => {
+      channels.push({ chanId: 'chan3', active: false })
+      const hints = getBandwidthHints(channels, pubkey)
+
+      expect(Object.keys(hints)).to.have.lengthOf(2)
+    })
+
+    it('assigns hints to the channel id', () => {
+      const hints = getBandwidthHints(channels, pubkey)
+
+      expect(hints).to.have.property('chan1')
+      expect(hints).to.have.property('chan2')
+    })
+
+    it('assigns balances to the right pubkeys', () => {
+      const hints = getBandwidthHints(channels, pubkey)
+
+      expect(hints.chan1).to.be.eql({
+        mypubkey: '1000000',
+        anotherpubkey: '90'
+      })
+      expect(hints.chan2).to.be.eql({
+        mypubkey: '87777',
+        theirpubkey: '56556'
+      })
+    })
+  })
+
   describe('findPaths', () => {
     let findPaths
     let findOutboundChannels
