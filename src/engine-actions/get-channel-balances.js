@@ -79,6 +79,11 @@ async function getChannelBalances () {
 
     const balance = new Big(localBalance)
 
+    this.logger.debug(balances)
+    this.logger.debug(acc)
+    this.logger.debug(symbol)
+    this.logger.debug(balance)
+
     acc[symbol] = acc[symbol].add(balance)
     return acc
   }, balances)
