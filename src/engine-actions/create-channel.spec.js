@@ -15,22 +15,33 @@ describe('createChannel', () => {
   let loggerStub
   let symbol
   let res
+  let feeRateStub
+  let fee
+  let generateStub
 
   beforeEach(() => {
     host = '127.0.0.1:10111'
     pubKey = '1234'
     fundingAmount = '100'
     symbol = 'BTC'
+    fee = 100
     channelPoint = sinon.stub()
     connectPeerStub = sinon.stub()
     openChannelStub = sinon.stub().returns(channelPoint)
     updateChannelStub = sinon.stub()
     clientStub = sinon.stub()
-    loggerStub = { debug: sinon.stub() }
+    loggerStub = {
+      debug: sinon.stub(),
+      error: sinon.stub()
+    }
+    feeRateStub = sinon.stub().returns(fee)
+    generateStub = sinon.stub().returns(channelPoint)
 
     createChannel.__set__('connectPeer', connectPeerStub)
     createChannel.__set__('openChannel', openChannelStub)
     createChannel.__set__('updateChannelPolicy', updateChannelStub)
+    createChannel.__set__('feeRateFromSymbol', feeRateStub)
+    createChannel.__set__('generateChanPointFromChannelInfo', generateStub)
     createChannel.__set__('client', clientStub)
     createChannel.__set__('logger', loggerStub)
   })
@@ -49,7 +60,7 @@ describe('createChannel', () => {
     })
 
     it('updates a channel', () => {
-      expect(updateChannelStub).to.have.been.calledWith()
+      expect(updateChannelStub).to.have.been.calledWith(channelPoint, fee)
     })
 
     it('returns true for successful channel creation', () => {
