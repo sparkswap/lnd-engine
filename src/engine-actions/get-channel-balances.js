@@ -69,8 +69,8 @@ async function getChannelBalances () {
     return balancesToHash(balances)
   }
 
-  const updatedBalances = channels.reduce((acc, { chanId, localBalance }) => {
-    const symbol = getChannelTypeFromId(chanId, this.client)
+  const updatedBalances = channels.reduce(async (acc, { chanId, localBalance }) => {
+    const symbol = await getChannelTypeFromId(chanId, this.client)
 
     if (!symbol) {
       this.logger.debug('Symbol could not be found from channel info', { chanId })
@@ -79,8 +79,8 @@ async function getChannelBalances () {
 
     const balance = new Big(localBalance)
 
-    this.logger.debug(balances)
-    this.logger.debug(acc)
+    this.logger.debug(JSON.stringify(balances))
+    this.logger.debug(JSON.stringify(acc))
     this.logger.debug(symbol)
     this.logger.debug(balance)
 
