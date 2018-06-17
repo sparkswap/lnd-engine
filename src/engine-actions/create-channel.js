@@ -4,10 +4,12 @@ const {
   updateChannelPolicy
 } = require('../lnd-actions')
 const {
-  LTC_FEE_PER_KW,
-  BTC_FEE_PER_KW,
+  LTC_FEE_MILLI_SAT,
+  BTC_FEE_MILLI_SAT,
   SUPPORTED_SYMBOLS
 } = require('../config')
+
+const TIMELOCK_DELTA = 9
 
 /**
  * Takes the response from OpenChannelSync (lnd) and returns a channel point
@@ -17,7 +19,7 @@ const {
  * @param {Object} info
  * @param {String} info.fundingTxidBytes
  * @param {String} info.fundingTxidStr
- * @param {String} info.fundingTxidStr
+ * @param {Number} info.outputIndex
  * @return {Object} res
  * @return {Null} an error occurred
  */
@@ -41,8 +43,8 @@ function generateChanPointFromChannelInfo (info) {
  * @return {Number} feeRate
  */
 function feeRateFromSymbol (symbol) {
-  if (SUPPORTED_SYMBOLS[symbol] === SUPPORTED_SYMBOLS.BTC) return (parseInt(BTC_FEE_PER_KW, 10) / 1000000)
-  if (SUPPORTED_SYMBOLS[symbol] === SUPPORTED_SYMBOLS.LTC) return (parseInt(LTC_FEE_PER_KW, 10) / 1000000)
+  if (SUPPORTED_SYMBOLS[symbol] === SUPPORTED_SYMBOLS.BTC) return (parseInt(BTC_FEE_MILLI_SAT, 10) / 1000000)
+  if (SUPPORTED_SYMBOLS[symbol] === SUPPORTED_SYMBOLS.LTC) return (parseInt(LTC_FEE_MILLI_SAT, 10) / 1000000)
 }
 
 /**
@@ -86,13 +88,17 @@ async function createChannel (host, publicKey, fundingAmount, symbol) {
     return false
   }
 
-  // Updates a channel policy after a given amount of time (ONLY FOR SIMNET)
-  // Since it takes 6 confirmation blocks to open a channel, we will wait 75 seconds
-  // which should be long enough for the channel to open
+  // Updates a channel policy after a channel "is" active (time estimate).
+  //
+  // It takes 6 confirmation blocks to open a channel. Currently we mine a block every 10 seconds.
+  // With this code, we will wait 120 seconds (2 minutes) which should be long enough
+  // for the channel to open
   if (process.env.NODE_ENV !== 'production') {
+    this.logger.debug('Queuing channel to be updated in 2 minutes')
+
     setTimeout(async () => {
       this.logger.debug('Updating channel point', { chanPoint, feeRate })
-      await updateChannelPolicy(chanPoint, feeRate, { client: this.client })
+      await updateChannelPolicy(chanPoint, feeRate, TIMELOCK_DELTA, { client: this.client })
     }, 120000)
   }
 
