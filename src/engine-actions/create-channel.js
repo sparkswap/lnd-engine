@@ -87,11 +87,13 @@ async function createChannel (host, publicKey, fundingAmount, symbol) {
   }
 
   // Updates a channel policy after a given amount of time (ONLY FOR SIMNET)
+  // Since it takes 6 confirmation blocks to open a channel, we will wait 75 seconds
+  // which should be long enough for the channel to open
   if (process.env.NODE_ENV !== 'production') {
     setTimeout(async () => {
       this.logger.debug('Updating channel point', { chanPoint, feeRate })
       await updateChannelPolicy(chanPoint, feeRate, { client: this.client })
-    }, 30000)
+    }, 75000)
   }
 
   return true
