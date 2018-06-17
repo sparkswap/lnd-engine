@@ -44,6 +44,11 @@ describe('createChannel', () => {
     createChannel.__set__('generateChanPointFromChannelInfo', generateStub)
     createChannel.__set__('client', clientStub)
     createChannel.__set__('logger', loggerStub)
+    createChannel.__set__('process', {
+      env: {
+        NODE_ENV: 'production'
+      }
+    })
   })
 
   describe('creating a channel', () => {
@@ -57,10 +62,6 @@ describe('createChannel', () => {
 
     it('opens a channel', () => {
       expect(openChannelStub).to.have.been.calledWith(pubKey, fundingAmount, sinon.match({ client: clientStub }))
-    })
-
-    it('updates a channel', () => {
-      expect(updateChannelStub).to.have.been.calledWith(channelPoint, fee)
     })
 
     it('generates a fee', () => {

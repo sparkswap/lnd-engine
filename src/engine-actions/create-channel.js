@@ -9,7 +9,21 @@ const {
   SUPPORTED_SYMBOLS
 } = require('../config')
 
+/**
+ * @constant
+ * @type {Number}
+ * @default
+ */
 const TIMELOCK_DELTA = 9
+
+/**
+ * Whole number value for milli-satoshi fee rate
+ *
+ * @constant
+ * @type {Number}
+ * @default
+ */
+const FEE_RATE_PRECISION = 1000000
 
 /**
  * Takes the response from OpenChannelSync (lnd) and returns a channel point
@@ -37,14 +51,17 @@ function generateChanPointFromChannelInfo (info) {
 }
 
 /**
- * Returns a feeRate for a specified symbol in mSat
+ * Based on a specified channel type (as determined by the symbol) we return the applicable
+ * feeRate for the type of currency.
+ *
+ * Fee rate is calculated as a 6 decimal place precision number (1e-6)
  *
  * @param {String} symbol
  * @return {Number} feeRate
  */
 function feeRateFromSymbol (symbol) {
-  if (SUPPORTED_SYMBOLS[symbol] === SUPPORTED_SYMBOLS.BTC) return (parseInt(BTC_FEE_MILLI_SAT, 10) / 1000000)
-  if (SUPPORTED_SYMBOLS[symbol] === SUPPORTED_SYMBOLS.LTC) return (parseInt(LTC_FEE_MILLI_SAT, 10) / 1000000)
+  if (SUPPORTED_SYMBOLS[symbol] === SUPPORTED_SYMBOLS.BTC) return (parseInt(BTC_FEE_MILLI_SAT, 10) / FEE_RATE_PRECISION)
+  if (SUPPORTED_SYMBOLS[symbol] === SUPPORTED_SYMBOLS.LTC) return (parseInt(LTC_FEE_MILLI_SAT, 10) / FEE_RATE_PRECISION)
 }
 
 /**
@@ -93,7 +110,7 @@ async function createChannel (host, publicKey, fundingAmount, symbol) {
   // It takes 6 confirmation blocks to open a channel. Currently we mine a block every 10 seconds.
   // With this code, we will wait 120 seconds (2 minutes) which should be long enough
   // for the channel to open
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV === 'development') {
     this.logger.debug('Queuing channel to be updated in 2 minutes')
 
     setTimeout(async () => {
