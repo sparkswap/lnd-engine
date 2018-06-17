@@ -9,12 +9,12 @@ describe('get-channel-balances', () => {
     let listChannelsStub
     let channel
     let channels
-    let feeToSymbolStub
+    let getChannelTypeFromIdStub
     let balancesStub
     let reverts
 
     beforeEach(() => {
-      feeToSymbolStub = sinon.stub().returns('BTC')
+      getChannelTypeFromIdStub = sinon.stub().returns('BTC')
       balancesStub = sinon.stub()
       channel = { feePerKw: 100, localBalance: 400 }
       channels = [channel, channel]
@@ -22,7 +22,7 @@ describe('get-channel-balances', () => {
 
       reverts = []
       reverts.push(getChannelBalances.__set__('listChannels', listChannelsStub))
-      reverts.push(getChannelBalances.__set__('getChannelTypeFromId', feeToSymbolStub))
+      reverts.push(getChannelBalances.__set__('getChannelTypeFromId', getChannelTypeFromIdStub))
       reverts.push(getChannelBalances.__set__('balancesToHash', balancesStub))
       reverts.push(getChannelBalances.__set__('SUPPORTED_SYMBOLS', { BTC: 'BTC' }))
     })
@@ -42,6 +42,55 @@ describe('get-channel-balances', () => {
     it('creates an updated balance hash', () => {
       const expectedResponse = { BTC: new Big(channels.reduce((acc, k) => (acc += k.localBalance), 0)) }
       expect(balancesStub).to.have.been.calledWith(sinon.match(expectedResponse))
+    })
+  })
+
+  describe('getChannelTypeFromId', () => {
+    let channelInfoStub
+    let node1Policy
+    let node2Policy
+    let clientStub
+    let chanId
+
+    const getChannelTypeFromId = getChannelBalances.__get__('getChannelTypeFromId')
+
+    beforeEach(() => {
+      clientStub = sinon.stub()
+      node1Policy = { feeRateMilliMsat: 100 }
+      node2Policy = { feeRateMilliMsat: 100 }
+      channelInfoStub = sinon.stub().returns({ node1Policy, node2Policy })
+
+      getChannelBalances.__set__('getChannelInfo', channelInfoStub)
+    })
+
+    it('gets channel info for an id', async () => {
+      await getChannelTypeFromId(chanId, clientStub)
+      expect(channelInfoStub).to.have.been.calledWith(chanId, { client: clientStub })
+    })
+
+    it('returns false if fees were not matched to a symbol', async () => {
+      const res = await getChannelTypeFromId(chanId, clientStub)
+      expect(res).to.be.eql(false)
+    })
+
+    it('returns BTC if fees were matched to BTC', async () => {
+      const btcFee = getChannelBalances.__get__('BTC_FEE_MILLI_SAT')
+      const newPolicy = { feeRateMilliMsat: btcFee }
+      channelInfoStub = sinon.stub().returns({ node1Policy: newPolicy, node2Policy })
+      getChannelBalances.__set__('getChannelInfo', channelInfoStub)
+      const res = await getChannelTypeFromId(chanId, clientStub)
+      const { BTC: btc } = getChannelBalances.__get__('SUPPORTED_SYMBOLS')
+      expect(res).to.be.eql(btc)
+    })
+
+    it('returns LTC if fees were matched to LTC', async () => {
+      const ltcFee = getChannelBalances.__get__('LTC_FEE_MILLI_SAT')
+      const newPolicy = { feeRateMilliMsat: ltcFee }
+      channelInfoStub = sinon.stub().returns({ node1Policy: newPolicy, node2Policy })
+      getChannelBalances.__set__('getChannelInfo', channelInfoStub)
+      const res = await getChannelTypeFromId(chanId, clientStub)
+      const { LTC: ltc } = getChannelBalances.__get__('SUPPORTED_SYMBOLS')
+      expect(res).to.be.eql(ltc)
     })
   })
 
