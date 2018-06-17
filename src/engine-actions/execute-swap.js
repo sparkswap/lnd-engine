@@ -92,10 +92,12 @@ function routeFromPath (amountToSend, finalCLTV, path) {
 
     // first in back track is our final destination
     if (index === 0) {
-      // last hop: no fees
+      // last hop: no fees as there is nothing to transit
       feeMsat = '0'
     } else {
-      feeMsat = computeFee(currentAmountMsat, channel.policy)
+      // this node's next channel is what determines the fee to transit the link
+      const nextChannel = backtrack[index - 1]
+      feeMsat = computeFee(currentAmountMsat, nextChannel.policy)
     }
 
     hop.feeMsat = feeMsat
@@ -118,10 +120,10 @@ function routeFromPath (amountToSend, finalCLTV, path) {
 }
 
 /**
- * Compute the fee for a given hop
- * @param  {String} amount Int64 Amount, in millisatoshis, to compute the fee for
- * @param  {LND~RoutePolicy} policy Routing Policy for the hop
- * @return {String}        Int64 of the amount of the fee in millisatoshis
+ * Compute the fee to use a given channel
+ * @param  {String} amount Int64 amount, in millisatoshis to be sent
+ * @param  {LND~RoutingPolicy} policy Routing policy for the channel
+ * @return {String}        Int64 amount, in millisatoshis, of the fee that should be paid
  */
 function computeFee (amount, policy) {
   const baseFee = Big(policy.feeBaseMsat)
@@ -250,7 +252,9 @@ function findOutboundChannels (edges, hints, fromPubKey, symbol, amount, visited
       capacity,
       channelId,
       toPubKey: node1Pub === fromPubKey ? node2Pub : node1Pub,
-      policy: node1Pub === fromPubKey ? node2Policy : node1Policy
+      // we want the policy to reflect the policy required to transit the link, which is set by the node which will
+      // send the HTLC, i.e. the `from` node
+      policy: node1Pub === fromPubKey ? node1Policy : node2Policy
     }
 
     console.log('found an outbound path', channel)

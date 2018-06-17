@@ -33,7 +33,7 @@ describe('execute-swap', () => {
           channelId: '4321',
           capacity: '20000000',
           policy: {
-            feeBaseMsat: '2000',
+            feeBaseMsat: '1000',
             feeRateMilliMsat: '7667',
             timeLockDelta: 10
           }
@@ -50,13 +50,13 @@ describe('execute-swap', () => {
     it('calculates the total fees', () => {
       const route = routeFromPath(amountToSend, finalCLTV, path)
 
-      expect(route).to.have.property('totalFeesMsat', '7669000')
+      expect(route).to.have.property('totalFeesMsat', '7668000')
     })
 
     it('calculates the total amount to send', () => {
       const route = routeFromPath(amountToSend, finalCLTV, path)
 
-      expect(route).to.have.property('totalAmtMsat', '1007669000')
+      expect(route).to.have.property('totalAmtMsat', '1007668000')
     })
 
     it('constructs hops', () => {
@@ -98,7 +98,7 @@ describe('execute-swap', () => {
     it('includes the fee in the hop', () => {
       const route = routeFromPath(amountToSend, finalCLTV, path)
 
-      expect(route.hops[0]).to.have.property('feeMsat', '7669000')
+      expect(route.hops[0]).to.have.property('feeMsat', '7668000')
       expect(route.hops[1]).to.have.property('feeMsat', '0')
     })
   })
@@ -276,10 +276,10 @@ describe('execute-swap', () => {
         channelId: '1234',
         capacity: '10000008',
         policy: {
-          feeBaseMsat: '2000',
+          feeBaseMsat: '1000',
           feeRateMilliMsat: '7667',
           minHtlc: '144',
-          timeLockDelta: 10
+          timeLockDelta: 9
         }
       })
       expect(path[1]).to.be.eql({
@@ -288,10 +288,10 @@ describe('execute-swap', () => {
         channelId: '4321',
         capacity: '20000000',
         policy: {
-          feeBaseMsat: '2000',
+          feeBaseMsat: '1000',
           feeRateMilliMsat: '7667',
           minHtlc: '144',
-          timeLockDelta: 10
+          timeLockDelta: 9
         }
       })
     })
@@ -421,7 +421,7 @@ describe('execute-swap', () => {
       expect(channel).to.have.property('channelId', '1234')
       expect(channel).to.have.property('toPubKey', 'theirpub')
       expect(channel).to.have.property('policy')
-      expect(channel.policy).to.be.eql(edges[1].node2Policy)
+      expect(channel.policy).to.be.eql(edges[1].node1Policy)
     })
   })
 
