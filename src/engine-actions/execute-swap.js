@@ -79,13 +79,14 @@ function routeFromPath (amountToSend, blockHeight, finalCLTVDelta, path) {
   const backtrack = path.slice().reverse()
 
   let currentAmountMsat = amountToSendMsat
-  let currentCLTV = blockHeight
+  let currentCLTV = blockHeight + finalCLTVDelta
 
   const hops = backtrack.map((channel, index) => {
     const hop = {
       chanId: channel.channelId,
       chanCapacity: channel.capacity,
-      amtToForwardMsat: currentAmountMsat.toString()
+      amtToForwardMsat: currentAmountMsat.toString(),
+      expiry: currentCLTV
     }
 
     let feeMsat
@@ -95,7 +96,8 @@ function routeFromPath (amountToSend, blockHeight, finalCLTVDelta, path) {
     if (index === 0) {
       // last hop: no fees as there is nothing to transit
       feeMsat = '0'
-      timeLockDelta = finalCLTVDelta
+      // no additional timelock for an outgoing link since there is no outgoing link
+      timeLockDelta = 0
     } else {
       // this node's next channel is what determines the fee/timelock to transit the link
       const nextChannel = backtrack[index - 1]
@@ -104,13 +106,12 @@ function routeFromPath (amountToSend, blockHeight, finalCLTVDelta, path) {
     }
 
     hop.feeMsat = feeMsat
-    hop.expiry = currentCLTV + timeLockDelta
 
     // update the current amount so we have enough funds to forward
     currentAmountMsat = currentAmountMsat.plus(feeMsat)
 
-    // update the current cltv to have enough expiry
-    currentCLTV = hop.expiry
+    // update the current cltv to have enough expiry for the _outgoing_ link
+    currentCLTV = currentCLTV + timeLockDelta
 
     return hop
   }).reverse()

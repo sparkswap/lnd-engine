@@ -86,7 +86,7 @@ describe('execute-swap', () => {
     it('includes expiry in the hop', () => {
       const route = routeFromPath(amountToSend, blockHeight, finalCLTVDelta, path)
 
-      expect(route.hops[0]).to.have.property('expiry', 5019)
+      expect(route.hops[0]).to.have.property('expiry', 5009)
       expect(route.hops[1]).to.have.property('expiry', 5009)
     })
 
