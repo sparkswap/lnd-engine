@@ -86,11 +86,10 @@ async function createChannel (host, publicKey, fundingAmount, symbol) {
     return false
   }
 
-  this.logger.debug('Updating channel point', { chanPoint, feeRate })
-
   // Updates a channel policy after a given amount of time (ONLY FOR SIMNET)
   if (process.env.NODE_ENV !== 'production') {
     setTimeout(async () => {
+      this.logger.debug('Updating channel point', { chanPoint, feeRate })
       await updateChannelPolicy(chanPoint, feeRate, { client: this.client })
     }, 30000)
   }
