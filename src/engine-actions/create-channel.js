@@ -1,3 +1,5 @@
+const util = require('util')
+
 const {
   connectPeer,
   openChannel,
@@ -8,6 +10,7 @@ const {
   BTC_FEE_PER_KW,
   SUPPORTED_SYMBOLS
 } = require('../config')
+const setTimeoutPromise = util.promisify(setTimeout)
 
 /**
  * Takes the response from OpenChannelSync (lnd) and returns a channel point
@@ -88,6 +91,7 @@ async function createChannel (host, publicKey, fundingAmount, symbol) {
 
   this.logger.debug('Updating channel point', { chanPoint, feeRate })
 
+  await setTimeoutPromise(200)
   await updateChannelPolicy(chanPoint, feeRate, { client: this.client })
 
   return true
