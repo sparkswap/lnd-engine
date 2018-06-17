@@ -54,7 +54,7 @@ async function executeSwap (counterpartyPubKey, swapHash, inbound, outbound) {
   console.log('route', route)
 
   console.log('executing swap for hash', swapHash)
-  const { paymentError, paymentPreimage } = await sendToRoute(swapHash, route, { client: this.client })
+  const { paymentError, paymentPreimage } = await sendToRoute(swapHash, [ route ], { client: this.client })
 
   if (paymentError) {
     throw new Error(`Error from LND while sending to route: ${paymentError}`)
