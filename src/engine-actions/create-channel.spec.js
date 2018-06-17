@@ -63,6 +63,14 @@ describe('createChannel', () => {
       expect(updateChannelStub).to.have.been.calledWith(channelPoint, fee)
     })
 
+    it('generates a fee', () => {
+      expect(feeRateStub).to.have.been.calledWith(symbol)
+    })
+
+    it('generates a channel point', () => {
+      expect(generateStub).to.have.been.calledWith(channelPoint)
+    })
+
     it('returns true for successful channel creation', () => {
       expect(res).to.be.true()
     })
