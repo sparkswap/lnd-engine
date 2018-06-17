@@ -86,6 +86,8 @@ async function createChannel (host, publicKey, fundingAmount, symbol) {
     return false
   }
 
+  this.logger.debug('Updating channel point', { chanPoint, feeRate })
+
   await updateChannelPolicy(chanPoint, feeRate, { client: this.client })
 
   return true
