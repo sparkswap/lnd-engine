@@ -28,22 +28,16 @@ async function executeSwap (counterpartyPubKey, swapHash, inbound, outbound) {
     listChannels({ client: this.client })
   ])
 
-  console.log('graph')
-  console.log(graph)
-
   const hints = getBandwidthHints(channels, identityPubkey)
 
-  console.log('hints')
-  console.log(hints)
+  this.logger.debug(`Got bandwidth hints for ${swapHash}`, { hints })
 
   // find paths
   const outboundPath = findPaths(graph.edges, hints, identityPubkey, counterpartyPubKey, outbound.symbol, outbound.amount)
-  console.log('outboundPath')
-  console.log(outboundPath)
+  this.logger.debug(`Found an outbound path to ${counterpartyPubKey} for ${swapHash}`, { path: outboundPath })
 
   const inboundPath = findPaths(graph.edges, hints, counterpartyPubKey, identityPubkey, inbound.symbol, inbound.amount)
-  console.log('inboundPath')
-  console.log(inboundPath)
+  this.logger.debug(`Found an inbound path from ${counterpartyPubKey} for ${swapHash}`, { path: inboundPath })
 
   if (!outboundPath || !inboundPath) {
     throw new Error(`Can't find a route between ${identityPubkey} and ${counterpartyPubKey} to swap ${outbound.amount} ${outbound.symbol} for ${inbound.amount} ${inbound.symbol}`)
@@ -52,10 +46,8 @@ async function executeSwap (counterpartyPubKey, swapHash, inbound, outbound) {
   // construct a valid route
   // TODO: need to construct two routes and then stitch them together, not treat as one big route
   const route = routeFromPath(inbound.amount, blockHeight, MIN_FINAL_CLTV_EXPIRY_DELTA, outboundPath.concat(inboundPath))
+  this.logger.debug(`Constructed a route for ${swapHash}`, { route })
 
-  console.log('route', route)
-
-  console.log('executing swap for hash', swapHash)
   const { paymentError, paymentPreimage } = await sendToRoute(swapHash, [ route ], { client: this.client })
 
   if (paymentError) {
@@ -166,9 +158,6 @@ function getBandwidthHints (channels, identityPubkey) {
 function findPaths (edges, hints, fromPubKey, toPubKey, symbol, amount, visited = []) {
   const candidates = findOutboundChannels(edges, hints, fromPubKey, symbol, amount, visited)
 
-  console.log('candidates')
-  console.log(candidates)
-
   const endOfPath = candidates.find((channel) => {
     if (channel.toPubKey === toPubKey) {
       return true
@@ -184,7 +173,6 @@ function findPaths (edges, hints, fromPubKey, toPubKey, symbol, amount, visited 
     localVisited.push(candidate.channelId)
 
     // find the rest of the path
-    console.log('findPaths', findPaths(edges, hints, candidate.toPubKey, toPubKey, symbol, amount, localVisited))
     const restOfPath = findPaths(edges, hints, candidate.toPubKey, toPubKey, symbol, amount, localVisited)
 
     if (restOfPath) {
@@ -196,8 +184,6 @@ function findPaths (edges, hints, fromPubKey, toPubKey, symbol, amount, visited 
     const lastSegment = path[path.length - 1]
     return lastSegment.toPubKey === toPubKey
   })
-
-  console.log('got paths', paths)
 
   // if we have anything, return it
   // TODO: return multiple paths so that LND has some route choices
@@ -218,20 +204,16 @@ function findOutboundChannels (edges, hints, fromPubKey, symbol, amount, visited
   return edges.reduce((filtered, { node1Pub, node2Pub, capacity, node1Policy, node2Policy, channelId }) => {
     // don't retrace
     if (visited.includes(channelId)) {
-      console.log('already saw', channelId)
       return filtered
     }
 
     // neither node is ours
     if (node1Pub !== fromPubKey && node2Pub !== fromPubKey) {
-      console.log('doesnt match pubkey', node1Pub, node2Pub, fromPubKey)
       return filtered
     }
 
     // not the right symbol
-    const channelSymbol = getChannelSymbol(node1Policy, node2Policy)
-    if (channelSymbol !== symbol) {
-      console.log('wrong symbol', channelSymbol, symbol)
+    if (getChannelSymbol(node1Policy, node2Policy) !== symbol) {
       return filtered
     }
 
@@ -240,16 +222,12 @@ function findOutboundChannels (edges, hints, fromPubKey, symbol, amount, visited
      * @param  {Object} hints[channelId] Hints for balance on each side of this channel
      */
     if (hints[channelId]) {
-      console.log('got hints for ', channelId)
-      console.log(hints[channelId][fromPubKey], amount)
       if (Big(hints[channelId][fromPubKey]).lt(amount)) {
-        console.log('not enough bandwidth', hints[channelId][fromPubKey], amount)
         return filtered
       }
     } else {
       // not enough capacity
       if (Big(capacity).lt(amount)) {
-        console.log('not enough capacity', capacity, amount)
         return filtered
       }
     }
@@ -263,8 +241,6 @@ function findOutboundChannels (edges, hints, fromPubKey, symbol, amount, visited
       // send the HTLC, i.e. the `from` node
       policy: node1Pub === fromPubKey ? node1Policy : node2Policy
     }
-
-    console.log('found an outbound path', channel)
 
     filtered.push(channel)
 
