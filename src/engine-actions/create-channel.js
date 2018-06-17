@@ -1,5 +1,3 @@
-const util = require('util')
-
 const {
   connectPeer,
   openChannel,
@@ -10,7 +8,6 @@ const {
   BTC_FEE_PER_KW,
   SUPPORTED_SYMBOLS
 } = require('../config')
-const setTimeoutPromise = util.promisify(setTimeout)
 
 /**
  * Takes the response from OpenChannelSync (lnd) and returns a channel point
@@ -91,8 +88,12 @@ async function createChannel (host, publicKey, fundingAmount, symbol) {
 
   this.logger.debug('Updating channel point', { chanPoint, feeRate })
 
-  await setTimeoutPromise(200)
-  await updateChannelPolicy(chanPoint, feeRate, { client: this.client })
+  // Updates a channel policy after a given amount of time (ONLY FOR SIMNET)
+  if (process.env.NODE_ENV !== 'production') {
+    setTimeout(async () => {
+      await updateChannelPolicy(chanPoint, feeRate, { client: this.client })
+    }, 30000)
+  }
 
   return true
 }
