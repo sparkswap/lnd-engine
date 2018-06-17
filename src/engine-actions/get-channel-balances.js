@@ -69,26 +69,20 @@ async function getChannelBalances () {
     return balancesToHash(balances)
   }
 
-  const updatedBalances = await channels.reduce(async (acc, { chanId, localBalance }) => {
+  // Using a for-in loop instead of reduce due to async w/ `getChannelTypeFromId`
+  for (let { chanId, localBalance } in channels) {
     const symbol = await getChannelTypeFromId(chanId, this.client)
 
     if (!symbol) {
       this.logger.debug('Symbol could not be found from channel info', { chanId })
-      return acc
+      continue
     }
 
     const balance = new Big(localBalance)
+    balances[symbol] = balances[symbol].add(balance)
+  }
 
-    this.logger.debug(JSON.stringify(balances))
-    this.logger.debug(JSON.stringify(acc))
-    this.logger.debug(symbol)
-    this.logger.debug(balance)
-
-    acc[symbol] = acc[symbol].add(balance)
-    return acc
-  }, Promise.resolve(balances))
-
-  return balancesToHash(updatedBalances)
+  return balancesToHash(balances)
 }
 
 module.exports = getChannelBalances
