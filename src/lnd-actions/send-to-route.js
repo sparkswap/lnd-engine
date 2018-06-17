@@ -22,7 +22,7 @@ function sendToRoute (paymentHash, routes, { client }) {
         if (err) return reject(err)
         return resolve(res)
       })
-    } catch(e) {
+    } catch (e) {
       reject(e)
     }
   })

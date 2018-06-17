@@ -1,7 +1,7 @@
 const { describeGraph, getInfo, listChannels, sendToRoute } = require('../lnd-actions')
 const { LTC_FEE_PER_KW, BTC_FEE_PER_KW } = require('../config')
 const { Big } = require('../utils')
-const DEFAULT_CLTV_DELTA = '9'
+const MIN_FINAL_CLTV_EXPIRY_DELTA = 9
 
 /**
  * Executes a swap as the initiating node
@@ -49,7 +49,7 @@ async function executeSwap (counterpartyPubKey, swapHash, inbound, outbound) {
 
   // construct a valid route
   // TODO: need to construct two routes and then stitch them together, not treat as one big route
-  const route = routeFromPath(inbound.amount, Big(DEFAULT_CLTV_DELTA).plus(blockHeight), outboundPath.concat(inboundPath))
+  const route = routeFromPath(inbound.amount, blockHeight, MIN_FINAL_CLTV_EXPIRY_DELTA, outboundPath.concat(inboundPath))
 
   console.log('route', route)
 
@@ -65,12 +65,13 @@ async function executeSwap (counterpartyPubKey, swapHash, inbound, outbound) {
 
 /**
  * Construct a route (with fee and time lock data) from a selected path
- * @param {String} Int64 string of amount to send
- * @param {String} Int64 string of the final CLTV (i.e. current best block + final CLTV)
+ * @param {String} amountToSend Int64 string of amount to send
+ * @param {Number} blockHeight Current best block height to build CLTVs on
+ * @param {Number} finalCLTVDelta Amount of the final CLTV delta
  * @param  {Array<InternalChannelEdge>} path Array of channel edges in order for the full path
  * @return {Object}      Route
  */
-function routeFromPath (amountToSend, finalCLTV, path) {
+function routeFromPath (amountToSend, blockHeight, finalCLTVDelta, path) {
   const amountToSendMsat = Big(amountToSend).times(1000)
 
   // we want to traverse the path in reverse so we can
@@ -78,35 +79,38 @@ function routeFromPath (amountToSend, finalCLTV, path) {
   const backtrack = path.slice().reverse()
 
   let currentAmountMsat = amountToSendMsat
-  let currentCLTV = Big(finalCLTV)
+  let currentCLTV = blockHeight
 
   const hops = backtrack.map((channel, index) => {
     const hop = {
       chanId: channel.channelId,
       chanCapacity: channel.capacity,
-      expiry: Number(currentCLTV), // expiry is a uint32, so needs to be a number
       amtToForwardMsat: currentAmountMsat.toString()
     }
 
     let feeMsat
+    let timeLockDelta
 
     // first in back track is our final destination
     if (index === 0) {
       // last hop: no fees as there is nothing to transit
       feeMsat = '0'
+      timeLockDelta = finalCLTVDelta
     } else {
-      // this node's next channel is what determines the fee to transit the link
+      // this node's next channel is what determines the fee/timelock to transit the link
       const nextChannel = backtrack[index - 1]
       feeMsat = computeFee(currentAmountMsat, nextChannel.policy)
+      timeLockDelta = nextChannel.policy.timeLockDelta
     }
 
     hop.feeMsat = feeMsat
+    hop.expiry = currentCLTV + timeLockDelta
 
     // update the current amount so we have enough funds to forward
     currentAmountMsat = currentAmountMsat.plus(feeMsat)
 
     // update the current cltv to have enough expiry
-    currentCLTV = currentCLTV.plus(channel.policy.timeLockDelta)
+    currentCLTV = hop.expiry
 
     return hop
   }).reverse()
