@@ -191,6 +191,7 @@ function findPaths (edges, hints, fromPubKey, toPubKey, symbol, amount, visited 
   console.log('got paths', paths)
 
   // if we have anything, return it
+  // TODO: return multiple paths so that LND has some route choices
   return paths[0]
 }
 
@@ -267,14 +268,31 @@ function findOutboundChannels (edges, hints, fromPubKey, symbol, amount, visited
  * @return {String}                      `BTC` or `LTC`
  */
 function getChannelSymbol (node1Policy, node2Policy) {
-  console.log('node1Policy', node1Policy)
-  console.log('node2Policy', node2Policy)
-  if (node1Policy.feeRateMilliMsat === LTC_FEE_PER_KW && node2Policy.feeRateMilliMsat === LTC_FEE_PER_KW) {
+  const feeRates = [ node1Policy.feeRateMilliMsat, node2Policy.feeRateMilliMsat ]
+  const hasLTCFees = feeRates.some(feeRate => getSymbolForFeeRate(feeRate) === 'LTC')
+  const hasBTCFees = feeRates.some(feeRate => getSymbolForFeeRate(feeRate) === 'BTC')
+
+  if (hasLTCFees && !hasBTCFees) {
     return 'LTC'
-  } else if (node1Policy.feeRateMilliMsat === BTC_FEE_PER_KW && node2Policy.feeRateMilliMsat === BTC_FEE_PER_KW) {
+  } else if (hasBTCFees && !hasLTCFees) {
     return 'BTC'
-  } else {
-    return ''
+  }
+
+  if (hasLTCFees || hasBTCFees) {
+    throw new Error(`Channels have disagreeing fee rate policies: ${feeRates[0]} (${getSymbolForFeeRate(feeRates[0])}), ${feeRates[1]} (${getSymbolForFeeRate(feeRates[1])})`)
+  }
+}
+
+/**
+ * Get the blockchain associated with a given channeel fee rate
+ * @param  {String} feeRate Int64 string of the fee rate (proportional millionths) in mSat
+ * @return {String}         `LTC` or `BTC`
+ */
+function getSymbolForFeeRate (feeRate) {
+  if (feeRate === LTC_FEE_PER_KW) {
+    return 'LTC'
+  } else if (feeRate === BTC_FEE_PER_KW) {
+    return 'BTC'
   }
 }
 

@@ -456,10 +456,23 @@ describe('execute-swap', () => {
       expect(getChannelSymbol(node1Policy, node1Policy)).to.be.equal('BTC')
     })
 
-    it('returns empty string for unidentified', () => {
+    it('returns LTC if one channel is not on the same page', () => {
       node2Policy.feeRateMilliMsat = '1000'
 
-      expect(getChannelSymbol(node1Policy, node2Policy)).to.be.equal('')
+      expect(getChannelSymbol(node1Policy, node2Policy)).to.be.equal('LTC')
+    })
+
+    it('returns undefined if no symbol is defined', () => {
+      node2Policy.feeRateMilliMsat = '1000'
+      node1Policy.feeRateMilliMsat = '1000'
+
+      expect(getChannelSymbol(node1Policy, node2Policy)).to.be.undefined()
+    })
+
+    it('throws if the channels disagree', () => {
+      node1Policy.feeRateMilliMsat = '6667'
+
+      expect(() => { getChannelSymbol(node1Policy, node2Policy) }).to.throw('disagree')
     })
   })
 })
