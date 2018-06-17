@@ -69,7 +69,7 @@ async function getChannelBalances () {
     return balancesToHash(balances)
   }
 
-  const updatedBalances = channels.reduce(async (acc, { chanId, localBalance }) => {
+  const updatedBalances = await channels.reduce(async (acc, { chanId, localBalance }) => {
     const symbol = await getChannelTypeFromId(chanId, this.client)
 
     if (!symbol) {
@@ -86,7 +86,7 @@ async function getChannelBalances () {
 
     acc[symbol] = acc[symbol].add(balance)
     return acc
-  }, balances)
+  }, Promise.resolve(balances))
 
   return balancesToHash(updatedBalances)
 }
