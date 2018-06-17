@@ -2,6 +2,8 @@ const { describeGraph, getInfo, listChannels, sendToRoute } = require('../lnd-ac
 const { LTC_FEE_PER_KW, BTC_FEE_PER_KW } = require('../config')
 const { Big } = require('../utils')
 const MIN_FINAL_CLTV_EXPIRY_DELTA = 9
+// CLTV Buffer protects us from a block ticking while the HTLC is being processed
+const CLTV_BUFFER = 1
 
 /**
  * Executes a swap as the initiating node
@@ -79,7 +81,7 @@ function routeFromPath (amountToSend, blockHeight, finalCLTVDelta, path) {
   const backtrack = path.slice().reverse()
 
   let currentAmountMsat = amountToSendMsat
-  let currentCLTV = blockHeight + finalCLTVDelta
+  let currentCLTV = blockHeight + finalCLTVDelta + CLTV_BUFFER
 
   const hops = backtrack.map((channel, index) => {
     const hop = {
@@ -102,7 +104,7 @@ function routeFromPath (amountToSend, blockHeight, finalCLTVDelta, path) {
       // this node's next channel is what determines the fee/timelock to transit the link
       const nextChannel = backtrack[index - 1]
       feeMsat = computeFee(currentAmountMsat, nextChannel.policy)
-      timeLockDelta = nextChannel.policy.timeLockDelta
+      timeLockDelta = nextChannel.policy.timeLockDelta + CLTV_BUFFER
     }
 
     hop.feeMsat = feeMsat

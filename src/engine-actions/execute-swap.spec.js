@@ -46,7 +46,7 @@ describe('execute-swap', () => {
     it('calculates the total time lock', () => {
       const route = routeFromPath(amountToSend, blockHeight, finalCLTVDelta, path)
 
-      expect(route).to.have.property('totalTimeLock', 5019)
+      expect(route).to.have.property('totalTimeLock', 5021)
     })
 
     it('calculates the total fees', () => {
@@ -86,8 +86,8 @@ describe('execute-swap', () => {
     it('includes expiry in the hop', () => {
       const route = routeFromPath(amountToSend, blockHeight, finalCLTVDelta, path)
 
-      expect(route.hops[0]).to.have.property('expiry', 5009)
-      expect(route.hops[1]).to.have.property('expiry', 5009)
+      expect(route.hops[0]).to.have.property('expiry', 5010)
+      expect(route.hops[1]).to.have.property('expiry', 5010)
     })
 
     it('includes the amount to forward in the hop', () => {
