@@ -197,11 +197,7 @@ function getBandwidthHints (channels, identityPubkey) {
 function findPaths (edges, hints, fromPubKey, toPubKey, symbol, amount, visited = []) {
   const candidates = findOutboundChannels(edges, hints, fromPubKey, symbol, amount, visited)
 
-  const endOfPath = candidates.find((channel) => {
-    if (channel.toPubKey === toPubKey) {
-      return true
-    }
-  })
+  const endOfPath = candidates.find((c) => c.toPubKey === toPubKey)
 
   // we found our target pubkey, so return
   if (endOfPath) return [ endOfPath ]
