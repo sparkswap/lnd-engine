@@ -23,7 +23,7 @@ npm run build
 npm test
 ```
 
-You can access the repl through `docker-compose run repl npm run c` and view all available commands with `commands`
+You can access the repl through `docker-compose run lnd_repl` and view all available commands with `commands`
 
 #### Using the docker files in your personal project
 
