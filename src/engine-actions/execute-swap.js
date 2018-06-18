@@ -182,7 +182,6 @@ function getBandwidthHints (channels, identityPubkey) {
   }, {})
 }
 
-// naive path finding - find any path that works
 /**
  * Find a path that can route from one pubkey to another with an `amount` of `symbol`
  * @param  {Array<LND~ChannelEdge} edges      Edges of the known network from LND~DescribeGraph
