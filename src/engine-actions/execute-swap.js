@@ -1,8 +1,26 @@
 const { describeGraph, getInfo, listChannels, sendToRoute } = require('../lnd-actions')
 const { LTC_FEE_MILLI_MSAT, BTC_FEE_MILLI_MSAT, SUPPORTED_SYMBOLS } = require('../config')
 const { Big } = require('../utils')
+/**
+ * This is the default timelock delta for the final hop in the chain.
+ * This is typically specified by the payment request
+ * @see `min_final_cltv_expiry` in {@link https://github.com/lightningnetwork/lightning-rfc/blob/master/11-payment-encoding.md#tagged-fields}
+ * When it is not defined by the payee (as in this case, where we're not satisfying a payment request),
+ * we use a default for the final hop.
+ * @see {@link https://github.com/lightningnetwork/lnd/blob/26636ce9943c4f0300a1d006c1f7ae3ebf078519/routing/router.go#L33}
+ * @type {Number}
+ * @default 9
+ * @constant
+ */
 const MIN_FINAL_CLTV_EXPIRY_DELTA = 9
-// CLTV Buffer protects us from a block ticking while the HTLC is being processed
+/**
+ * If a block is mined while the route is processing, one of the calculated CLTV Deltas may be too small
+ * causing the payment to fail. We add an extra block buffer to every step to ensure it won't fail.
+ * This is especially problematic on simnet where we mine blocks every 10 seconds, but it is a known issue on mainnet
+ * @see {@link https://github.com/lightningnetwork/lnd/issues/535}
+ * @type {Number}
+ * @constant
+ */
 const CLTV_BUFFER = 1
 
 /**
