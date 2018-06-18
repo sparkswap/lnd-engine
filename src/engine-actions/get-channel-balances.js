@@ -69,9 +69,16 @@ async function getChannelBalances () {
     return balancesToHash(balances)
   }
 
+  this.logger.debug(channels)
+  this.logger.debug(channels.length)
+
   // Using a for-in loop instead of reduce due to async w/ `getChannelTypeFromId`
   for (let { chanId, localBalance } in channels) {
+    this.logger.debug(chanId)
+
     const symbol = await getChannelTypeFromId(chanId, this.client)
+
+    this.logger.debug(symbol)
 
     if (!symbol) {
       this.logger.debug('Symbol could not be found from channel info', { chanId })
