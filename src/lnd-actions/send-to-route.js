@@ -11,10 +11,11 @@ const { deadline } = require('../grpc-utils')
  */
 function sendToRoute (paymentHash, routes, { client }) {
   return new Promise((resolve, reject) => {
-    // Although the LND RPC proto suggest that it supports a `bytes` parameter of `paymentHash`
-    // It does not pass through correctly when using `SendToRouteSync`
-    // @see {@link https://github.com/lightningnetwork/lnd/blob/master/rpcserver.go#L2356}
-    // @see {@link https://trello.com/c/lc3URJ4G/335-submit-bugfix-for-lnd-sendtoroutesync-paymenthash}
+    /** Although the LND RPC proto suggest that it supports a `bytes` parameter of `paymentHash`
+     * It does not pass through correctly when using `SendToRouteSync` and rejects as an invalid payment hash
+     * @see {@link https://github.com/lightningnetwork/lnd/blob/master/rpcserver.go#L2356}
+     * @see {@link https://trello.com/c/lc3URJ4G/335-submit-bugfix-for-lnd-sendtoroutesync-paymenthash}
+     */
     try {
       const paymentHashString = Buffer.from(paymentHash, 'base64').toString('hex')
 
