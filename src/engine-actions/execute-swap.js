@@ -265,9 +265,8 @@ function findOutboundChannels (edges, hints, fromPubKey, symbol, amount, visited
         return filtered
       }
     } else if (Big(capacity).lt(amount)) {
-        // not enough capacity
-        return filtered
-      }
+      // not enough capacity
+      return filtered
     }
 
     const channel = {
