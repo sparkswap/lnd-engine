@@ -5,7 +5,7 @@
  * @type {String}
  * @default
  */
-const LTC_FEE_MILLI_SAT = '7667'
+const LTC_FEE_MILLI_MSAT = '7667'
 
 /**
  * BTC Channel fee in mSat
@@ -14,7 +14,7 @@ const LTC_FEE_MILLI_SAT = '7667'
  * @type {String}
  * @default
  */
-const BTC_FEE_MILLI_SAT = '6667'
+const BTC_FEE_MILLI_MSAT = '6667'
 
 /**
  * @constant
@@ -27,7 +27,7 @@ const SUPPORTED_SYMBOLS = Object.freeze({
 })
 
 module.exports = {
-  LTC_FEE_MILLI_SAT,
-  BTC_FEE_MILLI_SAT,
+  LTC_FEE_MILLI_MSAT,
+  BTC_FEE_MILLI_MSAT,
   SUPPORTED_SYMBOLS
 }

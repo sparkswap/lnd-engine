@@ -4,8 +4,8 @@ const {
   updateChannelPolicy
 } = require('../lnd-actions')
 const {
-  LTC_FEE_MILLI_SAT,
-  BTC_FEE_MILLI_SAT,
+  LTC_FEE_MILLI_MSAT,
+  BTC_FEE_MILLI_MSAT,
   SUPPORTED_SYMBOLS
 } = require('../config')
 
@@ -60,8 +60,8 @@ function generateChanPointFromChannelInfo (info) {
  * @return {Number} feeRate
  */
 function feeRateFromSymbol (symbol) {
-  if (SUPPORTED_SYMBOLS[symbol] === SUPPORTED_SYMBOLS.BTC) return (parseInt(BTC_FEE_MILLI_SAT, 10) / FEE_RATE_PRECISION)
-  if (SUPPORTED_SYMBOLS[symbol] === SUPPORTED_SYMBOLS.LTC) return (parseInt(LTC_FEE_MILLI_SAT, 10) / FEE_RATE_PRECISION)
+  if (SUPPORTED_SYMBOLS[symbol] === SUPPORTED_SYMBOLS.BTC) return (parseInt(BTC_FEE_MILLI_MSAT, 10) / FEE_RATE_PRECISION)
+  if (SUPPORTED_SYMBOLS[symbol] === SUPPORTED_SYMBOLS.LTC) return (parseInt(LTC_FEE_MILLI_MSAT, 10) / FEE_RATE_PRECISION)
 }
 
 /**
