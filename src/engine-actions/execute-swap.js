@@ -139,16 +139,19 @@ function routeFromPath (amountToSend, blockHeight, finalCLTVDelta, path) {
 /**
  * Compute the fee to use a given channel
  * @param  {String} amount Int64 amount, in millisatoshis to be sent
- * @param  {LND~RoutingPolicy} policy Routing policy for the channel
- * @return {String}        Int64 amount, in millisatoshis, of the fee that should be paid
+ * @param  {LND~RoutingPolicy} policy       Routing policy for the channel
+ * @param  {String} policy.feeBaseMsat      The fee in millisatoshis, that will be charged to use this link regardless of amount
+ * @param  {String} policy.feeRateMilliMsat The fee in millisatoshis, that will be charged per million millisatoshis that transit this link (in addition to the base fee)
+ * @return {String}                         Int64 amount, in millisatoshis, of the fee that should be paid
  */
 function computeFee (amount, policy) {
   const baseFee = Big(policy.feeBaseMsat)
   const feeRate = Big(policy.feeRateMilliMsat)
 
-  // fees are per million satoshis
-  // we need to round up so that our fee will be accepted
-  // @see {@link https://github.com/lightningnetwork/lightning-rfc/blob/master/07-routing-gossip.md#htlc-fees}
+  /**
+   * we need to round up so that our fee will be accepted
+   * @see {@link https://github.com/lightningnetwork/lightning-rfc/blob/master/07-routing-gossip.md#htlc-fees}
+   */
   const variableFee = feeRate.times(amount).div(1000000).round(0, 3)
 
   return baseFee.plus(variableFee).toString()
