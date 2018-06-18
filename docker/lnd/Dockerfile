@@ -17,7 +17,7 @@ RUN apk add --no-cache \
     make \
     openssl
 
-WORKDIR $GOPATH/src/github.com/kinesis-exchange/lnd
+WORKDIR $GOPATH/src/github.com/lightningnetwork/lnd
 
 RUN git clone --branch ${LND_VERSION} https://github.com/kinesis-exchange/lnd . \
 &&  make \
