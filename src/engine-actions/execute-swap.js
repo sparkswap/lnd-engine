@@ -1,6 +1,5 @@
 const { describeGraph, getInfo, listChannels, sendToRoute } = require('../lnd-actions')
-const { LTC_FEE_MILLI_MSAT, BTC_FEE_MILLI_MSAT, SUPPORTED_SYMBOLS } = require('../config')
-const { Big } = require('../utils')
+const { Big, getChannelSymbol } = require('../utils')
 /**
  * This is the default timelock delta for the final hop in the chain.
  * This is typically specified by the payment request
@@ -283,41 +282,6 @@ function findOutboundChannels (edges, hints, fromPubKey, symbol, amount, visited
 
     return filtered
   }, [])
-}
-
-/**
- * Get the blockchain of the channel based on policy hints
- * @param  {LND~RoutePolicy} node1Policy Route policy of one of the nodes in the channel
- * @param  {LND~RoutePolicy} node2Policy Route policy of the other node in the channel
- * @return {String}                      `BTC` or `LTC`
- */
-function getChannelSymbol (node1Policy, node2Policy) {
-  const feeRates = [ node1Policy.feeRateMilliMsat, node2Policy.feeRateMilliMsat ]
-  const hasLTCFees = feeRates.some(feeRate => getSymbolForFeeRate(feeRate) === SUPPORTED_SYMBOLS.LTC)
-  const hasBTCFees = feeRates.some(feeRate => getSymbolForFeeRate(feeRate) === SUPPORTED_SYMBOLS.BTC)
-
-  if (hasLTCFees && !hasBTCFees) {
-    return SUPPORTED_SYMBOLS.LTC
-  } else if (hasBTCFees && !hasLTCFees) {
-    return SUPPORTED_SYMBOLS.BTC
-  }
-
-  if (hasLTCFees || hasBTCFees) {
-    throw new Error(`Channels have disagreeing fee rate policies: ${feeRates[0]} (${getSymbolForFeeRate(feeRates[0])}), ${feeRates[1]} (${getSymbolForFeeRate(feeRates[1])})`)
-  }
-}
-
-/**
- * Get the blockchain associated with a given channeel fee rate
- * @param  {String} feeRate Int64 string of the fee rate (proportional millionths) in mSat
- * @return {String}         `LTC` or `BTC`
- */
-function getSymbolForFeeRate (feeRate) {
-  if (feeRate === LTC_FEE_MILLI_MSAT) {
-    return SUPPORTED_SYMBOLS.LTC
-  } else if (feeRate === BTC_FEE_MILLI_MSAT) {
-    return SUPPORTED_SYMBOLS.BTC
-  }
 }
 
 module.exports = executeSwap
