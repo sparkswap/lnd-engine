@@ -3,7 +3,7 @@ const { LTC_FEE_MILLI_MSAT, BTC_FEE_MILLI_MSAT, SUPPORTED_SYMBOLS } = require('.
 /**
  * Get the blockchain associated with a given channeel fee rate
  * @param  {String|Number} feeRate Int64 string or Number of the fee rate (proportional millionths) in mSat
- * @return {String}         `LTC` or `BTC`
+ * @return {String|undefined}      `LTC` or `BTC` or undefined if no fee rate
  */
 function symbolForFeeRate (feeRate) {
   feeRate = feeRate.toString()
@@ -20,7 +20,7 @@ function symbolForFeeRate (feeRate) {
  * feeRate for the type of currency.
  *
  * @param {String} symbol
- * @return {String} feeRate fee rate (proportional millionths) in mSat
+ * @return {String|undefined} feeRate fee rate (proportional millionths) in mSat or `undefined` if no fee rate
  */
 function feeRateForSymbol (symbol) {
   if (SUPPORTED_SYMBOLS[symbol] === SUPPORTED_SYMBOLS.BTC) return BTC_FEE_MILLI_MSAT
@@ -31,7 +31,7 @@ function feeRateForSymbol (symbol) {
  * Guesses the symbol based off of the channel's policies
  * @param  {LND~RoutePolicy} node1Policy Route policy of one of the nodes in the channel
  * @param  {LND~RoutePolicy} node2Policy Route policy of the other node in the channel
- * @return {String}                      `BTC` or `LTC`
+ * @return {String|Boolean}              `BTC` or `LTC` if defined, false otherwise
  * @throws {Error} If Policies indicate mismmatched symbols
  */
 function getChannelSymbol (node1Policy, node2Policy) {
