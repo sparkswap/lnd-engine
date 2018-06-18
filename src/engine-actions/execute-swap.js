@@ -60,9 +60,19 @@ async function executeSwap (counterpartyPubKey, swapHash, inbound, outbound) {
     throw new Error(`Can't find a route between ${identityPubkey} and ${counterpartyPubKey} to swap ${outbound.amount} ${outbound.symbol} for ${inbound.amount} ${inbound.symbol}`)
   }
 
-  // construct a valid route
-  // TODO: need to construct two routes and then stitch them together, not treat as one big route
-  const route = routeFromPath(inbound.amount, blockHeight, MIN_FINAL_CLTV_EXPIRY_DELTA, outboundPath.concat(inboundPath))
+  const inboundRoute = routeFromPath(inbound.amount, blockHeight, MIN_FINAL_CLTV_EXPIRY_DELTA, inboundPath)
+  this.logger.debug(`Constructed an inbound route for ${swapHash}`, { inboundRoute })
+  const outboundRoute = routeFromPath(outbound.amount, blockHeight, inboundRoute.totalTimeLock, outboundPath)
+  this.logger.debug(`Constructed an outbound route for ${swapHash}`, { outboundRoute })
+
+  // construct a valid route that is stithced together so we can have different outbound and inbound amounts
+  const route = {
+    totalTimeLock: outboundRoute.totalTimeLock, // timelock is a uint32, so needs to be a number
+    totalAmtMsat: outboundRoute.totalAmtMsat,
+    totalFeesMsat: Big(outboundRoute.totalFeesMsat).plus(inboundRoute.totalFeesMsat).toString(),
+    hops: outboundRoute.hops.concat(inboundRoute.hops)
+  }
+
   this.logger.debug(`Constructed a route for ${swapHash}`, { route })
 
   const { paymentError, paymentPreimage } = await sendToRoute(swapHash, [ route ], { client: this.client })
