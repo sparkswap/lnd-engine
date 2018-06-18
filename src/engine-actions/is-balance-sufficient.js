@@ -1,5 +1,5 @@
 const { listChannels } = require('../lnd-actions')
-
+const { Big } = require('../utils')
 /**
  * Returns a boolean, true if there is an active channel between caller and remote parties that sufficient funds for an order, false if not
  *
@@ -27,8 +27,7 @@ async function isBalanceSufficient (destinationPublicKey, minValue, { outbound =
   }
 
   const activeChannelsFromDestination = activeChannels.filter(ac => ac.remotePubkey === destinationPublicKey)
-
-  return activeChannelsFromDestination.some(channel => channel[balance] >= minValue)
+  return activeChannelsFromDestination.some(channel => Big(channel[balance]).gte(minValue))
 }
 
 module.exports = isBalanceSufficient
