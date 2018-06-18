@@ -156,6 +156,7 @@ function computeFee (amount, policy) {
 
 /**
  * Construct an object with specific bandwidth for channels that we are party to
+ * Bandwidth hints are more precise measures of bandwidth available on a channel in each direction
  * @param  {Array<Channel>} channels List of channels we are party to
  * @param  {String} identityPubkey   Our Public Key
  * @return {Object}                  Key value of channel IDs and available balance by source public key
@@ -173,6 +174,17 @@ function getBandwidthHints (channels, identityPubkey) {
 }
 
 // naive path finding - find any path that works
+/**
+ * Find a path that can route from one pubkey to another with an `amount` of `symbol`
+ * @param  {Array<LND~ChannelEdge} edges      Edges of the known network from LND~DescribeGraph
+ * @param  {Object}                hints      Key value of channel bandwidth hints from `getBandwidthHints`
+ * @param  {String}                fromPubKey Public key of the node we are routing from
+ * @param  {String}                toPubKey   Public key of the node we are routing to
+ * @param  {String}                symbol     Symbol of the currency we are routing (i.e. `BTC` or `LTC`)
+ * @param  {String}                amount     Int64 string of the amount of base units (e.g. Satoshis) we are routing
+ * @param  {Array<String>}         visited    Array of channel ids that we have previosly tried
+ * @return {Array}                            A viable path
+ */
 function findPaths (edges, hints, fromPubKey, toPubKey, symbol, amount, visited = []) {
   const candidates = findOutboundChannels(edges, hints, fromPubKey, symbol, amount, visited)
 
@@ -209,7 +221,11 @@ function findPaths (edges, hints, fromPubKey, toPubKey, symbol, amount, visited 
 }
 
 /**
- * Find all channels from a given node that meet the other criteria
+ * Find all channels that:
+ *  - are connected to a given node
+ *  - are of the right symbol
+ *  - have not already been visited
+ *  - have sufficient bandwidth or capacity (as far as we can tell) to support the transaction
  * @param  {Array<LND~ChannelEdge} edges      Channel edges available in the graph
  * @param  {Object}                hints      Key value of channel bandwidth hints from `getBandwidthHints`
  * @param  {String}                fromPubKey Public key of the source node
@@ -237,15 +253,15 @@ function findOutboundChannels (edges, hints, fromPubKey, symbol, amount, visited
 
     /**
      * If we have bandwidth hints for this channel we should use them, otherwise fall back to capacity
+     * @see getBandwidthHints
      * @param  {Object} hints[channelId] Hints for balance on each side of this channel
      */
     if (hints[channelId]) {
       if (Big(hints[channelId][fromPubKey]).lt(amount)) {
         return filtered
       }
-    } else {
-      // not enough capacity
-      if (Big(capacity).lt(amount)) {
+    } else if (Big(capacity).lt(amount)) {
+        // not enough capacity
         return filtered
       }
     }
