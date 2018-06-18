@@ -80,7 +80,7 @@ async function createChannel (host, publicKey, fundingAmount, symbol) {
 
   // TODO check the funding defaults (usually 20000 satosh) and fail before contacting
   // LND
-  this.logger.debug(`Attempting to create channel with ${host}`)
+  this.logger.debug(`Attempting to create  ${symbol} channel with ${host}`)
 
   await connectPeer(publicKey, host, { client: this.client, logger: this.logger })
 
