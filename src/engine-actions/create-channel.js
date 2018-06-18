@@ -4,10 +4,11 @@ const {
   updateChannelPolicy
 } = require('../lnd-actions')
 const {
-  LTC_FEE_MILLI_MSAT,
-  BTC_FEE_MILLI_MSAT,
   SUPPORTED_SYMBOLS
 } = require('../config')
+const {
+  feeRateFromSymbol
+} = require('../utils')
 
 /**
  * Default timelock delta
@@ -57,14 +58,18 @@ function generateChanPointFromChannelInfo (info) {
  * Based on a specified channel type (as determined by the symbol) we return the applicable
  * feeRate for the type of currency.
  *
- * Fee rate is calculated as a 6 decimal place precision number (1e-6)
+ * For the `updateChannelPolicy` endpoint, this is expressed as per satoshi transferred
+ * and is a double with 6 decimal place precision (1e-6)
  *
  * @param {String} symbol
  * @return {Number} feeRate
  */
-function feeRateFromSymbol (symbol) {
-  if (SUPPORTED_SYMBOLS[symbol] === SUPPORTED_SYMBOLS.BTC) return (parseInt(BTC_FEE_MILLI_MSAT, 10) / FEE_RATE_PRECISION)
-  if (SUPPORTED_SYMBOLS[symbol] === SUPPORTED_SYMBOLS.LTC) return (parseInt(LTC_FEE_MILLI_MSAT, 10) / FEE_RATE_PRECISION)
+function feeRatePerSatoshiFromSymbol (symbol) {
+  const feeRatePerMillionSatoshis = feeRateFromSymbol(symbol)
+
+  if (!feeRatePerMillionSatoshis) return false
+
+  return (parseInt(feeRatePerMillionSatoshis, 10) / FEE_RATE_PRECISION)
 }
 
 /**
@@ -94,7 +99,7 @@ async function createChannel (host, publicKey, fundingAmount, symbol) {
   this.logger.debug(`Successfully opened channel with: ${host}`)
 
   // TODO: support multiple currencies
-  const feeRate = feeRateFromSymbol(symbol)
+  const feeRate = feeRatePerSatoshiFromSymbol(symbol)
 
   if (!feeRate) {
     this.logger.error('Unable to generate fee from provided symbol')
