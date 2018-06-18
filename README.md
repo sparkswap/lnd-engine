@@ -78,6 +78,7 @@ isBalanceSufficient()
 payInvoice(invoiceRequest)
 prepareSwap(swapHash, inbound, outbound)
 executeSwap(counterpartyPubKey, swapHash, inbound, outbound)
+createRefundInvoice(paymentRequest)
 ```
 
 ### IMPORTANT ABOUT SSL and NODEJS:
