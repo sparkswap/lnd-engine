@@ -10,11 +10,14 @@ const {
 } = require('../config')
 
 /**
+ * Default timelock delta
+ *
+ * @see {@link https://github.com/lightningnetwork/lnd/blob/master/chainregistry.go}
  * @constant
  * @type {Number}
  * @default
  */
-const TIMELOCK_DELTA = 9
+const TIMELOCK_DELTA = 144
 
 /**
  * Whole number value for milli-satoshi fee rate
@@ -80,7 +83,7 @@ async function createChannel (host, publicKey, fundingAmount, symbol) {
 
   // TODO check the funding defaults (usually 20000 satosh) and fail before contacting
   // LND
-  this.logger.debug(`Attempting to create channel with ${host}`)
+  this.logger.debug(`Attempting to create  ${symbol} channel with ${host}`)
 
   await connectPeer(publicKey, host, { client: this.client, logger: this.logger })
 
