@@ -155,11 +155,17 @@ function computeFee (amount, policy) {
 }
 
 /**
+ * @typedef {Object} BandwidthHint
+ * @property {String} <PublicKeyA> The int64 string amount, in base units (e.g. Satoshis) that is available on <PublicKeyA>'s side fo the channel for sending to <PublicKeyB>
+ * @property {String} <PublicKeyB> The int64 string amount, in base units (e.g. Satoshis) that is available on <PublicKeyA>'s side fo the channel for sending to <PublicKeyB>
+ */
+
+/**
  * Construct an object with specific bandwidth for channels that we are party to
  * Bandwidth hints are more precise measures of bandwidth available on a channel in each direction
- * @param  {Array<Channel>} channels List of channels we are party to
- * @param  {String} identityPubkey   Our Public Key
- * @return {Object}                  Key value of channel IDs and available balance by source public key
+ * @param  {Array<Channel>}                    channels       List of channels we are party to
+ * @param  {String}                            identityPubkey Our Public Key
+ * @return {Object.<ChannelId, BandwidthHint>} Key value of channel IDs and available balance by source public key
  */
 function getBandwidthHints (channels, identityPubkey) {
   const activeChannels = channels.filter(c => c.active)
