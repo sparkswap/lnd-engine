@@ -10,11 +10,14 @@ const {
 } = require('../config')
 
 /**
+ * Default timelock delta
+ *
+ * @see {@link https://github.com/lightningnetwork/lnd/blob/master/chainregistry.go}
  * @constant
  * @type {Number}
  * @default
  */
-const TIMELOCK_DELTA = 9
+const TIMELOCK_DELTA = 144
 
 /**
  * Whole number value for milli-satoshi fee rate

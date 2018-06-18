@@ -7,7 +7,7 @@ const { deadline } = require('../grpc-utils')
  * @see {@link http://api.lightning.community/#getChanInfo}
  * @return {String} identityPubkey
  */
-function getChannelInfo (chanId, { client }) {
+function getChanInfo (chanId, { client }) {
   return new Promise((resolve, reject) => {
     client.getChanInfo({ chanId }, { deadline: deadline() }, (err, res) => {
       if (err) return reject(err)
@@ -16,4 +16,4 @@ function getChannelInfo (chanId, { client }) {
   })
 }
 
-module.exports = getChannelInfo
+module.exports = getChanInfo

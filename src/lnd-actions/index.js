@@ -11,7 +11,7 @@ const decodePaymentRequest = require('./decode-payment-request')
 const listChannels = require('./list-channels')
 const sendPayment = require('./send-payment')
 const updateChannelPolicy = require('./update-channel-policy')
-const getChannelInfo = require('./get-channel-info')
+const getChanInfo = require('./get-chan-info')
 
 module.exports = {
   addInvoice,
@@ -27,5 +27,5 @@ module.exports = {
   listChannels,
   sendPayment,
   updateChannelPolicy,
-  getChannelInfo
+  getChanInfo
 }

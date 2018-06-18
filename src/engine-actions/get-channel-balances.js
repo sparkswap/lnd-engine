@@ -2,11 +2,11 @@ const { Big } = require('../utils')
 
 const {
   listChannels,
-  getChannelInfo
+  getChanInfo
 } = require('../lnd-actions')
 const {
-  LTC_FEE_MILLI_SAT,
-  BTC_FEE_MILLI_SAT,
+  LTC_FEE_MILLI_MSAT,
+  BTC_FEE_MILLI_MSAT,
   SUPPORTED_SYMBOLS
 } = require('../config')
 
@@ -36,15 +36,23 @@ function balancesToHash (balances) {
  * @return {false} if no symbol could be derived from fees
  */
 async function getChannelTypeFromId (chanId, client) {
-  const { node1Policy, node2Policy } = await getChannelInfo(chanId, { client })
+  const { node1Policy, node2Policy } = await getChanInfo(chanId, { client })
   const { feeRateMilliMsat: node1feerate } = node1Policy
   const { feeRateMilliMsat: node2feerate } = node2Policy
 
-  if (node1feerate === LTC_FEE_MILLI_SAT || node2feerate === LTC_FEE_MILLI_SAT) {
+  if (node1feerate === LTC_FEE_MILLI_MSAT && node2feerate === BTC_FEE_MILLI_MSAT) {
+    throw new Error('Channel fee mismatch has occurred and prevents the channel from being opened. n1: LTC, n2: BTC')
+  }
+
+  if (node1feerate === BTC_FEE_MILLI_MSAT && node2feerate === LTC_FEE_MILLI_MSAT) {
+    throw new Error('Channel fee mismatch has occurred and prevents the channel from being opened. n1: BTC, n2: LTC')
+  }
+
+  if (node1feerate === LTC_FEE_MILLI_MSAT || node2feerate === LTC_FEE_MILLI_MSAT) {
     return SUPPORTED_SYMBOLS.LTC
   }
 
-  if (node1feerate === BTC_FEE_MILLI_SAT || node2feerate === BTC_FEE_MILLI_SAT) {
+  if (node1feerate === BTC_FEE_MILLI_MSAT || node2feerate === BTC_FEE_MILLI_MSAT) {
     return SUPPORTED_SYMBOLS.BTC
   }
 
