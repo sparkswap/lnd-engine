@@ -1,5 +1,5 @@
 const { describeGraph, getInfo, listChannels, sendToRoute } = require('../lnd-actions')
-const { LTC_FEE_PER_KW, BTC_FEE_PER_KW } = require('../config')
+const { LTC_FEE_MILLI_MSAT, BTC_FEE_MILLI_MSAT, SUPPORTED_SYMBOLS } = require('../config')
 const { Big } = require('../utils')
 const MIN_FINAL_CLTV_EXPIRY_DELTA = 9
 // CLTV Buffer protects us from a block ticking while the HTLC is being processed
@@ -256,13 +256,13 @@ function findOutboundChannels (edges, hints, fromPubKey, symbol, amount, visited
  */
 function getChannelSymbol (node1Policy, node2Policy) {
   const feeRates = [ node1Policy.feeRateMilliMsat, node2Policy.feeRateMilliMsat ]
-  const hasLTCFees = feeRates.some(feeRate => getSymbolForFeeRate(feeRate) === 'LTC')
-  const hasBTCFees = feeRates.some(feeRate => getSymbolForFeeRate(feeRate) === 'BTC')
+  const hasLTCFees = feeRates.some(feeRate => getSymbolForFeeRate(feeRate) === SUPPORTED_SYMBOLS.LTC)
+  const hasBTCFees = feeRates.some(feeRate => getSymbolForFeeRate(feeRate) === SUPPORTED_SYMBOLS.BTC)
 
   if (hasLTCFees && !hasBTCFees) {
-    return 'LTC'
+    return SUPPORTED_SYMBOLS.LTC
   } else if (hasBTCFees && !hasLTCFees) {
-    return 'BTC'
+    return SUPPORTED_SYMBOLS.BTC
   }
 
   if (hasLTCFees || hasBTCFees) {
@@ -276,10 +276,10 @@ function getChannelSymbol (node1Policy, node2Policy) {
  * @return {String}         `LTC` or `BTC`
  */
 function getSymbolForFeeRate (feeRate) {
-  if (feeRate === LTC_FEE_PER_KW) {
-    return 'LTC'
-  } else if (feeRate === BTC_FEE_PER_KW) {
-    return 'BTC'
+  if (feeRate === LTC_FEE_MILLI_MSAT) {
+    return SUPPORTED_SYMBOLS.LTC
+  } else if (feeRate === BTC_FEE_MILLI_MSAT) {
+    return SUPPORTED_SYMBOLS.BTC
   }
 }
 
