@@ -40,7 +40,7 @@ describe('createChannel', () => {
     createChannel.__set__('connectPeer', connectPeerStub)
     createChannel.__set__('openChannel', openChannelStub)
     createChannel.__set__('updateChannelPolicy', updateChannelStub)
-    createChannel.__set__('feeRateFromSymbol', feeRateStub)
+    createChannel.__set__('feeRateForSymbol', feeRateStub)
     createChannel.__set__('generateChanPointFromChannelInfo', generateStub)
     createChannel.__set__('client', clientStub)
     createChannel.__set__('logger', loggerStub)
