@@ -38,7 +38,7 @@ describe('pay-invoice', () => {
     expect(sendPaymentStub).to.have.been.calledWith(paymentRequest, { client: clientStub })
   })
 
-  it('returns null', () => {
+  it('returns the payment preimage', () => {
     expect(res).to.eql(paymentPreimage)
   })
 })
