@@ -50,29 +50,20 @@ async function executeSwap (counterpartyPubKey, swapHash, inbound, outbound) {
   this.logger.debug(`Got bandwidth hints for ${swapHash}`, { hints })
 
   // find paths
-  const outboundPaths = findPaths(graph.edges, hints, identityPubkey, counterpartyPubKey, outbound.symbol, outbound.amount)
-  this.logger.debug(`Found ${outboundPaths.length} outbound paths to ${counterpartyPubKey} for ${swapHash}`)
+  const outboundPath = findPaths(graph.edges, hints, identityPubkey, counterpartyPubKey, outbound.symbol, outbound.amount)
+  this.logger.debug(`Found an outbound path to ${counterpartyPubKey} for ${swapHash}`, { path: outboundPath })
 
-  const inboundPaths = findPaths(graph.edges, hints, counterpartyPubKey, identityPubkey, inbound.symbol, inbound.amount)
-  this.logger.debug(`Found ${inboundPaths.length} inbound paths to ${counterpartyPubKey} for ${swapHash}`)
+  const inboundPath = findPaths(graph.edges, hints, counterpartyPubKey, identityPubkey, inbound.symbol, inbound.amount)
+  this.logger.debug(`Found an inbound path from ${counterpartyPubKey} for ${swapHash}`, { path: inboundPath })
 
-  if (!outboundPaths.length || !inboundPaths.length) {
+  if (!outboundPath || !inboundPath) {
     throw new Error(`Can't find a route between ${identityPubkey} and ${counterpartyPubKey} to swap ${outbound.amount} ${outbound.symbol} for ${inbound.amount} ${inbound.symbol}`)
   }
 
-  const routes = []
+  const route = routeFromPath(inbound.amount, blockHeight, MIN_FINAL_CLTV_EXPIRY_DELTA, outboundPath.concat(inboundPath), outboundPath.length - 1, outbound.amount)
+  this.logger.debug(`Constructed a route for ${swapHash}`, { route })
 
-  outboundPaths.forEach((outboundPath) => {
-    inboundPaths.forEach((inboundPath) => {
-      const route = routeFromPath(inbound.amount, blockHeight, MIN_FINAL_CLTV_EXPIRY_DELTA, outboundPath.concat(inboundPath), outboundPath.length - 1, outbound.amount)
-      this.logger.debug(`Constructed a route for ${swapHash}`, { route })
-      routes.push(route)
-    })
-  })
-
-  this.logger.info(`Found ${routes.length} routes from ${identityPubkey} to ${counterpartyPubKey} for ${swapHash}`)
-
-  const { paymentError, paymentPreimage } = await sendToRoute(swapHash, routes, { client: this.client })
+  const { paymentError, paymentPreimage } = await sendToRoute(swapHash, [ route ], { client: this.client })
 
   if (paymentError) {
     throw new Error(`Error from LND while sending to route: ${paymentError}`)
@@ -210,7 +201,7 @@ function getBandwidthHints (channels, identityPubkey) {
  * @param  {String}                symbol     Symbol of the currency we are routing (i.e. `BTC` or `LTC`)
  * @param  {String}                amount     Int64 string of the amount of base units (e.g. Satoshis) we are routing
  * @param  {Array<String>}         visited    Array of channel ids that we have previosly tried
- * @return {Array<Array>}                     An array of viable paths
+ * @return {Array}                            A viable path
  */
 function findPaths (edges, hints, fromPubKey, toPubKey, symbol, amount, visited = []) {
   const candidates = findOutboundChannels(edges, hints, fromPubKey, symbol, amount, visited)
@@ -228,8 +219,8 @@ function findPaths (edges, hints, fromPubKey, toPubKey, symbol, amount, visited 
     // find the rest of the path
     const restOfPath = findPaths(edges, hints, candidate.toPubKey, toPubKey, symbol, amount, localVisited)
 
-    if (restOfPath.length) {
-      return restOfPath.map(rest => [ candidate, ...rest ])
+    if (restOfPath) {
+      return [ candidate, ...restOfPath ]
     }
 
     return [ candidate ]
@@ -240,7 +231,7 @@ function findPaths (edges, hints, fromPubKey, toPubKey, symbol, amount, visited 
 
   // if we have anything, return it
   // TODO: return multiple paths so that LND has some route choices
-  return paths
+  return paths[0]
 }
 
 /**
