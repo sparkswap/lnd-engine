@@ -7,7 +7,7 @@ const {
   SUPPORTED_SYMBOLS
 } = require('../config')
 const {
-  feeRateFromSymbol
+  feeRateForSymbol
 } = require('../utils')
 
 /**
@@ -64,8 +64,8 @@ function generateChanPointFromChannelInfo (info) {
  * @param {String} symbol
  * @return {Number} feeRate
  */
-function feeRatePerSatoshiFromSymbol (symbol) {
-  const feeRatePerMillionSatoshis = feeRateFromSymbol(symbol)
+function feeRatePerSatoshiForSymbol (symbol) {
+  const feeRatePerMillionSatoshis = feeRateForSymbol(symbol)
 
   if (!feeRatePerMillionSatoshis) return false
 
@@ -99,7 +99,7 @@ async function createChannel (host, publicKey, fundingAmount, symbol) {
   this.logger.debug(`Successfully opened channel with: ${host}`)
 
   // TODO: support multiple currencies
-  const feeRate = feeRatePerSatoshiFromSymbol(symbol)
+  const feeRate = feeRatePerSatoshiForSymbol(symbol)
 
   if (!feeRate) {
     this.logger.error('Unable to generate fee from provided symbol')
