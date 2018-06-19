@@ -45,6 +45,8 @@ async function executeSwap (counterpartyPubKey, swapHash, inbound, outbound) {
     listChannels({ client: this.client })
   ])
 
+  this.logger.debug(`Retrieved channel graph with ${graph.edges.length} edges`, { graph })
+
   const hints = getBandwidthHints(channels, identityPubkey)
 
   this.logger.debug(`Got bandwidth hints for ${swapHash}`, { hints })
