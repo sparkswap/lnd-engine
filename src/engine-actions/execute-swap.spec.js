@@ -6,7 +6,9 @@ const executeSwap = rewire(path.resolve(__dirname, 'execute-swap'))
 describe('execute-swap', () => {
   describe('routeFromPath', () => {
     let routeFromPath
-    let amountToSend
+    let inboundAmount
+    let outboundAmount
+    let counterpartyPosition
     let blockHeight
     let finalCLTVDelta
     let path
@@ -14,7 +16,9 @@ describe('execute-swap', () => {
     beforeEach(() => {
       routeFromPath = executeSwap.__get__('routeFromPath')
 
-      amountToSend = '1000000'
+      counterpartyPosition = 1
+      outboundAmount = '1000000'
+      inboundAmount = '500000'
       blockHeight = 5000
       finalCLTVDelta = 9
       path = [
@@ -31,7 +35,7 @@ describe('execute-swap', () => {
         },
         {
           fromPubKey: 'theirpub',
-          toPubKey: 'anotherpub',
+          toPubKey: 'counterpub',
           channelId: '4321',
           capacity: '20000000',
           policy: {
@@ -39,69 +43,96 @@ describe('execute-swap', () => {
             feeRateMilliMsat: '7667',
             timeLockDelta: 10
           }
+        },
+        {
+          fromPubKey: 'counterpub',
+          toPubKey: 'anotherpub',
+          channelId: '6789',
+          capacity: '20000000',
+          policy: {
+            feeBaseMsat: '1000',
+            feeRateMilliMsat: '6667',
+            timeLockDelta: 10
+          }
+        },
+        {
+          fromPubKey: 'anotherpub',
+          toPubKey: 'mypub',
+          channelId: '9876',
+          capacity: '20000000',
+          policy: {
+            feeBaseMsat: '1000',
+            feeRateMilliMsat: '6667',
+            timeLockDelta: 10
+          }
         }
       ]
     })
 
     it('calculates the total time lock', () => {
-      const route = routeFromPath(amountToSend, blockHeight, finalCLTVDelta, path)
+      const route = routeFromPath(inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount)
 
-      expect(route).to.have.property('totalTimeLock', 5021)
+      expect(route).to.have.property('totalTimeLock', 5043)
     })
 
     it('calculates the total fees', () => {
-      const route = routeFromPath(amountToSend, blockHeight, finalCLTVDelta, path)
+      const route = routeFromPath(inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount)
 
-      expect(route).to.have.property('totalFeesMsat', '7668000')
+      expect(route).to.have.property('totalFeesMsat', '14387124')
     })
 
     it('calculates the total amount to send', () => {
-      const route = routeFromPath(amountToSend, blockHeight, finalCLTVDelta, path)
+      const route = routeFromPath(inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount)
 
-      expect(route).to.have.property('totalAmtMsat', '1007668000')
+      expect(route).to.have.property('totalAmtMsat', '1014387124')
     })
 
     it('constructs hops', () => {
-      const route = routeFromPath(amountToSend, blockHeight, finalCLTVDelta, path)
+      const route = routeFromPath(inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount)
 
       expect(route).to.have.property('hops')
       expect(route.hops).to.be.an('array')
-      expect(route.hops).to.have.lengthOf(2)
+      expect(route.hops).to.have.lengthOf(4)
     })
 
     it('includes channel id in the hop', () => {
-      const route = routeFromPath(amountToSend, blockHeight, finalCLTVDelta, path)
+      const route = routeFromPath(inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount)
 
       expect(route.hops[0]).to.have.property('chanId', '1234')
       expect(route.hops[1]).to.have.property('chanId', '4321')
     })
 
     it('includes channel capacity in the hop', () => {
-      const route = routeFromPath(amountToSend, blockHeight, finalCLTVDelta, path)
+      const route = routeFromPath(inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount)
 
       expect(route.hops[0]).to.have.property('chanCapacity', '10000008')
       expect(route.hops[1]).to.have.property('chanCapacity', '20000000')
     })
 
     it('includes expiry in the hop', () => {
-      const route = routeFromPath(amountToSend, blockHeight, finalCLTVDelta, path)
+      const route = routeFromPath(inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount)
 
-      expect(route.hops[0]).to.have.property('expiry', 5010)
-      expect(route.hops[1]).to.have.property('expiry', 5010)
+      expect(route.hops[0]).to.have.property('expiry', 5032)
+      expect(route.hops[1]).to.have.property('expiry', 5021)
+      expect(route.hops[2]).to.have.property('expiry', 5010)
+      expect(route.hops[3]).to.have.property('expiry', 5010)
     })
 
     it('includes the amount to forward in the hop', () => {
-      const route = routeFromPath(amountToSend, blockHeight, finalCLTVDelta, path)
+      const route = routeFromPath(inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount)
 
-      expect(route.hops[0]).to.have.property('amtToForwardMsat', '1000000000')
+      expect(route.hops[0]).to.have.property('amtToForwardMsat', '1006668000')
       expect(route.hops[1]).to.have.property('amtToForwardMsat', '1000000000')
+      expect(route.hops[2]).to.have.property('amtToForwardMsat', '500000000')
+      expect(route.hops[3]).to.have.property('amtToForwardMsat', '500000000')
     })
 
     it('includes the fee in the hop', () => {
-      const route = routeFromPath(amountToSend, blockHeight, finalCLTVDelta, path)
-
-      expect(route.hops[0]).to.have.property('feeMsat', '7668000')
-      expect(route.hops[1]).to.have.property('feeMsat', '0')
+      const route = routeFromPath(inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount)
+      expect(route.hops[0]).to.have.property('feeMsat', '7719124')
+      expect(route.hops[1]).to.have.property('feeMsat', '6668000')
+      expect(route.hops[2]).to.have.property('feeMsat', '0')
+      expect(route.hops[3]).to.have.property('feeMsat', '0')
     })
   })
 
