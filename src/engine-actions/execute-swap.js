@@ -60,7 +60,7 @@ async function executeSwap (counterpartyPubKey, swapHash, inbound, outbound) {
     throw new Error(`Can't find a route between ${identityPubkey} and ${counterpartyPubKey} to swap ${outbound.amount} ${outbound.symbol} for ${inbound.amount} ${inbound.symbol}`)
   }
 
-  const route = routeFromPath(inbound.amount, blockHeight, MIN_FINAL_CLTV_EXPIRY_DELTA, outboundPath.concat(inboundPath), outboundPath.length, outbound.amount)
+  const route = routeFromPath(inbound.amount, blockHeight, MIN_FINAL_CLTV_EXPIRY_DELTA, outboundPath.concat(inboundPath), outboundPath.length - 1, outbound.amount)
   this.logger.debug(`Constructed a route for ${swapHash}`, { route })
 
   const { paymentError, paymentPreimage } = await sendToRoute(swapHash, [ route ], { client: this.client })
@@ -78,7 +78,7 @@ async function executeSwap (counterpartyPubKey, swapHash, inbound, outbound) {
  * @param {Number} blockHeight Current best block height to build CLTVs on
  * @param {Number} finalCLTVDelta Amount of the final CLTV delta
  * @param  {Array<InternalChannelEdge>} path Array of channel edges in order for the full path
- * @param {Number} counterpartyPosition Index of the channel just after the counteparty node
+ * @param {Number} counterpartyPosition Index of the channel just before the counteparty node
  * @param {String} counterpartyAmount [description]
  * @return {Object}      Route
  */
