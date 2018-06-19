@@ -11,11 +11,13 @@ describe('pay-invoice', () => {
   let paymentRequest
   let res
   let logger
+  let paymentPreimage
 
   beforeEach(() => {
     clientStub = sinon.stub()
     paymentError = null
-    payment = { paymentError }
+    paymentPreimage = 'asdfasdf'
+    payment = { paymentError, paymentPreimage }
     paymentRequest = 'INVOICE_PAYMENT_REQUEST'
     logger = {
       info: sinon.stub(),
@@ -37,6 +39,6 @@ describe('pay-invoice', () => {
   })
 
   it('returns null', () => {
-    expect(res).to.eql(null)
+    expect(res).to.eql(paymentPreimage)
   })
 })

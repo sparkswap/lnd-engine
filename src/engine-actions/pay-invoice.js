@@ -8,11 +8,11 @@ const {
  * @param {String} paymentRequest
  * @param {Object} options
  * @param {Number} expiry expiration of refund invoices
- * @return {String} refundPaymentRequest
+ * @return {String} paymentPreimage
  */
 
 async function payInvoice (paymentRequest, options = {}) {
-  const { paymentError } = await sendPayment(paymentRequest, { client: this.client })
+  const { paymentError, paymentPreimage } = await sendPayment(paymentRequest, { client: this.client })
 
   if (paymentError) {
     this.logger.error('Failed to pay invoice', { paymentRequest })
@@ -21,7 +21,7 @@ async function payInvoice (paymentRequest, options = {}) {
 
   this.logger.debug('Payment successfully made', { paymentRequest })
 
-  return null
+  return paymentPreimage
 }
 
 module.exports = payInvoice
