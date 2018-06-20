@@ -45,6 +45,8 @@ async function executeSwap (counterpartyPubKey, swapHash, inbound, outbound) {
     listChannels({ client: this.client })
   ])
 
+  this.logger.debug(`Retrieved channel graph with ${graph.edges.length} edges`, { graph })
+
   const hints = getBandwidthHints(channels, identityPubkey)
 
   this.logger.debug(`Got bandwidth hints for ${swapHash}`, { hints })
@@ -60,9 +62,7 @@ async function executeSwap (counterpartyPubKey, swapHash, inbound, outbound) {
     throw new Error(`Can't find a route between ${identityPubkey} and ${counterpartyPubKey} to swap ${outbound.amount} ${outbound.symbol} for ${inbound.amount} ${inbound.symbol}`)
   }
 
-  // construct a valid route
-  // TODO: need to construct two routes and then stitch them together, not treat as one big route
-  const route = routeFromPath(inbound.amount, blockHeight, MIN_FINAL_CLTV_EXPIRY_DELTA, outboundPath.concat(inboundPath))
+  const route = routeFromPath(inbound.amount, blockHeight, MIN_FINAL_CLTV_EXPIRY_DELTA, outboundPath.concat(inboundPath), outboundPath.length - 1, outbound.amount)
   this.logger.debug(`Constructed a route for ${swapHash}`, { route })
 
   const { paymentError, paymentPreimage } = await sendToRoute(swapHash, [ route ], { client: this.client })
@@ -76,21 +76,27 @@ async function executeSwap (counterpartyPubKey, swapHash, inbound, outbound) {
 
 /**
  * Construct a route (with fee and time lock data) from a selected path
- * @param {String} amountToSend Int64 string of amount to send
+ * @param {String} inboundAmount Int64 string of amount to send
  * @param {Number} blockHeight Current best block height to build CLTVs on
  * @param {Number} finalCLTVDelta Amount of the final CLTV delta
  * @param  {Array<InternalChannelEdge>} path Array of channel edges in order for the full path
+ * @param {Number} counterpartyPosition Index of the channel just before the counteparty node
+ * @param {String} counterpartyAmount [description]
  * @return {Object}      Route
  */
-function routeFromPath (amountToSend, blockHeight, finalCLTVDelta, path) {
-  const amountToSendMsat = Big(amountToSend).times(1000)
+function routeFromPath (inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount) {
+  const inboundAmountMsat = Big(inboundAmount).times(1000)
+  const outboundAmountMsat = Big(outboundAmount).times(1000)
 
   // we want to traverse the path in reverse so we can
   // build up to our final amount
   const backtrack = path.slice().reverse()
+  // we want the index of the channel before we hit the counterparty
+  const backtrackPosition = (backtrack.length - 1) - counterpartyPosition
 
-  let currentAmountMsat = amountToSendMsat
+  let currentAmountMsat = inboundAmountMsat
   let currentCLTV = blockHeight + finalCLTVDelta + CLTV_BUFFER
+  let totalFeesMsat = Big(0)
 
   const hops = backtrack.map((channel, index) => {
     const hop = {
@@ -116,10 +122,17 @@ function routeFromPath (amountToSend, blockHeight, finalCLTVDelta, path) {
       timeLockDelta = nextChannel.policy.timeLockDelta + CLTV_BUFFER
     }
 
-    hop.feeMsat = feeMsat
+    // if we are at the counterparty we need to switch currency amounts, and there is no fee
+    if (index === backtrackPosition) {
+      hop.feeMsat = '0'
+      currentAmountMsat = outboundAmountMsat
+    } else {
+      hop.feeMsat = feeMsat
+      // update the current amount so we have enough funds to forward
+      currentAmountMsat = currentAmountMsat.plus(feeMsat)
+    }
 
-    // update the current amount so we have enough funds to forward
-    currentAmountMsat = currentAmountMsat.plus(feeMsat)
+    totalFeesMsat = totalFeesMsat.plus(hop.feeMsat)
 
     // update the current cltv to have enough expiry for the _outgoing_ link
     currentCLTV = currentCLTV + timeLockDelta
@@ -131,7 +144,7 @@ function routeFromPath (amountToSend, blockHeight, finalCLTVDelta, path) {
     hops: hops,
     totalTimeLock: Number(currentCLTV), // timelock is a uint32, so needs to be a number
     totalAmtMsat: currentAmountMsat.toString(),
-    totalFeesMsat: currentAmountMsat.minus(amountToSendMsat).toString()
+    totalFeesMsat: totalFeesMsat.toString()
   }
 }
 
