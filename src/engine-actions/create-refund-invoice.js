@@ -23,15 +23,14 @@ const REFUND_MEMO_PREFIX = 'REFUND:'
  */
 
 async function createRefundInvoice (paymentRequest) {
-  const { numSatoshis: requestValue, description: requestDescription, expiry } = await decodePaymentRequest(paymentRequest, { client: this.client })
+  const { numSatoshis: requestValue, description: requestDescription } = await decodePaymentRequest(paymentRequest, { client: this.client })
 
-  this.logger.debug('Attempting to create invoice', { expiry, requestValue })
+  this.logger.debug('Attempting to create invoice', { requestValue, paymentRequest })
 
-  const setExpiry = expiry || DEFAULT_INVOICE_EXPIRY
   // TODO: Use the settled value from an invoice lookup instead of the value from a decoded
   // payment request
   // see: https://trello.com/c/wzxVUNZl/288-check-fee-refund-values-on-relayer
-  const { paymentRequest: refundPaymentRequest } = await addInvoice(`${REFUND_MEMO_PREFIX} ${requestDescription}`, setExpiry, requestValue, { client: this.client })
+  const { paymentRequest: refundPaymentRequest } = await addInvoice(`${REFUND_MEMO_PREFIX} ${requestDescription}`, DEFAULT_INVOICE_EXPIRY, requestValue, { client: this.client })
 
   return refundPaymentRequest
 }
