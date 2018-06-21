@@ -30,7 +30,7 @@ describe('execute-swap', () => {
           policy: {
             feeBaseMsat: '2000',
             feeRateMilliMsat: '7',
-            timeLockDelta: 10
+            timeLockDelta: 100
           }
         },
         {
@@ -41,7 +41,7 @@ describe('execute-swap', () => {
           policy: {
             feeBaseMsat: '1000',
             feeRateMilliMsat: '7',
-            timeLockDelta: 10
+            timeLockDelta: 100
           }
         },
         {
@@ -52,7 +52,7 @@ describe('execute-swap', () => {
           policy: {
             feeBaseMsat: '1000',
             feeRateMilliMsat: '6',
-            timeLockDelta: 10
+            timeLockDelta: 100
           }
         },
         {
@@ -63,7 +63,7 @@ describe('execute-swap', () => {
           policy: {
             feeBaseMsat: '1000',
             feeRateMilliMsat: '6',
-            timeLockDelta: 10
+            timeLockDelta: 100
           }
         }
       ]
@@ -72,7 +72,15 @@ describe('execute-swap', () => {
     it('calculates the total time lock', () => {
       const route = routeFromPath(inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount)
 
-      expect(route).to.have.property('totalTimeLock', 5043)
+      expect(route).to.have.property('totalTimeLock', 5313)
+    })
+
+    it('calculates the total time lock for diverse policies', () => {
+      path[0].policy.timeLockDelta = 50
+
+      const route = routeFromPath(inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount)
+
+      expect(route).to.have.property('totalTimeLock', 5263)
     })
 
     it('calculates the total fees', () => {
@@ -114,8 +122,18 @@ describe('execute-swap', () => {
     it('includes expiry in the hop', () => {
       const route = routeFromPath(inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount)
 
-      expect(route.hops[0]).to.have.property('expiry', 5032)
-      expect(route.hops[1]).to.have.property('expiry', 5021)
+      expect(route.hops[0]).to.have.property('expiry', 5212)
+      expect(route.hops[1]).to.have.property('expiry', 5111)
+      expect(route.hops[2]).to.have.property('expiry', 5010)
+      expect(route.hops[3]).to.have.property('expiry', 5010)
+    })
+
+    it('includes expiry for diverse policies', () => {
+      path[1].policy.timeLockDelta = 50
+      const route = routeFromPath(inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount)
+
+      expect(route.hops[0]).to.have.property('expiry', 5162)
+      expect(route.hops[1]).to.have.property('expiry', 5111)
       expect(route.hops[2]).to.have.property('expiry', 5010)
       expect(route.hops[3]).to.have.property('expiry', 5010)
     })
@@ -255,13 +273,13 @@ describe('execute-swap', () => {
             feeBaseMsat: '1000',
             feeRateMilliMsat: '7',
             minHtlc: '144',
-            timeLockDelta: 9
+            timeLockDelta: 90
           },
           node2Policy: {
             feeBaseMsat: '2000',
             feeRateMilliMsat: '7',
             minHtlc: '144',
-            timeLockDelta: 10
+            timeLockDelta: 100
           }
         },
         {
@@ -275,13 +293,13 @@ describe('execute-swap', () => {
             feeBaseMsat: '1000',
             feeRateMilliMsat: '7',
             minHtlc: '144',
-            timeLockDelta: 9
+            timeLockDelta: 90
           },
           node2Policy: {
             feeBaseMsat: '2000',
             feeRateMilliMsat: '7',
             minHtlc: '144',
-            timeLockDelta: 10
+            timeLockDelta: 100
           }
         }
       ]
@@ -315,7 +333,7 @@ describe('execute-swap', () => {
           feeBaseMsat: '1000',
           feeRateMilliMsat: '7',
           minHtlc: '144',
-          timeLockDelta: 9
+          timeLockDelta: 90
         }
       })
       expect(path[1]).to.be.eql({
@@ -327,7 +345,7 @@ describe('execute-swap', () => {
           feeBaseMsat: '1000',
           feeRateMilliMsat: '7',
           minHtlc: '144',
-          timeLockDelta: 9
+          timeLockDelta: 90
         }
       })
     })
@@ -367,13 +385,13 @@ describe('execute-swap', () => {
             feeBaseMsat: '1000',
             feeRateMilliMsat: '7',
             minHtlc: '144',
-            timeLockDelta: 9
+            timeLockDelta: 90
           },
           node2Policy: {
             feeBaseMsat: '2000',
             feeRateMilliMsat: '7',
             minHtlc: '144',
-            timeLockDelta: 10
+            timeLockDelta: 100
           }
         },
         {
@@ -387,13 +405,13 @@ describe('execute-swap', () => {
             feeBaseMsat: '1000',
             feeRateMilliMsat: '7',
             minHtlc: '144',
-            timeLockDelta: 9
+            timeLockDelta: 90
           },
           node2Policy: {
             feeBaseMsat: '2000',
             feeRateMilliMsat: '7',
             minHtlc: '144',
-            timeLockDelta: 10
+            timeLockDelta: 100
           }
         }
       ]
