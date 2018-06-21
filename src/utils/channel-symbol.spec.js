@@ -70,6 +70,12 @@ describe('channel-symbol', () => {
       expect(getChannelSymbol(node1Policy, node2Policy)).to.be.equal('LTC')
     })
 
+    it('returns LTC if the other channel is not on the same page', () => {
+      node1Policy.feeRateMilliMsat = '1000'
+
+      expect(getChannelSymbol(node1Policy, node2Policy)).to.be.equal('LTC')
+    })
+
     it('returns false if no symbol is defined', () => {
       node2Policy.feeRateMilliMsat = '1000'
       node1Policy.feeRateMilliMsat = '1000'

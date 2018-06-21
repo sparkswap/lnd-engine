@@ -4,7 +4,7 @@ LABEL owner="Olaoluwa Osuntokun <lightning.engineering>"
 LABEL maintainer="Danny Paz <kinesis.exchange>"
 
 # Set the version of LND used in this image to prevent breaking changes
-ARG LND_VERSION='master'
+ARG LND_VERSION='debug/htlc-pass'
 
 # Force Go to use the cgo based DNS resolver. This is required to ensure DNS
 # queries required to connect to linked containers succeed.
@@ -19,7 +19,7 @@ RUN apk add --no-cache \
 
 WORKDIR $GOPATH/src/github.com/lightningnetwork/lnd
 
-RUN git clone --branch ${LND_VERSION} https://github.com/lightningnetwork/lnd . \
+RUN git clone --branch ${LND_VERSION} https://github.com/kinesis-exchange/lnd . \
 &&  make \
 &&  make install
 

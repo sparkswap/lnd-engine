@@ -20,7 +20,7 @@ function sendToRoute (paymentHash, routes, { client }) {
       const paymentHashString = Buffer.from(paymentHash, 'base64').toString('hex')
 
       // need a longer timeout for this - it takes awhile
-      client.sendToRouteSync({ paymentHashString, routes }, { deadline: deadline(10) }, (err, res) => {
+      client.sendToRouteSync({ paymentHashString, routes }, { deadline: deadline(20) }, (err, res) => {
         if (err) return reject(err)
         return resolve(res)
       })
