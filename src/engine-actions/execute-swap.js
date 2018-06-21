@@ -116,10 +116,11 @@ function routeFromPath (inboundAmount, blockHeight, finalCLTVDelta, path, counte
       // no additional timelock for an outgoing link since there is no outgoing link
       timeLockDelta = 0
     } else {
-      // this node's next channel is what determines the fee/timelock to transit the link
+      timeLockDelta = channel.policy.timeLockDelta + CLTV_BUFFER
+
+      // this node's next channel is what determines the fee to transit the link
       const nextChannel = backtrack[index - 1]
       feeMsat = computeFee(currentAmountMsat, nextChannel.policy)
-      timeLockDelta = nextChannel.policy.timeLockDelta + CLTV_BUFFER
     }
 
     // if we are at the counterparty we need to switch currency amounts, and there is no fee
