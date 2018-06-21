@@ -5,15 +5,15 @@ const { symbolForFeeRate, feeRateForSymbol, getChannelSymbol } = require('./chan
 describe('channel-symbol', () => {
   describe('symbolForFeeRate', () => {
     it('returns LTC', () => {
-      expect(symbolForFeeRate('7667')).to.be.eql('LTC')
+      expect(symbolForFeeRate('7')).to.be.eql('LTC')
     })
 
     it('returns BTC', () => {
-      expect(symbolForFeeRate('6667')).to.be.eql('BTC')
+      expect(symbolForFeeRate('6')).to.be.eql('BTC')
     })
 
     it('works with numbers', () => {
-      expect(symbolForFeeRate(6667)).to.be.eql('BTC')
+      expect(symbolForFeeRate(6)).to.be.eql('BTC')
     })
 
     it('returns undefined for an unknown fee rate', () => {
@@ -23,11 +23,11 @@ describe('channel-symbol', () => {
 
   describe('feeRateForSymbol', () => {
     it('returns the BTC fee rate', () => {
-      expect(feeRateForSymbol('BTC')).to.be.eql('6667')
+      expect(feeRateForSymbol('BTC')).to.be.eql('6')
     })
 
     it('returns the LTC fee rate', () => {
-      expect(feeRateForSymbol('LTC')).to.be.eql('7667')
+      expect(feeRateForSymbol('LTC')).to.be.eql('7')
     })
 
     it('returns undefined for an unknown symbol', () => {
@@ -42,13 +42,13 @@ describe('channel-symbol', () => {
     beforeEach(() => {
       node1Policy = {
         feeBaseMsat: '1000',
-        feeRateMilliMsat: '7667',
+        feeRateMilliMsat: '7',
         minHtlc: '144',
         timeLockDelta: 9
       }
       node2Policy = {
         feeBaseMsat: '2000',
-        feeRateMilliMsat: '7667',
+        feeRateMilliMsat: '7',
         minHtlc: '144',
         timeLockDelta: 10
       }
@@ -59,8 +59,8 @@ describe('channel-symbol', () => {
     })
 
     it('returns BTC for the BTC policy', () => {
-      node1Policy.feeRateMilliMsat = '6667'
-      node2Policy.feeRateMilliMsat = '6667'
+      node1Policy.feeRateMilliMsat = '6'
+      node2Policy.feeRateMilliMsat = '6'
       expect(getChannelSymbol(node1Policy, node1Policy)).to.be.equal('BTC')
     })
 
@@ -84,7 +84,7 @@ describe('channel-symbol', () => {
     })
 
     it('throws if the channels disagree', () => {
-      node1Policy.feeRateMilliMsat = '6667'
+      node1Policy.feeRateMilliMsat = '6'
 
       expect(() => { getChannelSymbol(node1Policy, node2Policy) }).to.throw('mismatch')
     })
