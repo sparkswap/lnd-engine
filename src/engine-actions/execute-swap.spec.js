@@ -25,7 +25,7 @@ describe('execute-swap', () => {
           capacity: '10000008',
           policy: {
             feeBaseMsat: '2000',
-            feeRateMilliMsat: '7667',
+            feeRateMilliMsat: '7',
             timeLockDelta: 10
           }
         },
@@ -36,7 +36,7 @@ describe('execute-swap', () => {
           capacity: '20000000',
           policy: {
             feeBaseMsat: '1000',
-            feeRateMilliMsat: '7667',
+            feeRateMilliMsat: '7',
             timeLockDelta: 10
           }
         }
@@ -52,13 +52,13 @@ describe('execute-swap', () => {
     it('calculates the total fees', () => {
       const route = routeFromPath(amountToSend, blockHeight, finalCLTVDelta, path)
 
-      expect(route).to.have.property('totalFeesMsat', '7668000')
+      expect(route).to.have.property('totalFeesMsat', '8000')
     })
 
     it('calculates the total amount to send', () => {
       const route = routeFromPath(amountToSend, blockHeight, finalCLTVDelta, path)
 
-      expect(route).to.have.property('totalAmtMsat', '1007668000')
+      expect(route).to.have.property('totalAmtMsat', '1000008000')
     })
 
     it('constructs hops', () => {
@@ -100,7 +100,7 @@ describe('execute-swap', () => {
     it('includes the fee in the hop', () => {
       const route = routeFromPath(amountToSend, blockHeight, finalCLTVDelta, path)
 
-      expect(route.hops[0]).to.have.property('feeMsat', '7668000')
+      expect(route.hops[0]).to.have.property('feeMsat', '8000')
       expect(route.hops[1]).to.have.property('feeMsat', '0')
     })
   })
@@ -219,13 +219,13 @@ describe('execute-swap', () => {
           capacity: '10000008',
           node1Policy: {
             feeBaseMsat: '1000',
-            feeRateMilliMsat: '7667',
+            feeRateMilliMsat: '7',
             minHtlc: '144',
             timeLockDelta: 9
           },
           node2Policy: {
             feeBaseMsat: '2000',
-            feeRateMilliMsat: '7667',
+            feeRateMilliMsat: '7',
             minHtlc: '144',
             timeLockDelta: 10
           }
@@ -239,13 +239,13 @@ describe('execute-swap', () => {
           capacity: '20000000',
           node1Policy: {
             feeBaseMsat: '1000',
-            feeRateMilliMsat: '7667',
+            feeRateMilliMsat: '7',
             minHtlc: '144',
             timeLockDelta: 9
           },
           node2Policy: {
             feeBaseMsat: '2000',
-            feeRateMilliMsat: '7667',
+            feeRateMilliMsat: '7',
             minHtlc: '144',
             timeLockDelta: 10
           }
@@ -279,7 +279,7 @@ describe('execute-swap', () => {
         capacity: '10000008',
         policy: {
           feeBaseMsat: '1000',
-          feeRateMilliMsat: '7667',
+          feeRateMilliMsat: '7',
           minHtlc: '144',
           timeLockDelta: 9
         }
@@ -291,7 +291,7 @@ describe('execute-swap', () => {
         capacity: '20000000',
         policy: {
           feeBaseMsat: '1000',
-          feeRateMilliMsat: '7667',
+          feeRateMilliMsat: '7',
           minHtlc: '144',
           timeLockDelta: 9
         }
@@ -331,13 +331,13 @@ describe('execute-swap', () => {
           capacity: '10000008',
           node1Policy: {
             feeBaseMsat: '1000',
-            feeRateMilliMsat: '7667',
+            feeRateMilliMsat: '7',
             minHtlc: '144',
             timeLockDelta: 9
           },
           node2Policy: {
             feeBaseMsat: '2000',
-            feeRateMilliMsat: '7667',
+            feeRateMilliMsat: '7',
             minHtlc: '144',
             timeLockDelta: 10
           }
@@ -351,13 +351,13 @@ describe('execute-swap', () => {
           capacity: '20000000',
           node1Policy: {
             feeBaseMsat: '1000',
-            feeRateMilliMsat: '7667',
+            feeRateMilliMsat: '7',
             minHtlc: '144',
             timeLockDelta: 9
           },
           node2Policy: {
             feeBaseMsat: '2000',
-            feeRateMilliMsat: '7667',
+            feeRateMilliMsat: '7',
             minHtlc: '144',
             timeLockDelta: 10
           }
