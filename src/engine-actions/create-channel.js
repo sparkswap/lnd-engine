@@ -9,6 +9,7 @@ const {
 const {
   feeRateForSymbol
 } = require('../utils')
+const delay = require('timeout-as-promise')
 
 /**
  * Default timelock delta
@@ -120,11 +121,9 @@ async function createChannel (host, publicKey, fundingAmount, symbol) {
   // for the channel to open
   if (process.env.NODE_ENV === 'development') {
     this.logger.debug('Queuing channel to be updated in 2 minutes')
-
-    setTimeout(async () => {
-      this.logger.debug('Updating channel point', { chanPoint, feeRate })
-      await updateChannelPolicy(chanPoint, feeRate, TIMELOCK_DELTA, { client: this.client })
-    }, 120000)
+    await delay(120000)
+    this.logger.debug('Updating channel point', { chanPoint, feeRate })
+    await updateChannelPolicy(chanPoint, feeRate, TIMELOCK_DELTA, { client: this.client })
   }
 
   return true

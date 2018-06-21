@@ -25,7 +25,10 @@ describe('createChannel', () => {
     fundingAmount = '100'
     symbol = 'BTC'
     fee = 100
-    channelPoint = sinon.stub()
+    channelPoint = {
+      fundingTxidStr: 'asfasfjas09fj09fj',
+      outputIndex: 0
+    }
     connectPeerStub = sinon.stub()
     openChannelStub = sinon.stub().returns(channelPoint)
     updateChannelStub = sinon.stub()
@@ -44,16 +47,22 @@ describe('createChannel', () => {
     createChannel.__set__('generateChanPointFromChannelInfo', generateStub)
     createChannel.__set__('client', clientStub)
     createChannel.__set__('logger', loggerStub)
-    createChannel.__set__('process', {
-      env: {
-        NODE_ENV: 'production'
-      }
-    })
   })
 
-  describe('creating a channel', () => {
+  describe('creating a channel in production', () => {
+    let revert
+
     beforeEach(async () => {
+      revert = createChannel.__set__('process', {
+        env: {
+          NODE_ENV: 'production'
+        }
+      })
       res = await createChannel(host, pubKey, fundingAmount, symbol)
+    })
+
+    afterEach(() => {
+      revert()
     })
 
     it('connects to a lnd host', () => {
@@ -72,8 +81,42 @@ describe('createChannel', () => {
       expect(generateStub).to.have.been.calledWith(channelPoint)
     })
 
+    it('does not update the channel policy', () => {
+      expect(updateChannelStub).to.not.have.been.calledOnce()
+    })
+
     it('returns true for successful channel creation', () => {
       expect(res).to.be.true()
+    })
+  })
+
+  describe('creating a channel in dev', () => {
+    let revert
+    let delay
+    let feeRate
+
+    beforeEach(async () => {
+      revert = createChannel.__set__('process', {
+        env: {
+          NODE_ENV: 'development'
+        }
+      })
+      delay = sinon.stub().resolves()
+      createChannel.__set__('delay', delay)
+      feeRate = 0.0001
+      createChannel.__set__('feeRatePerSatoshiFromSymbol', sinon.stub().returns(feeRate))
+      res = await createChannel(host, pubKey, fundingAmount, symbol)
+    })
+
+    afterEach(() => {
+      revert()
+    })
+
+    it('updates the channel policy', () => {
+      expect(delay).to.have.been.calledOnce()
+      expect(delay).to.have.been.calledWith(120000)
+      expect(updateChannelStub).to.have.been.calledOnce()
+      expect(updateChannelStub).to.have.been.calledWith(channelPoint, feeRate)
     })
   })
 
