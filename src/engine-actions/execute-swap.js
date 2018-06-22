@@ -103,7 +103,14 @@ function routeFromPath (inboundAmount, blockHeight, finalCLTVDelta, path, counte
   const backtrackPosition = (backtrack.length - 1) - counterpartyPosition
 
   let currentAmountMsat = inboundAmountMsat
-  let currentCLTV = blockHeight + finalCLTVDelta + CLTV_BUFFER
+  /**
+   * Although according to the spec there is no timelock needed except for the
+   * specified `finalCLTVDelta`, LND uses the forwarding policy of the inbound
+   * link as a check. We use the default as a minimum to avoid as many issues
+   * as we can.
+   * @see {@link https://github.com/lightningnetwork/lnd/issues/1431#issuecomment-399323539}
+   */
+  let currentCLTV = blockHeight + Math.max(finalCLTVDelta, DEFAULT_MIN_FWD_CLTV_DELTA) + CLTV_BUFFER
   let totalFeesMsat = Big(0)
 
   const hops = backtrack.map((channel, index) => {
@@ -121,7 +128,7 @@ function routeFromPath (inboundAmount, blockHeight, finalCLTVDelta, path, counte
     if (index === 0) {
       // last hop: no fees as there is nothing to transit
       feeMsat = '0'
-      // no additional timelock for an outgoing link since there is no outgoing link
+      // by the spec, the last and second to last hop should have the same timelock
       timeLockDelta = 0
     } else {
       /**
