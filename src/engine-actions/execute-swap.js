@@ -23,6 +23,14 @@ const MIN_FINAL_CLTV_EXPIRY_DELTA = 9
 const CLTV_BUFFER = 1
 
 /**
+ * The default CLTV delta that channels use to forward HTLCs.
+ * We use it to minimize chances of error since LND uses the wrong
+ * link to determine forward-ability.
+ * @see {@link https://github.com/lightningnetwork/lnd/issues/1431}
+ */
+const DEFAULT_MIN_FWD_CLTV_DELTA = 144
+
+/**
  * Executes a swap as the initiating node
  *
  * @param {String} counterpartyPubKey LN identity_publickey
@@ -116,7 +124,14 @@ function routeFromPath (inboundAmount, blockHeight, finalCLTVDelta, path, counte
       // no additional timelock for an outgoing link since there is no outgoing link
       timeLockDelta = 0
     } else {
-      timeLockDelta = channel.policy.timeLockDelta + CLTV_BUFFER
+      /**
+       * LND takes the wrong link's policies into account when forwarding HTLCs
+       * @ee {@link https://github.com/lightningnetwork/lnd/issues/1431}
+       * Since this is a hack and won't be how we route in production,
+       * we make sure we use at least the default CLTV to minimize the
+       * risk of HTLC rejection.
+       */
+      timeLockDelta = Math.max(channel.policy.timeLockDelta, DEFAULT_MIN_FWD_CLTV_DELTA) + CLTV_BUFFER
 
       // this node's next channel is what determines the fee to transit the link
       const nextChannel = backtrack[index - 1]
