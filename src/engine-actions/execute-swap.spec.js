@@ -20,7 +20,7 @@ describe('execute-swap', () => {
       outboundAmount = '1000000'
       inboundAmount = '500000'
       blockHeight = 5000
-      finalCLTVDelta = 9
+      finalCLTVDelta = 144
       path = [
         {
           fromPubKey: 'mypub',
@@ -72,7 +72,7 @@ describe('execute-swap', () => {
     it('calculates the total time lock', () => {
       const route = routeFromPath(inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount)
 
-      expect(route).to.have.property('totalTimeLock', 5445)
+      expect(route).to.have.property('totalTimeLock', 5580)
     })
 
     it('calculates the total time lock for diverse policies', () => {
@@ -80,7 +80,7 @@ describe('execute-swap', () => {
 
       const route = routeFromPath(inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount)
 
-      expect(route).to.have.property('totalTimeLock', 5451)
+      expect(route).to.have.property('totalTimeLock', 5586)
     })
 
     it('calculates the total fees', () => {
@@ -122,31 +122,40 @@ describe('execute-swap', () => {
     it('includes expiry in the hop', () => {
       const route = routeFromPath(inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount)
 
-      expect(route.hops[0]).to.have.property('expiry', 5300)
-      expect(route.hops[1]).to.have.property('expiry', 5155)
-      expect(route.hops[2]).to.have.property('expiry', 5010)
-      expect(route.hops[3]).to.have.property('expiry', 5010)
+      expect(route.hops[0]).to.have.property('expiry', 5435)
+      expect(route.hops[1]).to.have.property('expiry', 5290)
+      expect(route.hops[2]).to.have.property('expiry', 5145)
+      expect(route.hops[3]).to.have.property('expiry', 5145)
     })
 
     it('includes expiry for diverse policies', () => {
       path[1].policy.timeLockDelta = 150
       const route = routeFromPath(inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount)
 
-      expect(route.hops[0]).to.have.property('expiry', 5306)
-      expect(route.hops[1]).to.have.property('expiry', 5155)
-      expect(route.hops[2]).to.have.property('expiry', 5010)
-      expect(route.hops[3]).to.have.property('expiry', 5010)
+      expect(route.hops[0]).to.have.property('expiry', 5441)
+      expect(route.hops[1]).to.have.property('expiry', 5290)
+      expect(route.hops[2]).to.have.property('expiry', 5145)
+      expect(route.hops[3]).to.have.property('expiry', 5145)
     })
 
     it('uses at least 144 for all time lock deltas [HACK]', () => {
       path[1].policy.timeLockDelta = 100
       const route = routeFromPath(inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount)
 
-      expect(route).to.have.property('totalTimeLock', 5445)
-      expect(route.hops[0]).to.have.property('expiry', 5300)
-      expect(route.hops[1]).to.have.property('expiry', 5155)
-      expect(route.hops[2]).to.have.property('expiry', 5010)
-      expect(route.hops[3]).to.have.property('expiry', 5010)
+      expect(route).to.have.property('totalTimeLock', 5580)
+      expect(route.hops[0]).to.have.property('expiry', 5435)
+      expect(route.hops[1]).to.have.property('expiry', 5290)
+      expect(route.hops[2]).to.have.property('expiry', 5145)
+      expect(route.hops[3]).to.have.property('expiry', 5145)
+    })
+
+    it('uses at least 144 for the final hop [HACK]', () => {
+      finalCLTVDelta = 9
+
+      const route = routeFromPath(inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount)
+
+      expect(route.hops[2]).to.have.property('expiry', 5145)
+      expect(route.hops[3]).to.have.property('expiry', 5145)
     })
 
     it('includes the amount to forward in the hop', () => {
