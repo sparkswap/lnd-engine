@@ -5,7 +5,7 @@
  * @type {String}
  * @default
  */
-const LTC_FEE_MILLI_MSAT = '7667'
+const LTC_FEE_MILLI_MSAT = '7'
 
 /**
  * BTC Channel fee in mSat
@@ -14,7 +14,7 @@ const LTC_FEE_MILLI_MSAT = '7667'
  * @type {String}
  * @default
  */
-const BTC_FEE_MILLI_MSAT = '6667'
+const BTC_FEE_MILLI_MSAT = '6'
 
 /**
  * @constant

@@ -16,6 +16,7 @@ const isBalanceSufficient = require('./is-balance-sufficient')
 const payInvoice = require('./pay-invoice')
 const prepareSwap = require('./prepare-swap')
 const executeSwap = require('./execute-swap')
+const createRefundInvoice = require('./create-refund-invoice')
 
 module.exports = {
   getInvoices,
@@ -35,5 +36,6 @@ module.exports = {
   isBalanceSufficient,
   payInvoice,
   prepareSwap,
-  executeSwap
+  executeSwap,
+  createRefundInvoice
 }

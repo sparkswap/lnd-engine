@@ -51,6 +51,7 @@ describe('get-channel-balances', () => {
     let node2Policy
     let clientStub
     let chanId
+    let getChannelSymbol
 
     const getChannelTypeFromId = getChannelBalances.__get__('getChannelTypeFromId')
 
@@ -59,8 +60,10 @@ describe('get-channel-balances', () => {
       node1Policy = { feeRateMilliMsat: 100 }
       node2Policy = { feeRateMilliMsat: 100 }
       channelInfoStub = sinon.stub().returns({ node1Policy, node2Policy })
+      getChannelSymbol = sinon.stub()
 
       getChannelBalances.__set__('getChanInfo', channelInfoStub)
+      getChannelBalances.__set__('getChannelSymbol', getChannelSymbol)
     })
 
     it('gets channel info for an id', async () => {
@@ -69,28 +72,38 @@ describe('get-channel-balances', () => {
     })
 
     it('returns false if fees were not matched to a symbol', async () => {
+      getChannelSymbol.returns(false)
       const res = await getChannelTypeFromId(chanId, clientStub)
       expect(res).to.be.eql(false)
+
+      expect(getChannelSymbol).to.have.been.calledOnce()
+      expect(getChannelSymbol).to.have.been.calledWith(node1Policy, node2Policy)
     })
 
     it('returns BTC if fees were matched to BTC', async () => {
-      const btcFee = getChannelBalances.__get__('BTC_FEE_MILLI_MSAT')
+      const btcFee = '8098'
       const newPolicy = { feeRateMilliMsat: btcFee }
-      channelInfoStub = sinon.stub().returns({ node1Policy: newPolicy, node2Policy })
-      getChannelBalances.__set__('getChanInfo', channelInfoStub)
-      const res = await getChannelTypeFromId(chanId, clientStub)
+      channelInfoStub.returns({ node1Policy: newPolicy, node2Policy })
       const { BTC: btc } = getChannelBalances.__get__('SUPPORTED_SYMBOLS')
+      getChannelSymbol.returns(btc)
+      const res = await getChannelTypeFromId(chanId, clientStub)
       expect(res).to.be.eql(btc)
+
+      expect(getChannelSymbol).to.have.been.calledOnce()
+      expect(getChannelSymbol).to.have.been.calledWith(newPolicy, node2Policy)
     })
 
     it('returns LTC if fees were matched to LTC', async () => {
-      const ltcFee = getChannelBalances.__get__('LTC_FEE_MILLI_MSAT')
+      const ltcFee = '9089'
       const newPolicy = { feeRateMilliMsat: ltcFee }
-      channelInfoStub = sinon.stub().returns({ node1Policy: newPolicy, node2Policy })
-      getChannelBalances.__set__('getChanInfo', channelInfoStub)
-      const res = await getChannelTypeFromId(chanId, clientStub)
+      channelInfoStub.returns({ node1Policy: newPolicy, node2Policy })
       const { LTC: ltc } = getChannelBalances.__get__('SUPPORTED_SYMBOLS')
+      getChannelSymbol.returns(ltc)
+      const res = await getChannelTypeFromId(chanId, clientStub)
       expect(res).to.be.eql(ltc)
+
+      expect(getChannelSymbol).to.have.been.calledOnce()
+      expect(getChannelSymbol).to.have.been.calledWith(newPolicy, node2Policy)
     })
   })
 

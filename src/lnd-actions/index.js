@@ -10,6 +10,8 @@ const walletBalance = require('./wallet-balance')
 const decodePaymentRequest = require('./decode-payment-request')
 const listChannels = require('./list-channels')
 const sendPayment = require('./send-payment')
+const describeGraph = require('./describe-graph')
+const sendToRoute = require('./send-to-route')
 const updateChannelPolicy = require('./update-channel-policy')
 const getChanInfo = require('./get-chan-info')
 
@@ -26,6 +28,8 @@ module.exports = {
   decodePaymentRequest,
   listChannels,
   sendPayment,
+  describeGraph,
+  sendToRoute,
   updateChannelPolicy,
   getChanInfo
 }
