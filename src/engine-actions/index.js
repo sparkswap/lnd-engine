@@ -17,6 +17,7 @@ const payInvoice = require('./pay-invoice')
 const prepareSwap = require('./prepare-swap')
 const executeSwap = require('./execute-swap')
 const createRefundInvoice = require('./create-refund-invoice')
+const getTotalChannelBalance = require('./get-total-channel-balance')
 
 module.exports = {
   getInvoices,
@@ -37,5 +38,6 @@ module.exports = {
   payInvoice,
   prepareSwap,
   executeSwap,
-  createRefundInvoice
+  createRefundInvoice,
+  getTotalChannelBalance
 }
