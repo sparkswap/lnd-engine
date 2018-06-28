@@ -81,7 +81,3 @@ prepareSwap(swapHash, inbound, outbound)
 executeSwap(counterpartyPubKey, swapHash, inbound, outbound)
 createRefundInvoice(paymentRequest)
 ```
-
-### Troubleshooting the Engine
-
-For any GRPC instance you can use `GRPC_VERBOSITY=DEBUG` and `GRPC_TRACE=all` to log all actions during a grpc request. The contained `docker-compose` files have these variables 'commented out'.
