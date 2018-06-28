@@ -2,7 +2,6 @@ const actions = require('./engine-actions')
 const { generateLndClient } = require('./lnd-setup')
 const LND_PROTO_FILE_PATH = require.resolve('../proto/lnd-rpc.proto')
 
-// These values are currently set at build time in the LND Dockerfiles
 /**
  * @constant
  * @type {String}
