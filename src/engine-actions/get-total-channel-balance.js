@@ -26,13 +26,13 @@ async function getTotalChannelBalance (remotePubKey) {
 
   console.log('made it here')
   const activeChannelsForPubkey = channels.filter(channel => channel.remotePubkey === remotePubKey)
-  console.log(activeChannelsForPubkey)
+  console.log('activeChannelsForPubkey', activeChannelsForPubkey)
   const amountInActiveChannels = activeChannelsForPubkey.reduce((acc, chan) => (acc += chan.remoteBalance))
-  console.log(amountInActiveChannels)
+  console.log('amountInActiveChannels', amountInActiveChannels)
   balances['active'] = amountInActiveChannels
   console.log('balances', balances)
   const pendingChannelsForPubkey = pendingOpenChannels.filter(channel => channel.channel.remoteNodePub === remotePubKey)
-  console.log(pendingChannelsForPubkey)
+  console.log('pendingChannelsForPubkey', pendingChannelsForPubkey)
   const amountInPendingChannels = pendingChannelsForPubkey.reduce((acc, chan) => (acc += chan.remoteBalance))
   console.log(amountInPendingChannels)
   balances['pending'] = amountInPendingChannels
