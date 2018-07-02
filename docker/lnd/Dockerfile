@@ -4,7 +4,7 @@ LABEL owner="Olaoluwa Osuntokun <lightning.engineering>"
 LABEL maintainer="Danny Paz <kinesis.exchange>"
 
 # Set the version of LND used in this image to prevent breaking changes
-ARG LND_VERSION='debug/htlc-pass'
+ARG LND_VERSION='k#epic/cross-chain-preimage'
 
 # Force Go to use the cgo based DNS resolver. This is required to ensure DNS
 # queries required to connect to linked containers succeed.
