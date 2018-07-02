@@ -25,7 +25,7 @@ const MEMO_PREFIX = 'kinesis:'
 async function createSwapHash (orderId, value) {
   const expiry = SWAP_EXPIRY
   const memo = `${MEMO_PREFIX}${orderId}`
-  const { rHash } = await addInvoice(memo, expiry, value, { client: this.client })
+  const { rHash } = await addInvoice({ memo, expiry, value }, { client: this.client })
   return rHash
 }
 

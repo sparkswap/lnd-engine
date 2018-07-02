@@ -29,7 +29,7 @@ describe('createSwapHash', () => {
   })
 
   it('adds an invoice through lnd', () => {
-    expect(addInvoiceStub).to.have.been.calledWith(`kinesis:${orderId}`, '3600', value, sinon.match({ client: clientStub }))
+    expect(addInvoiceStub).to.have.been.calledWith({ memo: `kinesis:${orderId}`, expiry: '3600', value }, sinon.match({ client: clientStub }))
   })
 
   it('returns an invoice hash hash', () => {

@@ -9,7 +9,7 @@ const { addInvoice } = require('../lnd-actions')
  * @returns {String} paymentRequest hash of invoice from lnd
  */
 async function createInvoice (memo, expiry, value) {
-  const { paymentRequest } = await addInvoice(memo, expiry, value, { client: this.client })
+  const { paymentRequest } = await addInvoice({ memo, expiry, value }, { client: this.client })
   return paymentRequest
 }
 
