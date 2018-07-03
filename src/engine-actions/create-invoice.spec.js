@@ -31,7 +31,7 @@ describe('createInvoice', () => {
   })
 
   it('adds an invoice through lnd', () => {
-    expect(addInvoiceStub).to.have.been.calledWith(memo, expiry, value, sinon.match({ client: clientStub }))
+    expect(addInvoiceStub).to.have.been.calledWith(sinon.match({ memo, expiry, value }), sinon.match({ client: clientStub }))
   })
 
   it('returns a paymentRequest hash', () => {

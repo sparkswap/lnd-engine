@@ -56,9 +56,11 @@ describe('create-refund-invoice', () => {
     const expiry = createRefundInvoice.__get__('DEFAULT_INVOICE_EXPIRY')
 
     expect(addInvoiceStub).to.have.been.calledWith(
-      `${expiryPrefix} ${decodedDescription}`,
-      expiry,
-      invoiceValue,
+      {
+        memo: `${expiryPrefix} ${decodedDescription}`,
+        expiry,
+        value: invoiceValue
+      },
       { client: clientStub }
     )
   })
