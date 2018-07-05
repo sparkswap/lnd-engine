@@ -1,15 +1,16 @@
 FROM golang:1.10-alpine as builder
 
-LABEL owner="Olaoluwa Osuntokun <lightning.engineering>"
-LABEL maintainer="Danny Paz <kinesis.exchange>"
+LABEL maintainer="Kinesis Network <kinesis.network>"
 
 # Set the version of LND used in this image to prevent breaking changes
 ARG LND_VERSION='k#epic/cross-chain-preimage'
 
+# Set the chain that is used for the current image
+ARG NETWORK='btc'
+
 # Force Go to use the cgo based DNS resolver. This is required to ensure DNS
 # queries required to connect to linked containers succeed.
 ENV GODEBUG netdns=cgo
-
 
 # Install dependencies and install/build lnd.
 RUN apk add --no-cache \
@@ -32,41 +33,27 @@ RUN git clone --branch ${LND_VERSION} https://github.com/kinesis-exchange/lnd . 
 #
 RUN mkdir "/secure"
 
-ARG TLS_KEY='/secure/lnd-engine-tls.key'
-ARG TLS_CERT='/secure/lnd-engine-tls.cert'
-ARG TLS_CSR='/secure/lnd-engine-csr.csr'
-
-# Certs that are generated for using the lncli locally
-ARG LOCAL_TLS_KEY='/secure/lnd-engine-tls.key'
-ARG LOCAL_TLS_CERT='/secure/lnd-engine-tls.local.cert'
-ARG LOCAL_TLS_CSR='/secure/lnd-engine-csr.local.csr'
+ARG TLS_KEY='/secure/lnd-engine-tls-${NETWORK}.key'
+ARG TLS_CERT='/secure/lnd-engine-tls-${NETWORK}.cert'
+ARG TLS_CSR='/secure/lnd-engine-csr-${NETWORK}.csr'
 
 # # Manually generate certificate and add all domains, it is needed to connect
 # # "btcctl" and "lnd" to "btcd" over docker links.
 RUN openssl ecparam -genkey -name prime256v1 -out ${TLS_KEY}
 RUN openssl req -new -sha256 -key ${TLS_KEY} -out ${TLS_CSR} -subj '/CN=lnd_btc/O=lnd'
-RUN openssl req -new -sha256 -key ${TLS_KEY} -out ${LOCAL_TLS_CSR} -subj '/CN=localhost/O=lnd'
 RUN openssl req -x509 -sha256 -days 36500 -key ${TLS_KEY} -in ${TLS_CSR} -out ${TLS_CERT}
-RUN openssl req -x509 -sha256 -days 36500 -key ${TLS_KEY} -in ${LOCAL_TLS_CSR} -out ${LOCAL_TLS_CERT}
 
 RUN rm ${TLS_CSR}
-RUN rm ${LOCAL_TLS_CSR}
 
 # Start a new, final image to reduce size.
 FROM alpine as final
 
 RUN mkdir "/secure"
 
-ARG TLS_KEY='/secure/lnd-engine-tls.key'
-ARG TLS_CERT='/secure/lnd-engine-tls.cert'
-ARG LOCAL_TLS_CERT='/secure/lnd-engine-tls.local.cert'
-
 # Copy the binaries and entrypoint from the builder image.
 COPY --from=builder /go/bin/lncli /bin/
 COPY --from=builder /go/bin/lnd /bin/
-COPY --from=builder ${TLS_KEY} /secure/
-COPY --from=builder ${TLS_CERT} /secure/
-COPY --from=builder ${LOCAL_TLS_CERT} /secure/
+COPY --from=builder /secure /secure/
 
 # Add bash.
 RUN apk add --no-cache \
