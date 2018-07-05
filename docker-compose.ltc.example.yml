@@ -31,15 +31,13 @@ services:
       - DEBUG=info
       - DATA_DIR=/data
       - LOG_DIR=/data
-      - RPC_KEY=/secure/rpc-ltc.key
-      - RPC_CERT=/shared/rpc-ltc.cert
+      - RPC_KEY=/secure/rpc.key
+      - RPC_CERT=/shared/rpc.cert
       - RPC_LISTEN=0.0.0.0
       # This is set dynamically in the startup scripts
       # TODO: figure out how to dynamically set this variable and prevent it from
       # triggering warnings
       - "MINING_ADDRESS=$MINING_ADDRESS"
-    networks:
-      - lnd
     entrypoint: ["./start-ltcd.sh"]
 
   lnd_ltc:
@@ -48,7 +46,7 @@ services:
       - RPC_USER=kuser
       - RPC_PASS=kpass
       - RPC_HOST=ltcd
-      - RPC_CERT_PATH=/shared/rpc-ltc.cert
+      - RPC_CERT_PATH=/shared/rpc.cert
       - ADMIN_MACAROON=/shared/lnd-engine-admin-ltc.macaroon
       - READ_ONLY_MACAROON=/shared/lnd-engine-readonly-ltc.macaroon
       - INVOICE_MACAROON=/shared/lnd-engine-invoice-ltc.macaroon
@@ -66,8 +64,6 @@ services:
       - REST_LISTEN=0.0.0.0:8101
       - DATA_DIR=/data
       - LOG_DIR=/data
-    networks:
-      - lnd
     volumes:
       - 'shared:/shared'
       - 'lnd:/data'
@@ -79,7 +75,4 @@ services:
 volumes:
   shared:
   litecoin:
-  lnd:
-
-networks:
   lnd:

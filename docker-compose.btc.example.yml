@@ -31,15 +31,17 @@ services:
       - DEBUG=info
       - DATA_DIR=/data
       - LOG_DIR=/data
-      - RPC_KEY=/secure/rpc-btc.key
-      - RPC_CERT=/shared/rpc-btc.cert
+      - RPC_KEY=/secure/rpc.key
+      - RPC_CERT=/shared/rpc.cert
       - RPC_LISTEN=0.0.0.0
       # This is set dynamically in the startup scripts
       # TODO: figure out how to dynamically set this variable and prevent it from
       # triggering warnings
       - "MINING_ADDRESS=$MINING_ADDRESS"
-    networks:
-      - lnd
+    # Only needed for development
+    ports:
+      - '18555:18555'
+      - '18556:18556'
     entrypoint: ["./start-btcd.sh"]
 
   lnd_btc:
@@ -47,8 +49,8 @@ services:
     environment:
       - RPC_USER=kuser
       - RPC_PASS=kpass
-      - RPC_HOST=btcd
-      - RPC_CERT_PATH=/shared/rpc-btc.cert
+      - RPC_HOST=docker.for.mac.host.internal
+      - RPC_CERT_PATH=/shared/rpc.cert
       - ADMIN_MACAROON=/shared/lnd-engine-admin-btc.macaroon
       - READ_ONLY_MACAROON=/shared/lnd-engine-readonly-btc.macaroon
       - INVOICE_MACAROON=/shared/lnd-engine-invoice-btc.macaroon
@@ -66,8 +68,6 @@ services:
       - REST_LISTEN=0.0.0.0:8101
       - DATA_DIR=/data
       - LOG_DIR=/data
-    networks:
-      - lnd
     volumes:
       - 'shared:/shared'
       - 'lnd:/data'
@@ -79,7 +79,4 @@ services:
 volumes:
   shared:
   bitcoin:
-  lnd:
-
-networks:
   lnd:
