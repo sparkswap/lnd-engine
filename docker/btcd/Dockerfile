@@ -50,7 +50,7 @@ RUN apk add --no-cache \
 &&  chmod +x start-btcd.sh \
 # Manually generate certificate and add all domains, it is needed to connect
 # "btcctl" and "lnd" to "btcd" over docker links.
-&& "/bin/gencerts" --host="docker.for.mac.host.internal" --directory="/secure" --force
+&& "/bin/gencerts" --host=${CERT_HOST} --directory="/secure" --force
 
 # Mainnet (p2p, rpc)
 EXPOSE 8333 8334
