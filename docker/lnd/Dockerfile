@@ -62,6 +62,9 @@ COPY --from=builder /secure /secure/
 RUN apk add --no-cache \
     bash
 
+# Expose lnd ports (server, rpc).
+EXPOSE 9735 10009
+
 # Create a volume to house lnd certs/keys.
 # You should NOT do this before certificate generation!
 # Otherwise manually generated certificate will be overridden with shared
