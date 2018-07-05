@@ -6,6 +6,8 @@ echo ""
 echo "It's time to BUILD! All resistance is futile."
 echo ""
 
+npm i
+
 # Downloads the LND proto file
 LND_PROTO_URL=${LND_PROTO_URL:-https://raw.githubusercontent.com/lightningnetwork/lnd/master/lnrpc/rpc.proto}
 curl -o ./proto/lnd-rpc.proto $LND_PROTO_URL
