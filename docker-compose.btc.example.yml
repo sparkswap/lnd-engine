@@ -32,7 +32,7 @@ services:
       - DATA_DIR=/data
       - LOG_DIR=/data
       - RPC_KEY=/secure/rpc.key
-      - RPC_CERT=/shared/rpc.cert
+      - RPC_CERT=/shared/rpc-btc.cert
       - RPC_LISTEN=0.0.0.0
       - MAX_WEB_SOCKETS=100
       # This is set dynamically in the startup scripts

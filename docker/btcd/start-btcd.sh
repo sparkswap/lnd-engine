@@ -4,7 +4,7 @@
 set -e
 
 # Copy certs to the shared file
-[[ -e /secure/rpc.cert ]] && cp /secure/rpc.cert /shared
+[[ -e /secure/rpc.cert ]] && cp /secure/rpc.cert /shared/rpc-btc.cert
 
 # Start a cron for simnet, if network is simnet
 if [[ "$NETWORK" == "simnet" ]]; then
