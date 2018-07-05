@@ -43,7 +43,7 @@ services:
     entrypoint: ["./start-ltcd.sh"]
 
   lnd_ltc:
-    image: kinesis_lnd:latest
+    image: kinesis_lnd_ltc:latest
     environment:
       - RPC_USER=kuser
       - RPC_PASS=kpass

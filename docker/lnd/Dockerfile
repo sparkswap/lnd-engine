@@ -6,7 +6,10 @@ LABEL maintainer="Kinesis Network <kinesis.network>"
 ARG LND_VERSION='k#epic/cross-chain-preimage'
 
 # Set the chain that is used for the current image
-ARG NETWORK='btc'
+ARG NETWORK
+RUN \
+# Check for mandatory build arguments
+    : "${NETWORK:?NETWORK Build argument needs to be set.}"
 
 # Force Go to use the cgo based DNS resolver. This is required to ensure DNS
 # queries required to connect to linked containers succeed.
@@ -68,5 +71,5 @@ VOLUME ["/secure"]
 # Make lnd folder default.
 WORKDIR /home/lnd
 
-COPY "lnd/start-lnd.sh" .
+COPY "start-lnd.sh" .
 RUN chmod +x start-lnd.sh

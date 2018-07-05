@@ -30,15 +30,13 @@ COPY --from=builder /go/bin/ltcctl /bin/
 COPY --from=builder /go/bin/ltcd /bin/
 COPY --from=builder /go/bin/gencerts /bin/
 
-COPY "start-ltcctl.sh" .
 COPY "start-ltcd.sh" .
 
 RUN apk add --no-cache \
     bash \
     ca-certificates \
-&&  chmod +x start-ltcctl.sh \
 &&  chmod +x start-ltcd.sh \
-&&  mkdir "/rpc" "/root/.ltcd" "/root/.ltcctl" \
+&&  mkdir "/secure" "/root/.ltcd" "/root/.ltcctl" \
 &&  touch "/root/.ltcd/ltcd.conf" \
 # "ltcctl" and "lnd" to "ltcd" over docker links.
 &&  "/bin/gencerts" --host="${CERT_HOST}" --directory="/secure" --force
