@@ -24,7 +24,7 @@ if [[ -n "$MINING_ADDRESS" ]]; then
     PARAMS="$PARAMS --miningaddr=$MINING_ADDRESS"
 elif [[ "$NETWORK" == "simnet" ]]; then
     # TODO: Need to update this for ltcd
-    PROOF_OF_BURN_ADDRESS='sb1qcpeeeyuwfvguh6nudsquxww88dlefkrvns2wjd'
+    PROOF_OF_BURN_ADDRESS='LbCryptoLifeDotNetBurnAddrXXXGon58'
     PARAMS="$PARAMS --miningaddr=$PROOF_OF_BURN_ADDRESS"
 fi
 

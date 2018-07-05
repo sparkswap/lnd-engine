@@ -22,6 +22,7 @@ PARAMS=$(echo \
     "--rpclisten=$RPC_LISTEN" \
     "--rpccert=$RPC_CERT" \
     "--rpckey=$RPC_KEY" \
+    "--rpcmaxwebsockets=$MAX_WEB_SOCKETS" \
     "--txindex"
 )
 

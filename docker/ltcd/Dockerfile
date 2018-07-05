@@ -39,7 +39,7 @@ RUN apk add --no-cache \
 &&  mkdir "/secure" "/root/.ltcd" "/root/.ltcctl" \
 &&  touch "/root/.ltcd/ltcd.conf" \
 # "ltcctl" and "lnd" to "ltcd" over docker links.
-&&  "/bin/gencerts" --host="${CERT_HOST}" --directory="/secure" --force
+&&  "/bin/gencerts" --host=${CERT_HOST} --directory="/secure" --force
 
 # Mainnet ports (p2p, rpc)
 EXPOSE 8333 8334
