@@ -25,6 +25,8 @@ services:
       - shared:/shared
       - bitcoin:/data
     environment:
+      # PLEASE modify the user/pass to more secure information as these credentials
+      # can be used to directly access your btc instance
       - RPC_USER=kuser
       - RPC_PASS=kpass
       - NETWORK=simnet
@@ -48,6 +50,8 @@ services:
   lnd_btc:
     image: kinesis_lnd_btc:latest
     environment:
+      # PLEASE modify the user/pass on your BTCD node to more secure information
+      # as these credentials can be used to directly access your btcd instance
       - RPC_USER=kuser
       - RPC_PASS=kpass
       - RPC_HOST=docker.for.mac.host.internal
@@ -72,9 +76,6 @@ services:
     volumes:
       - 'shared:/shared'
       - 'lnd:/data'
-    # Please refer to the lnd docker file for details on exposed ports
-    # ports:
-    #   - '10111:10111'
     entrypoint: ["./start-lnd.sh"]
 
 volumes:

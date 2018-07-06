@@ -25,6 +25,8 @@ services:
       - shared:/shared
       - litecoin:/data
     environment:
+      # PLEASE modify the user/pass to more secure information as these credentials
+      # can be used to directly access your ltcd instance
       - RPC_USER=kuser
       - RPC_PASS=kpass
       - NETWORK=simnet
@@ -46,6 +48,8 @@ services:
     depends_on:
       - ltcd
     environment:
+      # PLEASE modify the user/pass to more secure information as these credentials
+      # can be used to directly access your ltcd instance
       - RPC_USER=kuser
       - RPC_PASS=kpass
       - RPC_HOST=docker.for.mac.host.internal
@@ -56,13 +60,13 @@ services:
       - TLS_CERT_PATH=/shared/lnd-engine-tls-ltc.cert
       - TLS_KEY_PATH=/secure/lnd-engine-tls-ltc.key
       - NETWORK=simnet
+      # We set the node to btcd/bitcoin because LTC simnet is not supported for LND
+      # see: https://github.com/lightningnetwork/lnd/blob/d83f4fbb85489ffc9b50da4c4162966046e9053e/config.go#L511-L514
       - CHAIN=bitcoin
       - NODE=btcd
       - DEBUG=info
       - RPC_LISTEN=0.0.0.0:10009
       - LISTEN=0.0.0.0:10111
-      # This address is for development only. You must change this to a
-      # tld to use in a production setting
       - EXTERNAL_ADDRESS=docker.for.mac.host.internal:10111
       - REST_LISTEN=0.0.0.0:8101
       - DATA_DIR=/data
@@ -70,9 +74,6 @@ services:
     volumes:
       - 'shared:/shared'
       - 'lnd:/data'
-    # Please refer to the lnd docker file for details on exposed ports
-    # ports:
-    #   - '10111:10111'
     entrypoint: ["./start-lnd.sh"]
 
 volumes:
