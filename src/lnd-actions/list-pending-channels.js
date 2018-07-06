@@ -7,7 +7,7 @@ const { deadline } = require('../grpc-utils')
  *
  * @return {Promise<Array>} channels
  */
-function pendingChannels ({ client }) {
+function listPendingChannels ({ client }) {
   return new Promise((resolve, reject) => {
     client.pendingChannels({}, { deadline: deadline() }, (err, res) => {
       if (err) return reject(err)
@@ -16,4 +16,4 @@ function pendingChannels ({ client }) {
   })
 }
 
-module.exports = pendingChannels
+module.exports = listPendingChannels

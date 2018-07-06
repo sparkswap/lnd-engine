@@ -1,7 +1,7 @@
 
 const {
   listChannels,
-  pendingChannels
+  listPendingChannels
 } = require('../lnd-actions')
 
 const { Big } = require('../utils')
@@ -14,7 +14,7 @@ const { Big } = require('../utils')
 async function getTotalChannelBalance (remotePubKey) {
   const { channels = [] } = await listChannels({ client: this.client })
 
-  const { pendingOpenChannels = [] } = await pendingChannels({ client: this.client })
+  const { pendingOpenChannels = [] } = await listPendingChannels({ client: this.client })
 
   const balances = {
     active: new Big(0),
@@ -22,7 +22,8 @@ async function getTotalChannelBalance (remotePubKey) {
   }
 
   if (channels.length === 0 && pendingOpenChannels.length === 0) {
-    throw new Error('getTotalChannelBalance: No channels exist')
+    this.logger.debug('getTotalChannelBalance: No channels exist')
+    return { activeBalance: balances['active'].toString(), pendingBalance: balances['pending'].toString() }
   }
 
   const activeChannelsForPubkey = channels.filter(channel => channel.remotePubkey === remotePubKey)
