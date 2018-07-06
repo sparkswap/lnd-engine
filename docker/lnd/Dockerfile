@@ -36,14 +36,14 @@ RUN git clone --branch ${LND_VERSION} https://github.com/kinesis-exchange/lnd . 
 #
 RUN mkdir "/secure"
 
-ARG TLS_KEY='/secure/lnd-engine-tls-${NETWORK}.key'
-ARG TLS_CERT='/secure/lnd-engine-tls-${NETWORK}.cert'
-ARG TLS_CSR='/secure/lnd-engine-csr-${NETWORK}.csr'
+ARG TLS_KEY="/secure/lnd-engine-tls-${NETWORK}.key"
+ARG TLS_CERT="/secure/lnd-engine-tls-${NETWORK}.cert"
+ARG TLS_CSR="/secure/lnd-engine-csr-${NETWORK}.csr"
 
 # # Manually generate certificate and add all domains, it is needed to connect
 # # "btcctl" and "lnd" to "btcd" over docker links.
 RUN openssl ecparam -genkey -name prime256v1 -out ${TLS_KEY}
-RUN openssl req -new -sha256 -key ${TLS_KEY} -out ${TLS_CSR} -subj '/CN=lnd_btc/O=lnd'
+RUN openssl req -new -sha256 -key ${TLS_KEY} -out ${TLS_CSR} -subj "/CN=lnd_${NETWORK}/O=lnd"
 RUN openssl req -x509 -sha256 -days 36500 -key ${TLS_KEY} -in ${TLS_CSR} -out ${TLS_CERT}
 
 RUN rm ${TLS_CSR}

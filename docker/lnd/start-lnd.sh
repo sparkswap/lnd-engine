@@ -4,8 +4,8 @@
 set -e
 
 # Copy certs to the shared file
-[[ -e /secure/lnd-engine-tls.cert ]] && cp /secure/lnd-engine-tls.cert /shared
-[[ -e /secure/lnd-engine-tls.local.cert ]] && cp /secure/lnd-engine-tls.local.cert /shared
+[[ -e /secure/lnd-engine-tls-btc.cert ]] && cp /secure/lnd-engine-tls-btc.cert /shared
+[[ -e /secure/lnd-engine-tls-ltc.cert ]] && cp /secure/lnd-engine-tls-ltc.cert /shared
 
 # USING THIS OPTION BECAUSE WERE BAD
 # BUT THIS WILL NEED TO BE REMOVED FOR TESTNET
