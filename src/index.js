@@ -4,6 +4,16 @@ const LND_PROTO_FILE_PATH = require.resolve('../proto/lnd-rpc.proto')
 
 /**
  * @constant
+ * @type {Array<string>}
+ * @default
+ */
+const SUPPORTED_CURRENCIES = Object.freeze({
+  LTC: 'LTC',
+  BTC: 'BTC'
+})
+
+/**
+ * @constant
  * @type {String}
  * @default
  */
@@ -30,13 +40,15 @@ class LndEngine {
    * @param {String|TLS_CERT_PATH} [options.tlsCertPath=TLS_CERT_PATH] - defaults to TLS_CERT_PATH
    * @param {String} [options.macaroonPath=MACAROON_PATH] options.macaroonPath - defaults to MACAROON_PATH
    */
-  constructor (host, { logger, tlsCertPath, macaroonPath } = {}) {
-    if (!host) {
-      throw new Error('Host is required for lnd-engine initialization')
-    }
+  constructor (host, currency, { logger, tlsCertPath, macaroonPath } = {}) {
+    if (!host) throw new Error('Host is required for lnd-engine initialization')
+    if (!currency) throw new Error('Currency is required for lnd-engine initialization')
+    if (!Object.values(SUPPORTED_CURRENCIES).includes(currency)) throw new Error(`lnd-engine does not support currency: ${currency}`)
 
     this.host = host
+    this.currency = currency
     this.logger = logger || console
+
     // TODO: Remove defaults for tls/macaroon path and change signature of lnd-engine constructor
     // to reflect that they are required. The default values might be useless now that
     // we support multiple chains for lnd
@@ -47,6 +59,31 @@ class LndEngine {
     this.client = generateLndClient(this.host, this.protoPath, this.tlsCertPath, this.macaroonPath)
 
     Object.assign(this, actions)
+
+    this.initialize()
+      .then(() => {
+        logger.info(`lnd-engine is initialized: ${host} for currency ${currency}`)
+      })
+      .catch(logger.error)
+  }
+
+  async initialize () {
+    const { chains = [] } = await actions.getInfo({ client: this.client })
+
+    if (Array.isArray(chains) && !chains.length) {
+      throw new Error('lnd-engine initialization chain information does not exist')
+    }
+
+    if (!chains.includes(this.currency)) {
+      throw new Error(`Host only supports ${chains.join(', ')} currency types. Received ${this.currency}.`)
+    }
+  }
+
+  /**
+   * @return {Object} key, value of currencies supported by lnd
+   */
+  static types () {
+    return SUPPORTED_CURRENCIES
   }
 }
 
