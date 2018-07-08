@@ -1,0 +1,16 @@
+{
+  "currencies": [
+    {
+      "name": "Bitcoin",
+      "chainName": "bitcoin",
+      "symbol": "BTC",
+      "quantumsPerCommon": "100000000"
+    },
+    {
+      "name": "Litecoin",
+      "chainName": "litecoin",
+      "symbol": "LTC",
+      "quantumsPerCommon": "100000000"
+    }
+  ]
+}

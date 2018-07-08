@@ -6,7 +6,7 @@ const {
 } = require('../lnd-actions')
 const {
   SUPPORTED_SYMBOLS
-} = require('../config')
+} = require('../fee-config')
 const {
   getChannelSymbol
 } = require('../utils')

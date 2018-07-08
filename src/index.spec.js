@@ -10,12 +10,19 @@ describe('lnd-engine index', () => {
   const macaroonPath = LndEngine.__get__('MACAROON_PATH')
 
   let clientStub
+  let currencies
 
   beforeEach(() => {
     clientStub = sinon.stub()
+    currencies = [
+      {
+        symbol: 'BTC'
+      }
+    ]
 
     LndEngine.__set__('actions', {})
     LndEngine.__set__('generateLndClient', clientStub)
+    LndEngine.__set__('currencies', currencies)
   })
 
   describe('default', () => {
@@ -34,6 +41,7 @@ describe('lnd-engine index', () => {
   })
 
   describe('constructor values', () => {
+    const symbol = 'BTC'
     const host = 'CUSTOM_HOST:1337'
     const logger = 'CUSTOM_LOGGER'
     const customTlsCertPath = '/custom/cert/path'
@@ -42,12 +50,18 @@ describe('lnd-engine index', () => {
     let engine
 
     beforeEach(() => {
-      engine = new LndEngine(host, { logger, tlsCertPath: customTlsCertPath, macaroonPath: customMacaroonPath })
+      engine = new LndEngine(symbol, host, { logger, tlsCertPath: customTlsCertPath, macaroonPath: customMacaroonPath })
     })
 
+    it('sets a symbol', () => expect(engine.symbol).to.eql(symbol))
+    it('retrieves currency config', () => expect(engine.currencyConfig).to.eql(currencies[0]))
     it('sets a host', () => expect(engine.host).to.eql(host))
     it('sets a logger', () => expect(engine.logger).to.eql(logger))
     it('sets a tlsCertPath', () => expect(engine.tlsCertPath).to.eql(customTlsCertPath))
     it('sets a macaroonPath', () => expect(engine.macaroonPath).to.eql(customMacaroonPath))
+
+    it('throws if the currency is not in available configuration', () => {
+      expect(() => { new LndEngine('XYZ') }).to.throw('not a valid symbol') // eslint-disable-line
+    })
   })
 })

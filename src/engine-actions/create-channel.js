@@ -5,7 +5,7 @@ const {
 } = require('../lnd-actions')
 const {
   SUPPORTED_SYMBOLS
-} = require('../config')
+} = require('../fee-config')
 const {
   feeRateForSymbol
 } = require('../utils')
