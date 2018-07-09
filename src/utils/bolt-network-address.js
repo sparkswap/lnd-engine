@@ -20,8 +20,8 @@ const BOLT_NETWORK_TYPE = 'bolt'
  * @throws {Error} If network type is not `bolt`
  */
 function parse (paymentChannelNetworkAddress) {
-  const delmiterIndex = paymentChannelNetworkAddress.indexOf(DELIMITER)
-  const [ networkType, networkAddress ] = [ paymentChannelNetworkAddress.slice(0, delmiterIndex), paymentChannelNetworkAddress.slice(delmiterIndex + 1) ]
+  const delimiterIndex = paymentChannelNetworkAddress.indexOf(DELIMITER)
+  const [ networkType, networkAddress ] = [ paymentChannelNetworkAddress.slice(0, delimiterIndex), paymentChannelNetworkAddress.slice(delimiterIndex + 1) ]
 
   if (networkType !== BOLT_NETWORK_TYPE) {
     throw new Error(`Unable to parse address for payment channel network type of '${networkType}'`)
