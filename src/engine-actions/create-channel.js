@@ -40,7 +40,6 @@ const FEE_RATE_PRECISION = 1000000
  * @param {String} info.fundingTxidStr
  * @param {Number} info.outputIndex
  * @return {Object} res
- * @return {Null} an error occurred
  */
 function generateChanPointFromChannelInfo (info) {
   const { fundingTxidBytes, fundingTxidStr, outputIndex: oIndex } = info
@@ -51,7 +50,7 @@ function generateChanPointFromChannelInfo (info) {
   } else if (fundingTxidStr) {
     return { fundingTxidStr, outputIndex }
   } else {
-    return null
+    throw new Error('Unable to generate chanpoint w/ openChannel info', { info })
   }
 }
 
@@ -67,8 +66,9 @@ function generateChanPointFromChannelInfo (info) {
  */
 function feeRatePerSatoshiForSymbol (symbol) {
   const feeRatePerMillionSatoshis = feeRateForSymbol(symbol)
-
-  if (!feeRatePerMillionSatoshis) return false
+  if (!feeRatePerMillionSatoshis) {
+    throw new Error('Unable to generate fee from provided symbol', symbol)
+  }
 
   return (parseInt(feeRatePerMillionSatoshis, 10) / FEE_RATE_PRECISION)
 }
@@ -80,7 +80,7 @@ function feeRatePerSatoshiForSymbol (symbol) {
  * @param {String} publicKey - LN identity_publickey
  * @param {String} fundingAmount - int64 string
  * @param {String} symbol - ticker symbol
- * @returns {Promise<boolean>} returns true on success
+ * @returns {Promise<void>} returns void on success
  */
 async function createChannel (host, publicKey, fundingAmount, symbol) {
   if (!Object.values(SUPPORTED_SYMBOLS).includes(symbol)) {
@@ -102,17 +102,7 @@ async function createChannel (host, publicKey, fundingAmount, symbol) {
   // TODO: support multiple currencies
   const feeRate = feeRatePerSatoshiForSymbol(symbol)
 
-  if (!feeRate) {
-    this.logger.error('Unable to generate fee from provided symbol')
-    return false
-  }
-
   const chanPoint = generateChanPointFromChannelInfo(channelInfo)
-
-  if (!chanPoint) {
-    this.logger.error('Unable to generate chanpoint w/ openChannel info', { channelInfo })
-    return false
-  }
 
   // Updates a channel policy after a channel "is" active (time estimate).
   //
@@ -125,8 +115,6 @@ async function createChannel (host, publicKey, fundingAmount, symbol) {
     this.logger.debug('Updating channel point', { chanPoint, feeRate })
     await updateChannelPolicy(chanPoint, feeRate, TIMELOCK_DELTA, { client: this.client })
   }
-
-  return true
 }
 
 module.exports = createChannel

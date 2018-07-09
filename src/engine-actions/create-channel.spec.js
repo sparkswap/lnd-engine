@@ -85,8 +85,8 @@ describe('createChannel', () => {
       expect(updateChannelStub).to.not.have.been.calledOnce()
     })
 
-    it('returns true for successful channel creation', () => {
-      expect(res).to.be.true()
+    it('returns void for successful channel creation', () => {
+      expect(res).to.eql(undefined)
     })
   })
 
@@ -122,5 +122,15 @@ describe('createChannel', () => {
 
   it('throws an error if symbol is not supported', () => {
     return expect(createChannel(host, pubKey, fundingAmount, 'DAN')).to.eventually.be.rejectedWith('Symbol is not currently supported')
+  })
+
+  it('throws an error if fees cannot be generated', () => {
+    feeRateStub.returns()
+    return expect(createChannel(host, pubKey, fundingAmount, symbol)).to.eventually.be.rejectedWith('Unable to generate fee from provided symbol')
+  })
+
+  it('throws an error if unable to generate chanpoint', () => {
+    generateStub.throws('Error', 'Unable to generate chanpoint w/ openChannel info')
+    return expect(createChannel(host, pubKey, fundingAmount, symbol)).to.eventually.be.rejectedWith('Unable to generate chanpoint w/ openChannel info')
   })
 })
