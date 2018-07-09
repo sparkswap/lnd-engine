@@ -35,15 +35,6 @@ class LndEngine {
 
     Object.assign(this, actions)
   }
-
-  /**
-   * Run the asynchronous operations need to initialize the engine, currently:
-   * - validating the configuration of the engine against the underlying node
-   * @return {Promise<void>}
-   */
-  async initialize () {
-    await this.validateNodeConfig()
-  }
 }
 
 module.exports = LndEngine
