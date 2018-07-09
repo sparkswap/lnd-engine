@@ -8,7 +8,7 @@ const { getInfo } = require('../lnd-actions')
  * @return {Boolean} Whether the configuration matches the node
  */
 async function validateNodeConfig () {
-  const { chains } = await getInfo({ client: this.client })
+  const { chains = [] } = await getInfo({ client: this.client })
 
   if (chains.length === 0) {
     throw new Error('LND has no chains configured.')
