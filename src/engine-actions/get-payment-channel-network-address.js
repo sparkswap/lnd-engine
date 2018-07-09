@@ -1,5 +1,5 @@
 const { getInfo } = require('../lnd-actions')
-const { boltNetworkAddress } = require('../utils')
+const { networkAddressFormatter } = require('../utils')
 
 const HOST_DELIMITER = '@'
 
@@ -25,7 +25,7 @@ async function getPaymentChannelNetworkAddress ({ includeHost = true } = {}) {
     networkInfo.host = host
   }
 
-  return boltNetworkAddress.serialize(networkInfo)
+  return networkAddressFormatter.serialize(networkInfo)
 }
 
 module.exports = getPaymentChannelNetworkAddress

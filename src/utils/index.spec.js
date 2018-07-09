@@ -2,7 +2,7 @@ const { expect } = require('test/test-helper')
 
 const {
   Big,
-  boltNetworkAddress
+  networkAddressFormatter
 } = require('./index')
 
 describe('utils index', () => {
@@ -11,8 +11,8 @@ describe('utils index', () => {
     expect(Big).to.not.be.undefined()
   })
 
-  it('defines boltNetworkAddress', () => {
-    expect(boltNetworkAddress).to.not.be.null()
-    expect(boltNetworkAddress).to.not.be.undefined()
+  it('defines networkAddressFormatter', () => {
+    expect(networkAddressFormatter).to.not.be.null()
+    expect(networkAddressFormatter).to.not.be.undefined()
   })
 })

@@ -1,11 +1,11 @@
 const Big = require('./big')
 const { symbolForFeeRate, feeRateForSymbol, getChannelSymbol } = require('./channel-symbol')
-const boltNetworkAddress = require('./bolt-network-address')
+const networkAddressFormatter = require('./network-address-formatter')
 
 module.exports = {
   Big,
   symbolForFeeRate,
   feeRateForSymbol,
   getChannelSymbol,
-  boltNetworkAddress
+  networkAddressFormatter
 }

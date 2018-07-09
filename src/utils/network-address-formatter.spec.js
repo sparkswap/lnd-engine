@@ -1,8 +1,8 @@
 const { expect } = require('test/test-helper')
 
-const { parse, serialize } = require('./bolt-network-address')
+const { parse, serialize } = require('./network-address-formatter')
 
-describe('bolt-network-address', () => {
+describe('network-address-formatter', () => {
   describe('parse', () => {
     it('parses a bolt network address', () => {
       expect(parse('bolt:123192380asfasdf@localhost')).to.be.eql({

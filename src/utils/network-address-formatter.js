@@ -11,7 +11,7 @@ const DELIMITER = ':'
  * @constant
  * @type {String}
  */
-const BOLT_NETWORK_TYPE = 'bolt'
+const NETWORK_TYPE = 'bolt'
 
 /**
  * Parse a given payment channel network address string into a public key and host
@@ -23,7 +23,7 @@ function parse (paymentChannelNetworkAddress) {
   const delimiterIndex = paymentChannelNetworkAddress.indexOf(DELIMITER)
   const [ networkType, networkAddress ] = [ paymentChannelNetworkAddress.slice(0, delimiterIndex), paymentChannelNetworkAddress.slice(delimiterIndex + 1) ]
 
-  if (networkType !== BOLT_NETWORK_TYPE) {
+  if (networkType !== NETWORK_TYPE) {
     throw new Error(`Unable to parse address for payment channel network type of '${networkType}'`)
   }
 
@@ -45,7 +45,7 @@ function parse (paymentChannelNetworkAddress) {
  * @return {String} serialized payment channel network address
  */
 function serialize ({ publicKey, host }) {
-  let address = `${BOLT_NETWORK_TYPE}${DELIMITER}${publicKey}`
+  let address = `${NETWORK_TYPE}${DELIMITER}${publicKey}`
 
   if (host) {
     address = `${address}@${host}`
