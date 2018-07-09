@@ -64,4 +64,34 @@ describe('lnd-engine index', () => {
       expect(() => { new LndEngine('XYZ') }).to.throw('not a valid symbol') // eslint-disable-line
     })
   })
+
+  describe('#initialize', () => {
+    const symbol = 'BTC'
+    const host = 'CUSTOM_HOST:1337'
+    const logger = 'CUSTOM_LOGGER'
+    const customTlsCertPath = '/custom/cert/path'
+    const customMacaroonPath = '/custom/macaroon/path'
+    let engine
+
+    beforeEach(() => {
+      engine = new LndEngine(symbol, host, { logger, tlsCertPath: customTlsCertPath, macaroonPath: customMacaroonPath })
+
+      engine.validateNodeConfig = sinon.stub().resolves()
+    })
+
+    it('returns a promise', () => {
+      expect(engine.initialize()).to.be.a('promise')
+    })
+
+    it('validates the node config', async () => {
+      await engine.initialize()
+
+      expect(engine.validateNodeConfig).to.have.been.calledOnce()
+    })
+
+    it('throws if validation fails', () => {
+      engine.validateNodeConfig.rejects(new Error('fake error'))
+      return expect(engine.initialize()).to.eventually.be.rejectedWith('fake error')
+    })
+  })
 })
