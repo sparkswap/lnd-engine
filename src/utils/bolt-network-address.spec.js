@@ -2,7 +2,7 @@ const { expect } = require('test/test-helper')
 
 const { parse, serialize } = require('./bolt-network-address')
 
-describe.only('bolt-network-address', () => {
+describe('bolt-network-address', () => {
   describe('parse', () => {
     it('parses a bolt network address', () => {
       expect(parse('bolt:123192380asfasdf@localhost')).to.be.eql({
