@@ -4,11 +4,6 @@ const { expect, rewire, sinon } = require('test/test-helper')
 const LndEngine = rewire(path.resolve('src', 'index'))
 
 describe('lnd-engine index', () => {
-  const protoFilePath = LndEngine.__get__('LND_PROTO_FILE_PATH')
-  const lndHost = LndEngine.__get__('LND_HOST')
-  const tlsPath = LndEngine.__get__('TLS_CERT_PATH')
-  const macaroonPath = LndEngine.__get__('MACAROON_PATH')
-
   let clientStub
   let currencies
 
@@ -25,21 +20,6 @@ describe('lnd-engine index', () => {
     LndEngine.__set__('currencies', currencies)
   })
 
-  describe('default', () => {
-    let engine
-
-    beforeEach(() => {
-      engine = new LndEngine()
-    })
-
-    it('sets a default host', () => expect(engine.host).to.eql(lndHost))
-    it('sets a default logger', () => expect(engine.logger).to.eql(console))
-    it('sets a default tlsCertPath', () => expect(engine.tlsCertPath).to.eql(tlsPath))
-    it('sets a default macaroonPath', () => expect(engine.macaroonPath).to.eql(macaroonPath))
-    it('sets a default protoPath', () => expect(engine.protoPath).to.eql(protoFilePath))
-    it('generates an lnd client', () => expect(clientStub).to.have.been.calledWith(lndHost, protoFilePath, tlsPath, macaroonPath))
-  })
-
   describe('constructor values', () => {
     const symbol = 'BTC'
     const host = 'CUSTOM_HOST:1337'
@@ -50,7 +30,7 @@ describe('lnd-engine index', () => {
     let engine
 
     beforeEach(() => {
-      engine = new LndEngine(symbol, host, { logger, tlsCertPath: customTlsCertPath, macaroonPath: customMacaroonPath })
+      engine = new LndEngine(host, symbol, { logger, tlsCertPath: customTlsCertPath, macaroonPath: customMacaroonPath })
     })
 
     it('sets a symbol', () => expect(engine.symbol).to.eql(symbol))
@@ -61,7 +41,7 @@ describe('lnd-engine index', () => {
     it('sets a macaroonPath', () => expect(engine.macaroonPath).to.eql(customMacaroonPath))
 
     it('throws if the currency is not in available configuration', () => {
-      expect(() => { new LndEngine('XYZ') }).to.throw('not a valid symbol') // eslint-disable-line
+      expect(() => { new LndEngine(host, 'XYZ') }).to.throw('not a valid symbol') // eslint-disable-line
     })
   })
 
@@ -74,7 +54,7 @@ describe('lnd-engine index', () => {
     let engine
 
     beforeEach(() => {
-      engine = new LndEngine(symbol, host, { logger, tlsCertPath: customTlsCertPath, macaroonPath: customMacaroonPath })
+      engine = new LndEngine(host, symbol, { logger, tlsCertPath: customTlsCertPath, macaroonPath: customMacaroonPath })
 
       engine.validateNodeConfig = sinon.stub().resolves()
     })
