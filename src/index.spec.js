@@ -4,6 +4,7 @@ const { expect, rewire, sinon } = require('test/test-helper')
 const LndEngine = rewire(path.resolve('src', 'index'))
 
 describe('lnd-engine index', () => {
+  const protoFilePath = LndEngine.__get__('LND_PROTO_FILE_PATH')
   let clientStub
   let currencies
 
@@ -33,6 +34,7 @@ describe('lnd-engine index', () => {
       engine = new LndEngine(host, symbol, { logger, tlsCertPath: customTlsCertPath, macaroonPath: customMacaroonPath })
     })
 
+    it('generates an lnd client', () => expect(clientStub).to.have.been.calledWith(host, protoFilePath, customTlsCertPath, customMacaroonPath))
     it('sets a symbol', () => expect(engine.symbol).to.eql(symbol))
     it('retrieves currency config', () => expect(engine.currencyConfig).to.eql(currencies[0]))
     it('sets a host', () => expect(engine.host).to.eql(host))
@@ -42,6 +44,9 @@ describe('lnd-engine index', () => {
 
     it('throws if the currency is not in available configuration', () => {
       expect(() => { new LndEngine(host, 'XYZ') }).to.throw('not a valid symbol') // eslint-disable-line
+    })
+    it('fails if no host is specified', () => {
+      expect(() => new LndEngine(null, symbol)).to.throw('Host is required')
     })
   })
 })

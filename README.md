@@ -7,15 +7,18 @@
 The following repo contains 2 modules that make up a `Kinesis Engine`:
 
 1. NPM module w/ LND abstraction layer (located in `src`)
-2. Dockerfiles for all containers needed for the LND Engine to work correctly
+2. Dockerfiles for all containers needed for the LND Engine
 
-Our current docker setup consists of the following containers:
+A current docker setup for the Kinesis exchange may look like:
+1. BTCD node
+2. LND BTCD node (kinesis-exchange fork)
+3. LTCD node
+4. LND LTCD node (kinesis-exchange fork)
 
-- roasbeef/BTCD - Headless daemon to interact with blockchain (no wallet in this package)
-- LND - Lightning Network Daemon + Wallet
-- repl - an interactive shell for using the lnd-engine stack
+#### Installation (lnd-engine only)
 
-#### Getting Started
+The following commands will install dependencies, import proto files and run tests on the
+lnd-engine codebase. These steps do not build the docker images associated with the lnd-engine.
 
 ```
 npm i
@@ -23,42 +26,26 @@ npm run build
 npm test
 ```
 
-You can access the repl through `docker-compose run lnd_repl` and view all available commands with `commands`
+#### Installation w/ Docker
+
+The lnd-engine docker files make use of Docker's image storage. Run the `npm run build-images` command to
+update all docker images on your local docker installation.
 
 #### Using the docker files in your personal project
 
-In order to use the lnd-engine in your project, follow the steps below:
+After you have built all images on your local system, you can then use the provided `docker-compose.btc.example.yml` or
+`docker-compose.ltc.example.yml` files in your project.
 
-Copy the docker files from this repo and put them into a `docker` folder at the root of your project (this assumes that your `docker-compose` file is also at the root of your project directory. Then, add the following references to your `docker-compose` file.
-
-NOTE: This code is ONLY supported in docker versions 2.x. Docker 3 does not support `extends` and is incompatible with the lnd-engine
+#### Library Usage
 
 ```
-# These services are imported from the lnd-engine
-lnd_btc:
-  build:
-    context: ./docker
-  depends_on:
-    - btcd
-  extends:
-    file: ./docker/lnd-docker-compose.yml
-    service: lnd_btc
-  environment:
-    # specify your public port
-    - EXTERNAL_ADDRESS=docker.for.mac.host.internal:10111
-  ports:
-    # This is a public port
-    - '10111:10111'
+const LndEngine = require('lnd-engine')
+const engine = new LndEngine(LND_HOST, engineOptions)
 
-btcd:
-  build:
-    context: ./docker
-  extends:
-    file: ./docker/lnd-docker-compose.yml
-    service: btcd
+engine.getTotalBalance.... etc...
 ```
 
-# API
+# JS API
 
 ```
 getTotalBalance()

@@ -30,17 +30,6 @@ const GRPC_OPTIONS = {
 }
 
 /**
- * @global
- * @constant
- * @type {Object}
- * @default
- */
-const LND_CLIENT_OPTIONS = {
-  'grpc.ssl_target_name_override': 'lnd_btc',
-  'grpc.default_authority': 'lnd_btc'
-}
-
-/**
  * Generates credentials for authentication to the LND rpc server
  *
  * @function
@@ -94,7 +83,7 @@ function generateLndClient (host, protoPath, tlsCertPath, macaroonPath) {
   const { lnrpc } = loadProto(protoPath)
   const credentials = generateCredentials(tlsCertPath, macaroonPath)
 
-  return new lnrpc.Lightning(host, credentials, LND_CLIENT_OPTIONS)
+  return new lnrpc.Lightning(host, credentials, {})
 }
 
 module.exports = generateLndClient

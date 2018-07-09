@@ -19,13 +19,17 @@ class LndEngine {
    * @param {String} options.macaroonPath - file path to the macaroon file for LND
    */
   constructor (host, symbol, { logger = console, tlsCertPath, macaroonPath } = {}) {
+    if (!host) {
+      throw new Error('Host is required for lnd-engine initialization')
+    }
+    this.host = host
+
     this.symbol = symbol
     this.currencyConfig = currencies.find(({ symbol }) => symbol === this.symbol)
     if (!this.currencyConfig) {
       throw new Error(`${symbol} is not a valid symbol for this engine.`)
     }
 
-    this.host = host
     this.logger = logger
     this.tlsCertPath = tlsCertPath
     this.macaroonPath = macaroonPath
