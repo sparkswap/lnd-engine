@@ -1,16 +1,9 @@
 #!/usr/bin/env bash
 
-# exit from script if error was raised.
 set -e
 
 # Copy certs to the shared file
-[[ -e /secure/rpc.cert ]] && cp /secure/rpc.cert /shared/rpc-btc.cert
-
-# Start a cron for simnet, if network is simnet
-if [[ "$NETWORK" == "simnet" ]]; then
-    crond -L /jobs/cron.log
-fi
-
+[[ -e /secure/rpc.cert ]] && cp /secure/rpc.cert /shared/rpc-ltc.cert
 
 PARAMS=$(echo \
     "--$NETWORK" \
@@ -33,8 +26,10 @@ PARAMS=$(echo \
 if [[ -n "$MINING_ADDRESS" ]]; then
     PARAMS="$PARAMS --miningaddr=$MINING_ADDRESS"
 elif [[ "$NETWORK" == "simnet" ]]; then
-    BURN_ADDRESS='sb1qcpeeeyuwfvguh6nudsquxww88dlefkrvns2wjd'
+    # TODO: Need to update this for ltcd
+    BURN_ADDRESS='03f1bc833f465d56bb388cb3d9c9bc9ac175cc0293bfb53a568607281db9680d05'
     PARAMS="$PARAMS --miningaddr=$BURN_ADDRESS"
 fi
 
-exec btcd $PARAMS
+exec ltcd $PARAMS
+

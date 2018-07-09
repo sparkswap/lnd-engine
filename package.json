@@ -15,6 +15,7 @@
   "scripts": {
     "prebuild": "bash ./scripts/prebuild.sh",
     "build": "bash ./scripts/build.sh",
+    "build-images": "bash ./scripts/build-images.sh",
     "pretest": "npm run format-no-fail",
     "test": "npm run test-engine",
     "test-engine": "NODE_PATH=. mocha 'src/**/*.spec.js'",
@@ -23,7 +24,6 @@
     "docs": "jsdoc -c .jsdoc.json",
     "postdoc": "http-server docs",
     "format-no-fail": "standard --fix; exit 0",
-    "fund": "bash ./scripts/fund-simnet-wallet.sh",
     "ci-test": "npm run format && npm run test-engine"
   },
   "repository": {
@@ -39,7 +39,7 @@
     "ltc",
     "litecoin"
   ],
-  "author": "Danny Paz <dan.pazuchowski@gmail.com> (http://www.dannypaz.com)",
+  "author": "Kinesis Network <kinesis.network>",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/kinesis-exchange/lnd-engine/issues"
