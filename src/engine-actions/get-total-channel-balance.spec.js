@@ -16,9 +16,9 @@ describe('getTotalChannelBalance', () => {
 
   beforeEach(() => {
     remotePubKey = 'asdf'
-    channel = { remotePubkey: remotePubKey, remoteBalance: 500 }
+    channel = { remotePubkey: remotePubKey, remoteBalance: '500' }
     channels = [channel, channel]
-    pendingChannel = { channel: { remoteNodePub: remotePubKey, remoteBalance: 400 } }
+    pendingChannel = { channel: { remoteNodePub: remotePubKey, remoteBalance: '400' } }
     pendingOpenChannels = [pendingChannel]
     listChannelsStub = sinon.stub().returns({ channels })
     listPendingChannelsStub = sinon.stub().returns({ pendingOpenChannels })
@@ -53,7 +53,7 @@ describe('getTotalChannelBalance', () => {
   })
 
   it('filters out channels that do not have the remotePubKey', async () => {
-    const anotherChannel = { remotePubkey: 'differentpubkey', remoteBalance: 500 }
+    const anotherChannel = { remotePubkey: 'differentpubkey', remoteBalance: '500' }
     channels = [channel, anotherChannel]
     listChannelsStub.returns({ channels })
     const res = await getTotalChannelBalance(remotePubKey)

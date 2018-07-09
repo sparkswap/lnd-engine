@@ -50,7 +50,6 @@ function generateChanPointFromChannelInfo (info) {
   } else if (fundingTxidStr) {
     return { fundingTxidStr, outputIndex }
   } else {
-    this.logger.error('Unable to generate chanpoint w/ openChannel info', { info })
     throw new Error('Unable to generate chanpoint w/ openChannel info', { info })
   }
 }
@@ -68,7 +67,6 @@ function generateChanPointFromChannelInfo (info) {
 function feeRatePerSatoshiForSymbol (symbol) {
   const feeRatePerMillionSatoshis = feeRateForSymbol(symbol)
   if (!feeRatePerMillionSatoshis) {
-    this.logger.error('Unable to generate fee from provided symbol', symbol)
     throw new Error('Unable to generate fee from provided symbol', symbol)
   }
 

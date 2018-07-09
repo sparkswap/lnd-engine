@@ -23,7 +23,6 @@ async function getTotalChannelBalance (remotePubKey) {
 
   if (channels.length === 0 && pendingOpenChannels.length === 0) {
     this.logger.debug('getTotalChannelBalance: No channels exist')
-    return { activeBalance: balances['active'].toString(), pendingBalance: balances['pending'].toString() }
   }
 
   const activeChannelsForPubkey = channels.filter(channel => channel.remotePubkey === remotePubKey)
