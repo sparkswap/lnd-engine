@@ -1642,6 +1642,9 @@ message Invoice {
 
     /// Whether this invoice should include routing hints for private channels.
     bool private = 15 [json_name = "private"];
+
+    /// Whether the preimage for this invoice is defined locally or stored externally
+    bool external_preimage = 30 [json_name = "external_preimage"];
 }
 message AddInvoiceResponse {
     bytes r_hash = 1 [json_name = "r_hash"];

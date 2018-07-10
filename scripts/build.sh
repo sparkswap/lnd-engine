@@ -9,7 +9,7 @@ echo ""
 npm i
 
 # Downloads the LND proto file
-LND_PROTO_URL=${LND_PROTO_URL:-https://raw.githubusercontent.com/lightningnetwork/lnd/master/lnrpc/rpc.proto}
+LND_PROTO_URL=${LND_PROTO_URL:-https://raw.githubusercontent.com/kinesis-exchange/lnd/k%23epic/cross-chain-preimage/lnrpc/rpc.proto}
 curl -o ./proto/lnd-rpc.proto $LND_PROTO_URL
 
 # Prepares the downloaded lnd-rpc proto file (installation steps tell you to remove this line)
