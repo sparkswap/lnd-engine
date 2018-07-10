@@ -18,6 +18,7 @@ const prepareSwap = require('./prepare-swap')
 const executeSwap = require('./execute-swap')
 const createRefundInvoice = require('./create-refund-invoice')
 const validateNodeConfig = require('./validate-node-config')
+const getPaymentChannelNetworkAddress = require('./get-payment-channel-network-address')
 
 module.exports = {
   getInvoices,
@@ -39,5 +40,6 @@ module.exports = {
   prepareSwap,
   executeSwap,
   createRefundInvoice,
-  validateNodeConfig
+  validateNodeConfig,
+  getPaymentChannelNetworkAddress
 }
