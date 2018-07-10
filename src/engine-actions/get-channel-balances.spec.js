@@ -126,7 +126,6 @@ describe('get-channel-balances', () => {
     })
 
     it('converts an object to a hash in symbol/value format', () => {
-      console.log(res)
       expect(res).to.eql([
         { symbol: 'BTC', value: BTC },
         { symbol: 'LTC', value: LTC }
