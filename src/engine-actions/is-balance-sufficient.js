@@ -1,15 +1,18 @@
 const { listChannels } = require('../lnd-actions')
-const { Big } = require('../utils')
+const { Big, networkAddressFormatter } = require('../utils')
+
 /**
- * Returns a boolean, true if there is an active channel between caller and remote parties that sufficient funds for an order, false if not
+ * Returns a boolean, true if there is an active channel between caller and remote
+ * parties that sufficient funds for an order, false if they are not
  *
- * @param {string} destinationPublicKey - destinations public key
+ * @param {string} destinationPublicKey - the destinations paymentChannelNetworkAddress
  * @param {Integer} minValue - minimum value that needs to be in the channel
  * @param {boolean} [options.outbound=true] outbound is true if checking outbound channels, false if inbound
 
  * @return {Promise<Boolean>} if a channel with sufficient funds exists
  */
-async function isBalanceSufficient (destinationPublicKey, minValue, { outbound = true } = {}) {
+async function isBalanceSufficient (paymentChannelNetworkAddress, minValue, { outbound = true } = {}) {
+  const destinationPublicKey = networkAddressFormatter.parse(paymentChannelNetworkAddress)
   const balance = outbound ? 'localBalance' : 'remoteBalance'
 
   const { channels } = await listChannels({ client: this.client })
