@@ -11,13 +11,18 @@ describe('isBalanceSufficient', () => {
   let channels
   let destination
   let revertListChannelsStub
+  let networkAddressStub
 
   beforeEach(() => {
     destination = 'asdf'
     value = '100'
     outbound = true
     clientStub = sinon.stub()
+    networkAddressStub = {
+      parse: sinon.stub().returns(destination)
+    }
     isBalanceSufficient.__set__('client', clientStub)
+    isBalanceSufficient.__set__('networkAddressFormatter', networkAddressStub)
   })
 
   afterEach(() => {
