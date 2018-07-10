@@ -1,4 +1,4 @@
-const { LTC_FEE_MILLI_MSAT, BTC_FEE_MILLI_MSAT, SUPPORTED_SYMBOLS } = require('../config')
+const { LTC_FEE_MILLI_MSAT, BTC_FEE_MILLI_MSAT, SUPPORTED_SYMBOLS } = require('../fee-config')
 
 /**
  * Get the blockchain associated with a given channeel fee rate
