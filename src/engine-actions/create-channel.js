@@ -7,7 +7,8 @@ const {
   SUPPORTED_SYMBOLS
 } = require('../fee-config')
 const {
-  feeRateForSymbol
+  feeRateForSymbol,
+  networkAddressFormatter
 } = require('../utils')
 const delay = require('timeout-as-promise')
 
@@ -76,16 +77,17 @@ function feeRatePerSatoshiForSymbol (symbol) {
 /**
  * Executes a connection and opens a channel w/ another lnd instance
  *
- * @param {String} host
- * @param {String} publicKey - LN identity_publickey
+ * @param {String} paymentChannelNetworkAddress
  * @param {String} fundingAmount - int64 string
  * @param {String} symbol - ticker symbol
  * @returns {Promise<boolean>} returns true on success
  */
-async function createChannel (host, publicKey, fundingAmount, symbol) {
+async function createChannel (paymentChannelNetworkAddress, fundingAmount, symbol) {
   if (!Object.values(SUPPORTED_SYMBOLS).includes(symbol)) {
     throw new Error(`Symbol is not currently supported on the engine: ${symbol}`)
   }
+
+  const { publicKey, host } = networkAddressFormatter.parse(paymentChannelNetworkAddress)
 
   // TODO check the funding defaults (usually 20000 satosh) and fail before contacting
   // LND
