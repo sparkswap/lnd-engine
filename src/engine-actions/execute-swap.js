@@ -7,7 +7,7 @@ const { networkAddressFormatter, sha256 } = require('../utils')
 const DEFAULT_MIN_FWD_CLTV_DELTA = 144
 
 /**
- * Executes a swap as the initiating node
+ * Executes a swap as the initiating (i.e. Taker) node
  *
  * @param {String} makerAddress Payment Channel Network Address for the Maker of the swap
  * @param {String} swapHash     base64 string of the swap hash associated with this swap
