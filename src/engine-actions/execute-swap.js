@@ -3,7 +3,6 @@ const { networkAddressFormatter, sha256 } = require('../utils')
 
 /**
  * The default CLTV delta that channels use to forward HTLCs.
- * @see {@link https://github.com/lightningnetwork/lnd/issues/1431}
  */
 const DEFAULT_MIN_FWD_CLTV_DELTA = 144
 
