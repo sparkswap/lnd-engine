@@ -45,7 +45,9 @@ WORKDIR $GOPATH/src/github.com/lightningnetwork/lnd
 
 # We use this cache date to always build LND instead of caching the files. This allows us
 # to continually grab changes from the LND_VERSION without tagging the release.
-ARG CACHE_DATE='blank'
+ARG CACHE_DATE=blank
+
+RUN echo ${CACHE_DATE}
 
 RUN git clone --branch ${LND_VERSION} https://github.com/kinesis-exchange/lnd . \
 &&  make \
