@@ -28,6 +28,11 @@ async function translateSwap (takerAddress, swapHash, amount, maxTimeLockDelta) 
 
   this.logger.debug(`Found ${routes.length} routes to ${takerAddress} for ${swapHash}`)
 
+  if (routes.length === 0) {
+    this.logger.error(`No route to ${takerAddress}`, { swapHash })
+    throw new Error(`No route to ${takerAddress}`)
+  }
+
   // round down in terms of blocks extended
   // @see {@link https://mikemcl.github.io/big.js/#rm}
   const maxTimeLockDeltaInBlocks = Big(maxTimeLockDelta).div(this.currencyConfig.secondsPerBlock).round(0, 0)

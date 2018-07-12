@@ -69,11 +69,23 @@ describe('translateSwap', () => {
     expect(queryRoutes).to.have.been.calledWith({ pubKey, amt: amount }, { client })
   })
 
+  it('throws if no routes are available', () => {
+    // remove all routes
+    routes.splice(0, 3)
+    expect(translateSwap.call(engine, address, swapHash, amount, maxTimeLock)).to.be.rejectedWith('No route')
+  })
+
   it('sends to routes that are below the maximum time lock', async () => {
     await translateSwap.call(engine, address, swapHash, amount, maxTimeLock)
 
     expect(sendToRoute).to.have.been.calledOnce()
     expect(sendToRoute).to.have.been.calledWith(swapHash, routes.slice(0, 2), { client })
+  })
+
+  it('throws if there are no routes below the maximum time lock', () => {
+    // remove the fast routes
+    routes.splice(0, 2)
+    expect(translateSwap.call(engine, address, swapHash, amount, maxTimeLock)).to.be.rejectedWith('No route')
   })
 
   it('throws if there is a payment error', () => {
