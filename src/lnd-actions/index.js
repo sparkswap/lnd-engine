@@ -15,6 +15,7 @@ const sendToRoute = require('./send-to-route')
 const updateChannelPolicy = require('./update-channel-policy')
 const getChanInfo = require('./get-chan-info')
 const subscribeInvoices = require('./subscribe-invoices')
+const listPendingChannels = require('./list-pending-channels')
 
 module.exports = {
   addInvoice,
@@ -33,5 +34,6 @@ module.exports = {
   sendToRoute,
   updateChannelPolicy,
   getChanInfo,
-  subscribeInvoices
+  subscribeInvoices,
+  listPendingChannels
 }
