@@ -36,6 +36,9 @@ describe('executeSwap', () => {
       logger: {
         error: sinon.stub(),
         info: sinon.stub()
+      },
+      currencyConfig: {
+        secondsPerBlock: 600
       }
     }
   })
@@ -72,10 +75,10 @@ describe('executeSwap', () => {
     expect(sendPayment).to.have.been.calledWith(sinon.match({ amt: amount }))
   })
 
-  it('uses a default final CLTV delta', async () => {
+  it('uses a final CLTV delta made up of the Maker\'s forwarding amount, the Relayer\'s forwarding amount, the Taker\'s final amount, and a buffer block', async () => {
     await executeSwap.call(engine, makerAddress, swapHash, amount)
 
-    expect(sendPayment).to.have.been.calledWith(sinon.match({ finalCltvDelta: 288 }))
+    expect(sendPayment).to.have.been.calledWith(sinon.match({ finalCltvDelta: 298 }))
   })
 
   it('throws on payment error', () => {
