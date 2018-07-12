@@ -15,7 +15,7 @@ describe('translateSwap', () => {
   let swapHash
   let preimage
   let blockHeight
-  let maxTimeLock
+  let extendedTimeLock
   let amount
   let routes
 
@@ -25,7 +25,7 @@ describe('translateSwap', () => {
     swapHash = '9283479q8asfjsdfjoji=='
     preimage = 'as9fd8uas9df8ya98sfy=='
     amount = '100000'
-    maxTimeLock = '60000'
+    extendedTimeLock = '146400'
     blockHeight = 100
 
     routes = [
@@ -61,7 +61,7 @@ describe('translateSwap', () => {
   })
 
   it('finds routes to the taker for the given amount', async () => {
-    await translateSwap.call(engine, address, swapHash, amount, maxTimeLock)
+    await translateSwap.call(engine, address, swapHash, amount, extendedTimeLock)
 
     expect(networkAddressFormatter.parse).to.have.been.calledOnce()
     expect(networkAddressFormatter.parse).to.have.been.calledWith(address)
@@ -72,11 +72,11 @@ describe('translateSwap', () => {
   it('throws if no routes are available', () => {
     // remove all routes
     routes.splice(0, 3)
-    expect(translateSwap.call(engine, address, swapHash, amount, maxTimeLock)).to.be.rejectedWith('No route')
+    expect(translateSwap.call(engine, address, swapHash, amount, extendedTimeLock)).to.be.rejectedWith('No route')
   })
 
   it('sends to routes that are below the maximum time lock', async () => {
-    await translateSwap.call(engine, address, swapHash, amount, maxTimeLock)
+    await translateSwap.call(engine, address, swapHash, amount, extendedTimeLock)
 
     expect(sendToRoute).to.have.been.calledOnce()
     expect(sendToRoute).to.have.been.calledWith(swapHash, routes.slice(0, 2), { client })
@@ -85,15 +85,15 @@ describe('translateSwap', () => {
   it('throws if there are no routes below the maximum time lock', () => {
     // remove the fast routes
     routes.splice(0, 2)
-    expect(translateSwap.call(engine, address, swapHash, amount, maxTimeLock)).to.be.rejectedWith('No route')
+    expect(translateSwap.call(engine, address, swapHash, amount, extendedTimeLock)).to.be.rejectedWith('No route')
   })
 
   it('throws if there is a payment error', () => {
     sendToRoute.resolves({ paymentError: 'fake error' })
-    return expect(translateSwap.call(engine, address, swapHash, amount, maxTimeLock)).to.eventually.be.rejectedWith('fake error')
+    return expect(translateSwap.call(engine, address, swapHash, amount, extendedTimeLock)).to.eventually.be.rejectedWith('fake error')
   })
 
   it('returns the payment preiamge', async () => {
-    expect(await translateSwap.call(engine, address, swapHash, amount, maxTimeLock)).to.be.eql(preimage)
+    expect(await translateSwap.call(engine, address, swapHash, amount, extendedTimeLock)).to.be.eql(preimage)
   })
 })
