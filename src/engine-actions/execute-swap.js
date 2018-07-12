@@ -64,11 +64,8 @@ async function executeSwap (makerAddress, swapHash, amount) {
     throw new Error(paymentError)
   }
 
-  console.log('paymentPreimage', paymentPreimage)
-
   const derivedHash = sha256.hash(paymentPreimage)
 
-  console.log(derivedHash)
   if (derivedHash !== swapHash) {
     this.logger.error('Swap executed but hash did not match', { swapHash, makerAddress, derivedHash })
     throw new Error(`Hash from preimage does not match swap hash: expected ${swapHash}, found ${derivedHash}`)
