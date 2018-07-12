@@ -2,8 +2,6 @@ FROM golang:1.10-alpine as builder
 
 LABEL maintainer="Kinesis Network <kinesis.network>"
 
-# Set the version of LND used in this image to prevent breaking changes
-ARG LND_VERSION='k#epic/cross-chain-preimage'
 
 # Set the chain that is used for the current image
 ARG NETWORK
@@ -48,7 +46,8 @@ WORKDIR $GOPATH/src/github.com/lightningnetwork/lnd
 # TODO: set this to a certain release commit
 ARG COMMIT_SHA=blank
 
-RUN git clone --branch ${LND_VERSION} https://github.com/kinesis-exchange/lnd . \
+RUN git clone https://github.com/kinesis-exchange/lnd . \
+&&  git checkout ${COMMIT_SHA} \
 &&  make \
 &&  make install
 
