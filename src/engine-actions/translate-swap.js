@@ -25,6 +25,11 @@ function calculateTimeLock (extendedTimeLockDelta, secondsPerBlock, blockHeight)
    * @type {Big}
    */
   const maxTimeLockDelta = Big(extendedTimeLockDelta).minus(DEFAULT_FWD_DELTA)
+
+  if (maxTimeLockDelta.lte(0)) {
+    throw new Error(`Insufficient time lock extended for forwarding policy. Expected at least ${DEFAULT_FWD_DELTA}, got ${extendedTimeLockDelta}`)
+  }
+
   // round down in terms of blocks extended
   // @see {@link https://mikemcl.github.io/big.js/#rm}
   const maxTimeLockDeltaInBlocks = maxTimeLockDelta.div(secondsPerBlock).round(0, 0)

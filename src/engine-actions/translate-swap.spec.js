@@ -75,6 +75,12 @@ describe('translateSwap', () => {
     expect(translateSwap.call(engine, address, swapHash, amount, extendedTimeLock)).to.be.rejectedWith('No route')
   })
 
+  it('throws if the extended time lock is insufficient', () => {
+    extendedTimeLock = '76400'
+
+    return expect(translateSwap.call(engine, address, swapHash, amount, extendedTimeLock)).to.eventually.be.rejectedWith('Insufficient time lock')
+  })
+
   it('sends to routes that are below the maximum time lock', async () => {
     await translateSwap.call(engine, address, swapHash, amount, extendedTimeLock)
 
