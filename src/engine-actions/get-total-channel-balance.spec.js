@@ -2,10 +2,10 @@ const path = require('path')
 const Big = require('big.js')
 const { expect, rewire, sinon } = require('test/test-helper')
 
-const getChannelBalances = rewire(path.resolve(__dirname, 'get-channel-balances'))
+const getTotalChannelBalance = rewire(path.resolve(__dirname, 'get-channel-balances'))
 
 describe('get-channel-balances', () => {
-  describe('getChannelBalances', () => {
+  describe('getTotalChannelBalance', () => {
     let listChannelsStub
     let channel
     let channels
@@ -21,14 +21,14 @@ describe('get-channel-balances', () => {
       listChannelsStub = sinon.stub().returns({ channels })
 
       reverts = []
-      reverts.push(getChannelBalances.__set__('listChannels', listChannelsStub))
-      reverts.push(getChannelBalances.__set__('getChannelTypeFromId', getChannelTypeFromIdStub))
-      reverts.push(getChannelBalances.__set__('balancesToHash', balancesStub))
-      reverts.push(getChannelBalances.__set__('SUPPORTED_SYMBOLS', { BTC: 'BTC' }))
+      reverts.push(getTotalChannelBalance.__set__('listChannels', listChannelsStub))
+      reverts.push(getTotalChannelBalance.__set__('getChannelTypeFromId', getChannelTypeFromIdStub))
+      reverts.push(getTotalChannelBalance.__set__('balancesToHash', balancesStub))
+      reverts.push(getTotalChannelBalance.__set__('SUPPORTED_SYMBOLS', { BTC: 'BTC' }))
     })
 
     beforeEach(async () => {
-      await getChannelBalances()
+      await getTotalChannelBalance()
     })
 
     afterEach(() => {
@@ -53,7 +53,7 @@ describe('get-channel-balances', () => {
     let chanId
     let getChannelSymbol
 
-    const getChannelTypeFromId = getChannelBalances.__get__('getChannelTypeFromId')
+    const getChannelTypeFromId = getTotalChannelBalance.__get__('getChannelTypeFromId')
 
     beforeEach(() => {
       clientStub = sinon.stub()
@@ -62,8 +62,7 @@ describe('get-channel-balances', () => {
       channelInfoStub = sinon.stub().returns({ node1Policy, node2Policy })
       getChannelSymbol = sinon.stub()
 
-      getChannelBalances.__set__('getChanInfo', channelInfoStub)
-      getChannelBalances.__set__('getChannelSymbol', getChannelSymbol)
+      getTotalChannelBalance.__set__('getChannelSymbol', getChannelSymbol)
     })
 
     it('gets channel info for an id', async () => {
@@ -84,7 +83,7 @@ describe('get-channel-balances', () => {
       const btcFee = '8098'
       const newPolicy = { feeRateMilliMsat: btcFee }
       channelInfoStub.returns({ node1Policy: newPolicy, node2Policy })
-      const { BTC: btc } = getChannelBalances.__get__('SUPPORTED_SYMBOLS')
+      const { BTC: btc } = getTotalChannelBalance.__get__('SUPPORTED_SYMBOLS')
       getChannelSymbol.returns(btc)
       const res = await getChannelTypeFromId(chanId, clientStub)
       expect(res).to.be.eql(btc)
@@ -97,7 +96,7 @@ describe('get-channel-balances', () => {
       const ltcFee = '9089'
       const newPolicy = { feeRateMilliMsat: ltcFee }
       channelInfoStub.returns({ node1Policy: newPolicy, node2Policy })
-      const { LTC: ltc } = getChannelBalances.__get__('SUPPORTED_SYMBOLS')
+      const { LTC: ltc } = getTotalChannelBalance.__get__('SUPPORTED_SYMBOLS')
       getChannelSymbol.returns(ltc)
       const res = await getChannelTypeFromId(chanId, clientStub)
       expect(res).to.be.eql(ltc)
@@ -113,7 +112,7 @@ describe('get-channel-balances', () => {
     let LTC
     let res
 
-    const balancesToHash = getChannelBalances.__get__('balancesToHash')
+    const balancesToHash = getTotalChannelBalance.__get__('balancesToHash')
 
     beforeEach(() => {
       BTC = 100

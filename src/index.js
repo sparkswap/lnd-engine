@@ -22,10 +22,11 @@ class LndEngine {
     if (!host) {
       throw new Error('Host is required for lnd-engine initialization')
     }
-    this.host = host
 
+    this.host = host
     this.symbol = symbol
     this.currencyConfig = currencies.find(({ symbol }) => symbol === this.symbol)
+
     if (!this.currencyConfig) {
       throw new Error(`${symbol} is not a valid symbol for this engine.`)
     }
