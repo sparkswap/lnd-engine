@@ -11,14 +11,14 @@ describe('numChannelsForPubkey', () => {
   let pendingOpenChannels
   let pendingChannel
   let reverts
-  let pubkey
+  let address
   let loggerStub
 
   beforeEach(() => {
-    pubkey = 'asdf'
-    channel = { remotePubkey: pubkey }
+    address = 'bolt:asdf@localhost'
+    channel = { remotePubkey: 'asdf' }
     channels = [channel, channel]
-    pendingChannel = { channel: { remoteNodePub: pubkey } }
+    pendingChannel = { channel: { remoteNodePub: 'asdf' } }
     pendingOpenChannels = [pendingChannel]
     listChannelsStub = sinon.stub().returns({ channels })
     listPendingChannelsStub = sinon.stub().returns({ pendingOpenChannels })
@@ -38,17 +38,17 @@ describe('numChannelsForPubkey', () => {
   })
 
   it('gets all available channels', async () => {
-    await numChannelsForPubkey(pubkey)
+    await numChannelsForPubkey(address)
     expect(listChannelsStub).to.have.been.called()
   })
 
   it('gets all pending channels', async () => {
-    await numChannelsForPubkey(pubkey)
+    await numChannelsForPubkey(address)
     expect(listPendingChannelsStub).to.have.been.called()
   })
 
   it('returns the number of active and pending channels for the given pubkey', async () => {
-    const res = await numChannelsForPubkey(pubkey)
+    const res = await numChannelsForPubkey(address)
     expect(res).to.eql(3)
   })
 
@@ -56,7 +56,7 @@ describe('numChannelsForPubkey', () => {
     const anotherChannel = { remotePubkey: 'differentpubkey' }
     channels = [channel, anotherChannel]
     listChannelsStub.returns({ channels })
-    const res = await numChannelsForPubkey(pubkey)
+    const res = await numChannelsForPubkey(address)
     expect(res).to.eql(2)
   })
 
@@ -65,7 +65,7 @@ describe('numChannelsForPubkey', () => {
     pendingOpenChannels = []
     listChannelsStub.returns({ channels })
     listPendingChannelsStub.returns({ pendingOpenChannels })
-    const res = await numChannelsForPubkey(pubkey)
+    const res = await numChannelsForPubkey(address)
     expect(res).to.eql(0)
     expect(loggerStub.debug).to.have.been.calledWith('numChannelsForPubkey: No channels exist')
   })
