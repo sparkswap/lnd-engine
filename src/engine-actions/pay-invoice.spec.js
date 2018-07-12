@@ -35,7 +35,7 @@ describe('pay-invoice', () => {
   })
 
   it('sends a payment to lnd', () => {
-    expect(sendPaymentStub).to.have.been.calledWith(paymentRequest, { client: clientStub })
+    expect(sendPaymentStub).to.have.been.calledWith({ paymentRequest }, { client: clientStub })
   })
 
   it('returns the payment preimage', () => {

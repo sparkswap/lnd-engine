@@ -2,7 +2,8 @@ const { expect } = require('test/test-helper')
 
 const {
   Big,
-  networkAddressFormatter
+  networkAddressFormatter,
+  sha256
 } = require('./index')
 
 describe('utils index', () => {
@@ -14,5 +15,10 @@ describe('utils index', () => {
   it('defines networkAddressFormatter', () => {
     expect(networkAddressFormatter).to.not.be.null()
     expect(networkAddressFormatter).to.not.be.undefined()
+  })
+
+  it('defines sha256', () => {
+    expect(sha256).to.not.be.null()
+    expect(sha256).to.not.be.undefined()
   })
 })

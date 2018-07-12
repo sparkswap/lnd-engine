@@ -3,499 +3,101 @@ const { expect, rewire, sinon } = require('test/test-helper')
 
 const executeSwap = rewire(path.resolve(__dirname, 'execute-swap'))
 
-describe('execute-swap', () => {
-  describe('routeFromPath', () => {
-    let routeFromPath
-    let inboundAmount
-    let outboundAmount
-    let counterpartyPosition
-    let blockHeight
-    let finalCLTVDelta
-    let path
+describe('executeSwap', () => {
+  let sha256
+  let networkAddressFormatter
+  let sendPayment
+  let swapHash
+  let makerAddress
+  let amount
+  let client
+  let engine
 
-    beforeEach(() => {
-      routeFromPath = executeSwap.__get__('routeFromPath')
+  beforeEach(() => {
+    sha256 = {
+      hash: sinon.stub()
+    }
+    sha256.hash.withArgs('fake preimage').returns('fake hash')
+    networkAddressFormatter = {
+      parse: sinon.stub().withArgs('fake address').returns({ publicKey: 'fake pubkey' })
+    }
+    sendPayment = sinon.stub().resolves({ paymentPreimage: 'fake preimage' })
 
-      counterpartyPosition = 1
-      outboundAmount = '1000000'
-      inboundAmount = '500000'
-      blockHeight = 5000
-      finalCLTVDelta = 144
-      path = [
-        {
-          fromPubKey: 'mypub',
-          toPubKey: 'theirpub',
-          channelId: '1234',
-          capacity: '10000008',
-          policy: {
-            feeBaseMsat: '2000',
-            feeRateMilliMsat: '7',
-            timeLockDelta: 144
-          }
-        },
-        {
-          fromPubKey: 'theirpub',
-          toPubKey: 'counterpub',
-          channelId: '4321',
-          capacity: '20000000',
-          policy: {
-            feeBaseMsat: '1000',
-            feeRateMilliMsat: '7',
-            timeLockDelta: 144
-          }
-        },
-        {
-          fromPubKey: 'counterpub',
-          toPubKey: 'anotherpub',
-          channelId: '6789',
-          capacity: '20000000',
-          policy: {
-            feeBaseMsat: '1000',
-            feeRateMilliMsat: '6',
-            timeLockDelta: 144
-          }
-        },
-        {
-          fromPubKey: 'anotherpub',
-          toPubKey: 'mypub',
-          channelId: '9876',
-          capacity: '20000000',
-          policy: {
-            feeBaseMsat: '1000',
-            feeRateMilliMsat: '6',
-            timeLockDelta: 144
-          }
-        }
-      ]
-    })
+    executeSwap.__set__('sha256', sha256)
+    executeSwap.__set__('networkAddressFormatter', networkAddressFormatter)
+    executeSwap.__set__('sendPayment', sendPayment)
 
-    it('calculates the total time lock', () => {
-      const route = routeFromPath(inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount)
-
-      expect(route).to.have.property('totalTimeLock', 5580)
-    })
-
-    it('calculates the total time lock for diverse policies', () => {
-      path[0].policy.timeLockDelta = 150
-
-      const route = routeFromPath(inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount)
-
-      expect(route).to.have.property('totalTimeLock', 5586)
-    })
-
-    it('calculates the total fees', () => {
-      const route = routeFromPath(inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount)
-
-      expect(route).to.have.property('totalFeesMsat', '12000')
-    })
-
-    it('calculates the total amount to send', () => {
-      const route = routeFromPath(inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount)
-
-      expect(route).to.have.property('totalAmtMsat', '1000008000')
-    })
-
-    it('constructs hops', () => {
-      const route = routeFromPath(inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount)
-
-      expect(route).to.have.property('hops')
-      expect(route.hops).to.be.an('array')
-      expect(route.hops).to.have.lengthOf(4)
-    })
-
-    it('includes channel id in the hop', () => {
-      const route = routeFromPath(inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount)
-
-      expect(route.hops[0]).to.have.property('chanId', '1234')
-      expect(route.hops[1]).to.have.property('chanId', '4321')
-      expect(route.hops[2]).to.have.property('chanId', '6789')
-      expect(route.hops[3]).to.have.property('chanId', '9876')
-    })
-
-    it('includes channel capacity in the hop', () => {
-      const route = routeFromPath(inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount)
-
-      expect(route.hops[0]).to.have.property('chanCapacity', '10000008')
-      expect(route.hops[1]).to.have.property('chanCapacity', '20000000')
-    })
-
-    it('includes expiry in the hop', () => {
-      const route = routeFromPath(inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount)
-
-      expect(route.hops[0]).to.have.property('expiry', 5435)
-      expect(route.hops[1]).to.have.property('expiry', 5290)
-      expect(route.hops[2]).to.have.property('expiry', 5145)
-      expect(route.hops[3]).to.have.property('expiry', 5145)
-    })
-
-    it('includes expiry for diverse policies', () => {
-      path[1].policy.timeLockDelta = 150
-      const route = routeFromPath(inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount)
-
-      expect(route.hops[0]).to.have.property('expiry', 5441)
-      expect(route.hops[1]).to.have.property('expiry', 5290)
-      expect(route.hops[2]).to.have.property('expiry', 5145)
-      expect(route.hops[3]).to.have.property('expiry', 5145)
-    })
-
-    it('uses at least 144 for all time lock deltas [HACK]', () => {
-      path[1].policy.timeLockDelta = 100
-      const route = routeFromPath(inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount)
-
-      expect(route).to.have.property('totalTimeLock', 5580)
-      expect(route.hops[0]).to.have.property('expiry', 5435)
-      expect(route.hops[1]).to.have.property('expiry', 5290)
-      expect(route.hops[2]).to.have.property('expiry', 5145)
-      expect(route.hops[3]).to.have.property('expiry', 5145)
-    })
-
-    it('uses at least 144 for the final hop [HACK]', () => {
-      finalCLTVDelta = 9
-
-      const route = routeFromPath(inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount)
-
-      expect(route.hops[2]).to.have.property('expiry', 5145)
-      expect(route.hops[3]).to.have.property('expiry', 5145)
-    })
-
-    it('includes the amount to forward in the hop', () => {
-      const route = routeFromPath(inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount)
-
-      expect(route.hops[0]).to.have.property('amtToForwardMsat', '1000000000')
-      expect(route.hops[1]).to.have.property('amtToForwardMsat', '500004000')
-      expect(route.hops[2]).to.have.property('amtToForwardMsat', '500000000')
-      expect(route.hops[3]).to.have.property('amtToForwardMsat', '500000000')
-    })
-
-    it('includes the fee in the hop', () => {
-      const route = routeFromPath(inboundAmount, blockHeight, finalCLTVDelta, path, counterpartyPosition, outboundAmount)
-
-      expect(route.hops[0]).to.have.property('feeMsat', '8000')
-      expect(route.hops[1]).to.have.property('feeMsat', '0')
-      expect(route.hops[2]).to.have.property('feeMsat', '4000')
-      expect(route.hops[3]).to.have.property('feeMsat', '0')
-    })
-  })
-
-  describe('computeFee', () => {
-    let computeFee
-    let amount
-    let policy
-
-    beforeEach(() => {
-      computeFee = executeSwap.__get__('computeFee')
-
-      amount = '1000000'
-      policy = {
-        feeBaseMsat: '1000',
-        feeRateMilliMsat: '1000'
+    swapHash = 'fake hash'
+    makerAddress = 'fake address'
+    amount = '100000'
+    client = 'fake client'
+    engine = {
+      client,
+      logger: {
+        error: sinon.stub(),
+        info: sinon.stub()
+      },
+      currencyConfig: {
+        secondsPerBlock: 600
       }
-    })
-
-    it('computes the fee', () => {
-      const fee = computeFee(amount, policy)
-
-      expect(fee).to.be.eql('2000')
-    })
-
-    it('rounds up', () => {
-      amount = '1000100'
-      const fee = computeFee(amount, policy)
-
-      expect(fee).to.be.eql('2001')
-    })
+    }
   })
 
-  describe('getBandwidthHints', () => {
-    let getBandwidthHints
-    let channels
-    let pubkey
+  it('sends a payment', async () => {
+    await executeSwap.call(engine, makerAddress, swapHash, amount)
 
-    beforeEach(() => {
-      getBandwidthHints = executeSwap.__get__('getBandwidthHints')
-
-      pubkey = 'mypubkey'
-
-      channels = [
-        {
-          chanId: 'chan1',
-          remotePubkey: 'anotherpubkey',
-          localBalance: '1000000',
-          remoteBalance: '90',
-          active: true
-        },
-        {
-          chanId: 'chan2',
-          remotePubkey: 'theirpubkey',
-          active: true,
-          localBalance: '87777',
-          remoteBalance: '56556'
-        }
-      ]
-    })
-
-    it('produces hints for every channel we are party to', () => {
-      const hints = getBandwidthHints(channels, pubkey)
-
-      expect(Object.keys(hints)).to.have.lengthOf(2)
-    })
-
-    it('skips channels that are inactive', () => {
-      channels.push({ chanId: 'chan3', active: false })
-      const hints = getBandwidthHints(channels, pubkey)
-
-      expect(Object.keys(hints)).to.have.lengthOf(2)
-    })
-
-    it('assigns hints to the channel id', () => {
-      const hints = getBandwidthHints(channels, pubkey)
-
-      expect(hints).to.have.property('chan1')
-      expect(hints).to.have.property('chan2')
-    })
-
-    it('assigns balances to the right pubkeys', () => {
-      const hints = getBandwidthHints(channels, pubkey)
-
-      expect(hints.chan1).to.be.eql({
-        mypubkey: '1000000',
-        anotherpubkey: '90'
-      })
-      expect(hints.chan2).to.be.eql({
-        mypubkey: '87777',
-        theirpubkey: '56556'
-      })
-    })
+    expect(sendPayment).to.have.been.calledOnce()
   })
 
-  describe('findPaths', () => {
-    let findPaths
-    let edges
-    let hints
-    let fromPubKey
-    let toPubKey
-    let symbol
-    let amount
-    let visited
+  it('sends using the client', async () => {
+    await executeSwap.call(engine, makerAddress, swapHash, amount)
 
-    beforeEach(() => {
-      findPaths = executeSwap.__get__('findPaths')
-
-      edges = [
-        {
-          channelId: '1234',
-          chanPoint: '0190019283',
-          lastUpdate: 10284012384,
-          node1Pub: 'mypub',
-          node2Pub: 'theirpub',
-          capacity: '10000008',
-          node1Policy: {
-            feeBaseMsat: '1000',
-            feeRateMilliMsat: '7',
-            minHtlc: '144',
-            timeLockDelta: 90
-          },
-          node2Policy: {
-            feeBaseMsat: '2000',
-            feeRateMilliMsat: '7',
-            minHtlc: '144',
-            timeLockDelta: 144
-          }
-        },
-        {
-          channelId: '4321',
-          chanPoint: '019098324283',
-          lastUpdate: 10284012374,
-          node1Pub: 'theirpub',
-          node2Pub: 'anotherpub',
-          capacity: '20000000',
-          node1Policy: {
-            feeBaseMsat: '1000',
-            feeRateMilliMsat: '7',
-            minHtlc: '144',
-            timeLockDelta: 90
-          },
-          node2Policy: {
-            feeBaseMsat: '2000',
-            feeRateMilliMsat: '7',
-            minHtlc: '144',
-            timeLockDelta: 144
-          }
-        }
-      ]
-
-      hints = {
-        '1234': {
-          'mypub': '1000000',
-          'theirpub': '999000'
-        }
-      }
-
-      fromPubKey = 'mypub'
-      toPubKey = 'anotherpub'
-      symbol = 'LTC'
-      amount = '2000'
-
-      visited = []
-    })
-
-    it('finds a complete path to the destination', () => {
-      const path = findPaths(edges, hints, fromPubKey, toPubKey, symbol, amount, visited)
-
-      expect(path).to.be.an('array')
-      expect(path).to.have.lengthOf(2)
-      expect(path[0]).to.be.eql({
-        fromPubKey: 'mypub',
-        toPubKey: 'theirpub',
-        channelId: '1234',
-        capacity: '10000008',
-        policy: {
-          feeBaseMsat: '1000',
-          feeRateMilliMsat: '7',
-          minHtlc: '144',
-          timeLockDelta: 90
-        }
-      })
-      expect(path[1]).to.be.eql({
-        fromPubKey: 'theirpub',
-        toPubKey: 'anotherpub',
-        channelId: '4321',
-        capacity: '20000000',
-        policy: {
-          feeBaseMsat: '1000',
-          feeRateMilliMsat: '7',
-          minHtlc: '144',
-          timeLockDelta: 90
-        }
-      })
-    })
-
-    it('returns undefined if there is no path', () => {
-      const path = findPaths(edges, hints, fromPubKey, 'mickeymouse', symbol, amount, visited)
-
-      expect(path).to.be.undefined()
-    })
+    expect(sendPayment).to.have.been.calledWith(sinon.match.any, { client })
   })
 
-  describe('findOutboundChannels', () => {
-    let findOutboundChannels
-    let getChannelSymbol
-    let edges
-    let hints
-    let fromPubKey
-    let symbol
-    let amount
-    let visited
-    let revert
+  it('sends to the counterparty\'s public key', async () => {
+    await executeSwap.call(engine, makerAddress, swapHash, amount)
 
-    beforeEach(() => {
-      getChannelSymbol = sinon.stub().returns('LTC')
-      revert = executeSwap.__set__('getChannelSymbol', getChannelSymbol)
-      findOutboundChannels = executeSwap.__get__('findOutboundChannels')
+    expect(networkAddressFormatter.parse).to.have.been.calledOnce()
+    expect(networkAddressFormatter.parse).to.have.been.calledWith(makerAddress)
+    expect(sendPayment).to.have.been.calledWith(sinon.match({ destString: 'fake pubkey' }))
+  })
 
-      edges = [
-        {
-          channelId: '1234',
-          chanPoint: '0190019283',
-          lastUpdate: 10284012384,
-          node1Pub: 'mypub',
-          node2Pub: 'theirpub',
-          capacity: '10000008',
-          node1Policy: {
-            feeBaseMsat: '1000',
-            feeRateMilliMsat: '7',
-            minHtlc: '144',
-            timeLockDelta: 90
-          },
-          node2Policy: {
-            feeBaseMsat: '2000',
-            feeRateMilliMsat: '7',
-            minHtlc: '144',
-            timeLockDelta: 144
-          }
-        },
-        {
-          channelId: '4321',
-          chanPoint: '019098324283',
-          lastUpdate: 10284012374,
-          node1Pub: 'theirpub',
-          node2Pub: 'anotherpub',
-          capacity: '20000000',
-          node1Policy: {
-            feeBaseMsat: '1000',
-            feeRateMilliMsat: '7',
-            minHtlc: '144',
-            timeLockDelta: 90
-          },
-          node2Policy: {
-            feeBaseMsat: '2000',
-            feeRateMilliMsat: '7',
-            minHtlc: '144',
-            timeLockDelta: 144
-          }
-        }
-      ]
+  it('sends using the swap hash', async () => {
+    await executeSwap.call(engine, makerAddress, swapHash, amount)
 
-      hints = {
-        '1234': {
-          'mypub': '1000000',
-          'theirpub': '999000'
-        }
-      }
+    expect(sendPayment).to.have.been.calledWith(sinon.match({ paymentHash: swapHash }))
+  })
 
-      fromPubKey = 'mypub'
-      symbol = 'LTC'
-      amount = '2000'
+  it('sends the amount for the swap', async () => {
+    await executeSwap.call(engine, makerAddress, swapHash, amount)
 
-      visited = []
-    })
+    expect(sendPayment).to.have.been.calledWith(sinon.match({ amt: amount }))
+  })
 
-    afterEach(() => {
-      revert()
-    })
+  it('uses a final CLTV delta made up of the Maker\'s forwarding amount, the Relayer\'s forwarding amount, the Taker\'s final amount, and a buffer block', async () => {
+    await executeSwap.call(engine, makerAddress, swapHash, amount)
 
-    it('provides an array of channels', () => {
-      expect(findOutboundChannels(edges, hints, fromPubKey, symbol, amount, visited)).to.be.an('array')
-    })
+    expect(sendPayment).to.have.been.calledWith(sinon.match({ finalCltvDelta: 298 }))
+  })
 
-    it('returns channels that are connected to this one', () => {
-      const channels = findOutboundChannels(edges, hints, fromPubKey, symbol, amount, visited)
+  it('throws on payment error', () => {
+    sendPayment.resolves({ paymentError: new Error('fake error') })
 
-      expect(channels).to.have.lengthOf(1)
-      expect(channels[0]).to.have.property('channelId', '1234')
-    })
+    return expect(executeSwap.call(engine, makerAddress, swapHash, amount)).to.eventually.be.rejectedWith('fake error')
+  })
 
-    it('checks bandwidth in the hints', () => {
-      hints['1234']['mypub'] = '1000'
-      expect(findOutboundChannels(edges, hints, fromPubKey, symbol, amount, visited)).to.have.lengthOf(0)
-    })
+  it('checks that the preimage matches', async () => {
+    await executeSwap.call(engine, makerAddress, swapHash, amount)
 
-    it('skips channels that have been visited', () => {
-      visited.push('1234')
-      expect(findOutboundChannels(edges, hints, fromPubKey, symbol, amount, visited)).to.have.lengthOf(0)
-    })
+    expect(sha256.hash).to.have.been.calledOnce()
+    expect(sha256.hash).to.have.been.calledWith('fake preimage')
+  })
 
-    it('only returns channels for the right symbol', () => {
-      symbol = 'BTC'
-      expect(findOutboundChannels(edges, hints, fromPubKey, symbol, amount, visited)).to.have.lengthOf(0)
-    })
+  it('throws if the hash does not match', () => {
+    sendPayment.resolves({ paymentPreimage: 'a diff preimage' })
+    sha256.hash.withArgs('a diff preimage').returns('a diff hash')
 
-    it('relies on channel capacity for filtering', () => {
-      hints = {}
-      edges[0].capacity = '10'
-      expect(findOutboundChannels(edges, hints, fromPubKey, symbol, amount, visited)).to.have.lengthOf(0)
-    })
-
-    it('constructs a channel', () => {
-      const channels = findOutboundChannels(edges, hints, fromPubKey, symbol, amount, visited)
-      const channel = channels[0]
-
-      expect(channel).to.have.property('fromPubKey', 'mypub')
-      expect(channel).to.have.property('capacity', '10000008')
-      expect(channel).to.have.property('channelId', '1234')
-      expect(channel).to.have.property('toPubKey', 'theirpub')
-      expect(channel).to.have.property('policy')
-      expect(channel.policy).to.be.eql(edges[1].node1Policy)
-    })
+    return expect(executeSwap.call(engine, makerAddress, swapHash, amount)).to.eventually.be.rejectedWith('Hash from preimage does not match swap hash')
   })
 })
