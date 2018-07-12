@@ -20,6 +20,7 @@ const createRefundInvoice = require('./create-refund-invoice')
 const validateNodeConfig = require('./validate-node-config')
 const getPaymentChannelNetworkAddress = require('./get-payment-channel-network-address')
 const translateSwap = require('./translate-swap')
+const getSettledSwapPreimage = require('./get-settled-swap-preimage')
 
 module.exports = {
   getInvoices,
@@ -43,5 +44,6 @@ module.exports = {
   createRefundInvoice,
   validateNodeConfig,
   getPaymentChannelNetworkAddress,
-  translateSwap
+  translateSwap,
+  getSettledSwapPreimage
 }

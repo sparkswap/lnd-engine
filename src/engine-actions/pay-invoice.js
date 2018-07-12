@@ -12,7 +12,7 @@ const {
  */
 
 async function payInvoice (paymentRequest, options = {}) {
-  const { paymentError, paymentPreimage } = await sendPayment(paymentRequest, { client: this.client })
+  const { paymentError, paymentPreimage } = await sendPayment({ paymentRequest }, { client: this.client })
 
   if (paymentError) {
     this.logger.error('Failed to pay invoice', { paymentRequest })
