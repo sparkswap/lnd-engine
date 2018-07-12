@@ -14,6 +14,7 @@ const describeGraph = require('./describe-graph')
 const sendToRoute = require('./send-to-route')
 const updateChannelPolicy = require('./update-channel-policy')
 const getChanInfo = require('./get-chan-info')
+const queryRoutes = require('./query-routes')
 const subscribeInvoices = require('./subscribe-invoices')
 const listPendingChannels = require('./list-pending-channels')
 
@@ -34,6 +35,7 @@ module.exports = {
   sendToRoute,
   updateChannelPolicy,
   getChanInfo,
+  queryRoutes,
   subscribeInvoices,
   listPendingChannels
 }
