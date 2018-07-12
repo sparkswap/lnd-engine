@@ -11,6 +11,7 @@ const dirtyChai = require('dirty-chai')
 const rewire = require('rewire')
 const timekeeper = require('timekeeper')
 const chaiAsPromised = require('chai-as-promised')
+const delay = require('timeout-as-promise')
 
 const { expect } = chai
 
@@ -29,5 +30,6 @@ module.exports = {
   sinon: sandbox,
   rewire,
   expect,
-  timekeeper
+  timekeeper,
+  delay
 }

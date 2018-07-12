@@ -5,19 +5,10 @@ const { deadline } = require('../grpc-utils')
  *
  * @function
  * @see {@link http://api.lightning.community/#subscribeInvoices}
- * @return {Object} response
- * @return {String} response.memo
- * @return {Number} response.value
- * @return {Date} response.settledDate
- * @return {Bool} response.settled
+ * @return {ReadableStream} Readable stream from gprc
  */
 function subscribeInvoices ({ client }) {
-  return new Promise((resolve, reject) => {
-    client.subscribeInvoices({}, { deadline: deadline() }, (err, res) => {
-      if (err) return reject(err)
-      return resolve(res)
-    })
-  })
+  return client.subscribeInvoices({}, { deadline: deadline() })
 }
 
 module.exports = subscribeInvoices
