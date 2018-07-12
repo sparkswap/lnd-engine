@@ -6,7 +6,7 @@ const { networkAddressFormatter } = require('../utils')
  * @return {number} number of active and pending channels
  */
 async function numChannelsForPubkey (address) {
-  const { channels } = listChannels({ client: this.client })
+  const { channels = [] } = listChannels({ client: this.client })
   const { pendingOpenChannels = [] } = await listPendingChannels({ client: this.client })
 
   if (channels.length === 0 && pendingOpenChannels.length === 0) {
