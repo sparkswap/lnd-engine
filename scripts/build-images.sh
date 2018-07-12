@@ -2,6 +2,9 @@
 
 set -e -u
 
+# We add a CACHE_DATE to the lnd repos to trigger cache-invalidation for the cloning
+# the lnd repository. Without it, docker would continue to cache old code and we
+# would never receive updates from the kinesis-exchange/lnd fork.
 CACHE_DATE=`date '+%Y-%m-%d-%H:%M'`
 
 # NOTE: The names specified with `-t` directly map to the service names in
