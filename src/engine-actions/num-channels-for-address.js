@@ -5,12 +5,12 @@ const { networkAddressFormatter } = require('../utils')
  * @param {String} paymentChannelNetworkAddress
  * @return {number} number of active and pending channels
  */
-async function numChannelsForPubkey (address) {
+async function numChannelsForAddress (address) {
   const { channels = [] } = listChannels({ client: this.client })
   const { pendingOpenChannels = [] } = await listPendingChannels({ client: this.client })
 
   if (channels.length === 0 && pendingOpenChannels.length === 0) {
-    this.logger.debug('numChannelsForPubkey: No channels exist')
+    this.logger.debug('numChannelsForAddress: No channels exist')
   }
 
   const { publicKey } = networkAddressFormatter.parse(address)
@@ -19,4 +19,4 @@ async function numChannelsForPubkey (address) {
   return channelsForPubkey.length + pendingChannelsForPubkey.length
 }
 
-module.exports = numChannelsForPubkey
+module.exports = numChannelsForAddress

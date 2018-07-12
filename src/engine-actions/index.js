@@ -19,7 +19,7 @@ const executeSwap = require('./execute-swap')
 const createRefundInvoice = require('./create-refund-invoice')
 const validateNodeConfig = require('./validate-node-config')
 const getPaymentChannelNetworkAddress = require('./get-payment-channel-network-address')
-const numChannelsForPubkey = require('./num-channels-for-pubkey')
+const numChannelsForAddress = require('./num-channels-for-address')
 
 module.exports = {
   getInvoices,
@@ -43,5 +43,5 @@ module.exports = {
   createRefundInvoice,
   validateNodeConfig,
   getPaymentChannelNetworkAddress,
-  numChannelsForPubkey
+  numChannelsForAddress
 }

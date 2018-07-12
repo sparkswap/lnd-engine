@@ -1,9 +1,9 @@
 const path = require('path')
 const { expect, rewire, sinon } = require('test/test-helper')
 
-const numChannelsForPubkey = rewire(path.resolve(__dirname, 'num-channels-for-pubkey'))
+const numChannelsForAddress = rewire(path.resolve(__dirname, 'num-channels-for-address'))
 
-describe('numChannelsForPubkey', () => {
+describe('numChannelsForAddress', () => {
   let listChannelsStub
   let listPendingChannelsStub
   let channel
@@ -28,9 +28,9 @@ describe('numChannelsForPubkey', () => {
     }
 
     reverts = []
-    reverts.push(numChannelsForPubkey.__set__('listChannels', listChannelsStub))
-    reverts.push(numChannelsForPubkey.__set__('listPendingChannels', listPendingChannelsStub))
-    reverts.push(numChannelsForPubkey.__set__('logger', loggerStub))
+    reverts.push(numChannelsForAddress.__set__('listChannels', listChannelsStub))
+    reverts.push(numChannelsForAddress.__set__('listPendingChannels', listPendingChannelsStub))
+    reverts.push(numChannelsForAddress.__set__('logger', loggerStub))
   })
 
   afterEach(() => {
@@ -38,17 +38,17 @@ describe('numChannelsForPubkey', () => {
   })
 
   it('gets all available channels', async () => {
-    await numChannelsForPubkey(address)
+    await numChannelsForAddress(address)
     expect(listChannelsStub).to.have.been.called()
   })
 
   it('gets all pending channels', async () => {
-    await numChannelsForPubkey(address)
+    await numChannelsForAddress(address)
     expect(listPendingChannelsStub).to.have.been.called()
   })
 
   it('returns the number of active and pending channels for the given pubkey', async () => {
-    const res = await numChannelsForPubkey(address)
+    const res = await numChannelsForAddress(address)
     expect(res).to.eql(3)
   })
 
@@ -56,7 +56,7 @@ describe('numChannelsForPubkey', () => {
     const anotherChannel = { remotePubkey: 'differentpubkey' }
     channels = [channel, anotherChannel]
     listChannelsStub.returns({ channels })
-    const res = await numChannelsForPubkey(address)
+    const res = await numChannelsForAddress(address)
     expect(res).to.eql(2)
   })
 
@@ -65,8 +65,8 @@ describe('numChannelsForPubkey', () => {
     pendingOpenChannels = []
     listChannelsStub.returns({ channels })
     listPendingChannelsStub.returns({ pendingOpenChannels })
-    const res = await numChannelsForPubkey(address)
+    const res = await numChannelsForAddress(address)
     expect(res).to.eql(0)
-    expect(loggerStub.debug).to.have.been.calledWith('numChannelsForPubkey: No channels exist')
+    expect(loggerStub.debug).to.have.been.calledWith('numChannelsForAddress: No channels exist')
   })
 })
