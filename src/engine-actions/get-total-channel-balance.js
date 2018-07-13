@@ -11,12 +11,12 @@ async function getTotalChannelBalance () {
 
   if (channels.length === 0) {
     this.logger.debug('getTotalChannelBalance: No channels exist')
-    return new Big(0).toString()
+    return Big(0).toString()
   }
 
   const totalLocalBalance = channels.reduce((acc, c) => {
-    return acc.add(new Big(c.localBalance))
-  }, new Big(0))
+    return acc.add(Big(c.localBalance))
+  }, Big(0))
 
   return totalLocalBalance.toString()
 }
