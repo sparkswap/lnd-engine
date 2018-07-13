@@ -4,7 +4,7 @@ const { listChannels } = require('../lnd-actions')
 /**
  * Get local balance of all channels for a specific daemon
  *
- * @return {Big} totalBalance
+ * @return {String} totalBalance (int64)
  */
 async function getTotalChannelBalance () {
   const { channels = [] } = await listChannels({ client: this.client })
@@ -15,10 +15,10 @@ async function getTotalChannelBalance () {
   }
 
   const totalLocalBalance = channels.reduce((acc, c) => {
-    acc.add(new Big(c.localBalance))
+    return acc.add(new Big(c.localBalance))
   }, new Big(0))
 
-  return totalLocalBalance
+  return totalLocalBalance.toString()
 }
 
 module.exports = getTotalChannelBalance
