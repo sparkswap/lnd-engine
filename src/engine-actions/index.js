@@ -5,7 +5,7 @@ const getConfirmedBalance = require('./get-confirmed-balance')
 const getUnconfirmedBalance = require('./get-unconfirmed-balance')
 const getPeers = require('./get-peers')
 const getInvoiceValue = require('./get-invoice-value')
-const getChannelBalances = require('./get-channel-balances')
+const getTotalChannelBalance = require('./get-total-channel-balance')
 const createChannel = require('./create-channel')
 const createInvoice = require('./create-invoice')
 const createNewAddress = require('./create-new-address')
@@ -31,7 +31,7 @@ module.exports = {
   getUnconfirmedBalance,
   getPeers,
   getInvoiceValue,
-  getChannelBalances,
+  getTotalChannelBalance,
   createChannel,
   createInvoice,
   createNewAddress,
