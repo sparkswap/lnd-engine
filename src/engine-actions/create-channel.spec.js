@@ -7,15 +7,9 @@ describe('createChannel', () => {
   let fundingAmount
   let connectPeerStub
   let openChannelStub
-  let updateChannelStub
-  let channelPoint
   let clientStub
   let loggerStub
-  let symbol
   let res
-  let feeRateStub
-  let fee
-  let generateStub
   let networkAddressStub
   let publicKey
   let host
@@ -30,47 +24,23 @@ describe('createChannel', () => {
       parse: sinon.stub().returns({ publicKey, host })
     }
     fundingAmount = '100'
-    symbol = 'BTC'
-    fee = 100
-    channelPoint = {
-      fundingTxidStr: 'asfasfjas09fj09fj',
-      outputIndex: 0
-    }
     connectPeerStub = sinon.stub()
-    openChannelStub = sinon.stub().returns(channelPoint)
-    updateChannelStub = sinon.stub()
+    openChannelStub = sinon.stub()
     clientStub = sinon.stub()
     loggerStub = {
       debug: sinon.stub(),
       error: sinon.stub()
     }
-    feeRateStub = sinon.stub().returns(fee)
-    generateStub = sinon.stub().returns(channelPoint)
-
     createChannel.__set__('connectPeer', connectPeerStub)
     createChannel.__set__('openChannel', openChannelStub)
-    createChannel.__set__('updateChannelPolicy', updateChannelStub)
-    createChannel.__set__('feeRateForSymbol', feeRateStub)
-    createChannel.__set__('generateChanPointFromChannelInfo', generateStub)
     createChannel.__set__('client', clientStub)
     createChannel.__set__('logger', loggerStub)
     createChannel.__set__('networkAddressFormatter', networkAddressStub)
   })
 
-  describe('creating a channel in production', () => {
-    let revert
-
+  describe('creating a channel', () => {
     beforeEach(async () => {
-      revert = createChannel.__set__('process', {
-        env: {
-          NODE_ENV: 'production'
-        }
-      })
-      res = await createChannel(paymentChannelNetworkAddress, fundingAmount, symbol)
-    })
-
-    afterEach(() => {
-      revert()
+      res = await createChannel(paymentChannelNetworkAddress, fundingAmount)
     })
 
     it('parses the paymentChannelNetworkAddress', () => {
@@ -85,64 +55,8 @@ describe('createChannel', () => {
       expect(openChannelStub).to.have.been.calledWith(publicKey, fundingAmount, sinon.match({ client: clientStub }))
     })
 
-    it('generates a fee', () => {
-      expect(feeRateStub).to.have.been.calledWith(symbol)
-    })
-
-    it('generates a channel point', () => {
-      expect(generateStub).to.have.been.calledWith(channelPoint)
-    })
-
-    it('does not update the channel policy', () => {
-      expect(updateChannelStub).to.not.have.been.calledOnce()
-    })
-
     it('returns void for successful channel creation', () => {
       expect(res).to.eql(undefined)
     })
-  })
-
-  describe('creating a channel in dev', () => {
-    let revert
-    let delay
-    let feeRate
-
-    beforeEach(async () => {
-      revert = createChannel.__set__('process', {
-        env: {
-          NODE_ENV: 'development'
-        }
-      })
-      delay = sinon.stub().resolves()
-      createChannel.__set__('delay', delay)
-      feeRate = 0.0001
-      createChannel.__set__('feeRatePerSatoshiFromSymbol', sinon.stub().returns(feeRate))
-      res = await createChannel(paymentChannelNetworkAddress, fundingAmount, symbol)
-    })
-
-    afterEach(() => {
-      revert()
-    })
-
-    it('updates the channel policy', () => {
-      expect(delay).to.have.been.calledOnce()
-      expect(delay).to.have.been.calledWith(120000)
-      expect(updateChannelStub).to.have.been.calledOnce()
-      expect(updateChannelStub).to.have.been.calledWith(channelPoint, feeRate)
-    })
-  })
-
-  it('throws an error if symbol is not supported', () => {
-    return expect(createChannel(paymentChannelNetworkAddress, fundingAmount, 'DAN')).to.eventually.be.rejectedWith('Symbol is not currently supported')
-  })
-
-  it('throws an error if fees cannot be generated', () => {
-    feeRateStub.returns()
-    return expect(createChannel(paymentChannelNetworkAddress, fundingAmount, symbol)).to.eventually.be.rejectedWith('Unable to generate fee from provided symbol')
-  })
-
-  it('throws an error if unable to generate chanpoint', () => {
-    generateStub.throws('Error', 'Unable to generate chanpoint w/ openChannel info')
-    return expect(createChannel(paymentChannelNetworkAddress, fundingAmount, symbol)).to.eventually.be.rejectedWith('Unable to generate chanpoint w/ openChannel info')
   })
 })
