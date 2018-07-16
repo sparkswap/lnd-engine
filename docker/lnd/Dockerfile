@@ -2,7 +2,6 @@ FROM golang:1.10-alpine as builder
 
 LABEL maintainer="Kinesis Network <kinesis.network>"
 
-
 # Set the chain that is used for the current image
 ARG NETWORK
 RUN \

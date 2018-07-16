@@ -2,8 +2,6 @@ FROM golang:1.10-alpine as builder
 
 LABEL maintainer="Kinesis Network <kinesis.network>"
 
-ARG BTCD_VERSION='86fed78'
-
 # Install build dependencies such as git and glide.
 RUN apk add --no-cache \
     git \
@@ -11,18 +9,24 @@ RUN apk add --no-cache \
 
 WORKDIR $GOPATH/src/github.com/btcsuite/btcd
 
+# We use this cache date to always build LND instead of caching the files. This allows us
+# to continually grab changes from the LND_VERSION without tagging the release.
+# TODO: set this to a certain release commit
+ARG COMMIT_SHA
+
+RUN \
+# Check for mandatory build arguments
+    : "${COMMIT_SHA:?COMMIT_SHA Build argument needs to be set.}"
+
+
 # Grab and install the latest version of btcd
 RUN git clone https://github.com/btcsuite/btcd . \
-&& git checkout ${BTCD_VERSION} \
+&& git checkout ${COMMIT_SHA} \
 &&  glide install \
 &&  go install . ./cmd/...
 
 # Start a new image
 FROM alpine as final
-
-# We set the cert host for btcd as the internal macOS docker address due
-# to development setup
-ARG CERT_HOST='docker.for.mac.host.internal'
 
 # Copy the compiled binaries from the builder image.
 COPY --from=builder /go/bin/addblock /bin/
@@ -47,10 +51,15 @@ RUN apk add --no-cache \
     ca-certificates \
 &&  mkdir "/secure" "/root/.btcd" "/root/.btcctl" \
 &&  touch "/root/.btcd/btcd.conf" \
-&&  chmod +x start-btcd.sh \
+&&  chmod +x start-btcd.sh
+
+# We set the cert host for btcd (set as --build-arg on docker build)
+ARG CERT_HOST
+
 # Manually generate certificate and add all domains, it is needed to connect
 # "btcctl" and "lnd" to "btcd" over docker links.
-&& "/bin/gencerts" --host=${CERT_HOST} --directory="/secure" --force
+RUN "/bin/gencerts" --host=${CERT_HOST} --directory="/secure" --force
+
 
 # Mainnet (p2p, rpc)
 EXPOSE 8333 8334
