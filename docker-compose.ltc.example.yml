@@ -21,6 +21,8 @@ version: '2.4'
 services:
   ltcd:
     image: kinesis_ltcd:latest
+    ports:
+      - '18556:18556'
     volumes:
       - shared:/shared
       - litecoin:/data
@@ -47,6 +49,9 @@ services:
     image: kinesis_lnd_ltc:latest
     depends_on:
       - ltcd
+    volumes:
+      - 'shared:/shared'
+      - 'lnd:/data'
     environment:
       # PLEASE modify the user/pass to more secure information as these credentials
       # can be used to directly access your ltcd instance
@@ -71,9 +76,6 @@ services:
       - REST_LISTEN=0.0.0.0:8101
       - DATA_DIR=/data
       - LOG_DIR=/data
-    volumes:
-      - 'shared:/shared'
-      - 'lnd:/data'
     entrypoint: ["./start-lnd.sh"]
 
 volumes:

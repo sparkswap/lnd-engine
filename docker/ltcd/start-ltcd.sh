@@ -5,6 +5,11 @@ set -e
 # Copy certs to the shared file
 [[ -e /secure/rpc.cert ]] && cp /secure/rpc.cert /shared/rpc-ltc.cert
 
+# Start a cron for simnet, if network is simnet
+if [[ "$NETWORK" == "simnet" ]]; then
+    crond -L /jobs/cron.log
+fi
+
 PARAMS=$(echo \
     "--$NETWORK" \
     "--debuglevel=$DEBUG" \
