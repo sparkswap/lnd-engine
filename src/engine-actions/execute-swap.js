@@ -4,6 +4,7 @@ const { networkAddressFormatter, sha256 } = require('../utils')
 /**
  * The default amount of time, in seconds, that the Maker will use in forwarding this transaction.
  * LND's default value announced on its channels is 24 hours (144 Bitcoin blocks)
+ *
  * @todo Make this amount dynamic and determined with the price/amount or determined from the channel graph
  * @type {Number}
  * @constant
@@ -13,6 +14,7 @@ const DEFAULT_MAKER_FWD_DELTA = 86400
 /**
  * The default amount of time, in seconds, that the Relayer will use in forwarding this transaction.
  * LND's default value announced on its channels is 24 hours (144 Bitcoin blocks)
+ *
  * @todo Make this amount dynamic and published by the Relayer or determined from the channel graph
  * @type {Number}
  * @constant
@@ -22,6 +24,7 @@ const DEFAULT_RELAYER_FWD_DELTA = 86400
 /**
  * The default amoumt of time, in seconds, that the Taker (this node) expects to receive when settling a swap.
  * It is derived from BOLT-11 which states it as 90 minutes (9 Bitcoin blocks)
+ *
  * @see {@link https://github.com/lightningnetwork/lightning-rfc/blob/master/11-payment-encoding.md}
  * @todo Make this amount dynamic and set by the broker/user
  * @type {Number}
@@ -32,6 +35,7 @@ const DEFAULT_MIN_FINAL_DELTA = 5400
 /**
  * The number of blocks to buffer any output timelock by to account for block ticks during a swap
  * This is especially problematic on simnet where we mine blocks every 10 seconds, but it is a known issue on mainnet
+ *
  * @see {@link https://github.com/lightningnetwork/lnd/issues/535}
  * @type {Number}
  * @constant

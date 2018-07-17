@@ -7,7 +7,6 @@ const grpc = require('grpc')
 const fs = require('fs')
 
 /**
- * @global
  * @constant
  * @type {String}
  * @default
@@ -18,7 +17,6 @@ const GRPC_FILE_TYPE = 'proto'
  * These service options are tied directly to the SSL certs that are generated for
  * the engines LND service.
  *
- * @global
  * @constant
  * @type {Object}
  * @default
@@ -32,11 +30,10 @@ const GRPC_OPTIONS = {
 /**
  * Generates credentials for authentication to the LND rpc server
  *
- * @function
  * @private
  * @see https://github.com/lightningnetwork/lnd/blob/master/docs/macaroons.md
- * @param {String} tlsCertPath
- * @param {String} lndMacaroonPath
+ * @param {String} tlsCertPath - absolute path of tls cert for lnd
+ * @param {String} lndMacaroonPath - absolute path of macaroon for lnd
  * @return {grpc.credentials}
  */
 function generateCredentials (tlsCertPath, macaroonPath) {
@@ -58,9 +55,8 @@ function generateCredentials (tlsCertPath, macaroonPath) {
 /**
  * Generates a proto definition for a specified proto file path
  *
- * @function
  * @private
- * @param {String} path - lnd protofile path
+ * @param {String} path - absolute lnd protofile path
  * @return {grpc.Object}
  * @throws {Error} proto file not found
  */
@@ -71,12 +67,12 @@ function loadProto (path) {
 }
 
 /**
- *
  * Generates a proto definition for a specified proto file path
  *
- * @function
  * @param {String} host - lnd host address
  * @param {String} protoFilePath - lnd protobuf file path
+ * @param {String} tlsCertPath - absolute path of tls cert for lnd
+ * @param {String} macaroonPath - absolute path of macaroon for lnd
  * @return {grpc.Client}
  */
 function generateLndClient (host, protoPath, tlsCertPath, macaroonPath) {

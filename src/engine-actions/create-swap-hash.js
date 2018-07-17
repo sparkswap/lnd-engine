@@ -1,7 +1,8 @@
 const { addInvoice } = require('../lnd-actions')
 
 /**
- * default expiry for swap hashes is 3600 seconds - 1 hour.
+ * Default expiry for swap hashes is 3600 seconds - 1 hour.
+ *
  * @todo Should this be changed to something shorter or be configurable
  * @constant
  * @type {String}
@@ -12,6 +13,7 @@ const SWAP_EXPIRY = '3600'
  * The memo prefix allows us to easily find Kinesis-related invoices
  * in LND. In this case, the invoice is the end point of the swap, its
  * "terminus".
+ *
  * @constant
  * @type {String}
  * @default
@@ -21,8 +23,8 @@ const MEMO_PREFIX = 'kinesis-swap-terminus:'
 /**
  * Creates a swap hash to prepare for a swap
  *
- * @param {String} orderId order ID for the swap hash
- * @param {Number} value
+ * @param {String} orderId - order ID for the swap hash
+ * @param {Number} value - value of swap invoice in satoshis
  * @returns {String} rHash hash of invoice from lnd
  */
 async function createSwapHash (orderId, value) {

@@ -3,6 +3,7 @@ const { addInvoice, decodePaymentRequest } = require('../lnd-actions')
 /**
  * DEFAULT_INVOICE_EXPIRY
  * Default value is 1 year expiry for invoices (in seconds)
+ *
  * @constant
  * @type {String}
  * @default
@@ -15,13 +16,13 @@ const DEFAULT_INVOICE_EXPIRY = 31536000
  * @default
  */
 const REFUND_MEMO_PREFIX = 'REFUND:'
+
 /**
  * Creates an invoice
  *
  * @param {String} paymentRequest
- * @returns {String} paymentRequest hash of invoice from lnd
+ * @returns {String} paymentRequest hash of refund invoice from lnd
  */
-
 async function createRefundInvoice (paymentRequest) {
   const { numSatoshis: requestValue, description: requestDescription } = await decodePaymentRequest(paymentRequest, { client: this.client })
 
