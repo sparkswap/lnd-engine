@@ -19,6 +19,15 @@ COMMIT_SHA=`git ls-remote git://github.com/kinesis-exchange/lnd | grep "refs/hea
 LTCD_COMMIT_SHA=`git ls-remote git://github.com/ltcsuite/ltcd | grep "refs/heads/$LTCD_VERSION$" | cut -f 1`
 BTCD_COMMIT_SHA=`git ls-remote git://github.com/btcsuite/btcd | grep "refs/heads/$BTCD_VERSION$" | cut -f 1`
 
+# We need to set LTCD_COMMIT_SHA to a specific commit due to an rpcwitness
+# data type change that is not pushed to master yet.
+#
+# We set to a specific commit to make sure LTCD will not break on new changes
+# to master.
+#
+# TODO: Remove this once https://github.com/ltcsuite/ltcd/pull/7 is merged
+LTCD_COMMIT_SHA='cdab10132e8c6e4a3ffd112dba54791946d28906'
+
 # NOTE: The names specified with `-t` directly map to the service names in
 # the applicable services docker-compose file
 docker build -t kinesis_lnd_btc ./docker/lnd --build-arg NETWORK=btc --build-arg COMMIT_SHA=$COMMIT_SHA
