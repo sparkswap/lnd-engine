@@ -17,7 +17,7 @@ function getSettledSwapPreimage (swapHash) {
     try {
       // Before subscribing to invoices we lookup to see if it has already been settled,
       // if so, we can return immediately to the caller
-      const { settled, rPreimage } = await lookupInvoice(swapHash, { client: this.client })
+      const { settled, rPreimage } = await lookupInvoice(Buffer.from(swapHash, 'base64').toString('hex'), { client: this.client })
 
       if (settled) {
         return resolve(rPreimage)
