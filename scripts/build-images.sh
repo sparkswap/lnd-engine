@@ -3,7 +3,11 @@
 set -e -u
 
 # Default certhost needed to build images. For production, this will change to *.kinesis.network
-CERT_HOST=docker.for.mac.host.internal
+CERT_HOST=${CERT_HOST:-docker.for.mac.host.internal}
+
+echo "Building images for cert host: $CERT_HOST"
+echo "This cert host is used during ltcd/btcd cert generation"
+echo ""
 
 # Default branches for each repo
 # TODO: Lock these to a specific commit
