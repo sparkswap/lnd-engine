@@ -25,30 +25,17 @@ function getSettledSwapPreimage (swapHash) {
 
       const subscription = subscribeInvoices({ client: this.client })
 
-      // Helper to make sure we tear down our listeners
-      const finish = (err, response) => {
-        subscription.removeListener('error')
-        subscription.removeListener('end')
-        subscription.removeListener('data')
-
-        if (err) {
-          return reject(err)
-        }
-
-        resolve(response)
-      }
-
-      subscription.on('error', (err) => {
+      const errorListener = (err) => {
         this.logger.error(`Error from subscribeInvoices stream`, err)
         return finish(err)
-      })
+      }
 
-      subscription.on('end', () => {
+      const endListener = () => {
         this.logger.error(`LND closed subscribeInvoices stream before returning our value`)
         return finish(new Error(`LND closed stream to retrieve invoice`))
-      })
+      }
 
-      subscription.on('data', (response) => {
+      const dataListener = (response) => {
         const { memo, rHash, settled, settleDate, rPreimage } = response
         this.logger.debug('Received invoice subscription from LND', { memo, rHash, settled })
         if (rHash === swapHash) {
@@ -59,7 +46,24 @@ function getSettledSwapPreimage (swapHash) {
             return finish(null, rPreimage)
           }
         }
-      })
+      }
+
+      // Helper to make sure we tear down our listeners
+      const finish = (err, response) => {
+        subscription.removeListener('error', errorListener)
+        subscription.removeListener('end', endListener)
+        subscription.removeListener('data', dataListener)
+
+        if (err) {
+          return reject(err)
+        }
+
+        resolve(response)
+      }
+
+      subscription.on('error', errorListener)
+      subscription.on('end', endListener)
+      subscription.on('data', dataListener)
     } catch (e) {
       return reject(e)
     }
