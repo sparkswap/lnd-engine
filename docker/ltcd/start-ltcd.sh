@@ -21,7 +21,8 @@ PARAMS=$(echo \
     "--rpccert=$RPC_CERT" \
     "--rpckey=$RPC_KEY" \
     "--rpcmaxwebsockets=$MAX_WEB_SOCKETS" \
-    "--txindex"
+    "--txindex" \
+    "--dropcfindex"
 )
 
 # Set the mining flag w/ specified environment variable
