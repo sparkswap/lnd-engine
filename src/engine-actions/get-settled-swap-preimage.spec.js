@@ -14,9 +14,6 @@ describe('getSettledSwapPreimage', () => {
   let otherInvoice
   let theSettledInvoice
   let theUnsettledInvoice
-  let dataListenerStub
-  let endListenerStub
-  let errorListenerStub
 
   function streamReturnsInvoices (stream, invoices) {
     stream.on.withArgs('data').callsFake(async (evt, listener) => {
