@@ -23,7 +23,7 @@ function sendPayment ({ paymentRequest, paymentHash, destString, amt, finalCltvD
   const request = { paymentRequest, paymentHash, destString, amt, finalCltvDelta, feeLimit }
 
   return new Promise((resolve, reject) => {
-    client.sendPaymentSync(request, { deadline: deadline() }, (err, res) => {
+    client.sendPaymentSync(request, { deadline: deadline(30) }, (err, res) => {
       if (err) return reject(err)
       return resolve(res)
     })
