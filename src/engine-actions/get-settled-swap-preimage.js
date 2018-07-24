@@ -8,6 +8,7 @@ const {
  * it will wait for the settlement before returning to the caller
  *
  * @see {lnd-actions#lookupinvoice}
+ * @see {@link http://api.lightning.community/#addinvoice}
  * @see {lnd-actions#subscribeInvoices}
  * @param {String} swapHash
  * @returns {Boolean} true if the invoice is settled, false if not
@@ -15,9 +16,18 @@ const {
 function getSettledSwapPreimage (swapHash) {
   return new Promise(async (resolve, reject) => {
     try {
+      let paymentHash
+
+      if (!swapHash) {
+        throw new Error('Swaphash must be defined')
+      }
+
+      // We convert the swapHash from base64 string to hex because lookupInvoice takes in a hex
+      // encoded rhash as an argument.
+      paymentHash = Buffer.from(swapHash, 'base64').toString('hex')
       // Before subscribing to invoices we lookup to see if it has already been settled,
       // if so, we can return immediately to the caller
-      const { settled, rPreimage } = await lookupInvoice(Buffer.from(swapHash, 'base64').toString('hex'), { client: this.client })
+      const { settled, rPreimage } = await lookupInvoice(paymentHash, { client: this.client })
 
       if (settled) {
         return resolve(rPreimage)

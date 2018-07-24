@@ -6,6 +6,7 @@
  * @return {ReadableStream} Readable stream from gprc
  */
 function subscribeInvoices ({ client }) {
+  // We don't use a deadline here because this is a long-running operation
   return client.subscribeInvoices({})
 }
 

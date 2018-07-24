@@ -14,6 +14,9 @@ describe('getSettledSwapPreimage', () => {
   let otherInvoice
   let theSettledInvoice
   let theUnsettledInvoice
+  let dataListenerStub
+  let endListenerStub
+  let errorListenerStub
 
   function streamReturnsInvoices (stream, invoices) {
     stream.on.withArgs('data').callsFake(async (evt, listener) => {
@@ -72,12 +75,18 @@ describe('getSettledSwapPreimage', () => {
     getSettledSwapPreimage.__set__('subscribeInvoices', subscribeInvoicesStub)
   })
 
+  it('throws an error if the swapHash does not exist', () => {
+    swapHash = undefined
+
+    return expect(getSettledSwapPreimage.call(engine, swapHash)).to.eventually.be.rejectedWith('Swaphash must be defined')
+  })
+
   it('looks up the invoice', async () => {
     lookupInvoiceStub.resolves(theSettledInvoice)
     await getSettledSwapPreimage.call(engine, swapHash)
 
     expect(lookupInvoiceStub).to.have.been.calledOnce()
-    expect(lookupInvoiceStub).to.have.been.calledWith(swapHash, { client: clientStub })
+    expect(lookupInvoiceStub).to.have.been.calledWith(Buffer.from(swapHash, 'base64').toString('hex'), { client: clientStub })
   })
 
   it('throws if the invoice does not exist', () => {
@@ -146,10 +155,13 @@ describe('getSettledSwapPreimage', () => {
   it('removes listeners', async () => {
     streamReturnsInvoices(invoiceStream, [ theSettledInvoice ])
     await getSettledSwapPreimage.call(engine, swapHash)
+    const dataListener = invoiceStream.on.withArgs('data').args[0][1]
+    const endListener = invoiceStream.on.withArgs('end').args[0][1]
+    const errorListener = invoiceStream.on.withArgs('error').args[0][1]
 
     expect(invoiceStream.removeListener).to.have.been.calledThrice()
-    expect(invoiceStream.removeListener).to.have.been.calledWith('data')
-    expect(invoiceStream.removeListener).to.have.been.calledWith('end')
-    expect(invoiceStream.removeListener).to.have.been.calledWith('error')
+    expect(invoiceStream.removeListener).to.have.been.calledWith('data', dataListener)
+    expect(invoiceStream.removeListener).to.have.been.calledWith('end', endListener)
+    expect(invoiceStream.removeListener).to.have.been.calledWith('error', errorListener)
   })
 })
