@@ -3,9 +3,10 @@
 set -e -u
 
 # Default certhost needed to build images. For production, this will change to *.kinesis.network
-CERT_HOST=${CERT_HOST:-docker.for.mac.host.internal}
+LTCD_CERT_HOST=${LTCD_CERT_HOST:-docker.for.mac.host.internal}
+BTCD_CERT_HOST=${BTCD_CERT_HOST:-docker.for.mac.host.internal}
 
-echo "Building images for cert host: $CERT_HOST"
+echo "Building images for cert hosts: LTC: $LTCD_CERT_HOST, BTC: $BTCD_CERT_HOST"
 echo "This cert host is used during ltcd/btcd cert generation"
 echo ""
 
@@ -36,5 +37,5 @@ LTCD_COMMIT_SHA='cdab10132e8c6e4a3ffd112dba54791946d28906'
 # the applicable services docker-compose file
 docker build -t kinesis_lnd_btc ./docker/lnd --build-arg NETWORK=btc --build-arg COMMIT_SHA=$COMMIT_SHA
 docker build -t kinesis_lnd_ltc ./docker/lnd --build-arg NETWORK=ltc --build-arg COMMIT_SHA=$COMMIT_SHA
-docker build -t kinesis_ltcd ./docker/ltcd --build-arg COMMIT_SHA=$LTCD_COMMIT_SHA --build-arg CERT_HOST=$CERT_HOST
-docker build -t kinesis_btcd ./docker/btcd --build-arg COMMIT_SHA=$BTCD_COMMIT_SHA --build-arg CERT_HOST=$CERT_HOST
+docker build -t kinesis_ltcd ./docker/ltcd --build-arg COMMIT_SHA=$LTCD_COMMIT_SHA --build-arg CERT_HOST=$LTCD_CERT_HOST
+docker build -t kinesis_btcd ./docker/btcd --build-arg COMMIT_SHA=$BTCD_COMMIT_SHA --build-arg CERT_HOST=$BTCD_CERT_HOST

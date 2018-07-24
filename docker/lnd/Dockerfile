@@ -4,9 +4,7 @@ LABEL maintainer="Kinesis Network <kinesis.network>"
 
 # Set the chain that is used for the current image
 ARG NETWORK
-RUN \
-# Check for mandatory build arguments
-    : "${NETWORK:?NETWORK Build argument needs to be set.}"
+RUN : "${NETWORK:?NETWORK Build argument needs to be set.}"
 
 # Force Go to use the cgo based DNS resolver. This is required to ensure DNS
 # queries required to connect to linked containers succeed.
@@ -44,6 +42,7 @@ WORKDIR $GOPATH/src/github.com/lightningnetwork/lnd
 # to continually grab changes from the LND_VERSION without tagging the release.
 # TODO: set this to a certain release commit
 ARG COMMIT_SHA=blank
+RUN : "${COMMIT_SHA:?COMMIT_SHA Build argument needs to be set.}"
 
 RUN git clone https://github.com/kinesis-exchange/lnd . \
 &&  git checkout ${COMMIT_SHA} \

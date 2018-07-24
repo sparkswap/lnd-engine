@@ -2,16 +2,12 @@ FROM golang:1.10-alpine as builder
 
 LABEL maintainer="Kinesis Network <kinesis.network>"
 
-
 # Install build deps
 RUN apk add --no-cache git \
 &&  go get -u github.com/Masterminds/glide
 
 ARG COMMIT_SHA
-
-RUN \
-# Check for mandatory build arguments
-    : "${COMMIT_SHA:?COMMIT_SHA Build argument needs to be set.}"
+RUN : "${COMMIT_SHA:?COMMIT_SHA Build argument needs to be set.}"
 
 WORKDIR $GOPATH/src/github.com/ltcsuite/ltcd
 
@@ -65,18 +61,15 @@ RUN apk add --no-cache \
 
 # We set the cert host for btcd (set as --build-arg on docker build)
 ARG CERT_HOST
+RUN : "${CERT_HOST:?CERT_HOST Build argument needs to be set.}" \
+&&  "/bin/gencerts" --host=${CERT_HOST} --directory="/secure" --force
 
-RUN \
-# Check for mandatory build arguments
-    : "${CERT_HOST:?CERT_HOST Build argument needs to be set.}"
-
-RUN "/bin/gencerts" --host=${CERT_HOST} --directory="/secure" --force
-
+# TODO: figure out correct ports for ltcd
 # Mainnet ports (p2p, rpc)
-EXPOSE 8333 8334
+EXPOSE 9335 9334
 
 # Testnet ports (p2p, rpc)
-EXPOSE 18333 18334
+EXPOSE 19335 19334
 
 # Simnet ports (p2p, rpc)
 EXPOSE 18555 18556

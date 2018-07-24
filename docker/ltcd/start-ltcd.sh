@@ -20,9 +20,14 @@ PARAMS=$(echo \
     "--rpclisten=$RPC_LISTEN" \
     "--rpccert=$RPC_CERT" \
     "--rpckey=$RPC_KEY" \
-    "--rpcmaxwebsockets=$MAX_WEB_SOCKETS" \
     "--txindex"
 )
+
+# If MAX_WEB_SOCKETS is specified then we'll set it in the params, otherwise
+# we will let ltcd decide on the default
+if [[ -n "$MAX_WEB_SOCKETS" ]]; then
+    PARAMS="$PARAMS --rpcmaxwebsockets=$MAX_WEB_SOCKETS"
+fi
 
 # Set the mining flag w/ specified environment variable
 #
