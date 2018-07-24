@@ -20,7 +20,7 @@ version: '2.4'
 
 services:
   ltcd:
-    image: kinesis_ltcd:latest
+    image: sparkswap_ltcd:latest
     ports:
       - '18556:18556'
     volumes:
@@ -46,7 +46,7 @@ services:
     entrypoint: ["./start-ltcd.sh"]
 
   lnd_ltc:
-    image: kinesis_lnd_ltc:latest
+    image: sparkswap_lnd_ltc:latest
     depends_on:
       - ltcd
     volumes:
@@ -66,7 +66,7 @@ services:
       - TLS_KEY_PATH=/secure/lnd-engine-tls-ltc.key
       - NETWORK=simnet
       # The original lnd implementation does not support litecoin simnet (yet as of 7/10/2018),
-      # however the kinesis-network lnd fork has enabled litecoin/ltcd simnet
+      # however the sparkswap/lnd fork has enabled litecoin/ltcd simnet
       - CHAIN=litecoin
       - NODE=ltcd
       - DEBUG=info

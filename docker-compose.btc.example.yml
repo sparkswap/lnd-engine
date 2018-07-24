@@ -20,7 +20,7 @@ version: '2.4'
 
 services:
   btcd:
-    image: kinesis_btcd:latest
+    image: sparkswap_btcd:latest
     volumes:
       - shared:/shared
       - bitcoin:/data
@@ -48,7 +48,7 @@ services:
     entrypoint: ["./start-btcd.sh"]
 
   lnd_btc:
-    image: kinesis_lnd_btc:latest
+    image: sparkswap_lnd_btc:latest
     environment:
       # PLEASE modify the user/pass on your BTCD node to more secure information
       # as these credentials can be used to directly access your btcd instance

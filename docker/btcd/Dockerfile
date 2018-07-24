@@ -1,6 +1,6 @@
 FROM golang:1.10-alpine as builder
 
-LABEL maintainer="Kinesis Network <kinesis.network>"
+LABEL maintainer="SparkSwap <dev@sparkswap.com>"
 
 # Install build dependencies such as git and glide.
 RUN apk add --no-cache \

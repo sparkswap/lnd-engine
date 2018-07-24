@@ -1,6 +1,6 @@
 FROM golang:1.10-alpine as builder
 
-LABEL maintainer="Kinesis Network <kinesis.network>"
+LABEL maintainer="SparkSwap <dev@sparkswap.com>"
 
 # Set the chain that is used for the current image
 ARG NETWORK
@@ -44,7 +44,7 @@ WORKDIR $GOPATH/src/github.com/lightningnetwork/lnd
 ARG COMMIT_SHA=blank
 RUN : "${COMMIT_SHA:?COMMIT_SHA Build argument needs to be set.}"
 
-RUN git clone https://github.com/kinesis-exchange/lnd . \
+RUN git clone https://github.com/sparkswap/lnd . \
 &&  git checkout ${COMMIT_SHA} \
 &&  make \
 &&  make install

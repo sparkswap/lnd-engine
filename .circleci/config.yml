@@ -1,12 +1,11 @@
-# Kinesis CircleCI Config
-#
+# Sparkswap CircleCI Config
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
 version: 2
 jobs:
   build:
     docker:
-      - image: node:8
+      - image: node:8.11
     working_directory: ~/relayer
 
     steps:

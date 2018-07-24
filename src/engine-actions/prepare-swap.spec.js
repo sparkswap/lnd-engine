@@ -31,7 +31,7 @@ describe('prepareSwap', () => {
   })
 
   it('adds an invoice through lnd', () => {
-    expect(addInvoiceStub).to.have.been.calledWith({ memo: `kinesis-swap-pivot:${orderId}`, expiry: '3600', value, externalPreimage: true, rHash: swapHash }, sinon.match({ client: clientStub }))
+    expect(addInvoiceStub).to.have.been.calledWith({ memo: `sparkswap-swap-pivot:${orderId}`, expiry: '3600', value, externalPreimage: true, rHash: swapHash }, sinon.match({ client: clientStub }))
   })
 
   it('returns an invoice hash hash', () => {

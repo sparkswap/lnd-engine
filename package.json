@@ -1,7 +1,7 @@
 {
   "name": "lnd-engine",
   "version": "0.1.0-alpha-preview",
-  "description": "Kinesis engine for LND",
+  "description": "A SparkSwap Engine for LND lightning implementation",
   "main": "src/index.js",
   "standard": {
     "env": [
@@ -28,23 +28,23 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kinesis-exchange/lnd-engine.git"
+    "url": "git+https://github.com/sparkswap/lnd-engine.git"
   },
   "keywords": [
+    "sparkswap",
     "lnd",
-    "kinesis",
-    "exchange",
-    "bitcoin",
+    "lightning",
     "btc",
+    "bitcoin",
     "ltc",
     "litecoin"
   ],
-  "author": "Kinesis Network <kinesis.network>",
+  "author": "SparkSwap <dev@sparkswap.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/kinesis-exchange/lnd-engine/issues"
+    "url": "https://github.com/sparkswap/lnd-engine/issues"
   },
-  "homepage": "https://github.com/kinesis-exchange/lnd-engine#readme",
+  "homepage": "https://github.com/sparkswap/lnd-engine#readme",
   "devDependencies": {
     "chai": "4.1.2",
     "chai-as-promised": "7.1.1",
