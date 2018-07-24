@@ -1,5 +1,3 @@
-const { deadline } = require('../grpc-utils')
-
 /**
  * Check's an invoice status
  *
@@ -8,7 +6,8 @@ const { deadline } = require('../grpc-utils')
  * @return {ReadableStream} Readable stream from gprc
  */
 function subscribeInvoices ({ client }) {
-  return client.subscribeInvoices({}, { deadline: deadline() })
+  // We don't use a deadline here because this is a long-running operation
+  return client.subscribeInvoices({})
 }
 
 module.exports = subscribeInvoices
