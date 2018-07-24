@@ -2,7 +2,7 @@
 
 <img src="https://kines.is/logo.png" alt="SparkSwap" width="550">
 
-[![CircleCI](https://circleci.com/gh/kinesis-exchange/lnd-engine.svg?style=svg&circle-token=47c81b3a717f062885f159dfded078e134413db1)](https://circleci.com/gh/kinesis-exchange/lnd-engine)
+[![CircleCI](https://circleci.com/gh/sparkswap/lnd-engine.svg?style=svg&circle-token=47c81b3a717f062885f159dfded078e134413db1)](https://circleci.com/gh/sparkswap/lnd-engine)
 
 The following repo contains 2 modules that make up a `SparkSwap Engine`:
 
