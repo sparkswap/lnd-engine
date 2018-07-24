@@ -32,7 +32,8 @@ PARAMS=$(echo \
     "--$NODE.rpcuser=$RPC_USER" \
     "--$NODE.rpcpass=$RPC_PASS" \
     "--debuglevel=$DEBUG" \
-    "--externalip=$EXTERNAL_ADDRESS"
+    "--externalip=$EXTERNAL_ADDRESS" \
+    "--extpreimage.rpchost=$EXTPREIMAGE_HOST"
 )
 
 # We want to disable bootstrapping for testnet due to missing LTC DNS seeds for
