@@ -29,7 +29,7 @@ function getSettledSwapPreimage (swapHash) {
       // if so, we can return immediately to the caller
       const { settled, rPreimage } = await lookupInvoice(paymentHash, { client: this.client })
 
-      this.logger.debug('we got here')
+      this.logger.debug('Invoice has been retrieved: ', { settled })
 
       if (settled) {
         return resolve(rPreimage)
