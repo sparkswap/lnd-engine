@@ -10,14 +10,14 @@ const { addInvoice } = require('../lnd-actions')
 const SWAP_EXPIRY = '3600'
 
 /**
- * The memo prefix allows us to easily find Kinesis-related invoices
+ * The memo prefix allows us to easily find SparkSwap-related invoices
  * in LND. In this case, the invoice is the pivot point of the swap
  * where it changes chains.
  * @constant
  * @type {String}
  * @default
  */
-const MEMO_PREFIX = 'kinesis-swap-pivot:'
+const MEMO_PREFIX = 'sparkswap-swap-pivot:'
 
 /**
  * Prepares for a swap in which this node is the counterparty to the intiating node

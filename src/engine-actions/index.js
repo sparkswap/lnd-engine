@@ -3,7 +3,6 @@ const getPublicKey = require('./get-public-key')
 const getTotalBalance = require('./get-total-balance')
 const getConfirmedBalance = require('./get-confirmed-balance')
 const getUnconfirmedBalance = require('./get-unconfirmed-balance')
-const getPeers = require('./get-peers')
 const getInvoiceValue = require('./get-invoice-value')
 const getTotalChannelBalance = require('./get-total-channel-balance')
 const createChannel = require('./create-channel')
@@ -29,7 +28,6 @@ module.exports = {
   getTotalBalance,
   getConfirmedBalance,
   getUnconfirmedBalance,
-  getPeers,
   getInvoiceValue,
   getTotalChannelBalance,
   createChannel,

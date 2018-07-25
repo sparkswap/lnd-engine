@@ -1,6 +1,6 @@
 FROM golang:1.10-alpine as builder
 
-LABEL maintainer="Kinesis Network <kinesis.network>"
+LABEL maintainer="SparkSwap <dev@sparkswap.com>"
 
 # Install build deps
 RUN apk add --no-cache git \
@@ -26,7 +26,7 @@ RUN git clone https://github.com/ltcsuite/ltcd ./ \
 &&  git remote add dev git://github.com/cfromknecht/btcd \
 &&  git fetch dev \
 # We must set git configuration to use `git merge`
-&&  git config --global user.email "dev@kinesis.network" \
+&&  git config --global user.email "dev@sparkswap.com" \
 &&  git config --global user.name "dev" \
 # Merges the fix/single change into ltcd
 &&  git merge dev/rpc-witness-serialization-fix \
