@@ -13,6 +13,29 @@ const { queryRoutes, sendToRoute, getInfo } = require('../lnd-actions')
 const DEFAULT_FWD_DELTA = 86400
 
 /**
+ * Number of route options to be returned when calculating routes for translating
+ * a swap.
+ *
+ * @type {Number}
+ * @constant
+ * @default
+ */
+const NUM_OF_ROUTES = 10
+
+/*
+ * The default amoumt of time, in seconds, that the Taker (this node) expects to
+ * receive when settling a swap.
+ *
+ * It is derived from BOLT-11 which states the final CLTV delta as 90 minutes (9 Bitcoin blocks).
+ * However, we reflect LND's default is 144 blocks to align to the forwarding policy.
+ *
+ * @type {Number}
+ * @constant
+ * @default
+ */
+const FINAL_CLTV_DELTA = 144
+
+/**
  * @param  {String} extendedTimeLockDelta Int64 string of the number of seconds extended to us in the inbound HTLC
  * @param  {Number} secondsPerBlock       Block time of the current block chain
  * @param  {Number} blockHeight           Current height of the current block chain
@@ -55,8 +78,8 @@ async function translateSwap (takerAddress, swapHash, amount, extendedTimeLockDe
     pubKey: publicKey,
     amt: amount,
     // TODO: Figure out what number for this would be
-    numRoutes: 10,
-    finalCltvDelta: 144
+    numRoutes: NUM_OF_ROUTES,
+    finalCltvDelta: FINAL_CLTV_DELTA
   }
 
   const [ { routes = [] }, { blockHeight } ] = await Promise.all([

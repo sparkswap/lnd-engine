@@ -3,7 +3,7 @@ const { expect, rewire, sinon, delay } = require('test/test-helper')
 
 const getSettledSwapPreimage = rewire(path.resolve(__dirname, 'get-settled-swap-preimage'))
 
-describe('getSettledSwapPreimage', () => {
+describe.only('getSettledSwapPreimage', () => {
   let clientStub
   let engine
   let lookupInvoiceStub

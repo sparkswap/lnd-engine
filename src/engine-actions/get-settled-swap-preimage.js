@@ -14,7 +14,7 @@ const {
  * @returns {Boolean} true if the invoice is settled, false if not
  */
 function getSettledSwapPreimage (swapHash) {
-  return new Promise(async function (resolve, reject) {
+  return new Promise(async (resolve, reject) => {
     try {
       if (!swapHash) {
         throw new Error('Swaphash must be defined')
@@ -73,9 +73,9 @@ function getSettledSwapPreimage (swapHash) {
         resolve(response)
       }
 
-      subscription.on('error', errorListener.bind(this))
-      subscription.on('end', endListener.bind(this))
-      subscription.on('data', dataListener.bind(this))
+      subscription.on('error', errorListener)
+      subscription.on('end', endListener)
+      subscription.on('data', dataListener)
     } catch (e) {
       return reject(e)
     }
