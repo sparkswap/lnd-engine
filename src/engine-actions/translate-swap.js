@@ -53,7 +53,9 @@ async function translateSwap (takerAddress, swapHash, amount, extendedTimeLockDe
   const { publicKey } = networkAddressFormatter.parse(takerAddress)
   const queryRoutesReq = {
     pubKey: publicKey,
-    amt: amount
+    amt: amount,
+    // TODO: Figure out what number for this would be
+    numRoute: 1
   }
 
   const [ { routes = [] }, { blockHeight } ] = await Promise.all([
