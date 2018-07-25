@@ -55,7 +55,8 @@ async function translateSwap (takerAddress, swapHash, amount, extendedTimeLockDe
     pubKey: publicKey,
     amt: amount,
     // TODO: Figure out what number for this would be
-    numRoutes: 1
+    numRoutes: 1,
+    finalCltvDelta: 144
   }
 
   const [ { routes = [] }, { blockHeight } ] = await Promise.all([
