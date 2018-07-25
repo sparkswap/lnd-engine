@@ -2,7 +2,8 @@ const { Big, networkAddressFormatter, CLTV_DELTA } = require('../utils')
 const { queryRoutes, sendToRoute, getInfo } = require('../lnd-actions')
 
 const {
-  DEFAULT_MAKER_FWD_DELTA
+  DEFAULT_MAKER_FWD_DELTA,
+  DEFAULT_MIN_FINAL_DELTA
 } = CLTV_DELTA
 
 /**
@@ -25,11 +26,12 @@ const NUM_OF_ROUTES = 10
  * @return {String} Maximum block height for the downstream payment
  */
 function calculateTimeLock (extendedTimeLockDelta, secondsPerBlock, blockHeight) {
-  /**
-   * Max time lock to use on the path to taker address in seconds
-   * @todo make this dynamic based on the node's forwarding policy
-   * @type {Big}
-   */
+  // maxTimeLockDelta represents the max time lock to use on the path from
+  // the Maker (the current node) to the taker address, in seconds.
+  //
+  // We substract our own timelock delta so that we have sufficient time for the
+  // act of translating between block chains.
+  //
   const maxTimeLockDelta = Big(extendedTimeLockDelta).minus(DEFAULT_MAKER_FWD_DELTA)
 
   if (maxTimeLockDelta.lte(0)) {
@@ -64,7 +66,10 @@ async function translateSwap (takerAddress, swapHash, amount, extendedTimeLockDe
     throw new Error('secondsPerBlock is not specified in the currencyConfig for lnd-engine')
   }
 
-  const finalCltvDelta = Math.ceil(DEFAULT_MAKER_FWD_DELTA / secondsPerBlock)
+  // We specifically use Math.ceil here to ensure that the swap succeeds by providing
+  // the terminating node (Taker) additional timelock. This allows enough time so that
+  // the Taker will not reject the HTLC as having too little timelock.
+  const finalCltvDelta = Math.ceil(DEFAULT_MIN_FINAL_DELTA / secondsPerBlock)
 
   const queryRoutesReq = {
     pubKey: publicKey,
@@ -96,16 +101,16 @@ async function translateSwap (takerAddress, swapHash, amount, extendedTimeLockDe
 
   const totalTimeLock = calculateTimeLock(extendedTimeLockDelta, this.currencyConfig.secondsPerBlock, blockHeight)
 
-  this.logger.debug(`Total timelock calculated for route: ${totalTimeLock}`)
+  this.logger.debug(`Maximum timelock for second leg of swap calculated as: ${totalTimeLock}`)
 
   const availableRoutes = routes.filter(route => Big(route.totalTimeLock).lte(totalTimeLock))
 
   if (availableRoutes.length === 0) {
-    this.logger.error(`No route to ${takerAddress} with at most ${totalTimeLock}`, { swapHash })
-    throw new Error(`No route to ${takerAddress} with at most ${totalTimeLock}`)
+    this.logger.error(`No route to ${takerAddress} with a timelock (in blocks) less than/equal to ${totalTimeLock}`, { swapHash })
+    throw new Error(`No route to ${takerAddress} with a timelock (in blocks) less than/equal to ${totalTimeLock}`)
   }
 
-  this.logger.debug(`Found ${availableRoutes.length} routes with at most ${totalTimeLock} for ${swapHash}`)
+  this.logger.debug(`Found ${availableRoutes.length} routes with a timelock (in blocks) less than/equal to ${totalTimeLock}`, { swapHash })
 
   const { paymentPreimage, paymentError } = await sendToRoute(swapHash, availableRoutes, { client: this.client })
 

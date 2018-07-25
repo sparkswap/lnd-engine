@@ -40,8 +40,14 @@ async function executeSwap (makerAddress, swapHash, amount) {
     throw new Error('secondsPerBlock is not specified in the currencyConfig for lnd-engine')
   }
 
-  // TotalTimeLock includes `taker -> relayer -> maker` deltas (in seconds)
+  // TotalTimeLock includes `Maker -> Relayer -> Taker` deltas (in seconds), where
+  // our current node is the Taker.
   const totalTimeLockInSeconds = DEFAULT_MAKER_FWD_DELTA + DEFAULT_RELAYER_FWD_DELTA + DEFAULT_MIN_FINAL_DELTA
+
+  // We specifically use Math.ceil here to ensure that the swap succeeds by providing
+  // the maker (who is translating between chains) additional timelock. As the Taker,
+  // we would prefer to add additional time (in blocks) to our finalCltvDelta than to
+  // have to hltc be rejected.
   const finalCltvDelta = Math.ceil(totalTimeLockInSeconds / secondsPerBlock) + BLOCK_BUFFER
 
   const request = {

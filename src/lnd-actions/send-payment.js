@@ -6,7 +6,7 @@ const { deadline } = require('../grpc-utils')
  * @type {Number}
  * @default
  */
-const SEND_PAYMENT_DEADLINE = 60
+const SEND_PAYMENT_DEADLINE = 30
 
 /**
  * @typedef {Object} FeeLimit
