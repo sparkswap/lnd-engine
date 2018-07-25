@@ -21,13 +21,14 @@ const DEFAULT_RELAYER_FWD_DELTA = 86400
 
 /**
  * The default amoumt of time, in seconds, that the Taker (this node) expects to receive when settling a swap.
- * It is derived from BOLT-11 which states it as 90 minutes (9 Bitcoin blocks)
+ * BOLT-11 states it as 90 minutes (9 Bitcoin blocks), but LND's default is 144 blocks to align to the forwarding
+ * policy.
  * @see {@link https://github.com/lightningnetwork/lightning-rfc/blob/master/11-payment-encoding.md}
  * @todo Make this amount dynamic and set by the broker/user
  * @type {Number}
  * @constant
  */
-const DEFAULT_MIN_FINAL_DELTA = 5400
+const DEFAULT_MIN_FINAL_DELTA = 86400
 
 /**
  * The number of blocks to buffer any output timelock by to account for block ticks during a swap
