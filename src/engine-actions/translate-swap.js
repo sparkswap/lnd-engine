@@ -55,7 +55,7 @@ async function translateSwap (takerAddress, swapHash, amount, extendedTimeLockDe
     pubKey: publicKey,
     amt: amount,
     // TODO: Figure out what number for this would be
-    numRoutes: 1,
+    numRoutes: 10,
     finalCltvDelta: 144
   }
 
