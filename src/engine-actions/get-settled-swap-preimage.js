@@ -71,9 +71,9 @@ function getSettledSwapPreimage (swapHash) {
         resolve(response)
       }
 
-      subscription.on('error', errorListener)
-      subscription.on('end', endListener)
-      subscription.on('data', dataListener)
+      subscription.on('error', errorListener.bind(this))
+      subscription.on('end', endListener.bind(this))
+      subscription.on('data', dataListener.bind(this))
     } catch (e) {
       return reject(e)
     }
