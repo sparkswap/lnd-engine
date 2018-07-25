@@ -73,13 +73,15 @@ async function translateSwap (takerAddress, swapHash, amount, extendedTimeLockDe
 
   const totalTimeLock = calculateTimeLock(extendedTimeLockDelta, this.currencyConfig.secondsPerBlock, blockHeight)
 
-  const availableRoutes = routes.filter(route => Big(route.totalTimeLock).lte(totalTimeLock))
+  this.logger.debug(`Total timelock found for route: ${totalTimeLock}`)
 
-  this.logger.debug(`Found ${availableRoutes.length} routes with at most ${totalTimeLock} for ${swapHash}`)
+  const availableRoutes = routes.filter(route => Big(route.totalTimeLock).lte(totalTimeLock))
 
   if (availableRoutes.length === 0) {
     this.logger.error(`No route to ${takerAddress} with at most ${totalTimeLock}`, { swapHash })
     throw new Error(`No route to ${takerAddress} with at most ${totalTimeLock}`)
+  } else {
+    this.logger.debug(`Found ${availableRoutes.length} routes with at most ${totalTimeLock} for ${swapHash}`)
   }
 
   const { paymentPreimage, paymentError } = await sendToRoute(swapHash, availableRoutes, { client: this.client })
