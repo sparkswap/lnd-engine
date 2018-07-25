@@ -71,6 +71,8 @@ async function translateSwap (takerAddress, swapHash, amount, extendedTimeLockDe
     throw new Error(`No route to ${takerAddress}`)
   }
 
+  this.logger.debug('Calculating timelock: ', { extendedTimeLockDelta, blockHeight })
+
   const totalTimeLock = calculateTimeLock(extendedTimeLockDelta, this.currencyConfig.secondsPerBlock, blockHeight)
 
   this.logger.debug(`Total timelock found for route: ${totalTimeLock}`)
