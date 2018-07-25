@@ -16,18 +16,20 @@ const {
 function getSettledSwapPreimage (swapHash) {
   return new Promise(async (resolve, reject) => {
     try {
-      let paymentHash
-
       if (!swapHash) {
         throw new Error('Swaphash must be defined')
       }
 
       // We convert the swapHash from base64 string to hex because lookupInvoice takes in a hex
       // encoded rhash as an argument.
-      paymentHash = Buffer.from(swapHash, 'base64').toString('hex')
+      const paymentHash = Buffer.from(swapHash, 'base64').toString('hex')
+
+      this.logger.debug('Looking up invoice by paymentHash:', { paymentHash })
       // Before subscribing to invoices we lookup to see if it has already been settled,
       // if so, we can return immediately to the caller
       const { settled, rPreimage } = await lookupInvoice(paymentHash, { client: this.client })
+
+      this.logger.debug('Invoice has been retrieved: ', { settled })
 
       if (settled) {
         return resolve(rPreimage)

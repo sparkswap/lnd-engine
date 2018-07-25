@@ -1,6 +1,14 @@
 const { deadline } = require('../grpc-utils')
 
 /**
+ * SendPayment deadline (in seconds)
+ * @constant
+ * @type {Number}
+ * @default
+ */
+const SEND_PAYMENT_DEADLINE = 30
+
+/**
  * @typedef {Object} FeeLimit
  * @property {String} fixed Int64 string of max number of satoshis to pay in fees
  */
@@ -23,7 +31,7 @@ function sendPayment ({ paymentRequest, paymentHash, destString, amt, finalCltvD
   const request = { paymentRequest, paymentHash, destString, amt, finalCltvDelta, feeLimit }
 
   return new Promise((resolve, reject) => {
-    client.sendPaymentSync(request, { deadline: deadline(30) }, (err, res) => {
+    client.sendPaymentSync(request, { deadline: deadline(SEND_PAYMENT_DEADLINE) }, (err, res) => {
       if (err) return reject(err)
       return resolve(res)
     })
