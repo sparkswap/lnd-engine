@@ -90,12 +90,12 @@ async function translateSwap (takerAddress, swapHash, amount, extendedTimeLockDe
     throw new Error(`No route to ${takerAddress}`)
   }
 
+  this.logger.debug(`Found ${routes.length} routes to ${takerAddress} for ${swapHash}`)
+
   if (!blockHeight) {
     this.logger.error('Blockheight was not returned from daemon', { blockHeight })
     throw new Error(`No route to ${takerAddress}. Blockheight was unavailable`)
   }
-
-  this.logger.debug(`Found ${routes.length} routes to ${takerAddress} for ${swapHash}`)
 
   this.logger.debug('Calculating timelock with params:', { extendedTimeLockDelta, blockHeight })
 
