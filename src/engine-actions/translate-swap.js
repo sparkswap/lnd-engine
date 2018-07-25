@@ -1,20 +1,15 @@
-const { Big, networkAddressFormatter } = require('../utils')
+const { Big, networkAddressFormatter, CLTV_DELTA } = require('../utils')
 const { queryRoutes, sendToRoute, getInfo } = require('../lnd-actions')
 
-/**
- * Amount of time, in seconds, to deduct from the incoming HTLC to ensure we have enough timelock
- * for forwarding the swap. This is roughly equivalent to our forwarding policy for the first channel
- * on the new chain.
- * LND's default is 24 hours (144 Bitcoin blocks).
- * @type {Number}
- * @constant
- * @todo make this dynamic based on our node's actual forwarding policies, or user-set and pre-agreed with the Taker
- */
-const DEFAULT_FWD_DELTA = 86400
+const {
+  DEFAULT_MAKER_FWD_DELTA,
+  BLOCK_BUFFER
+} = CLTV_DELTA
 
 /**
  * Number of route options to be returned when calculating routes for translating
  * a swap.
+ * NOTE: 20 is the max value for numRoutes on lnd
  *
  * @type {Number}
  * @constant
@@ -22,20 +17,9 @@ const DEFAULT_FWD_DELTA = 86400
  */
 const NUM_OF_ROUTES = 10
 
-/*
- * The default amoumt of time, in seconds, that the Taker (this node) expects to
- * receive when settling a swap.
- *
- * It is derived from BOLT-11 which states the final CLTV delta as 90 minutes (9 Bitcoin blocks).
- * However, we reflect LND's default is 144 blocks to align to the forwarding policy.
- *
- * @type {Number}
- * @constant
- * @default
- */
-const FINAL_CLTV_DELTA = 144
-
 /**
+ * Calculates a timelock based on the Maker's default fowarding policy
+ *
  * @param  {String} extendedTimeLockDelta Int64 string of the number of seconds extended to us in the inbound HTLC
  * @param  {Number} secondsPerBlock       Block time of the current block chain
  * @param  {Number} blockHeight           Current height of the current block chain
@@ -47,10 +31,10 @@ function calculateTimeLock (extendedTimeLockDelta, secondsPerBlock, blockHeight)
    * @todo make this dynamic based on the node's forwarding policy
    * @type {Big}
    */
-  const maxTimeLockDelta = Big(extendedTimeLockDelta).minus(DEFAULT_FWD_DELTA)
+  const maxTimeLockDelta = Big(extendedTimeLockDelta).minus(DEFAULT_MAKER_FWD_DELTA)
 
   if (maxTimeLockDelta.lte(0)) {
-    throw new Error(`Insufficient time lock extended for forwarding policy. Expected at least ${DEFAULT_FWD_DELTA}, got ${extendedTimeLockDelta}`)
+    throw new Error(`Insufficient time lock extended for forwarding policy. Expected at least ${DEFAULT_MAKER_FWD_DELTA}, got ${extendedTimeLockDelta}`)
   }
 
   // round down in terms of blocks extended
@@ -74,27 +58,42 @@ async function translateSwap (takerAddress, swapHash, amount, extendedTimeLockDe
   this.logger.info(`Translating swap for ${swapHash} by sending to ${takerAddress}`, { amount, extendedTimeLockDelta })
 
   const { publicKey } = networkAddressFormatter.parse(takerAddress)
+
+  const secondsPerBlock = this.currencyConfig.secondsPerBlock
+
+  if (!secondsPerBlock) {
+    throw new Error('secondsPerBlock is not specified in the currencyConfig for lnd-engine')
+  }
+
+  const finalCltvDelta = Math.ceil(DEFAULT_MAKER_FWD_DELTA / secondsPerBlock) + BLOCK_BUFFER
+
   const queryRoutesReq = {
     pubKey: publicKey,
     amt: amount,
-    // TODO: Figure out what number for this would be
     numRoutes: NUM_OF_ROUTES,
-    finalCltvDelta: FINAL_CLTV_DELTA
+    finalCltvDelta
   }
 
-  const [ { routes = [] }, { blockHeight } ] = await Promise.all([
+  this.logger.debug('Calling queryRoutes on lnd w/ params', { params: queryRoutesReq })
+
+  const [ { routes = [] }, { blockHeight = '' } ] = await Promise.all([
     queryRoutes(queryRoutesReq, { client: this.client }),
     getInfo({ client: this.client })
   ])
-
-  this.logger.debug(`Found ${routes.length} routes to ${takerAddress} for ${swapHash}`)
 
   if (routes.length === 0) {
     this.logger.error(`No route to ${takerAddress}`, { swapHash })
     throw new Error(`No route to ${takerAddress}`)
   }
 
-  this.logger.debug('Calculating timelock: ', { extendedTimeLockDelta, blockHeight })
+  if (!blockHeight) {
+    this.logger.error('Blockheight was not returned from daemon', { blockHeight })
+    throw new Error(`No route to ${takerAddress}. Blockheight was unavailable`)
+  }
+
+  this.logger.debug(`Found ${routes.length} routes to ${takerAddress} for ${swapHash}`)
+
+  this.logger.debug('Calculating timelock with params:', { extendedTimeLockDelta, blockHeight })
 
   const totalTimeLock = calculateTimeLock(extendedTimeLockDelta, this.currencyConfig.secondsPerBlock, blockHeight)
 
@@ -105,9 +104,9 @@ async function translateSwap (takerAddress, swapHash, amount, extendedTimeLockDe
   if (availableRoutes.length === 0) {
     this.logger.error(`No route to ${takerAddress} with at most ${totalTimeLock}`, { swapHash })
     throw new Error(`No route to ${takerAddress} with at most ${totalTimeLock}`)
-  } else {
-    this.logger.debug(`Found ${availableRoutes.length} routes with at most ${totalTimeLock} for ${swapHash}`)
   }
+
+  this.logger.debug(`Found ${availableRoutes.length} routes with at most ${totalTimeLock} for ${swapHash}`)
 
   const { paymentPreimage, paymentError } = await sendToRoute(swapHash, availableRoutes, { client: this.client })
 
