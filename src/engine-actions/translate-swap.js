@@ -2,8 +2,7 @@ const { Big, networkAddressFormatter, CLTV_DELTA } = require('../utils')
 const { queryRoutes, sendToRoute, getInfo } = require('../lnd-actions')
 
 const {
-  DEFAULT_MAKER_FWD_DELTA,
-  BLOCK_BUFFER
+  DEFAULT_MAKER_FWD_DELTA
 } = CLTV_DELTA
 
 /**
@@ -65,7 +64,7 @@ async function translateSwap (takerAddress, swapHash, amount, extendedTimeLockDe
     throw new Error('secondsPerBlock is not specified in the currencyConfig for lnd-engine')
   }
 
-  const finalCltvDelta = Math.ceil(DEFAULT_MAKER_FWD_DELTA / secondsPerBlock) + BLOCK_BUFFER
+  const finalCltvDelta = Math.ceil(DEFAULT_MAKER_FWD_DELTA / secondsPerBlock)
 
   const queryRoutesReq = {
     pubKey: publicKey,
@@ -97,7 +96,7 @@ async function translateSwap (takerAddress, swapHash, amount, extendedTimeLockDe
 
   const totalTimeLock = calculateTimeLock(extendedTimeLockDelta, this.currencyConfig.secondsPerBlock, blockHeight)
 
-  this.logger.debug(`Total timelock found for route: ${totalTimeLock}`)
+  this.logger.debug(`Total timelock calculated for route: ${totalTimeLock}`)
 
   const availableRoutes = routes.filter(route => Big(route.totalTimeLock).lte(totalTimeLock))
 
