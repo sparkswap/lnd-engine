@@ -4,7 +4,7 @@
 
 [![CircleCI](https://circleci.com/gh/sparkswap/lnd-engine.svg?style=svg&circle-token=47c81b3a717f062885f159dfded078e134413db1)](https://circleci.com/gh/sparkswap/lnd-engine)
 
-The following repo contains 2 modules that make up a `SparkSwap Engine`:
+The following repo contains 2 modules that make up a SparkSwap Payment Channel Network Engine:
 
 1. NPM module w/ LND abstraction layer (located in `src`)
 2. Dockerfiles for all containers needed for the LND Engine to run on a broker daemon
