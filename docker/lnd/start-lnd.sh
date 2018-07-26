@@ -38,7 +38,7 @@ PARAMS=$(echo \
 
 # We want to disable bootstrapping for testnet due to missing LTC DNS seeds for
 # LND and because sparkswap/lnd is not updated to tip
-if [[ "$NETWORK" == "testnet" ]]; then
+if [[ ! "$NETWORK" == "mainnet" ]]; then
     PARAMS="$PARAMS --nobootstrap"
 fi
 
