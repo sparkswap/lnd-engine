@@ -1,6 +1,9 @@
-# sparkswap LND Engine
+<img src="https://sparkswap.com/img/logo.svg" alt="sparkswap - sparkswap.com" width="400">
 
 [![CircleCI](https://circleci.com/gh/sparkswap/lnd-engine.svg?style=svg&circle-token=47c81b3a717f062885f159dfded078e134413db1)](https://circleci.com/gh/sparkswap/lnd-engine)
+
+sparkswap LND Engine
+====================
 
 The following repo contains 2 modules that make up a SparkSwap Payment Channel Network Engine:
 
