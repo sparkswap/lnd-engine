@@ -1,6 +1,6 @@
 const getInvoices = require('./get-invoices')
 const getPublicKey = require('./get-public-key')
-const getTotalBalance = require('./get-total-balance')
+const getUncommittedBalance = require('./get-uncommitted-balance')
 const getConfirmedBalance = require('./get-confirmed-balance')
 const getUnconfirmedBalance = require('./get-unconfirmed-balance')
 const getInvoiceValue = require('./get-invoice-value')
@@ -25,7 +25,7 @@ const numChannelsForAddress = require('./num-channels-for-address')
 module.exports = {
   getInvoices,
   getPublicKey,
-  getTotalBalance,
+  getUncommittedBalance,
   getConfirmedBalance,
   getUnconfirmedBalance,
   getInvoiceValue,
