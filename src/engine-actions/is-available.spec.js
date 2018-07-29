@@ -3,7 +3,7 @@ const { expect, rewire, sinon } = require('test/test-helper')
 
 const isAvailable = rewire(path.resolve(__dirname, 'is-available'))
 
-describe('getTotalBalance', () => {
+describe('getUncommittedBalance', () => {
   let getInfoStub
   let clientStub
   let res

@@ -1,9 +1,9 @@
 const path = require('path')
 const { expect, rewire, sinon } = require('test/test-helper')
 
-const getTotalBalance = rewire(path.resolve(__dirname, 'get-total-balance'))
+const getUncommittedBalance = rewire(path.resolve(__dirname, 'get-uncommitted-balance'))
 
-describe('getTotalBalance', () => {
+describe('getUncommittedBalance', () => {
   let walletBalanceStub
   let clientStub
   let balanceResponse
@@ -16,12 +16,12 @@ describe('getTotalBalance', () => {
     walletBalanceStub = sinon.stub().returns(balanceResponse)
     clientStub = sinon.stub()
 
-    getTotalBalance.__set__('walletBalance', walletBalanceStub)
-    getTotalBalance.__set__('client', clientStub)
+    getUncommittedBalance.__set__('walletBalance', walletBalanceStub)
+    getUncommittedBalance.__set__('client', clientStub)
   })
 
   beforeEach(async () => {
-    res = await getTotalBalance()
+    res = await getUncommittedBalance()
   })
 
   it('gets a wallet balance', () => {

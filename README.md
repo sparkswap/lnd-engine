@@ -52,7 +52,7 @@ const engineOptions = {
 
 const engine = new LndEngine('0.0.0.0:10009', 'BTC', engineOptions)
 
-engine.getTotalBalance.... etc
+engine.getUncommittedBalance.... etc
 ```
 
 # API
@@ -101,7 +101,7 @@ translateSwap
 
 ```
 getConfirmedBalance
-getTotalBalance
+getUncommittedBalance
 getTotalChannelBalance
 getUnconfirmedBalance
 isBalanceSufficient
