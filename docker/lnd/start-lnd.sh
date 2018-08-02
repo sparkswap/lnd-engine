@@ -5,7 +5,8 @@ set -e
 
 # Copy certs to the shared file
 if [[ -e /secure/lnd-engine-tls-btc.cert ]]; then
-    cp /secure/lnd-engine-tls-btc.cert /shared
+    rm -f /shared/lnd-engine-tls-btc.cert
+    cp /secure/lnd-engine-tls-btc.cert /shared/lnd-engine-tls-btc.cert
 else
     echo "/secure/lnd-engine-tls-btc.cert does not exist inside of the lnd docker container."
     echo "Please check your dockerfile changes or rebuild images w/ npm run build-images"
@@ -13,7 +14,8 @@ else
 fi
 
 if [[ -e /secure/lnd-engine-tls-ltc.cert ]]; then
-    cp /secure/lnd-engine-tls-ltc.cert /shared
+    rm -f /shared/lnd-engine-tls-ltc.cert
+    cp /secure/lnd-engine-tls-ltc.cert /shared/lnd-engine-tls-ltc.cert
 else
     echo "/secure/lnd-engine-tls-btc.cert does not exist inside of the lnd docker container."
     echo "Please check your dockerfile changes or rebuild images w/ npm run build-images"

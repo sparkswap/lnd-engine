@@ -4,6 +4,7 @@ set -e
 
 # Copy certs to the shared file
 if [[ -e /secure/rpc.cert ]]; then
+    rm -f /shared/rpc-ltc.cert
     cp /secure/rpc.cert /shared/rpc-ltc.cert
 else
     echo "/secure/rpc.cert does not exist inside of the ltcd docker container."

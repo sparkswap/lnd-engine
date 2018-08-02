@@ -4,6 +4,7 @@
 set -e
 
 if [[ -e /secure/rpc.cert ]]; then
+    rm -f /shared/rpc-btc.cert
     cp /secure/rpc.cert /shared/rpc-btc.cert
 else
     echo "/secure/rpc.cert does not exist inside of the btcd docker container."
