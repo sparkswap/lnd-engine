@@ -91,6 +91,9 @@ async function translateSwap (takerAddress, swapHash, amount, extendedTimeLockDe
   }
 
   this.logger.debug(`Found ${routes.length} routes to ${takerAddress} for ${swapHash}`)
+  routes.forEach((route, i) => {
+    this.logger.debug(`Route ${i} totalTimeLock: ${route.totalTimeLock}`)
+  })
 
   if (!blockHeight) {
     this.logger.error('Blockheight was not returned from daemon', { blockHeight })
