@@ -4,8 +4,23 @@
 set -e
 
 # Copy certs to the shared file
-[[ -e /secure/lnd-engine-tls-btc.cert ]] && cp /secure/lnd-engine-tls-btc.cert /shared
-[[ -e /secure/lnd-engine-tls-ltc.cert ]] && cp /secure/lnd-engine-tls-ltc.cert /shared
+if [[ "$CHAIN" == "bitcoin" ]] && [[ -e /secure/lnd-engine-tls-btc.cert ]]; then
+    rm -f /shared/lnd-engine-tls-btc.cert
+    cp /secure/lnd-engine-tls-btc.cert /shared/lnd-engine-tls-btc.cert
+elif [[ "$CHAIN" == "bitcoin" ]]; then
+    echo "/secure/lnd-engine-tls-btc.cert does not exist inside of the lnd docker container."
+    echo "Please check your dockerfile changes or rebuild images w/ npm run build-images"
+    exit 1
+fi
+
+if [[ "$CHAIN" == "litecoin" ]] && [[ -e /secure/lnd-engine-tls-ltc.cert ]]; then
+    rm -f /shared/lnd-engine-tls-ltc.cert
+    cp /secure/lnd-engine-tls-ltc.cert /shared/lnd-engine-tls-ltc.cert
+elif [[ "$CHAIN" == "litecoin" ]]; then
+    echo "/secure/lnd-engine-tls-btc.cert does not exist inside of the lnd docker container."
+    echo "Please check your dockerfile changes or rebuild images w/ npm run build-images"
+    exit 1
+fi
 
 # USING THIS OPTION BECAUSE WERE BAD
 # BUT THIS WILL NEED TO BE REMOVED FOR TESTNET
@@ -39,6 +54,7 @@ PARAMS=$(echo \
 # We want to disable bootstrapping for testnet due to missing LTC DNS seeds for
 # LND and because sparkswap/lnd is not updated to tip
 if [[ ! "$NETWORK" == "mainnet" ]]; then
+    echo "Disabling dns bootstrap for $NETWORK"
     PARAMS="$PARAMS --nobootstrap"
 fi
 
