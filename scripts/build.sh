@@ -31,7 +31,10 @@ curl -o ./proto/lnd-rpc.proto $LND_PROTO_URL
 sed 's|^import \"google/api/annotations.proto\";||' ./proto/lnd-rpc.proto > /tmp/file.$$ && mv /tmp/file.$$ ./proto/lnd-rpc.proto
 
 # If we want to build images with the command then we can use
-if [ "$ARG" != "no-docker" ]; then
-  echo "Building broker docker images"
+if [ "$ARG" == "local" ]; then
+  echo "building local broker docker images"
+  npm run build-images local
+elif [ "$ARG" != "no-docker" ]; then
+  echo "building broker docker images"
   npm run build-images
 fi
