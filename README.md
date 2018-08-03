@@ -40,11 +40,6 @@ To run tests, use `npm run test`
 The lnd-engine docker files make use of Docker's internal image storage (to replicate the functionality of docker hub locally). Run the `npm run build-images` command to
 update all docker images on your local docker installation.
 
-#### Using the docker files in your personal project
-
-After you have built all images on your local system, you can use the provided `docker-compose.btc.example.yml` or
-`docker-compose.ltc.example.yml` files as a reference for docker setup in your own project.
-
 #### Library Usage
 
 ```
