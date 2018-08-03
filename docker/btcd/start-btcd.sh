@@ -3,8 +3,14 @@
 # exit from script if error was raised.
 set -e
 
-# Copy certs to the shared file
-[[ -e /secure/rpc.cert ]] && cp /secure/rpc.cert /shared/rpc-btc.cert
+if [[ -e /secure/rpc.cert ]]; then
+    rm -f /shared/rpc-btc.cert
+    cp /secure/rpc.cert /shared/rpc-btc.cert
+else
+    echo "/secure/rpc.cert does not exist inside of the btcd docker container."
+    echo "Please check your dockerfile changes or rebuild images w/ npm run build-images"
+    exit 1
+fi
 
 # Start a cron for simnet, if network is simnet
 if [[ "$NETWORK" == "simnet" ]]; then

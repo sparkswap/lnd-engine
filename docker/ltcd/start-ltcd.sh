@@ -3,7 +3,14 @@
 set -e
 
 # Copy certs to the shared file
-[[ -e /secure/rpc.cert ]] && cp /secure/rpc.cert /shared/rpc-ltc.cert
+if [[ -e /secure/rpc.cert ]]; then
+    rm -f /shared/rpc-ltc.cert
+    cp /secure/rpc.cert /shared/rpc-ltc.cert
+else
+    echo "/secure/rpc.cert does not exist inside of the ltcd docker container."
+    echo "Please check your dockerfile changes or rebuild images w/ npm run build-images"
+    exit 1
+fi
 
 # Start a cron for simnet, if network is simnet
 if [[ "$NETWORK" == "simnet" ]]; then
