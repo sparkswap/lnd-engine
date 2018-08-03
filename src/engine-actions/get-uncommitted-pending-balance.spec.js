@@ -32,13 +32,32 @@ describe('getUncommittedPendingBalance', () => {
     getUncommittedPendingBalance.__set__('logger', logger)
   })
 
-  it('returns 0 if no channels exist', async () => {
-    listPendingChannelsStub = sinon.stub().returns({})
+  it('returns 0 if no unconfirmed balance and no channels exist', async () => {
+    listPendingChannelsStub.resolves({})
+    walletBalanceStub.resolves({unconfirmedBalance: '0'})
+    getUncommittedPendingBalance.__set__('listPendingChannels', listPendingChannelsStub)
+    return expect(await getUncommittedPendingBalance()).to.be.eql('0')
+  })
+
+  it('returns the unconfirmed balance if no channels exist', async () => {
+    listPendingChannelsStub = sinon.stub().resolves({})
     getUncommittedPendingBalance.__set__('listPendingChannels', listPendingChannelsStub)
     return expect(await getUncommittedPendingBalance()).to.be.eql('1234')
   })
 
-  it('returns the total pending close channel balance combined with unconfirmed wallet balance', async () => {
+  it('adds pendingClosingChannels to the unconfirmed balance if the pendingClosingChannels exist', async () => {
+    listPendingChannelsStub.resolves({pendingClosingChannels})
+    getUncommittedPendingBalance.__set__('listPendingChannels', listPendingChannelsStub)
+    return expect(await getUncommittedPendingBalance()).to.be.eql('2244')
+  })
+
+  it('adds pendingClosingChannels and pendingForceClosingChannels to the unconfirmed balance if the channels exist', async () => {
+    listPendingChannelsStub.resolves({pendingClosingChannels, pendingForceClosingChannels})
+    getUncommittedPendingBalance.__set__('listPendingChannels', listPendingChannelsStub)
+    return expect(await getUncommittedPendingBalance()).to.be.eql('2274')
+  })
+
+  it('adds pendingClosingChannels, pendingForceClosingChannels,and waitingCloseChannels to the unconfirmed balance if the channels exist', async () => {
     getUncommittedPendingBalance.__set__('listPendingChannels', listPendingChannelsStub)
     return expect(await getUncommittedPendingBalance()).to.be.eql('2274')
   })
