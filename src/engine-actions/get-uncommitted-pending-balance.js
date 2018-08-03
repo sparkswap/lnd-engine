@@ -14,7 +14,7 @@ async function getUncommittedPendingBalance () {
     return Big(unconfirmedBalance).toString()
   }
 
-  const allPendingChannels = pendingClosingChannels + pendingForceClosingChannels + waitingCloseChannels
+  const allPendingChannels = pendingClosingChannels.concat(pendingForceClosingChannels).concat(waitingCloseChannels)
   const totalPendingLocalBalance = allPendingChannels.reduce((acc, c) => {
     return acc.add(Big(c.channel.localBalance))
   }, Big(0))
