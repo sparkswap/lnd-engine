@@ -19,7 +19,6 @@ fi
 
 
 PARAMS=$(echo \
-    "--$NETWORK" \
     "--debuglevel=$DEBUG" \
     "--rpcuser=$RPC_USER" \
     "--rpcpass=$RPC_PASS" \
@@ -30,6 +29,11 @@ PARAMS=$(echo \
     "--rpckey=$RPC_KEY" \
     "--txindex"
 )
+
+# If the network is mainnet, then we can omit the network tag for btcd.
+if [[ "$NETWORK" != "mainnet" ]]; then
+    PARAMS="$PARAMS --$NETWORK"
+fi
 
 # If MAX_WEB_SOCKETS is specified then we'll set it in the params, otherwise
 # we will let btcd decide on the default
