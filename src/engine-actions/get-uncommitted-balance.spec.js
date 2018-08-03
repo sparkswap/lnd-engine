@@ -7,12 +7,12 @@ describe('getUncommittedBalance', () => {
   let walletBalanceStub
   let clientStub
   let balanceResponse
-  let totalBalance
+  let confirmedBalance
   let res
 
   beforeEach(() => {
-    totalBalance = '1234'
-    balanceResponse = { totalBalance }
+    confirmedBalance = '1234'
+    balanceResponse = { confirmedBalance }
     walletBalanceStub = sinon.stub().returns(balanceResponse)
     clientStub = sinon.stub()
 
@@ -29,6 +29,6 @@ describe('getUncommittedBalance', () => {
   })
 
   it('returns the totalBalance', () => {
-    expect(res).to.be.eql(totalBalance)
+    expect(res).to.be.eql(confirmedBalance)
   })
 })
