@@ -18,14 +18,20 @@ A current docker setup a functional BTC/LTC LND Engine:
 
 #### Installation (lnd-engine only)
 
-The following commands will install dependencies and import associated proto files for
-the lnd-engine codebase.
+The following commands will install dependencies, import associated proto files for
+the lnd-engine codebase and will build all docker images
 
 ```
 npm run build
 ```
 
-You can then use `npm run build-images` to build all docker containers.
+You can prevent the building of docker images with:
+
+```
+npm run build no-docker
+```
+
+Additionally, You can then use `npm run build-images` to build docker images separately.
 
 To run tests, use `npm run test`
 
