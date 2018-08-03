@@ -106,6 +106,7 @@ getUncommittedBalance
 getTotalChannelBalance
 getUnconfirmedBalance
 isBalanceSufficient
+getTotalPendingChannelBalance
 ```
 
 ### Channels

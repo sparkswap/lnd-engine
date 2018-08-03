@@ -21,6 +21,7 @@ const getPaymentChannelNetworkAddress = require('./get-payment-channel-network-a
 const translateSwap = require('./translate-swap')
 const getSettledSwapPreimage = require('./get-settled-swap-preimage')
 const numChannelsForAddress = require('./num-channels-for-address')
+const getTotalPendingChannelBalance = require('./get-total-pending-channel-balance')
 
 module.exports = {
   getInvoices,
@@ -45,5 +46,6 @@ module.exports = {
   getPaymentChannelNetworkAddress,
   translateSwap,
   getSettledSwapPreimage,
-  numChannelsForAddress
+  numChannelsForAddress,
+  getTotalPendingChannelBalance
 }
