@@ -2,9 +2,15 @@
 
 set -e -u
 
-# Default certhost needed to build images. For production, this will change to *.sparkswap.com
-LTCD_CERT_HOST=${LTCD_CERT_HOST:-host.docker.internal}
-BTCD_CERT_HOST=${BTCD_CERT_HOST:-host.docker.internal}
+ARG=${1:-remote}
+
+if [[ "$ARG" == "local" ]]; then
+  LTCD_CERT_HOST=${LTCD_CERT_HOST:-host.docker.internal}
+  BTCD_CERT_HOST=${BTCD_CERT_HOST:-host.docker.internal}
+else
+  LTCD_CERT_HOST=${LTCD_CERT_HOST:-ltcd}
+  BTCD_CERT_HOST=${BTCD_CERT_HOST:-btcd}
+fi
 
 echo "Building images for cert hosts: LTC: $LTCD_CERT_HOST, BTC: $BTCD_CERT_HOST"
 echo "This cert host is used during ltcd/btcd cert generation"
