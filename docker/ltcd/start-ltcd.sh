@@ -29,7 +29,7 @@ PARAMS=$(echo \
     "--txindex"
 )
 
-# If the network is mainnet, then we can omit the network tag for btcd.
+# If the network is mainnet, then we can omit the network tag for ltcd.
 if [[ "$NETWORK" != "mainnet" ]]; then
     PARAMS="$PARAMS --$NETWORK"
 fi
