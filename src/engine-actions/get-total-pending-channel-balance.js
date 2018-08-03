@@ -15,7 +15,7 @@ async function getTotalPendingChannelBalance () {
   }
 
   const totalPendingLocalBalance = pendingOpenChannels.reduce((acc, c) => {
-    return acc.add(Big(c.channel.localBalance))
+    return acc.plus(c.channel.localBalance)
   }, Big(0))
 
   return totalPendingLocalBalance.toString()
