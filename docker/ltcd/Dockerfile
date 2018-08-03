@@ -76,11 +76,3 @@ EXPOSE 18555 18556
 
 # Segnet ports (p2p, rpc)
 EXPOSE 28901 28902
-
-# Create a volume to house pregenerated RPC credentials. This will be
-# shared with any lnd, btcctl containers so they can securely query ltcd's RPC
-# server.
-# You should NOT do this before certificate generation!
-# Otherwise manually generated certificate will be overridden with shared
-# mounted volume! For more info read dockerfile "VOLUME" documentation.
-VOLUME ["/secure"]
