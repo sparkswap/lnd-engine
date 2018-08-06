@@ -5,6 +5,13 @@ set -e
 
 CONFIG_FILE=/home/lnd/lnd.conf
 
+# Simple check to make sure that the user has changed the external url of lnd_btc
+# outside of simnet. This will cause unintended issues w/ routing through the relayer
+if [[ "$NETWORK" != 'simnet' ]] && [[ "$EXTERNAL_ADDRESS" == *"host.docker.internal"* ]]; then
+    echo "Your current external address for LND_BTC is set to an internal address. Please change this for $NETWORK"
+    exit 1
+fi
+
 # Copy certs to the shared file
 if [[ -e /secure/lnd-engine-tls-btc.cert ]]; then
     rm -f /shared/lnd-engine-tls-btc.cert
@@ -32,7 +39,7 @@ PARAMS=$(echo \
 
 # User is allowed to specify
 # Default is btcd
-if [[ -z "$RPC_HOST" ]]; then
+if [[ ! -z "$RPC_HOST" ]]; then
     PARAMS="$PARAMS --btcd.rpchost=$RPC_HOST"
 fi
 
