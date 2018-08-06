@@ -11,7 +11,6 @@ async function getOpenChannelCapacities () {
 
   if (channels.length === 0) {
     this.logger.debug('getTotalChannelBalance: No channels exist')
-    return Big(0).toString()
   }
 
   const activeLocalBalance = channels.filter((chan) => chan.active === true).reduce((acc, c) => {
@@ -22,7 +21,7 @@ async function getOpenChannelCapacities () {
     return acc.plus(c.remoteBalance)
   }, Big(0))
 
-  const activeBalances = {localBalance: activeLocalBalance, remoteBalance: activeRemoteBalance}
+  const activeBalances = {localBalance: activeLocalBalance.toString(), remoteBalance: activeRemoteBalance.toString()}
 
   const inactiveLocalBalance = channels.filter((chan) => chan.active === false).reduce((acc, c) => {
     return acc.plus(c.localBalance)
@@ -32,7 +31,7 @@ async function getOpenChannelCapacities () {
     return acc.plus(c.remoteBalance)
   }, Big(0))
 
-  const inactiveBalances = {localBalance: inactiveLocalBalance, remoteBalance: inactiveRemoteBalance}
+  const inactiveBalances = {localBalance: inactiveLocalBalance.toString(), remoteBalance: inactiveRemoteBalance.toString()}
 
   return { active: activeBalances, inactive: inactiveBalances }
 }
