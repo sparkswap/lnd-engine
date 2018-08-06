@@ -34,13 +34,8 @@ PARAMS=$(echo \
     "--externalip=$EXTERNAL_ADDRESS" \
     "--extpreimage.rpchost=$EXTPREIMAGE_HOST" \
     "--btcd.rpcuser=$RPC_USER" \
-    "--btcd.rpcpass=$RPC_PASS"
+    "--btcd.rpcpass=$RPC_PASS" \
+    "--btcd.rpchost=$RPC_HOST"
 )
-
-# User is allowed to specify
-# Default is btcd
-if [[ ! -z "$RPC_HOST" ]]; then
-    PARAMS="$PARAMS --btcd.rpchost=$RPC_HOST"
-fi
 
 exec lnd $PARAMS "$@"
