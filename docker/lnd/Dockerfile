@@ -1,8 +1,8 @@
+
 FROM golang:1.10-alpine as builder
 
 LABEL maintainer="SparkSwap <dev@sparkswap.com>"
 
-# Set the chain that is used for the current image
 ARG NETWORK
 RUN : "${NETWORK:?NETWORK Build argument needs to be set.}"
 
@@ -52,6 +52,9 @@ RUN git clone https://github.com/sparkswap/lnd . \
 # Start a new, final image to reduce size.
 FROM alpine as final
 
+ARG NETWORK
+RUN : "${NETWORK:?NETWORK Build argument needs to be set.}"
+
 RUN mkdir "/secure"
 
 # Copy the binaries and entrypoint from the builder image.
@@ -66,14 +69,12 @@ RUN apk add --no-cache \
 # Expose lnd ports (server, rpc).
 EXPOSE 9735 10009
 
-# Create a volume to house lnd certs/keys.
-# You should NOT do this before certificate generation!
-# Otherwise manually generated certificate will be overridden with shared
-# mounted volume! For more info read dockerfile "VOLUME" documentation.
-VOLUME ["/secure"]
-
 # Make lnd folder default.
 WORKDIR /home/lnd
 
-COPY "start-lnd.sh" .
-RUN chmod +x start-lnd.sh
+COPY "start-lnd-${NETWORK}.sh" "./start-lnd.sh"
+RUN chmod +x ./start-lnd.sh
+
+COPY "lnd-${NETWORK}.conf" "./lnd.conf"
+
+CMD ["bash", "./start-lnd.sh"]
