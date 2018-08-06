@@ -11,7 +11,6 @@ async function getPendingChannelCapacities () {
 
   if (pendingOpenChannels.length === 0) {
     this.logger.debug('getPendingChannelCapacities: No channels exist')
-    return { localBalance: Big(0).toString(), remoteBalance: Big(0).toString() }
   }
 
   const totalLocalBalance = pendingOpenChannels.reduce((acc, c) => {

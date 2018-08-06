@@ -10,7 +10,7 @@ async function getOpenChannelCapacities () {
   const { channels = [] } = await listChannels({ client: this.client })
 
   if (channels.length === 0) {
-    this.logger.debug('getTotalChannelBalance: No channels exist')
+    this.logger.debug('getOpenChannelCapacities: No channels exist')
   }
 
   const activeLocalBalance = channels.filter((chan) => chan.active === true).reduce((acc, c) => {
