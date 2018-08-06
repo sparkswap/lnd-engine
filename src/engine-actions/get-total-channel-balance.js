@@ -15,7 +15,7 @@ async function getTotalChannelBalance () {
   }
 
   const totalLocalBalance = channels.reduce((acc, c) => {
-    return acc.add(Big(c.localBalance))
+    return acc.plus(c.localBalance)
   }, Big(0))
 
   return totalLocalBalance.toString()

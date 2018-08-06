@@ -5,8 +5,8 @@ const { walletBalance } = require('../lnd-actions')
  * @returns {String} total
  */
 async function getUncommittedBalance () {
-  const { totalBalance } = await walletBalance({ client: this.client })
-  return totalBalance
+  const { confirmedBalance } = await walletBalance({ client: this.client })
+  return confirmedBalance
 }
 
 module.exports = getUncommittedBalance
