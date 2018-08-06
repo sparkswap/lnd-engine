@@ -31,14 +31,14 @@ const DEFAULT_RELAYER_FWD_DELTA = 86400
 const DEFAULT_MIN_FINAL_DELTA = 86400
 
 /**
- * The number of blocks to buffer any output timelock by to account for block ticks during a swap
- * This is especially problematic on simnet where we mine blocks every 10 seconds, but it is a known issue on mainnet
+ * The amount of time, in seconds, that we'd like to buffer any output timelock by to account for block ticks during a swap
+ * This is especially problematic on simnet where we mine blocks every 10 seconds and is a known issue on mainnet.
  *
  * @see {@link https://github.com/lightningnetwork/lnd/issues/535}
  * @type {Number}
  * @constant
  */
-const BLOCK_BUFFER = 1
+const BLOCK_BUFFER = 1800
 
 module.exports = {
   DEFAULT_MAKER_FWD_DELTA,
