@@ -102,16 +102,20 @@ describe('translate-swap', () => {
       expect(queryRoutes).to.have.been.calledWith({ pubKey, amt: amount, finalCltvDelta, numRoutes }, { client })
     })
 
-    it('throws if no routes are available', () => {
+    it('returns permanent error if no routes are available', async () => {
       // remove all routes
       routes.splice(0, 3)
-      expect(translateSwap.call(engine, address, swapHash, amount, extendedTimeLock)).to.be.rejectedWith('No route')
+      const res = await translateSwap.call(engine, address, swapHash, amount, extendedTimeLock)
+      expect(res).to.have.property('permanentError')
+      expect(res.permanentError).to.contain('No route')
     })
 
-    it('throws if the extended time lock is insufficient', () => {
+    it('returns permanent error if the extended time lock is insufficient', async () => {
       extendedTimeLock = '76400'
 
-      return expect(translateSwap.call(engine, address, swapHash, amount, extendedTimeLock)).to.eventually.be.rejectedWith('Insufficient time lock')
+      const res = await translateSwap.call(engine, address, swapHash, amount, extendedTimeLock)
+      expect(res).to.have.property('permanentError')
+      expect(res.permanentError).to.contain('Insufficient time lock')
     })
 
     it('sends to routes that are below the maximum time lock', async () => {
@@ -121,19 +125,21 @@ describe('translate-swap', () => {
       expect(sendToRoute).to.have.been.calledWith(swapHash, routes.slice(0, 2), { client })
     })
 
-    it('throws if there are no routes below the maximum time lock', () => {
+    it('returns permanent error if there are no routes below the maximum time lock', async () => {
       // remove the fast routes
       routes.splice(0, 2)
-      expect(translateSwap.call(engine, address, swapHash, amount, extendedTimeLock)).to.be.rejectedWith('No route')
+      const res = await translateSwap.call(engine, address, swapHash, amount, extendedTimeLock)
+      expect(res).to.have.property('permanentError')
+      expect(res.permanentError).to.contain('No route')
     })
 
-    it('throws if there is a payment error', () => {
+    it('returns permanent error if there is a payment error', async () => {
       sendToRoute.resolves({ paymentError: 'fake error' })
-      return expect(translateSwap.call(engine, address, swapHash, amount, extendedTimeLock)).to.eventually.be.rejectedWith('fake error')
+      expect(await translateSwap.call(engine, address, swapHash, amount, extendedTimeLock)).to.be.eql({ permanentError: 'fake error' })
     })
 
     it('returns the payment preiamge', async () => {
-      expect(await translateSwap.call(engine, address, swapHash, amount, extendedTimeLock)).to.be.eql(preimage)
+      expect(await translateSwap.call(engine, address, swapHash, amount, extendedTimeLock)).to.be.eql({ paymentPreimage: preimage })
     })
   })
 })

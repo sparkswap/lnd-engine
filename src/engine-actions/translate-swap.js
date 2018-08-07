@@ -45,6 +45,12 @@ function calculateTimeLock (extendedTimeLockDelta, secondsPerBlock, blockHeight)
 }
 
 /**
+ * @typedef {Object} TranslateSwapOutcome
+ * @property {String} paymentPreimage Base64 string of the preimage for the swapHash
+ * @property {String} permanentError Error encountered that is permanent, and safe to cancel the upstream HTLC
+ */
+
+/**
  * Translates a swap to a new payment channel network by making a payment
  * to the counterparty (Taker) node on this network
  *
@@ -52,7 +58,7 @@ function calculateTimeLock (extendedTimeLockDelta, secondsPerBlock, blockHeight)
  * @param {String} swapHash     swap hash that will be associated with the swap
  * @param {String} amount       Int64 string of the amount of outbound currency in integer units
  * @param {String} extendedTimeLockDelta  Int64 string of the time lock extended to us by on the first chain in seconds
- * @returns {String} Base64 string of the preimage for the swapHash
+ * @returns {TranslateSwapOutcome}
  * @todo make time lock dynamic based on pre-agreed or advertised routes
  */
 async function translateSwap (takerAddress, swapHash, amount, extendedTimeLockDelta) {
@@ -63,7 +69,9 @@ async function translateSwap (takerAddress, swapHash, amount, extendedTimeLockDe
   const secondsPerBlock = this.currencyConfig.secondsPerBlock
 
   if (!secondsPerBlock) {
-    throw new Error('secondsPerBlock is not specified in the currencyConfig for lnd-engine')
+    const err = 'secondsPerBlock is not specified in the currencyConfig for lnd-engine'
+    this.logger.error(err)
+    return { permanentError: err }
   }
 
   // We specifically use Math.ceil here to ensure that the swap succeeds by providing
@@ -86,8 +94,9 @@ async function translateSwap (takerAddress, swapHash, amount, extendedTimeLockDe
   ])
 
   if (routes.length === 0) {
-    this.logger.error(`No route to ${takerAddress}`, { swapHash })
-    throw new Error(`No route to ${takerAddress}`)
+    const err = `No route to ${takerAddress}`
+    this.logger.error(err, { swapHash })
+    return { permanentError: err }
   }
 
   this.logger.debug(`Found ${routes.length} routes to ${takerAddress} for ${swapHash}`)
@@ -97,20 +106,28 @@ async function translateSwap (takerAddress, swapHash, amount, extendedTimeLockDe
 
   if (!blockHeight) {
     this.logger.error('Blockheight was not returned from daemon', { blockHeight })
-    throw new Error(`No route to ${takerAddress}. Blockheight was unavailable`)
+    return { permanentError: `No route to ${takerAddress}. Blockheight was unavailable` }
   }
 
   this.logger.debug('Calculating timelock with params:', { extendedTimeLockDelta, blockHeight })
 
-  const totalTimeLock = calculateTimeLock(extendedTimeLockDelta, this.currencyConfig.secondsPerBlock, blockHeight)
+  let totalTimeLock
+
+  try {
+    totalTimeLock = calculateTimeLock(extendedTimeLockDelta, this.currencyConfig.secondsPerBlock, blockHeight)
+  } catch (err) {
+    this.logger.error(err)
+    return { permanentError: err.message }
+  }
 
   this.logger.debug(`Maximum timelock for second leg of swap calculated as: ${totalTimeLock}`)
 
   const availableRoutes = routes.filter(route => Big(route.totalTimeLock).lte(totalTimeLock))
 
   if (availableRoutes.length === 0) {
-    this.logger.error(`No route to ${takerAddress} with a timelock (in blocks) less than/equal to ${totalTimeLock}`, { swapHash })
-    throw new Error(`No route to ${takerAddress} with a timelock (in blocks) less than/equal to ${totalTimeLock}`)
+    const err = `No route to ${takerAddress} with a timelock (in blocks) less than/equal to ${totalTimeLock}`
+    this.logger.error(err, { swapHash })
+    return { permanentError: err }
   }
 
   this.logger.debug(`Found ${availableRoutes.length} routes with a timelock (in blocks) less than/equal to ${totalTimeLock}`, { swapHash })
@@ -119,10 +136,10 @@ async function translateSwap (takerAddress, swapHash, amount, extendedTimeLockDe
 
   if (paymentError) {
     this.logger.error(`Payment error while sending to route`, { paymentError, swapHash })
-    throw new Error(paymentError)
+    return { permanentError: paymentError }
   }
 
-  return paymentPreimage
+  return { paymentPreimage }
 }
 
 module.exports = translateSwap
