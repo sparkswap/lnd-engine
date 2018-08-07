@@ -23,6 +23,8 @@ const getSettledSwapPreimage = require('./get-settled-swap-preimage')
 const numChannelsForAddress = require('./num-channels-for-address')
 const getTotalPendingChannelBalance = require('./get-total-pending-channel-balance')
 const getUncommittedPendingBalance = require('./get-uncommitted-pending-balance')
+const getPendingChannelCapacities = require('./get-pending-channel-capacities')
+const getOpenChannelCapacities = require('./get-open-channel-capacities')
 
 module.exports = {
   getInvoices,
@@ -49,5 +51,7 @@ module.exports = {
   getSettledSwapPreimage,
   numChannelsForAddress,
   getTotalPendingChannelBalance,
-  getUncommittedPendingBalance
+  getUncommittedPendingBalance,
+  getPendingChannelCapacities,
+  getOpenChannelCapacities
 }

@@ -48,7 +48,7 @@ async function executeSwap (makerAddress, swapHash, amount) {
   // the maker (who is translating between chains) additional timelock. As the Taker,
   // we would prefer to add additional time (in blocks) to our finalCltvDelta than to
   // have to hltc be rejected.
-  const finalCltvDelta = Math.ceil(totalTimeLockInSeconds / secondsPerBlock) + BLOCK_BUFFER
+  const finalCltvDelta = Math.ceil((totalTimeLockInSeconds + BLOCK_BUFFER) / secondsPerBlock)
 
   const request = {
     destString: counterpartyPubKey,
