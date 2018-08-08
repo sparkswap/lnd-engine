@@ -19,7 +19,7 @@ async function closeChannels ({ force = false } = {}) {
 async function close (channel) {
   return new Promise(async (resolve, reject) => {
     try {
-      const close = closeChannel(channel.channelPoint, { client: this.client })
+      const close = closeChannel(channel.channelPoint, false, { client: this.client })
 
       const errorListener = (err) => {
         this.logger.error(`Error from closeChannel stream`, err)
