@@ -8,8 +8,10 @@ describe('createNewAddress', () => {
   let clientStub
   let addressResponse
   let res
+  let nestedWitnessType
 
   beforeEach(() => {
+    nestedWitnessType = 1
     addressResponse = '1234'
     newAddressStub = sinon.stub().returns(addressResponse)
     clientStub = sinon.stub()
@@ -23,7 +25,7 @@ describe('createNewAddress', () => {
   })
 
   it('creates a new address through lnd', () => {
-    expect(newAddressStub).to.have.been.calledWith(sinon.match({ client: clientStub }))
+    expect(newAddressStub).to.have.been.calledWith(nestedWitnessType, { client: clientStub })
   })
 
   it('returns a wallet address', () => {
