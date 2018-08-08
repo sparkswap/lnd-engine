@@ -11,30 +11,35 @@ const {
  */
 async function closeChannels ({ force = false } = {}) {
   const { channels = [] } = await listChannels({ client: this.client })
-  const closedChannelResponses = await Promise.all(channels.map(channel => close(channel, this.client)))
+  const closedChannelResponses = await Promise.all(channels.map(channel => close(channel, this.client, this.logger)))
   this.logger.debug(`Successfully closed channel`)
   return closedChannelResponses
 }
 
-async function close (channel, client) {
+async function close (channel, client, logger) {
   return new Promise(async (resolve, reject) => {
     try {
-      const close = closeChannel({ fundingTxidStr: channel.channelPoint }, false, { client })
+      const [fundingTxidStr, outputIndex] = channel.channelPoint.split(':')
+      const channelPoint = {
+        fundingTxidStr,
+        outputIndex: parseInt(outputIndex)
+      }
+      const close = closeChannel(channelPoint, false, { client })
 
       const errorListener = (err) => {
-        this.logger.error(`Error from closeChannel stream`, err)
+        logger.error(`Error from closeChannel stream`, err)
         return finish(err)
       }
 
       const endListener = () => {
         const error = `LND closed closeChannel stream before returning our value`
-        this.logger.error(error)
+        logger.error(error)
         return finish(new Error(error))
       }
 
       const dataListener = (response) => {
         // see what the response is before figuring out the return
-        this.logger.info(response)
+        logger.info(response)
         return finish(response)
       }
 
