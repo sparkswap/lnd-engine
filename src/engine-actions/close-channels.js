@@ -11,19 +11,19 @@ const {
  */
 async function closeChannels ({ force = false } = {}) {
   const { channels = [] } = await listChannels({ client: this.client })
-  const closedChannelResponses = await Promise.all(channels.map(channel => close(channel)))
+  const closedChannelResponses = await Promise.all(channels.map(channel => close(channel, this.client)))
   this.logger.debug(`Successfully closed channel`)
   return closedChannelResponses
 }
 
-async function close (channel) {
-  console.log('client', this.client)
+async function close (channel, client) {
+  console.log('client', client)
   return new Promise(async (resolve, reject) => {
     try {
       console.log('channelPoint and client test')
       console.log(channel.channelPoint)
       console.log(this.client)
-      const close = closeChannel(channel.channelPoint, false, { client: this.client })
+      const close = closeChannel(channel.channelPoint, false, { client })
 
       const errorListener = (err) => {
         this.logger.error(`Error from closeChannel stream`, err)
