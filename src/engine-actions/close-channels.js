@@ -39,7 +39,7 @@ async function close (channel, client, logger) {
 
       const dataListener = (response) => {
         // see what the response is before figuring out the return
-        logger.info(response)
+        logger.info(JSON.stringify(response))
         return finish(response)
       }
 
