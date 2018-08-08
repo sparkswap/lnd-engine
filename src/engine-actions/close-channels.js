@@ -17,7 +17,7 @@ async function closeChannels ({ force = false } = {}) {
 }
 
 async function close (channel, client, logger) {
-  return new Promise(async (resolve, reject) => {
+  return new Promise((resolve, reject) => {
     try {
       const [fundingTxidStr, outputIndex] = channel.channelPoint.split(':')
       const channelPoint = {
@@ -40,7 +40,7 @@ async function close (channel, client, logger) {
       const dataListener = (response) => {
         // see what the response is before figuring out the return
         logger.info(JSON.stringify(response))
-        return finish(response)
+        return finish(null, response)
       }
 
       // Helper to make sure we tear down our listeners
