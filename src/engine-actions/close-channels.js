@@ -17,12 +17,8 @@ async function closeChannels ({ force = false } = {}) {
 }
 
 async function close (channel, client) {
-  this.logger.debug('client', client)
   return new Promise(async (resolve, reject) => {
     try {
-      this.logger.debug('channelPoint and client test')
-      this.logger.debug(channel.channelPoint)
-      this.logger.debug(client)
       const close = closeChannel(channel.channelPoint, false, { client })
 
       const errorListener = (err) => {
