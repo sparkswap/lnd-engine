@@ -5,12 +5,24 @@ const {
 /**
  * Closes a channel given the channel point
  *
- * @param {Boolean} [options.outbound=true] outbound is true if checking outbound channels, false if inbound
+ * @param {Object} options
+ * @param {Object} [options.force=false] force is true if you want to force close channels, false if not
  * @returns {Promise<Array.<Object>>}
  */
 async function closeChannels ({ force = false } = {}) {
   const { channels = [] } = await listChannels({ client: this.client })
-  const activeChannels = channels.filter(c => c.active)
+
+  if (channels.length === 0) {
+    this.logger.debug('closeChannels: No channels exist')
+    return []
+  }
+
+  const activeChannels = channels.filter(c => c.active === true)
+
+  if (activeChannels.length === 0) {
+    this.logger.debug('closeChannels: No active channels exist')
+    return []
+  }
 
   const closedChannelResponses = await Promise.all(activeChannels).map(channel => close(channel, force, this.client, this.logger))
 
