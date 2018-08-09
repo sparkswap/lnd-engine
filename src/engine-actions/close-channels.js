@@ -30,7 +30,7 @@ async function closeChannels ({ force = false } = {}) {
   return closedChannelResponses
 }
 
-async function close (channel, client, force, logger) {
+async function close (channel, force, client, logger) {
   logger.info('FORCE', force)
   return new Promise((resolve, reject) => {
     try {
