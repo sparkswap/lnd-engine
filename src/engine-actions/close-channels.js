@@ -5,9 +5,8 @@ const {
 /**
  * Closes a channel given the channel point
  *
- * @param {String} paymentChannelNetworkAddress
- * @param {String} fundingAmount - int64 string
- * @returns {Promise<void>} returns void on success
+ * @param {Boolean} [options.outbound=true] outbound is true if checking outbound channels, false if inbound
+ * @returns {Promise<Array.<Object>>}
  */
 async function closeChannels ({ force = false } = {}) {
   const { channels = [] } = await listChannels({ client: this.client })
@@ -30,22 +29,6 @@ async function close (channel, client, force, logger) {
       }
       const close = closeChannel(channelPoint, force, { client })
 
-      const errorListener = (err) => {
-        logger.error(`Error from closeChannel stream`, err)
-        return finish(err)
-      }
-
-      const endListener = () => {
-        const error = `LND closed closeChannel stream before returning our value`
-        logger.error(error)
-        return finish(new Error(error))
-      }
-
-      const dataListener = (response) => {
-        logger.info('Closing channel', response)
-        return finish(null, response)
-      }
-
       // Helper to make sure we tear down our listeners
       const finish = (err, response) => {
         close.removeListener('error', errorListener)
@@ -57,6 +40,22 @@ async function close (channel, client, force, logger) {
         }
 
         resolve(response)
+      }
+
+      const errorListener = (err) => {
+        logger.error('Error from closeChannel stream', err)
+        return finish(err)
+      }
+
+      const endListener = () => {
+        const error = 'LND closed closeChannel stream before returning our value'
+        logger.error(error)
+        return finish(new Error(error))
+      }
+
+      const dataListener = (response) => {
+        logger.info('Closing channel', response)
+        return finish(null, response)
       }
 
       close.on('error', errorListener)

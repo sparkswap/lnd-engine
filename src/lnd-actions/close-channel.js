@@ -1,9 +1,10 @@
 /**
- * Open a channel w/ LND
+ * Close a channel w/ LND
+ * @see {@link http://api.lightning.community/#closechannel}
  *
- * @param {String} publicKey - lnd public key to open channel with
- * @param {String} fundingAmount - the amount to fund the channel w/
- * @return {Promise}
+ * @param {Object} channelPoint { fundingTxidStr, outputIndex } to identify the channel to be closed
+ * @param {Boolean} force - true if we want to force close the channel, false if not (defaults to false)
+ * @return {ReadableStream} Readable stream from gprc
  */
 function closeChannel (channelPoint, force, { client }) {
   return client.closeChannel({ channelPoint, force })
