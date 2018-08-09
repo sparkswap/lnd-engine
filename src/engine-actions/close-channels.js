@@ -24,7 +24,7 @@ async function closeChannels ({ force = false } = {}) {
     return []
   }
 
-  const closedChannelResponses = await Promise.all(activeChannels).map(channel => close(channel, force, this.client, this.logger))
+  const closedChannelResponses = await Promise.all(activeChannels.map(channel => close(channel, force, this.client, this.logger)))
 
   this.logger.info('Successfully closed channels', closedChannelResponses)
   return closedChannelResponses
