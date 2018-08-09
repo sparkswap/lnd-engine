@@ -15,7 +15,6 @@ WORKDIR $GOPATH/src/github.com/btcsuite/btcd
 ARG COMMIT_SHA
 RUN : "${COMMIT_SHA:?COMMIT_SHA Build argument needs to be set.}"
 
-
 # Grab and install the latest version of btcd
 RUN git clone https://github.com/btcsuite/btcd . \
 && git checkout ${COMMIT_SHA} \
