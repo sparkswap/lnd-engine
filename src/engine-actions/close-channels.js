@@ -1,6 +1,7 @@
 const {
   listChannels,
-  closeChannel
+  closeChannel,
+  listPendingChannels
 } = require('../lnd-actions')
 /**
  * Closes a channel given the channel point
@@ -9,11 +10,26 @@ const {
  * @param {String} fundingAmount - int64 string
  * @returns {Promise<void>} returns void on success
  */
-async function closeChannels ({ force = false } = {}) {
+async function closeChannels ({ force = false, pending = false } = {}) {
   const { channels = [] } = await listChannels({ client: this.client })
-  const closedChannelResponses = await Promise.all(channels.map(channel => close(channel, this.client, this.logger)))
-  this.logger.debug(`Successfully closed channel`)
-  return closedChannelResponses
+  const activeChannels = channels.filter(c => c.active)
+
+  let inactiveChannels = []
+  if (force === true) {
+    inactiveChannels = channels.filter(c => c.active === false)
+  }
+
+  let pendingChannels = []
+  if (pending === true) {
+    const { pendingOpenChannels = [] } = await listPendingChannels({ client: this.client })
+    pendingChannels = pendingOpenChannels
+  }
+  const closedChannelResponses = await Promise.all(activeChannels.concat(inactiveChannels).map(channel => close(channel, this.client, this.logger)))
+  const closedPendingChannelResponses = await Promise.all(pendingChannels.map(channel => close(channel.channel, this.client, this.logger)))
+
+  const allClosedChannels = closedChannelResponses.concat(closedPendingChannelResponses)
+  this.logger.info('Successfully closed channels', allClosedChannels)
+  return allClosedChannels
 }
 
 async function close (channel, client, logger) {
@@ -38,8 +54,7 @@ async function close (channel, client, logger) {
       }
 
       const dataListener = (response) => {
-        // see what the response is before figuring out the return
-        logger.info(JSON.stringify(response))
+        logger.info('Closing channel', response)
         return finish(null, response)
       }
 
