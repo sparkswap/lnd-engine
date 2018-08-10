@@ -7,7 +7,7 @@ CONFIG_FILE=/home/lnd/lnd.conf
 
 # Simple check to make sure that the user has changed the external url of lnd_btc
 # outside of simnet. This will cause unintended issues w/ routing through the relayer
-if [[ "$NETWORK" != 'simnet' ]] && [[ "$EXTERNAL_ADDRESS" == *"your.ip.address"* ]]; then
+if [[ "$NETWORK" != 'simnet' ]] && [[ "$EXTERNAL_ADDRESS" == *"sample.ip.address"* ]]; then
     echo "Your current external address for LND_LTC is set to an internal address. Please change this for $NETWORK"
     exit 1
 fi
