@@ -25,7 +25,7 @@ fi
 # USING THIS OPTION BECAUSE WERE BAD
 # BUT THIS WILL NEED TO BE REMOVED FOR TESTNET
 echo 'LND has --noencryptwallet set. MAKE SURE TO REMOVE THIS'
-
+echo "LND BTC starting with network: $NETWORK"
 
 PARAMS=$(echo \
     "--configfile=$CONFIG_FILE" \

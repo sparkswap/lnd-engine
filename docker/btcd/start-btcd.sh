@@ -35,6 +35,8 @@ if [[ "$NETWORK" != "mainnet" ]]; then
     PARAMS="$PARAMS --$NETWORK"
 fi
 
+echo "BTCD starting with network: $NETWORK"
+
 # If MAX_WEB_SOCKETS is specified then we'll set it in the params, otherwise
 # we will let btcd decide on the default
 if [[ -n "$MAX_WEB_SOCKETS" ]]; then
