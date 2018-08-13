@@ -117,4 +117,5 @@ getOpenChannelCapacities
 ```
 createChannel
 numChannelsForAddress
+closeChannels
 ```

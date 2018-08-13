@@ -31,7 +31,6 @@ async function closeChannels ({ force = false } = {}) {
 }
 
 async function close (channel, force, client, logger) {
-  logger.info('FORCE', force)
   return new Promise((resolve, reject) => {
     try {
       const [fundingTxidStr, outputIndex] = channel.channelPoint.split(':')
