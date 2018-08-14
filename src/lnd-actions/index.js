@@ -16,6 +16,7 @@ const updateChannelPolicy = require('./update-channel-policy')
 const queryRoutes = require('./query-routes')
 const subscribeInvoices = require('./subscribe-invoices')
 const listPendingChannels = require('./list-pending-channels')
+const closeChannel = require('./close-channel')
 
 module.exports = {
   addInvoice,
@@ -35,5 +36,6 @@ module.exports = {
   updateChannelPolicy,
   queryRoutes,
   subscribeInvoices,
-  listPendingChannels
+  listPendingChannels,
+  closeChannel
 }
