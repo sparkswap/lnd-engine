@@ -26,6 +26,7 @@ const getUncommittedPendingBalance = require('./get-uncommitted-pending-balance'
 const getPendingChannelCapacities = require('./get-pending-channel-capacities')
 const getOpenChannelCapacities = require('./get-open-channel-capacities')
 const closeChannels = require('./close-channels')
+const getMaxChannel = require('./get-max-channel')
 
 module.exports = {
   getInvoices,
@@ -55,5 +56,6 @@ module.exports = {
   getUncommittedPendingBalance,
   getPendingChannelCapacities,
   getOpenChannelCapacities,
-  closeChannels
+  closeChannels,
+  getMaxChannel
 }

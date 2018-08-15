@@ -110,6 +110,7 @@ getTotalPendingChannelBalance
 getUncommittedPendingBalance
 getPendingChannelCapacities
 getOpenChannelCapacities
+getMaxChannel
 ```
 
 ### Channels
