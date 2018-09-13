@@ -12,11 +12,14 @@ const {
  */
 
 async function withdrawFunds (addr, amount) {
-  const { txid } = await sendCoins(addr, amount, { client: this.client })
+  try {
+    const { txid } = await sendCoins(addr, amount, { client: this.client })
+    this.logger.debug('Coins successfully sent', { txid })
 
-  this.logger.debug('Coins successfully sent', { txid })
-
-  return txid
+    return txid
+  } catch (err) {
+    throw new Error(err)
+  }
 }
 
 module.exports = withdrawFunds
