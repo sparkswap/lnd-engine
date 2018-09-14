@@ -1,7 +1,7 @@
 const { deadline } = require('../grpc-utils')
 
 /**
- * Check's an invoice status
+ * Sends coins from lnd wallet to address
  *
  * @function
  * @see {@link http://api.lightning.community/#sendCoins}
@@ -11,7 +11,6 @@ const { deadline } = require('../grpc-utils')
  * @return {String} response.txid
  */
 function sendCoins (addr, amount, { client }) {
-  console.log('SENDCOINS APRM', addr, amount)
   return new Promise((resolve, reject) => {
     client.sendCoins({ addr, amount }, { deadline: deadline() }, (err, res) => {
       if (err) return reject(err)

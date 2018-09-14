@@ -36,9 +36,4 @@ describe('withdrawFunds', () => {
     res = await withdrawFunds(addr, amount)
     expect(res).to.eql(txid)
   })
-
-  it('throws and error if the withdrawal was unsuccessful', () => {
-    sendCoinsStub.throws('Error', 'insufficient funds')
-    expect(withdrawFunds(addr, amount)).to.eventually.be.rejectedWith('insufficient funds')
-  })
 })
