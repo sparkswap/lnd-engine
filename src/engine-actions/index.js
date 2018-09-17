@@ -27,6 +27,7 @@ const getPendingChannelCapacities = require('./get-pending-channel-capacities')
 const getOpenChannelCapacities = require('./get-open-channel-capacities')
 const closeChannels = require('./close-channels')
 const getMaxChannel = require('./get-max-channel')
+const withdrawFunds = require('./withdraw-funds')
 
 module.exports = {
   getInvoices,
@@ -57,5 +58,6 @@ module.exports = {
   getPendingChannelCapacities,
   getOpenChannelCapacities,
   closeChannels,
-  getMaxChannel
+  getMaxChannel,
+  withdrawFunds
 }
