@@ -22,9 +22,9 @@ else
     exit 1
 fi
 
-# USING THIS OPTION BECAUSE WERE BAD
-# BUT THIS WILL NEED TO BE REMOVED FOR TESTNET
-echo 'LND has --noencryptwallet set. MAKE SURE TO REMOVE THIS'
+# USING THIS OPTION BECAUSE WE'RE BAD
+# BUT THIS WILL NEED TO BE REMOVED FOR MAINNET
+echo 'LND has --noseedbackup set. MAKE SURE TO REMOVE THIS'
 echo "LND LTC starting with network: $NETWORK"
 
 PARAMS=$(echo \
