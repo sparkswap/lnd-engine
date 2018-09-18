@@ -120,3 +120,8 @@ createChannel
 numChannelsForAddress
 closeChannels
 ```
+
+### Wallets
+```
+withdrawFunds
+```
