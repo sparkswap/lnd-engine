@@ -88,10 +88,15 @@ async function translateSwap (takerAddress, swapHash, amount, extendedTimeLockDe
 
   this.logger.debug('Calling queryRoutes on lnd w/ params', { params: queryRoutesReq })
 
-  const [ { routes = [] }, { blockHeight = '' } ] = await Promise.all([
-    queryRoutes(queryRoutesReq, { client: this.client }),
-    getInfo({ client: this.client })
-  ])
+  try {
+    var [ { routes = [] }, { blockHeight = '' } ] = await Promise.all([
+      queryRoutes(queryRoutesReq, { client: this.client }),
+      getInfo({ client: this.client })
+    ])
+  } catch (e) {
+    this.logger.error(e)
+    return { permanentError: e.message }
+  }
 
   if (routes.length === 0) {
     const err = `No route to ${takerAddress}`
@@ -111,10 +116,8 @@ async function translateSwap (takerAddress, swapHash, amount, extendedTimeLockDe
 
   this.logger.debug('Calculating timelock with params:', { extendedTimeLockDelta, blockHeight })
 
-  let totalTimeLock
-
   try {
-    totalTimeLock = calculateTimeLock(extendedTimeLockDelta, this.currencyConfig.secondsPerBlock, blockHeight)
+    var totalTimeLock = calculateTimeLock(extendedTimeLockDelta, this.currencyConfig.secondsPerBlock, blockHeight)
   } catch (err) {
     this.logger.error(err)
     return { permanentError: err.message }
