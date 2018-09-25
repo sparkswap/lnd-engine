@@ -110,6 +110,14 @@ describe('translate-swap', () => {
       expect(res.permanentError).to.contain('No route')
     })
 
+    it('returns permanent error if a call to queryRoutes fails', async () => {
+      const error = 'TARGET NOT FOUND'
+      queryRoutes.rejects(new Error(error))
+      const res = await translateSwap.call(engine, address, swapHash, amount, extendedTimeLock)
+      expect(res).to.have.property('permanentError')
+      expect(res.permanentError).to.contain(error)
+    })
+
     it('returns permanent error if the extended time lock is insufficient', async () => {
       extendedTimeLock = '76400'
 
