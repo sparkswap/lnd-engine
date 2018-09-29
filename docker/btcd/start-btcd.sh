@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
-# exit from script if error was raised.
-set -e
+set -ex
 
 if [[ -e /secure/rpc.cert ]]; then
     rm -f /shared/rpc-btc.cert
@@ -12,21 +11,21 @@ else
     exit 1
 fi
 
-# Start a cron for simnet, if network is simnet
+# Start a cron if network is simnet
 if [[ "$NETWORK" == "simnet" ]]; then
     crond -L /jobs/cron.log
 fi
 
 
-PARAMS=$(echo \
-    "--debuglevel=$DEBUG" \
-    "--rpcuser=$RPC_USER" \
-    "--rpcpass=$RPC_PASS" \
-    "--datadir=$DATA_DIR" \
-    "--logdir=$LOG_DIR" \
-    "--rpclisten=$RPC_LISTEN" \
-    "--rpccert=$RPC_CERT" \
-    "--rpckey=$RPC_KEY" \
+params=$(echo \
+    "--debuglevel=$debug" \
+    "--rpcuser=$rpc_user" \
+    "--rpcpass=$rpc_pass" \
+    "--datadir=$data_dir" \
+    "--logdir=$log_dir" \
+    "--rpclisten=$rpc_listen" \
+    "--rpccert=$rpc_cert" \
+    "--rpckey=$rpc_key" \
     "--txindex"
 )
 

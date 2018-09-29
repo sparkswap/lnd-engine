@@ -1,6 +1,6 @@
 FROM golang:1.10-alpine as builder
 
-LABEL maintainer="SparkSwap <dev@sparkswap.com>"
+LABEL maintainer="sparkswap <dev@sparkswap.com>"
 
 # Install build deps
 RUN apk add --no-cache git \

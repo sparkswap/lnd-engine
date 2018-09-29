@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 
-# exit from script if error was raised.
 set -e
 
+# TODO: Make this dynamic
+NODE=bitcoind
+
 CONFIG_FILE=/home/lnd/lnd.conf
+
 
 # Simple check to make sure that the user has changed the external url of lnd_btc
 # outside of simnet. This will cause unintended issues w/ routing through the relayer
@@ -33,9 +36,14 @@ PARAMS=$(echo \
     "--debuglevel=$DEBUG" \
     "--externalip=$EXTERNAL_ADDRESS" \
     "--extpreimage.rpchost=$EXTPREIMAGE_HOST" \
-    "--btcd.rpcuser=$RPC_USER" \
-    "--btcd.rpcpass=$RPC_PASS" \
-    "--btcd.rpchost=$RPC_HOST"
+    "--$NODE.rpcuser=$RPC_USER" \
+    "--$NODE.rpcpass=$RPC_PASS" \
+    "--$NODE.rpchost=$RPC_HOST"
 )
+
+if [[ "$NODE" == "bitcoind" ]]; then
+    PARAMS="$PARAMS --bitcoind.zmqpubrawblock=$ZMQPUBRAWBLOCK"
+    PARAMS="$PARAMS --bitcoind.zmqpubrawtx=$ZMQPUBRAWTX"
+fi
 
 exec lnd $PARAMS "$@"
