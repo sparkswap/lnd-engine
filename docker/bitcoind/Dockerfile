@@ -22,6 +22,9 @@ EXPOSE 18332 18333
 # RegTest (rpc, http)
 EXPOSE 18443 18444
 
+# zmq interfaces (block, tx)
+EXPOSE 28333 28334
+
 WORKDIR /home/bitcoind
 
 ADD "start-bitcoind.sh" ./start-bitcoind.sh

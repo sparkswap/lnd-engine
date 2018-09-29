@@ -27,8 +27,11 @@ PARAMS=$(echo \
     "-rpcpassword=$RPC_PASS" \
     "-datadir=$DATA_DIR" \
     "-rpcbind=$RPC_LISTEN" \
-    "-rpcallowip=172.0.0.0/8" \
+    "-rpcallowip=0.0.0.0/0" \
     "-listenonion=0" \
+    "-zmqpubrawblock=tcp://0.0.0.0:28333" \
+    "-zmqpubrawtx=tcp://0.0.0.0:28334" \
+    "-server=1" \
     "-txindex"
 )
 
