@@ -2,7 +2,7 @@
 
 set -e
 
-NODE=${NODE:-bitcoind}
+NODE=${NODE:-btcd}
 CONFIG_FILE=/home/lnd/lnd.conf
 
 

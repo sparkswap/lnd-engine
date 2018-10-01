@@ -2,8 +2,8 @@
 
 set -e
 
+NODE=${NODE:-ltcd}
 CONFIG_FILE=/home/lnd/lnd.conf
-NODE=ltcd
 
 # Simple check to make sure that the user has changed the external url of lnd_btc
 # outside of simnet. This will cause unintended issues w/ routing through the relayer
