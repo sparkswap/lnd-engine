@@ -2,9 +2,7 @@
 
 set -e
 
-# TODO: Make this dynamic
-NODE=bitcoind
-
+NODE=${NODE:-bitcoind}
 CONFIG_FILE=/home/lnd/lnd.conf
 
 
@@ -33,6 +31,7 @@ echo "LND BTC starting with network: $NETWORK"
 PARAMS=$(echo \
     "--configfile=$CONFIG_FILE" \
     "--bitcoin.$NETWORK" \
+    "--bitcoin.node=$NODE" \
     "--debuglevel=$DEBUG" \
     "--externalip=$EXTERNAL_ADDRESS" \
     "--extpreimage.rpchost=$EXTPREIMAGE_HOST" \
