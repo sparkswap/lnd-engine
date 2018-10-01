@@ -80,4 +80,4 @@ RUN : "${NODE:?NODE Build argument needs to be set.}"
 
 COPY "./conf/lnd-${NODE}.conf" "./lnd.conf"
 
-CMD ["bash", "-c" "NODE=${NODE} ./start-lnd.sh"]
+CMD ["bash", "-c", "NODE=${NODE} ./start-lnd.sh"]
