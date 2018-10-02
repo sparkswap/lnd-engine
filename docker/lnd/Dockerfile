@@ -78,6 +78,9 @@ RUN chmod +x ./start-lnd.sh
 ARG NODE
 RUN : "${NODE:?NODE Build argument needs to be set.}"
 
+# Set NODE to an env so we can use it in the start script
+ENV NODE ${NODE}
+
 COPY "./conf/lnd-${NODE}.conf" "./lnd.conf"
 
 CMD ["bash", "-c", "NODE=${NODE} ./start-lnd.sh"]
