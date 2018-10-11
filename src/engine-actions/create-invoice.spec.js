@@ -6,32 +6,35 @@ const createInvoice = rewire(path.resolve(__dirname, 'create-invoice'))
 describe('createInvoice', () => {
   let memo
   let expiry
-  let value
+  let commonValue
   let addInvoiceStub
   let clientStub
   let invoiceResponse
   let paymentRequest
+  let currencyConfig
   let res
 
   beforeEach(() => {
     memo = 'MEMO'
     expiry = '2000'
-    value = '100'
+    commonValue = '100'
     paymentRequest = '1234'
     invoiceResponse = { paymentRequest }
     addInvoiceStub = sinon.stub().returns(invoiceResponse)
     clientStub = sinon.stub()
+    currencyConfig = {
+      quantumsPerCommon: '100'
+    }
 
     createInvoice.__set__('addInvoice', addInvoiceStub)
-    createInvoice.__set__('client', clientStub)
   })
 
   beforeEach(async () => {
-    res = await createInvoice(memo, expiry, value)
+    res = await createInvoice.call({ currencyConfig, client: clientStub }, memo, expiry, commonValue)
   })
 
   it('adds an invoice through lnd', () => {
-    expect(addInvoiceStub).to.have.been.calledWith(sinon.match({ memo, expiry, value }), sinon.match({ client: clientStub }))
+    expect(addInvoiceStub).to.have.been.calledWith(sinon.match({ memo, expiry, value: '10000' }), sinon.match({ client: clientStub }))
   })
 
   it('returns a paymentRequest hash', () => {
