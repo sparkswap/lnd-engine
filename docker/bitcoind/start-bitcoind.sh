@@ -3,9 +3,12 @@
 # exit from script if error was raised.
 set -e
 
+MINER=${MINER:-false}
+
 # Start a cron if network is regtest and the current node is setup to be the networks
 # miner.
-if [[ "$NETWORK" == "regtest" ]] && [[ "$MINER" == "true" ]]; then
+if [[ "$NETWORK" == "regtest" ]] && [[ "$MINER" = true ]]; then
+    echo "Setting up bitcoind instance as MINER"
     mkdir -p "/jobs"
     touch "/jobs/cron.log"
     # We must add the `funding-cron` txt file here because we are forced to use
