@@ -21,6 +21,9 @@ else
   LND_LTC_NODE=litecoind
 fi
 
+LND_BTC_NODE=btcd
+LND_LTC_NODE=ltcd
+
 # NOTE: The names specified with `-t` directly map to the service names in
 # the applicable services docker-compose file
 docker build -t sparkswap_lnd_btc ./docker/lnd --build-arg NODE=$LND_BTC_NODE --build-arg NETWORK=btc --build-arg COMMIT_SHA=$COMMIT_SHA

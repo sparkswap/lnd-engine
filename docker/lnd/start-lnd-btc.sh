@@ -2,6 +2,7 @@
 
 set -e
 
+NODE=${NODE:-btcd}
 CONFIG_FILE=/home/lnd/lnd.conf
 NODE=${NODE}
 
@@ -9,6 +10,7 @@ if [ -z "$NODE" ]; then
     echo "NODE is not set for lnd-btc"
     exit 1
 fi
+
 
 
 # Simple check to make sure that the user has changed the external url of lnd_btc
