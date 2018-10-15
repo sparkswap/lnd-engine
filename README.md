@@ -11,10 +11,10 @@ The following repo contains 2 modules that make up a SparkSwap Payment Channel N
 2. Dockerfiles for all containers needed for the LND Engine to run on a broker daemon
 
 A current docker setup a functional BTC/LTC LND Engine:
-1. BTCD node
-2. LND BTCD node (SparkSwap fork)
-3. LTCD node
-4. LND LTCD node (SparkSwap fork)
+1. Bitcoin node (BTCD is default)
+2. LND BTC node (SparkSwap fork)
+3. Litecoin node (LTCD is default)
+4. LND LTC node (SparkSwap fork)
 
 #### Installation (lnd-engine only)
 

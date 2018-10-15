@@ -39,9 +39,28 @@ BTCD_COMMIT_SHA=`git ls-remote git://github.com/btcsuite/btcd | grep "refs/heads
 # TODO: Remove this once https://github.com/ltcsuite/ltcd/pull/7 is merged
 LTCD_COMMIT_SHA='cdab10132e8c6e4a3ffd112dba54791946d28906'
 
+LND_BTC_NODE=btcd
+LND_LTC_NODE=ltcd
+
 # NOTE: The names specified with `-t` directly map to the service names in
 # the applicable services docker-compose file
-docker build -t sparkswap_lnd_btc ./docker/lnd --build-arg NETWORK=btc --build-arg COMMIT_SHA=$COMMIT_SHA
-docker build -t sparkswap_lnd_ltc ./docker/lnd --build-arg NETWORK=ltc --build-arg COMMIT_SHA=$COMMIT_SHA
-docker build -t sparkswap_ltcd ./docker/ltcd --build-arg COMMIT_SHA=$LTCD_COMMIT_SHA --build-arg CERT_HOST=$LTCD_CERT_HOST
-docker build -t sparkswap_btcd ./docker/btcd --build-arg COMMIT_SHA=$BTCD_COMMIT_SHA --build-arg CERT_HOST=$BTCD_CERT_HOST
+docker build -t sparkswap_lnd_btc ./docker/lnd --build-arg NODE=$LND_BTC_NODE --build-arg NETWORK=btc --build-arg COMMIT_SHA=$COMMIT_SHA
+docker build -t sparkswap_lnd_ltc ./docker/lnd --build-arg NODE=$LND_LTC_NODE --build-arg NETWORK=ltc --build-arg COMMIT_SHA=$COMMIT_SHA
+
+if [[ "$LND_BTC_NODE" == "btcd" ]]; then
+  docker build -t sparkswap_btcd ./docker/btcd --build-arg COMMIT_SHA=$BTCD_COMMIT_SHA --build-arg CERT_HOST=$BTCD_CERT_HOST
+else
+  # TEMPORARY: These builds are only availabe by modifying the LND_BTC_NODE and LND_LTC_NODE
+  # variables above
+  BITCOIND_VERSION='0.16.3'
+  docker build -t sparkswap_bitcoind ./docker/bitcoind --build-arg VERSION=$BITCOIND_VERSION
+fi
+
+if [[ "$LND_LTC_NODE" == "ltcd" ]]; then
+  docker build -t sparkswap_ltcd ./docker/ltcd --build-arg COMMIT_SHA=$LTCD_COMMIT_SHA --build-arg CERT_HOST=$LTCD_CERT_HOST
+else
+  # TEMPORARY: These builds are only availabe by modifying the LND_BTC_NODE and LND_LTC_NODE
+  # variables above
+  LITECOIND_VERSION=''
+  docker build -t sparkswap_litecoind ./docker/litecoind --build-arg VERSION=$BITCOIND_VERSION
+fi

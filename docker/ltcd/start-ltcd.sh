@@ -12,7 +12,7 @@ else
     exit 1
 fi
 
-# Start a cron for simnet, if network is simnet
+# Start a cron if network is simnet
 if [[ "$NETWORK" == "simnet" ]]; then
     crond -L /jobs/cron.log
 fi

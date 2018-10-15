@@ -1,7 +1,7 @@
 
 FROM golang:1.10-alpine as builder
 
-LABEL maintainer="SparkSwap <dev@sparkswap.com>"
+LABEL maintainer="sparkswap <dev@sparkswap.com>"
 
 ARG NETWORK
 RUN : "${NETWORK:?NETWORK Build argument needs to be set.}"
@@ -75,6 +75,9 @@ WORKDIR /home/lnd
 COPY "start-lnd-${NETWORK}.sh" "./start-lnd.sh"
 RUN chmod +x ./start-lnd.sh
 
-COPY "lnd-${NETWORK}.conf" "./lnd.conf"
+ARG NODE
+RUN : "${NODE:?NODE Build argument needs to be set.}"
 
-CMD ["bash", "./start-lnd.sh"]
+COPY "./conf/lnd-${NODE}.conf" "./lnd.conf"
+
+CMD ["bash", "-c", "NODE=${NODE} ./start-lnd.sh"]

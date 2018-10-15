@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-# exit from script if error was raised.
 set -e
 
+NODE=${NODE:-ltcd}
 CONFIG_FILE=/home/lnd/lnd.conf
 
 # Simple check to make sure that the user has changed the external url of lnd_btc
@@ -33,9 +33,9 @@ PARAMS=$(echo \
     "--debuglevel=$DEBUG" \
     "--externalip=$EXTERNAL_ADDRESS" \
     "--extpreimage.rpchost=$EXTPREIMAGE_HOST" \
-    "--ltcd.rpcuser=$RPC_USER" \
-    "--ltcd.rpcpass=$RPC_PASS" \
-    "--ltcd.rpchost=$RPC_HOST"
+    "--$NODE.rpcuser=$RPC_USER" \
+    "--$NODE.rpcpass=$RPC_PASS" \
+    "--$NODE.rpchost=$RPC_HOST"
 )
 
 exec lnd $PARAMS "$@"
