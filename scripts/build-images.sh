@@ -4,6 +4,8 @@ set -e -u
 
 ARG=${1:-remote}
 
+echo "Building images with arg: $ARG"
+
 # Default branches for each repo
 # TODO: Lock these to a specific commit
 LND_VERSION='k#epic/cross-chain-preimage'
@@ -43,7 +45,7 @@ if [[ "$ARG" == "local" ]]; then
   LTCD_COMMIT_SHA='cdab10132e8c6e4a3ffd112dba54791946d28906'
   docker build -t sparkswap_btcd ./docker/btcd --build-arg COMMIT_SHA=$BTCD_COMMIT_SHA --build-arg CERT_HOST=$BTCD_CERT_HOST
   docker build -t sparkswap_ltcd ./docker/ltcd --build-arg COMMIT_SHA=$LTCD_COMMIT_SHA --build-arg CERT_HOST=$LTCD_CERT_HOST
-elif [[ "ARG" == "experimental" ]]; then
+elif [[ "$ARG" == "experimental" ]]; then
   BITCOIND_VERSION='0.16.3'
   docker build -t sparkswap_bitcoind ./docker/bitcoind --build-arg VERSION=$BITCOIND_VERSION
   LITECOIND_VERSION='0.16.3'
