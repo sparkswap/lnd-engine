@@ -4,6 +4,13 @@ set -e
 
 NODE=${NODE:-btcd}
 CONFIG_FILE=/home/lnd/lnd.conf
+NODE=${NODE}
+
+if [ -z "$NODE" ]; then
+    echo "NODE is not set for lnd-btc"
+    exit 1
+fi
+
 
 
 # Simple check to make sure that the user has changed the external url of lnd_btc
@@ -14,6 +21,7 @@ if [[ "$NETWORK" != 'simnet' ]] && [[ "$EXTERNAL_ADDRESS" == *"sample.ip.address
 fi
 
 # Copy certs to the shared file
+
 if [[ -e /secure/lnd-engine-tls-btc.cert ]]; then
     rm -f /shared/lnd-engine-tls-btc.cert
     cp /secure/lnd-engine-tls-btc.cert /shared/lnd-engine-tls-btc.cert
@@ -26,7 +34,7 @@ fi
 # USING THIS OPTION BECAUSE WE'RE BAD
 # BUT THIS WILL NEED TO BE REMOVED FOR MAINNET
 echo 'LND has --noseedbackup set. MAKE SURE TO REMOVE THIS'
-echo "LND BTC starting with network: $NETWORK"
+echo "LND BTC starting with network: $NETWORK $NODE"
 
 PARAMS=$(echo \
     "--configfile=$CONFIG_FILE" \

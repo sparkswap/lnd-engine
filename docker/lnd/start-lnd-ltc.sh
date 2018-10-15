@@ -17,7 +17,7 @@ if [[ -e /secure/lnd-engine-tls-ltc.cert ]]; then
     rm -f /shared/lnd-engine-tls-ltc.cert
     cp /secure/lnd-engine-tls-ltc.cert /shared/lnd-engine-tls-ltc.cert
 else
-    echo "/secure/lnd-engine-tls-btc.cert does not exist inside of the lnd docker container."
+    echo "/secure/lnd-engine-tls-ltc.cert does not exist inside of the lnd docker container."
     echo "Please check your dockerfile changes or rebuild images w/ npm run build-images"
     exit 1
 fi
@@ -25,7 +25,7 @@ fi
 # USING THIS OPTION BECAUSE WE'RE BAD
 # BUT THIS WILL NEED TO BE REMOVED FOR MAINNET
 echo 'LND has --noseedbackup set. MAKE SURE TO REMOVE THIS'
-echo "LND LTC starting with network: $NETWORK"
+echo "LND LTC starting with network: $NETWORK $NODE"
 
 PARAMS=$(echo \
     "--configfile=$CONFIG_FILE" \
@@ -37,5 +37,10 @@ PARAMS=$(echo \
     "--$NODE.rpcpass=$RPC_PASS" \
     "--$NODE.rpchost=$RPC_HOST"
 )
+
+if [[ "$NODE" == "litecoind" ]]; then
+    PARAMS="$PARAMS --$NODE.zmqpubrawblock=$ZMQPUBRAWBLOCK"
+    PARAMS="$PARAMS --$NODE.zmqpubrawtx=$ZMQPUBRAWTX"
+fi
 
 exec lnd $PARAMS "$@"
