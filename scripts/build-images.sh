@@ -46,10 +46,10 @@ if [[ "$ARG" == "local" ]]; then
   docker build -t sparkswap_btcd ./docker/btcd --build-arg COMMIT_SHA=$BTCD_COMMIT_SHA --build-arg CERT_HOST=$BTCD_CERT_HOST
   docker build -t sparkswap_ltcd ./docker/ltcd --build-arg COMMIT_SHA=$LTCD_COMMIT_SHA --build-arg CERT_HOST=$LTCD_CERT_HOST
 elif [[ "$ARG" == "experimental" ]]; then
-  BITCOIND_VERSION='0.16.3'
+  BITCOIND_VERSION='0.17.0'
   docker build -t sparkswap_bitcoind ./docker/bitcoind --build-arg VERSION=$BITCOIND_VERSION
   LITECOIND_VERSION='0.16.3'
-  docker build -t sparkswap_litecoind ./docker/litecoind --build-arg VERSION=$BITCOIND_VERSION
+  docker build -t sparkswap_litecoind ./docker/litecoind --build-arg VERSION=$LITECOIND_VERSION
 else
   LTCD_CERT_HOST=${LTCD_CERT_HOST:-ltcd}
   BTCD_CERT_HOST=${BTCD_CERT_HOST:-btcd}
