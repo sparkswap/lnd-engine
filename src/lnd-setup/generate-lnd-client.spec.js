@@ -4,23 +4,26 @@ const { expect, rewire, sinon } = require('test/test-helper')
 const LndEngine = rewire(path.resolve('src', 'lnd-setup', 'generate-lnd-client'))
 
 describe('lnd-engine index', () => {
-  let revertGrpc
   let grpcLoadStub
+  let loadPackageStub
+  let protoDefinition
+
+  let reverts = []
 
   beforeEach(() => {
-    grpcLoadStub = sinon.stub()
+    protoDefinition = sinon.stub()
+    grpcLoadStub = sinon.stub().returns(protoDefinition)
+    loadPackageStub = sinon.stub()
 
-    revertGrpc = LndEngine.__set__('grpc', {
-      load: grpcLoadStub
-    })
+    reverts.push(LndEngine.__set__('grpcProtoLoader', { loadSync: grpcLoadStub }))
+    reverts.push(LndEngine.__set__('grpc', { loadPackageDefinition: loadPackageStub }))
   })
 
   afterEach(() => {
-    revertGrpc()
+    reverts.forEach(r => r())
   })
 
   describe('loadProto', () => {
-    const grpcFileType = LndEngine.__get__('GRPC_FILE_TYPE')
     const grpcOptions = LndEngine.__get__('GRPC_OPTIONS')
 
     let loadProto
@@ -33,11 +36,19 @@ describe('lnd-engine index', () => {
       expect(() => loadProto()).to.throw('LND-ENGINE error - Proto file not found at path: undefined')
     })
 
+    it('creates a package definition', () => {
+      const protoPath = 'localhost:1337'
+      const revert = LndEngine.__set__('fs', { existsSync: sinon.stub().returns(true) })
+      loadProto(protoPath)
+      expect(grpcLoadStub).to.have.been.calledWith(protoPath, grpcOptions)
+      revert()
+    })
+
     it('loads a proto file', () => {
       const protoPath = 'localhost:1337'
       const revert = LndEngine.__set__('fs', { existsSync: sinon.stub().returns(true) })
       loadProto(protoPath)
-      expect(grpcLoadStub).to.have.been.calledWith(protoPath, grpcFileType, grpcOptions)
+      expect(loadPackageStub).to.have.been.calledWith(protoDefinition)
       revert()
     })
   })
