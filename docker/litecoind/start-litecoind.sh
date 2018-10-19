@@ -14,12 +14,13 @@ if [[ "$NETWORK" == "regtest" ]] && [[ "$MINER" = true ]]; then
     # We must add the `funding-cron` txt file here because we are forced to use
     # `cron` instead of `crond`, where the former does not import environment variables
     # from the user session and instead uses a bare-bones `sh` session to run these commands
-    echo "* * * * * ( litecoin-cli -regtest -rpcuser=$RPC_USER -rpcpassword=$RPC_PASS generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
-    echo "* * * * * ( sleep 10 ; litecoin-cli -regtest -rpcuser="$RPC_USER" -rpcpassword="$RPC_PASS" generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
-    echo "* * * * * ( sleep 20 ; litecoin-cli -regtest -rpcuser="$RPC_USER" -rpcpassword="$RPC_PASS" generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
-    echo "* * * * * ( sleep 30 ; litecoin-cli -regtest -rpcuser="$RPC_USER" -rpcpassword="$RPC_PASS" generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
-    echo "* * * * * ( sleep 40 ; litecoin-cli -regtest -rpcuser="$RPC_USER" -rpcpassword="$RPC_PASS" generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
-    echo "* * * * * ( sleep 50 ; litecoin-cli -regtest -rpcuser="$RPC_USER" -rpcpassword="$RPC_PASS" generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
+    LITECOIN_CLI_PATH=/usr/local/bin/litecoin-cli
+    echo "* * * * * ( $LITECOIN_CLI_PATH -regtest -rpcuser=$RPC_USER -rpcpassword=$RPC_PASS generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
+    echo "* * * * * ( sleep 10 ; $LITECOIN_CLI_PATH -regtest -rpcuser="$RPC_USER" -rpcpassword="$RPC_PASS" generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
+    echo "* * * * * ( sleep 20 ; $LITECOIN_CLI_PATH -regtest -rpcuser="$RPC_USER" -rpcpassword="$RPC_PASS" generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
+    echo "* * * * * ( sleep 30 ; $LITECOIN_CLI_PATH -regtest -rpcuser="$RPC_USER" -rpcpassword="$RPC_PASS" generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
+    echo "* * * * * ( sleep 40 ; $LITECOIN_CLI_PATH -regtest -rpcuser="$RPC_USER" -rpcpassword="$RPC_PASS" generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
+    echo "* * * * * ( sleep 50 ; $LITECOIN_CLI_PATH -regtest -rpcuser="$RPC_USER" -rpcpassword="$RPC_PASS" generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
     chmod 755 /jobs/funding-cron.txt
     /usr/bin/crontab /jobs/funding-cron.txt
     cron

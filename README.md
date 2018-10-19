@@ -11,9 +11,9 @@ The following repo contains 2 modules that make up a SparkSwap Payment Channel N
 2. Dockerfiles for all containers needed for the LND Engine to run on a broker daemon
 
 A current docker setup a functional BTC/LTC LND Engine:
-1. Bitcoin node (BTCD is default)
+1. Bitcoin node
 2. LND BTC node (SparkSwap fork)
-3. Litecoin node (LTCD is default)
+3. Litecoin node
 4. LND LTC node (SparkSwap fork)
 
 #### Installation (lnd-engine only)
@@ -25,13 +25,19 @@ the lnd-engine codebase and will build all docker images
 npm run build
 ```
 
+You can build a simnet version of lnd-engine by using the following, NOTE this should only be used for development purposes:
+
+```
+npm run build local
+```
+
 You can prevent the building of docker images with:
 
 ```
 npm run build no-docker
 ```
 
-Additionally, You can then use `npm run build-images` to build docker images separately.
+You can then use `npm run build-images` to build docker images separately at another time.
 
 To run tests, use `npm run test`
 
