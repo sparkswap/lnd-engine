@@ -18,6 +18,7 @@ const fs = require('fs')
  */
 const GRPC_OPTIONS = {
   longs: String,
+  bytes: String,
   enums: String,
   defaults: true,
   oneofs: true
