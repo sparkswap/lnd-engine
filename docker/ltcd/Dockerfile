@@ -14,22 +14,6 @@ WORKDIR $GOPATH/src/github.com/ltcsuite/ltcd
 # Grab and install ltcd
 RUN git clone https://github.com/ltcsuite/ltcd ./ \
 &&  git checkout ${COMMIT_SHA} \
-# We need to cherry-pick a change from another branch which fixes
-# the expected witness return types when querying for
-# transactions over rpc. The fix adds behaivor for treating witnesses
-# as an array of strings instead of a single string.
-# Without this fix, we will receive errors when creating channels between
-# 2 LTCD nodes.
-#
-# More info on the fix here: https://github.com/ltcsuite/ltcd/pull/7
-# TODO: Remove this hack
-&&  git remote add dev git://github.com/cfromknecht/btcd \
-&&  git fetch dev \
-# We must set git configuration to use `git merge`
-&&  git config --global user.email "dev@sparkswap.com" \
-&&  git config --global user.name "dev" \
-# Merges the fix/single change into ltcd
-&&  git merge dev/rpc-witness-serialization-fix \
 &&  glide install \
 &&  go install . ./cmd/ltcctl ./cmd/gencerts
 
