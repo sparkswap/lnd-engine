@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # exit from script if error was raised.
-set -ex
+set -e
 
 MINER=${MINER:-false}
 
@@ -44,10 +44,15 @@ if [[ "$DEBUG" == "debug" ]]; then
     PARAMS="$PARAMS -debug"
 fi
 
+# Bitcoind has options for -regtest and -testnet, but does not require an option
+# if the network is mainnet
 if [[ "$NETWORK" != "mainnet" ]]; then
     PARAMS="$PARAMS -$NETWORK"
 fi
 
+# Bitcoind does not support hostname to ip resolution very well, so instead, if the
+# CONNECT_HOST variable is set to a docker address, we will use the OS to resolve to
+# an IP and then connect to that machine
 if [[ "$NETWORK" == "regtest" ]] && [[ -n "$CONNECT_HOST" ]]; then
     if [[ "$CONNECT_HOST" == "host.docker.internal" ]]; then
         CONNECT_HOST=$(getent hosts host.docker.internal | awk '{ print $1 ; exit }')
@@ -57,16 +62,19 @@ if [[ "$NETWORK" == "regtest" ]] && [[ -n "$CONNECT_HOST" ]]; then
     PARAMS="$PARAMS -connect=$CONNECT_HOST:$CONNECT_PORT"
 fi
 
+# For a regtest setup, we need to expose a port that other nodes can connect to.
+# this port will be designated for ONLY miners.
 if [[ "$NETWORK" == "regtest" ]] && [[ "$MINER" = true ]]; then
     PARAMS="$PARAMS -port=$MINER_PORT"
 fi
 
-echo "Bitcoind starting with network: $NETWORK"
-
 # If MAX_WEB_SOCKETS is specified then we'll set it in the params, otherwise
 # we will let bitcoind decide on the default (125)
+# NOTE: This should only be used for regtest environments
 if [[ -n "$MAX_WEB_SOCKETS" ]]; then
     PARAMS="$PARAMS -maxconnections=$MAX_WEB_SOCKETS"
 fi
+
+echo "Bitcoind starting with network: $NETWORK"
 
 exec bitcoind $PARAMS
