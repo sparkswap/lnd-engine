@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # exit from script if error was raised.
-set -e
+set -ex
 
 MINER=${MINER:-false}
 
@@ -46,6 +46,19 @@ fi
 
 if [[ "$NETWORK" != "mainnet" ]]; then
     PARAMS="$PARAMS -$NETWORK"
+fi
+
+if [[ "$NETWORK" == "regtest" ]] && [[ -n "$CONNECT_HOST" ]]; then
+    if [[ "$CONNECT_HOST" == "host.docker.internal" ]]; then
+        CONNECT_HOST=$(getent hosts host.docker.internal | awk '{ print $1 ; exit }')
+    fi
+
+    echo "Connecting to mining node: $CONNECT_HOST:$CONNECT_PORT"
+    PARAMS="$PARAMS -connect=$CONNECT_HOST:$CONNECT_PORT"
+fi
+
+if [[ "$NETWORK" == "regtest" ]] && [[ "$MINER" = true ]]; then
+    PARAMS="$PARAMS -port=$MINER_PORT"
 fi
 
 echo "Bitcoind starting with network: $NETWORK"
