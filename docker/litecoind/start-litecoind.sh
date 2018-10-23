@@ -69,7 +69,6 @@ fi
 
 # If MAX_WEB_SOCKETS is specified then we'll set it in the params, otherwise
 # we will let litecoind decide on the default (125)
-# NOTE: This should only be used for regtest environments
 if [[ "$NETWORK" == "regtest" ]] && [[ -n "$MAX_WEB_SOCKETS" ]]; then
     PARAMS="$PARAMS -maxconnections=$MAX_WEB_SOCKETS"
 fi

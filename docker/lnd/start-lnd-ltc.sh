@@ -35,7 +35,7 @@ PARAMS=$(echo \
     "--extpreimage.rpchost=$EXTPREIMAGE_HOST" \
     "--$NODE.rpcuser=$RPC_USER" \
     "--$NODE.rpcpass=$RPC_PASS" \
-    "--$NODE.rpchost=$RPC_HOST" \
+    "--$NODE.rpchost=$RPC_HOST"
 )
 
 if [[ "$NODE" == "litecoind" ]]; then
