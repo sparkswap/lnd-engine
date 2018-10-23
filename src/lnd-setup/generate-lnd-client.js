@@ -4,19 +4,12 @@
  */
 
 const grpc = require('grpc')
+const grpcProtoLoader = require('@grpc/proto-loader')
 const fs = require('fs')
 
 /**
- * @global
- * @constant
- * @type {String}
- * @default
- */
-const GRPC_FILE_TYPE = 'proto'
-
-/**
- * These service options are tied directly to the SSL certs that are generated for
- * the engines LND service.
+ * Default values for grpc/proto-loader that mimic the default behaivor
+ * of grpc.
  *
  * @global
  * @constant
@@ -24,9 +17,11 @@ const GRPC_FILE_TYPE = 'proto'
  * @default
  */
 const GRPC_OPTIONS = {
-  convertFieldsToCamelCase: true,
-  binaryAsBase64: true,
-  longsAsStrings: true
+  longs: String,
+  bytes: String,
+  enums: String,
+  defaults: true,
+  oneofs: true
 }
 
 /**
@@ -67,7 +62,8 @@ function generateCredentials (tlsCertPath, macaroonPath) {
 function loadProto (path) {
   if (!fs.existsSync(path)) throw new Error(`LND-ENGINE error - Proto file not found at path: ${path}`)
 
-  return grpc.load(path, GRPC_FILE_TYPE, GRPC_OPTIONS)
+  const packageDefinition = grpcProtoLoader.loadSync(path, GRPC_OPTIONS)
+  return grpc.loadPackageDefinition(packageDefinition)
 }
 
 /**
