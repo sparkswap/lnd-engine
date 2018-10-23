@@ -17,7 +17,6 @@ if [[ "$NETWORK" == "simnet" ]]; then
     crond -L /jobs/cron.log
 fi
 
-
 PARAMS=$(echo \
     "--debuglevel=$DEBUG" \
     "--rpcuser=$RPC_USER" \
@@ -35,14 +34,12 @@ if [[ "$NETWORK" != "mainnet" ]]; then
     PARAMS="$PARAMS --$NETWORK"
 fi
 
-echo "BTCD starting with network: $NETWORK"
 
 # If MAX_WEB_SOCKETS is specified then we'll set it in the params, otherwise
 # we will let btcd decide on the default
 if [[ -n "$MAX_WEB_SOCKETS" ]]; then
     PARAMS="$PARAMS --rpcmaxwebsockets=$MAX_WEB_SOCKETS"
 fi
-
 
 # Set the mining flag w/ specified environment variable
 #
@@ -54,5 +51,7 @@ elif [[ "$NETWORK" == "simnet" ]]; then
     BURN_ADDRESS='sb1qcpeeeyuwfvguh6nudsquxww88dlefkrvns2wjd'
     PARAMS="$PARAMS --miningaddr=$BURN_ADDRESS"
 fi
+
+echo "BTCD starting with network: $NETWORK"
 
 exec btcd $PARAMS
