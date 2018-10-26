@@ -34,8 +34,6 @@ if [[ "$NETWORK" != "mainnet" ]]; then
     PARAMS="$PARAMS --$NETWORK"
 fi
 
-echo "LTCD starting with network: $NETWORK"
-
 # If MAX_WEB_SOCKETS is specified then we'll set it in the params, otherwise
 # we will let ltcd decide on the default
 if [[ -n "$MAX_WEB_SOCKETS" ]]; then
@@ -53,6 +51,8 @@ elif [[ "$NETWORK" == "simnet" ]]; then
     BURN_ADDRESS='03f1bc833f465d56bb388cb3d9c9bc9ac175cc0293bfb53a568607281db9680d05'
     PARAMS="$PARAMS --miningaddr=$BURN_ADDRESS"
 fi
+
+echo "LTCD starting with network: $NETWORK"
 
 exec ltcd $PARAMS
 
