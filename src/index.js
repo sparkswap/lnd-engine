@@ -54,18 +54,10 @@ class LndEngine {
   }
 
   /**
-   * Helper to reload the `Lightning` RPC in-case the user's node had not been
-   * setup before
-   */
-  reload () {
-    this.client = generateLightningClient(this)
-  }
-
-  /**
    * Client will return false if the lnd-engine requires wallet configuration before
    * the engine is fully functional.
    */
-  get active () {
+  get isUnlocked () {
     return !!Object.keys(this.client).length
   }
 }

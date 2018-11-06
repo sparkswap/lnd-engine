@@ -25,13 +25,14 @@ function generateWalletUnlockerClient ({ host, protoPath, tlsCertPath, logger })
   if (!fs.existsSync(tlsCertPath)) {
     throw new Error(`LND-ENGINE error - tls cert file not found at path: ${tlsCertPath}`)
   }
+
   const tls = fs.readFileSync(tlsCertPath)
   const tlsCredentials = grpc.credentials.createSsl(tls)
 
   try {
     return new lnrpc.WalletUnlocker(host, tlsCredentials)
   } catch (e) {
-    logger.info('Unable to create WalletUnlocker')
+    logger.error('Unable to create WalletUnlocker')
     return null
   }
 }

@@ -58,4 +58,29 @@ describe('lnd-engine index', () => {
       expect(() => new LndEngine(null, symbol)).to.throw('Host is required')
     })
   })
+
+  describe('isUnlocked', () => {
+    const symbol = 'BTC'
+    const host = 'CUSTOM_HOST:1337'
+    const logger = 'CUSTOM_LOGGER'
+    const customTlsCertPath = '/custom/cert/path'
+    const customMacaroonPath = '/custom/macaroon/path'
+
+    let engine
+
+    beforeEach(() => {
+      engine = new LndEngine(host, symbol, { logger, tlsCertPath: customTlsCertPath, macaroonPath: customMacaroonPath })
+    })
+
+    it('returns false if client is not set on an engine', () => {
+      engine.client = {}
+      expect(engine.isUnlocked).to.be.false()
+    })
+
+    it('returns true if client is configured', () => {
+      const lightningStub = sinon.stub()
+      engine.client = { Lightning: lightningStub }
+      expect(engine.isUnlocked).to.be.true()
+    })
+  })
 })

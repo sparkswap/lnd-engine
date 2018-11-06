@@ -29,6 +29,9 @@ else
     exit 1
 fi
 
+# USING THIS OPTION BECAUSE WE'RE BAD
+# BUT THIS WILL NEED TO BE REMOVED FOR MAINNET
+echo 'LND has --noseedbackup set. MAKE SURE TO REMOVE THIS'
 echo "LND BTC starting with network: $NETWORK $NODE"
 
 PARAMS=$(echo \
