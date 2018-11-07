@@ -7,7 +7,7 @@ const {
  * Creates a wallet
  *
  * @param {String} password - wallet password, used to unlock lnd wallet
- * @return {void}
+ * @return {Array<String>} cipher seed
  */
 async function createWallet (password) {
   const { cipherSeedMnemonic } = await genSeed({ client: this.walletUnlocker })
@@ -20,7 +20,11 @@ async function createWallet (password) {
   // as it does not accept String password types at this time.
   const walletPassword = Buffer.from(password, 'utf8')
 
-  return initWallet(walletPassword, cipherSeedMnemonic)
+  // This call merely resolves or rejects, there is no return value when the
+  // wallet is initialized
+  await initWallet(walletPassword, cipherSeedMnemonic)
+
+  return cipherSeedMnemonic
 }
 
 module.exports = createWallet

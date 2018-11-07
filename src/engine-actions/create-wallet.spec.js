@@ -21,7 +21,7 @@ describe('createWallet', () => {
       cipherSeedMnemonic: ['bird', 'cat']
     }
     genSeedStub = sinon.stub().returns(seed)
-    initWalletStub = sinon.stub()
+    initWalletStub = sinon.stub().resolves()
     bufferStub = sinon.stub().returns(buffer)
 
     createWallet.__set__('genSeed', genSeedStub)
@@ -48,5 +48,10 @@ describe('createWallet', () => {
   it('initializes a wallet', async () => {
     await createWallet.call(engine, password)
     expect(initWalletStub).to.have.been.calledWith(buffer, sinon.match(seed.cipherSeedMnemonic))
+  })
+
+  it('returns a cipher seed for the created wallet', async () => {
+    const res = await createWallet.call(engine, password)
+    expect(res).to.be.eql(seed.cipherSeedMnemonic)
   })
 })
