@@ -13,8 +13,9 @@ async function createWallet (password) {
   const { cipherSeedMnemonic } = await genSeed({ client: this.walletUnlocker })
 
   if (typeof password !== 'string') {
-    throw Error('Invalid type of password')
+    throw new Error('Provided password must be a string value')
   }
+
   // Password must be converted to buffer in order for lnd to accept
   // as it does not accept String password types at this time.
   const walletPassword = Buffer.from(password, 'utf8')
