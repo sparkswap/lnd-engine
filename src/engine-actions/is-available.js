@@ -1,4 +1,6 @@
-const { getInfo } = require('../lnd-actions')
+const { promisify } = require('util')
+
+const { deadline } = require('../grpc-utils')
 
 /**
  * Queries LND for a successful response
@@ -6,7 +8,8 @@ const { getInfo } = require('../lnd-actions')
  * @return {String} identityPubkey
  */
 async function isAvailable () {
-  await getInfo({ client: this.client })
+  const res = await promisify(this.client.getInfo)({}, { deadline: deadline() })
+  this.logger.debug(res)
   return true
 }
 
