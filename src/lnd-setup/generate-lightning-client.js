@@ -55,12 +55,7 @@ function generateLightningClient ({ host, protoPath, tlsCertPath, macaroonPath, 
     rpcCredentials = grpc.credentials.combineChannelCredentials(sslCredentials, macaroonCredentials)
   }
 
-  try {
-    return new lnrpc.Lightning(host, rpcCredentials, {})
-  } catch (e) {
-    logger.error('Unable to create Lightning rpc', e)
-    return null
-  }
+  return new lnrpc.Lightning(host, rpcCredentials, {})
 }
 
 module.exports = generateLightningClient

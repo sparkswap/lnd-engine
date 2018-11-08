@@ -112,22 +112,6 @@ describe('generateLightningClient', () => {
     expect(lightningStub).to.have.been.calledWith(host, combinedCreds)
   })
 
-  context('daemon is not initializaed', () => {
-    beforeEach(() => {
-      // No `Lightning` rpc will exist if the daemon is not initialized
-      loadProtoStub.returns({ lnrpc: {} })
-    })
-
-    it('logs a failure', () => {
-      generateLightningClient(engineStub)
-      expect(loggerErrorStub).to.have.been.calledWith(sinon.match('Unable to create Lightning rpc'))
-    })
-
-    it('returns null', () => {
-      expect(generateLightningClient(engineStub)).to.eql(null)
-    })
-  })
-
   context('macaroon not found', () => {
     beforeEach(() => {
       existsSyncStub.withArgs(macaroonPath).returns(false)

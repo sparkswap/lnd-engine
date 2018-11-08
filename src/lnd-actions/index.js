@@ -18,6 +18,7 @@ const subscribeInvoices = require('./subscribe-invoices')
 const listPendingChannels = require('./list-pending-channels')
 const closeChannel = require('./close-channel')
 const sendCoins = require('./send-coins')
+const genSeed = require('./gen-seed')
 
 module.exports = {
   addInvoice,
@@ -39,5 +40,6 @@ module.exports = {
   subscribeInvoices,
   listPendingChannels,
   closeChannel,
-  sendCoins
+  sendCoins,
+  genSeed
 }

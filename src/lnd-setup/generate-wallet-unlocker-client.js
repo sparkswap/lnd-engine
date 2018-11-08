@@ -19,7 +19,7 @@ const fs = require('fs')
  * @returns {grpc.Client} lnrpc WalletUnlocker client definition
  * @returns {null}
  */
-function generateWalletUnlockerClient ({ host, protoPath, tlsCertPath, logger }) {
+function generateWalletUnlockerClient ({ host, protoPath, tlsCertPath }) {
   const { lnrpc } = loadProto(protoPath)
 
   if (!fs.existsSync(tlsCertPath)) {
@@ -29,12 +29,7 @@ function generateWalletUnlockerClient ({ host, protoPath, tlsCertPath, logger })
   const tls = fs.readFileSync(tlsCertPath)
   const tlsCredentials = grpc.credentials.createSsl(tls)
 
-  try {
-    return new lnrpc.WalletUnlocker(host, tlsCredentials)
-  } catch (e) {
-    logger.error('Unable to create WalletUnlocker')
-    return null
-  }
+  return new lnrpc.WalletUnlocker(host, tlsCredentials)
 }
 
 module.exports = generateWalletUnlockerClient

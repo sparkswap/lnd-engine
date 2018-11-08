@@ -78,19 +78,4 @@ describe('generateWalletUnlockerClient', () => {
     generateWalletUnlockerClient(engine)
     expect(lnrpcProto).to.have.been.calledWith(host, tlsCreds)
   })
-
-  context('daemon is already initialized', () => {
-    beforeEach(() => {
-      loadProtoStub.returns({ lnrpc: {} })
-    })
-
-    it('returns null', () => {
-      expect(generateWalletUnlockerClient(engine)).to.be.eql(null)
-    })
-
-    it('logs an error', () => {
-      generateWalletUnlockerClient(engine)
-      expect(loggerErrorStub).to.have.been.calledWith('Unable to create WalletUnlocker')
-    })
-  })
 })
