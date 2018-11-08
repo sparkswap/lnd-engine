@@ -22,7 +22,7 @@ async function createWallet (password) {
 
   // This call merely resolves or rejects, there is no return value when the
   // wallet is initialized
-  await initWallet(walletPassword, cipherSeedMnemonic)
+  await initWallet(walletPassword, cipherSeedMnemonic, { client: this.walletUnlocker })
 
   return cipherSeedMnemonic
 }
