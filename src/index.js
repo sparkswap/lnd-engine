@@ -106,12 +106,17 @@ class LndEngine {
       console.log('action', action)
       console.log('vaidsdfsdf', this.validated)
       this[name] = (...args) => {
-        if (!this.validated) throw new Error(`${symbol} Engine is not ready yet`)
+        if (!this.validated()) throw new Error(`${symbol} Engine is not ready yet`)
         action.call(this, ...args)
       }
     })
 
     this.validateNodeConfig = validateNodeConfig
+  }
+
+  get validated () {
+    console.log('validateddddddd', this.validated)
+    return this.validated
   }
 }
 
