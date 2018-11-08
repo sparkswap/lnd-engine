@@ -24,7 +24,7 @@ async function validateNodeConfig () {
     throw new Error(`Mismatched configuration: Engine is configured for ${this.currencyConfig.chainName}, LND is configured for ${chainName}.`)
   }
 
-  return true
+  this.validated = true
 }
 
 module.exports = validateNodeConfig
