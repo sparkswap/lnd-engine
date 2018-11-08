@@ -29,6 +29,7 @@ const closeChannels = require('./close-channels')
 const getMaxChannel = require('./get-max-channel')
 const withdrawFunds = require('./withdraw-funds')
 const validateNode = require('./validate-node')
+const createWallet = require('./create-wallet')
 
 module.exports = {
   getInvoices,
