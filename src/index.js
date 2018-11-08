@@ -104,6 +104,7 @@ class LndEngine {
     Object.entries(actionsToValidate).forEach(([name, action]) => {
       console.log('name', name)
       console.log('action', action)
+      console.log('vaidsdfsdf', this.validated)
       this[name] = (...args) => {
         if (!this.validated) throw new Error(`${symbol} Engine is not ready yet`)
         action.call(this, ...args)
