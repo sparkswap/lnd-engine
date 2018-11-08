@@ -62,5 +62,6 @@ module.exports = {
   closeChannels,
   getMaxChannel,
   withdrawFunds,
-  validateNode
+  validateNode,
+  createWallet
 }
