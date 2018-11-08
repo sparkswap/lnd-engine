@@ -101,7 +101,9 @@ class LndEngine {
 
     this.client = generateLndClient(this.host, this.protoPath, this.tlsCertPath, this.macaroonPath)
     this.validated = false
-    actionsToValidate.entries().forEach(([name, action]) => {
+    Object.entries(actionsToValidate).forEach(([name, action]) => {
+      console.log('name', name)
+      console.log('action', action)
       this[name] = (...args) => {
         if (!this.validated) throw new Error(`${symbol} Engine is not ready yet`)
         action.call(this, ...args)
