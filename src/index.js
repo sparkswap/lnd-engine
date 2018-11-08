@@ -118,6 +118,10 @@ class LndEngine {
     console.log('validateddddddd', this.validated)
     return this.validated
   }
+
+  set validated (bool) {
+    this.validated = bool
+  }
 }
 
 module.exports = LndEngine
