@@ -17,7 +17,6 @@ const fs = require('fs')
  * @param {String} engine.protoPath
  * @param {String} engine.tlsCertPath
  * @returns {grpc.Client} lnrpc WalletUnlocker client definition
- * @returns {null}
  */
 function generateWalletUnlockerClient ({ host, protoPath, tlsCertPath }) {
   const { lnrpc } = loadProto(protoPath)

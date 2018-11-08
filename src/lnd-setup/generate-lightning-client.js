@@ -19,7 +19,6 @@ const fs = require('fs')
  * @param {String} engine.macaroonPath
  * @param {Logger} engine.logger
  * @returns {grpc.Client} lnrpc Lightning client definition
- * @returns {null}
  */
 function generateLightningClient ({ host, protoPath, tlsCertPath, macaroonPath, logger }) {
   const { lnrpc } = loadProto(protoPath)

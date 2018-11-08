@@ -28,6 +28,7 @@ const getOpenChannelCapacities = require('./get-open-channel-capacities')
 const closeChannels = require('./close-channels')
 const getMaxChannel = require('./get-max-channel')
 const withdrawFunds = require('./withdraw-funds')
+const validateNode = require('./validate-node')
 
 module.exports = {
   getInvoices,
@@ -59,5 +60,6 @@ module.exports = {
   getOpenChannelCapacities,
   closeChannels,
   getMaxChannel,
-  withdrawFunds
+  withdrawFunds,
+  validateNode
 }
