@@ -51,7 +51,9 @@ async function isEngineUnlocked (client) {
  * @throws {Error} Mismatched configuration if chain is different than engine configuration
  */
 async function validateNodeConfig () {
+  this.logger.info('Checking if the engine is unlocked')
   const isUnlocked = await isEngineUnlocked(this.client)
+  this.logger.info('OK we checked', isUnlocked)
 
   // We need to set the `isUnlocked` variable here so that end users can call the engine
   // and validate if the engine is available or not
