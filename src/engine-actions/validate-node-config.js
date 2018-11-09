@@ -2,10 +2,10 @@ const { getInfo } = require('../lnd-actions')
 
 /**
  * Validates this engine's configuration against the node it is
- * hooked up to.
+ * hooked up to. Sets the engine validated flag to true if all validations pass.
  *
  * @function
- * @return {Boolean} Whether the configuration matches the node
+ * @return {void}
  */
 async function validateNodeConfig () {
   const { chains = [] } = await getInfo({ client: this.client })
@@ -24,7 +24,7 @@ async function validateNodeConfig () {
     throw new Error(`Mismatched configuration: Engine is configured for ${this.currencyConfig.chainName}, LND is configured for ${chainName}.`)
   }
 
-  return true
+  this.validated = true
 }
 
 module.exports = validateNodeConfig

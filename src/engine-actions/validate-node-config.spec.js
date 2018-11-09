@@ -32,7 +32,7 @@ describe('validateNodeConfig', () => {
   })
 
   it('returns true if configuration matches', async () => {
-    expect(await validateNodeConfig.call(engine)).to.be.eql(true)
+    expect(await validateNodeConfig.call(engine)).to.be.eql(undefined)
   })
 
   it('throws if LND has more than one chain active', () => {
