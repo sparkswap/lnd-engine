@@ -32,12 +32,9 @@ sed 's|^import \"google/api/annotations.proto\";||' ./proto/lnd-rpc.proto > /tmp
 
 # If we want to build images with the command then we can use
 if [ "$ARG" == "local" ]; then
-  echo "building local broker docker images"
+  echo "Building local broker docker images"
   npm run build-images local
-elif [ "$ARG" == "experimental" ]; then
-  echo "building broker docker images"
-  npm run build-images experimental
-elif [ "$ARG" != "no-docker" ]; then
-  echo "building broker docker images"
+else
+  echo "Building broker docker images"
   npm run build-images
 fi
