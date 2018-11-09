@@ -1,68 +1,5 @@
 const { currencies } = require('./config')
-const {
-  getInvoices,
-  getPublicKey,
-  getUncommittedBalance,
-  getConfirmedBalance,
-  getUnconfirmedBalance,
-  getInvoiceValue,
-  getTotalChannelBalance,
-  createChannel,
-  createInvoice,
-  createNewAddress,
-  createSwapHash,
-  isAvailable,
-  isInvoicePaid,
-  isBalanceSufficient,
-  payInvoice,
-  prepareSwap,
-  executeSwap,
-  createRefundInvoice,
-  validateNodeConfig,
-  getPaymentChannelNetworkAddress,
-  translateSwap,
-  getSettledSwapPreimage,
-  numChannelsForAddress,
-  getTotalPendingChannelBalance,
-  getUncommittedPendingBalance,
-  getPendingChannelCapacities,
-  getOpenChannelCapacities,
-  closeChannels,
-  getMaxChannel,
-  withdrawFunds
-} = require('./engine-actions')
-const actionsToValidate = {
-  getInvoices,
-  getPublicKey,
-  getUncommittedBalance,
-  getConfirmedBalance,
-  getUnconfirmedBalance,
-  getInvoiceValue,
-  getTotalChannelBalance,
-  createChannel,
-  createInvoice,
-  createNewAddress,
-  createSwapHash,
-  isAvailable,
-  isInvoicePaid,
-  isBalanceSufficient,
-  payInvoice,
-  prepareSwap,
-  executeSwap,
-  createRefundInvoice,
-  getPaymentChannelNetworkAddress,
-  translateSwap,
-  getSettledSwapPreimage,
-  numChannelsForAddress,
-  getTotalPendingChannelBalance,
-  getUncommittedPendingBalance,
-  getPendingChannelCapacities,
-  getOpenChannelCapacities,
-  closeChannels,
-  getMaxChannel,
-  withdrawFunds
-}
-
+const { validationDependentActions, validationIndependentActions } = require('./engine-actions')
 const { generateLndClient } = require('./lnd-setup')
 const LND_PROTO_FILE_PATH = require.resolve('../proto/lnd-rpc.proto')
 
@@ -101,26 +38,16 @@ class LndEngine {
 
     this.client = generateLndClient(this.host, this.protoPath, this.tlsCertPath, this.macaroonPath)
     this.validated = false
-    Object.entries(actionsToValidate).forEach(([name, action]) => {
-      console.log('name', name)
-      console.log('action', action)
-      console.log('vaidsdfsdf', this.validated)
+    Object.entries(validationDependentActions).forEach(([name, action]) => {
       this[name] = (...args) => {
-        if (!this.validated()) throw new Error(`${symbol} Engine is not ready yet`)
-        action.call(this, ...args)
+        if (!this.validated) throw new Error(`${symbol} Engine is not ready yet`)
+        return action.call(this, ...args)
       }
     })
 
-    this.validateNodeConfig = validateNodeConfig
-  }
-
-  get validated () {
-    console.log('validateddddddd', this.validated)
-    return this.validated
-  }
-
-  set validated (bool) {
-    this.validated = bool
+    Object.entries(validationIndependentActions).forEach(([name, action]) => {
+      this[name] = action
+    })
   }
 }
 
