@@ -28,6 +28,7 @@ async function isEngineUnlocked () {
     // In GRPC, "unimplemented" indicates operation is not implemented or not
     // supported/enabled in this specific service. In our case, this means the
     // WalletUnlocker RPC has been turned off and the Lightning RPC is now functional
+    this.logger.info('what the', { error: e.stack })
     if (e.code && e.code === UNIMPLEMENTED_SERVICE_CODE) {
       return true
     }
