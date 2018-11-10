@@ -1,7 +1,7 @@
 const {
-  getInfo,
-  isEngineUnlocked
+  getInfo
 } = require('../lnd-actions')
+const isEngineUnlocked = require('./is-engine-unlocked')
 
 /**
  * Validates this engine's configuration against the node it is
