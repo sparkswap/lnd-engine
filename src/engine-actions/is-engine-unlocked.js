@@ -19,24 +19,26 @@ const UNIMPLEMENTED_SERVICE_CODE = 12
  * @return {Boolean} isEngineUnlocked
  */
 async function isEngineUnlocked () {
+  // By default, we return false because it means the error was unrelated to the
+  // response we were expecting. The user will need to check the underlying daemon.
+  let isUnlocked = false
+
   try {
     // If the call to `genSeed` succeeds, then we can assume that our LND instance
     // is unlocked and functional
     await genSeed({ client: this.walletUnlocker })
-    return false
   } catch (e) {
+    this.logger.debug('Error received when checking for engine unlock')
+
     // In GRPC, "unimplemented" indicates operation is not implemented or not
     // supported/enabled in this specific service. In our case, this means the
     // WalletUnlocker RPC has been turned off and the Lightning RPC is now functional
-    this.logger.info('what the', { error: e.stack, code: e.code, status: e.status })
     if (e.code && e.code === UNIMPLEMENTED_SERVICE_CODE) {
-      return true
+      isUnlocked = true
     }
-
-    // We return false, because it means the error was unrelated to the response we were
-    // expecting which means the node is down and the user will now have to troubleshoot further
-    return false
   }
+
+  return isUnlocked
 }
 
 module.exports = isEngineUnlocked
