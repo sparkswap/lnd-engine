@@ -19,10 +19,6 @@ const UNIMPLEMENTED_SERVICE_CODE = 12
  * @return {Boolean} isEngineUnlocked
  */
 async function isEngineUnlocked () {
-  // By default, we return false because it means the error was unrelated to the
-  // response we were expecting. The user will need to check the underlying daemon.
-  let isUnlocked = false
-
   try {
     // If the call to `genSeed` succeeds, then we can assume that our LND instance
     // is unlocked and functional
@@ -34,11 +30,13 @@ async function isEngineUnlocked () {
     // supported/enabled in this specific service. In our case, this means the
     // WalletUnlocker RPC has been turned off and the Lightning RPC is now functional
     if (e.code && e.code === UNIMPLEMENTED_SERVICE_CODE) {
-      isUnlocked = true
+      return true
     }
   }
 
-  return isUnlocked
+  // By default, we return false because it means the error was unrelated to the
+  // response we were expecting. The user will need to check the underlying daemon.
+  return false
 }
 
 module.exports = isEngineUnlocked
