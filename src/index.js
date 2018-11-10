@@ -50,9 +50,6 @@ class LndEngine {
     this.client = generateLightningClient(this)
     this.walletUnlocker = generateWalletUnlockerClient(this)
 
-    // This value is mutated in `validateNodeConfig`
-    this.isUnlocked = false
-
     Object.assign(this, actions)
   }
 }

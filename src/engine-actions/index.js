@@ -28,7 +28,7 @@ const getOpenChannelCapacities = require('./get-open-channel-capacities')
 const closeChannels = require('./close-channels')
 const getMaxChannel = require('./get-max-channel')
 const withdrawFunds = require('./withdraw-funds')
-const validateNode = require('./validate-node')
+const isEngineUnlocked = require('./is-engine-unlocked')
 const createWallet = require('./create-wallet')
 
 module.exports = {
@@ -62,6 +62,6 @@ module.exports = {
   closeChannels,
   getMaxChannel,
   withdrawFunds,
-  validateNode,
-  createWallet
+  createWallet,
+  isEngineUnlocked
 }

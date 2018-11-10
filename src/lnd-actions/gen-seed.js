@@ -6,7 +6,6 @@ const { deadline } = require('../grpc-utils')
  * @function
  * @see {@link http://api.lightning.community/#genSeed}
  * @return {Object} res
- * @return {Object} cipherSeedMnemonic
  */
 function genSeed ({ client }) {
   return new Promise((resolve, reject) => {

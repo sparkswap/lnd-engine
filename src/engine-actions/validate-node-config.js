@@ -1,5 +1,6 @@
 const {
-  getInfo
+  getInfo,
+  isEngineUnlocked
 } = require('../lnd-actions')
 
 /**
@@ -7,12 +8,22 @@ const {
  * hooked up to.
  *
  * @function
- * @return {True} Node is configured correctly
+ * @return {Boolean} Node is configured correctly
  * @throws {Error} LND has no chains configured
  * @throws {Error} LND can only support one active chain at a time
  * @throws {Error} Mismatched configuration if chain is different than engine configuration
  */
 async function validateNodeConfig () {
+  const isUnlocked = await isEngineUnlocked.call(this)
+
+  if (!isUnlocked) {
+    // If the engine is not unlocked then the subsequent call to getInfo
+    // will fail, so instead we will just return and have the application
+    // handle this case
+    this.logger.warn(`LND ENGINE - Engine for ${this.symbol} is not unlocked`)
+    return false
+  }
+
   const { chains = [] } = await getInfo({ client: this.client })
 
   if (chains.length === 0) {
