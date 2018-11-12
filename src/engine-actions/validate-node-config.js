@@ -20,8 +20,6 @@ async function validateNodeConfig () {
     // handle this case
     this.logger.warn(`LND ENGINE - Engine for ${this.symbol} is not unlocked`)
     return
-  } else {
-    this.logger.debug(`LND ENGINE - Engine for ${this.symbol} is unlocked`)
   }
 
   const { chains = [] } = await getInfo({ client: this.client })
