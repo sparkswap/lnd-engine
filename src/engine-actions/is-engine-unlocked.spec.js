@@ -9,10 +9,7 @@ describe('isEngineUnlocked', () => {
 
   beforeEach(() => {
     engine = {
-      walletUnlocker: sinon.stub(),
-      logger: {
-        debug: sinon.stub()
-      }
+      walletUnlocker: sinon.stub()
     }
     genSeedStub = sinon.stub()
 
@@ -41,10 +38,6 @@ describe('isEngineUnlocked', () => {
 
     beforeEach(async () => {
       res = await isEngineUnlocked.call(engine)
-    })
-
-    it('creates a debug log', () => {
-      expect(engine.logger.debug).to.have.been.calledWith(sinon.match('Error received'))
     })
 
     it('returns true if an engine is unlocked', () => {
