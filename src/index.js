@@ -55,7 +55,6 @@ class LndEngine {
 
     Object.entries(validationDependentActions).forEach(([name, action]) => {
       this[name] = (...args) => {
-        this.logger.info('What', { validated: this.validated })
         if (!this.validated) throw new Error(`${symbol} Engine is not ready yet`)
         return action.call(this, ...args)
       }

@@ -27,7 +27,8 @@ describe('validateNodeConfig', () => {
     }
     engine = {
       logger: {
-        warn: warnStub
+        warn: warnStub,
+        debug: sinon.stub()
       },
       client: clientStub,
       currencyConfig
