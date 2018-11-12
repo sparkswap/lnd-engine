@@ -53,7 +53,6 @@ class LndEngine {
     this.macaroonPath = macaroonPath
     this.protoPath = LND_PROTO_FILE_PATH
     this.client = generateLndClient(this.host, this.protoPath, this.tlsCertPath, this.macaroonPath)
-    this.validated = false
 
     // We wrap all validation dependent actions in a callback so we can prevent
     // their use if the current engine is in an invalid state.
@@ -78,6 +77,9 @@ class LndEngine {
       this[name] = action
     })
 
+    // We set validated to false by default, however this will be modified in the
+    // `validateNodeConfig` action
+    this.validated = false
     this.validateEngine()
   }
 
