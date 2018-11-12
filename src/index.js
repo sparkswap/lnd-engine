@@ -25,7 +25,7 @@ class LndEngine {
    * LndEngine Constructor
    *
    * @class
-   * @param {String} host - host grpc address
+   * @param {String} host - host gRPC address
    * @param {String} symbol Common symbol of the currency this engine supports (e.g. `BTC`)
    * @param {Object} options
    * @param {Logger} [options.logger=console] - logger used by the engine
@@ -52,11 +52,11 @@ class LndEngine {
     this.client = generateLightningClient(this)
     this.walletUnlocker = generateWalletUnlockerClient(this)
     this.validated = false
-    this.validate = () => this.validated
 
     Object.entries(validationDependentActions).forEach(([name, action]) => {
       this[name] = (...args) => {
-        if (!this.validate()) throw new Error(`${symbol} Engine is not ready yet`)
+        this.logger.info('What', { validated: this.validated })
+        if (!this.validated) throw new Error(`${symbol} Engine is not ready yet`)
         return action.call(this, ...args)
       }
     })
