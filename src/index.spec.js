@@ -42,7 +42,6 @@ describe('lnd-engine index', () => {
     it('sets a logger', () => expect(engine.logger).to.eql(logger))
     it('sets a tlsCertPath', () => expect(engine.tlsCertPath).to.eql(customTlsCertPath))
     it('sets a macaroonPath', () => expect(engine.macaroonPath).to.eql(customMacaroonPath))
-    it('sets isUnlocked to false', () => expect(engine.isUnlocked).to.eql(false))
 
     it('generates an lnd lightning client', () => {
       expect(clientStub).to.have.been.calledWith(engine)
@@ -55,6 +54,7 @@ describe('lnd-engine index', () => {
     it('throws if the currency is not in available configuration', () => {
       expect(() => { new LndEngine(host, 'XYZ') }).to.throw('not a valid symbol') // eslint-disable-line
     })
+
     it('fails if no host is specified', () => {
       expect(() => new LndEngine(null, symbol)).to.throw('Host is required')
     })

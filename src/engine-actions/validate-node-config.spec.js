@@ -9,21 +9,45 @@ describe('validateNodeConfig', () => {
   let clientStub
   let currencyConfig
   let engine
+  let walletUnlockedStub
+  let warnStub
 
   beforeEach(() => {
     getInfoResponse = { chains: [ 'bitcoin' ] }
     getInfoStub = sinon.stub().returns(getInfoResponse)
+    walletUnlockedStub = sinon.stub().resolves(true)
+    warnStub = sinon.stub()
 
     validateNodeConfig.__set__('getInfo', getInfoStub)
+    validateNodeConfig.__set__('isEngineUnlocked', { call: walletUnlockedStub })
 
     clientStub = sinon.stub()
     currencyConfig = {
       chainName: 'bitcoin'
     }
     engine = {
+      logger: {
+        warn: warnStub
+      },
       client: clientStub,
       currencyConfig
     }
+  })
+
+  context('wallet is not unlocked', () => {
+    let res
+
+    beforeEach(async () => {
+      walletUnlockedStub.resolves(false)
+      res = await validateNodeConfig.call(engine)
+    })
+    it('warns the user if a if a wallet is not unlocked', () => {
+      expect(warnStub).to.have.been.calledWith(sinon.match('is not unlocked'))
+    })
+
+    it('returns false if wallet is not unlocked', () => {
+      expect(res).to.be.eql(false)
+    })
   })
 
   it('gets info on a specified lnd instance', async () => {
