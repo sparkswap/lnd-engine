@@ -35,28 +35,16 @@ describe('validateNodeConfig', () => {
   })
 
   context('wallet is not unlocked', () => {
-    let res
-
-    beforeEach(async () => {
+    it('warns the user if a if a wallet is not unlocked', async () => {
       walletUnlockedStub.resolves(false)
-      res = await validateNodeConfig.call(engine)
-    })
-    it('warns the user if a if a wallet is not unlocked', () => {
+      await validateNodeConfig.call(engine)
       expect(warnStub).to.have.been.calledWith(sinon.match('is not unlocked'))
-    })
-
-    it('returns false if wallet is not unlocked', () => {
-      expect(res).to.be.eql(false)
     })
   })
 
   it('gets info on a specified lnd instance', async () => {
     await validateNodeConfig.call(engine)
     expect(getInfoStub).to.have.been.calledWith(sinon.match({ client: clientStub }))
-  })
-
-  it('returns true if configuration matches', async () => {
-    expect(await validateNodeConfig.call(engine)).to.be.eql(true)
   })
 
   it('throws if LND has more than one chain active', () => {

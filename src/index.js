@@ -5,7 +5,10 @@ const {
   generateLightningClient,
   generateWalletUnlockerClient
 } = require('./lnd-setup')
-const actions = require('./engine-actions')
+const {
+  validationDependentActions,
+  validationIndependentActions
+} = require('./engine-actions')
 
 /**
  * @constant
@@ -46,11 +49,20 @@ class LndEngine {
     this.tlsCertPath = tlsCertPath
     this.macaroonPath = macaroonPath
     this.protoPath = LND_PROTO_FILE_PATH
-
     this.client = generateLightningClient(this)
     this.walletUnlocker = generateWalletUnlockerClient(this)
+    this.validated = false
 
-    Object.assign(this, actions)
+    Object.entries(validationDependentActions).forEach(([name, action]) => {
+      this[name] = (...args) => {
+        if (!this.validated) throw new Error(`${symbol} Engine is not ready yet`)
+        return action.call(this, ...args)
+      }
+    })
+
+    Object.entries(validationIndependentActions).forEach(([name, action]) => {
+      this[name] = action
+    })
   }
 }
 

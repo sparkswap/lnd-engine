@@ -7,6 +7,8 @@ describe('lnd-engine index', () => {
   let clientStub
   let walletStub
   let currencies
+  let validationIndependentActions
+  let validationDependentActions
 
   beforeEach(() => {
     clientStub = sinon.stub()
@@ -16,10 +18,18 @@ describe('lnd-engine index', () => {
         symbol: 'BTC'
       }
     ]
+    validationDependentActions = {
+      getInvoices: sinon.stub().resolves()
+    }
 
-    LndEngine.__set__('actions', {})
+    validationIndependentActions = {
+      validateNodeConfig: sinon.stub()
+    }
+
     LndEngine.__set__('generateLightningClient', clientStub)
     LndEngine.__set__('generateWalletUnlockerClient', walletStub)
+    LndEngine.__set__('validationDependentActions', validationDependentActions)
+    LndEngine.__set__('validationIndependentActions', validationIndependentActions)
     LndEngine.__set__('currencies', currencies)
   })
 
@@ -57,6 +67,25 @@ describe('lnd-engine index', () => {
 
     it('fails if no host is specified', () => {
       expect(() => new LndEngine(null, symbol)).to.throw('Host is required')
+    })
+
+    it('assigns actions', () => {
+      expect(engine.validateNodeConfig).to.not.be.undefined()
+      expect(engine.getInvoices).to.not.be.undefined()
+    })
+
+    it('throws an error if a validation dependent action is called and the engine is not validated', () => {
+      return expect(() => engine.getInvoices()).to.throw()
+    })
+
+    it('does not throw an error if a validation dependent action is called and the engine is not validated', () => {
+      return expect(() => engine.validateNodeConfig()).to.not.throw()
+    })
+
+    it('calls the action if the engine is validated', () => {
+      engine.validated = true
+      engine.getInvoices('test', 'args')
+      return expect(validationDependentActions.getInvoices).to.be.calledWith('test', 'args')
     })
   })
 })

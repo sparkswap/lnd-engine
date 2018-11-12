@@ -3,13 +3,13 @@ const isEngineUnlocked = require('./is-engine-unlocked')
 
 /**
  * Validates this engine's configuration against the node it is
- * hooked up to.
+ * hooked up to. Sets the engine validated flag to true if all validations pass.
  *
  * @function
- * @return {Boolean} Node is configured correctly
  * @throws {Error} LND has no chains configured
  * @throws {Error} LND can only support one active chain at a time
  * @throws {Error} Mismatched configuration if chain is different than engine configuration
+ * @return {void}
  */
 async function validateNodeConfig () {
   const isUnlocked = await isEngineUnlocked.call(this)
@@ -19,7 +19,7 @@ async function validateNodeConfig () {
     // will fail, so instead we will just return and have the application
     // handle this case
     this.logger.warn(`LND ENGINE - Engine for ${this.symbol} is not unlocked`)
-    return false
+    return
   }
 
   const { chains = [] } = await getInfo({ client: this.client })
@@ -38,7 +38,7 @@ async function validateNodeConfig () {
     throw new Error(`Mismatched configuration: Engine is configured for ${this.currencyConfig.chainName}, LND is configured for ${chainName}.`)
   }
 
-  return true
+  this.validated = true
 }
 
 module.exports = validateNodeConfig
