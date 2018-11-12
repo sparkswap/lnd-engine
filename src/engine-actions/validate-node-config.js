@@ -1,6 +1,4 @@
-const {
-  getInfo
-} = require('../lnd-actions')
+const { getInfo } = require('../lnd-actions')
 const isEngineUnlocked = require('./is-engine-unlocked')
 
 /**
