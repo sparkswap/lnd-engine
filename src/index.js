@@ -52,10 +52,11 @@ class LndEngine {
     this.client = generateLightningClient(this)
     this.walletUnlocker = generateWalletUnlockerClient(this)
     this.validated = false
+    this.validate = () => this.validated
 
     Object.entries(validationDependentActions).forEach(([name, action]) => {
       this[name] = (...args) => {
-        if (!this.validated) throw new Error(`${symbol} Engine is not ready yet`)
+        if (!this.validate()) throw new Error(`${symbol} Engine is not ready yet`)
         return action.call(this, ...args)
       }
     })
