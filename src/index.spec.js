@@ -82,7 +82,7 @@ describe('lnd-engine index', () => {
     })
   })
 
-  describe('#validateEngines', () => {
+  describe('#validateEngine', () => {
     const symbol = 'BTC'
     const host = 'CUSTOM_HOST:1337'
     const customTlsCertPath = '/custom/cert/path'
