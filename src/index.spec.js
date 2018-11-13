@@ -106,7 +106,7 @@ describe('lnd-engine index', () => {
 
     it('wraps a function in exponential backoff', async () => {
       await engine.validateEngine()
-      expect(exponentialStub).to.have.been.calledWith(sinon.match.func, { symbol }, { errorMessage: sinon.match('Engine failed') })
+      expect(exponentialStub).to.have.been.calledWith(sinon.match.func, { symbol }, { errorMessage: sinon.match('Engine failed'), logger })
     })
 
     it('logs if validation is successful', async () => {

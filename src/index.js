@@ -20,7 +20,7 @@ class LndEngine {
    * @param {String} options.macaroonPath - file path to the macaroon file for LND
    * @param {Boolean} [options.validations=true]
    */
-  constructor (host, symbol, { logger = console, tlsCertPath, macaroonPath, validations = true } = {}) {
+  constructor (host, symbol, { logger = console, tlsCertPath, macaroonPath } = {}) {
     if (!host) {
       throw new Error('Host is required for lnd-engine initialization')
     }
@@ -42,12 +42,6 @@ class LndEngine {
     // We set validated to false by default, however this will be modified in the
     // `validateNodeConfig` action
     this.validated = false
-
-    // We use a `validations` flag to determine if the engine should validate it self
-    // vs. if the parent application would like to run synchronous validations manually
-    if (validations) {
-      this.validateEngine()
-    }
 
     // We wrap all validation dependent actions in a callback so we can prevent
     // their use if the current engine is in an invalid state.
@@ -85,7 +79,8 @@ class LndEngine {
       // for a period of time, until it is either successful or there is actually something wrong.
       const validationCall = () => this.validateNodeConfig()
       const payload = { symbol: this.symbol }
-      await exponentialBackoff.call(this, validationCall, payload, { errorMessage: 'Engine failed to validate. Retrying' })
+      const errorMessage = 'Engine failed to validate. Retrying'
+      await exponentialBackoff(validationCall, payload, { errorMessage, logger: this.logger })
     } catch (e) {
       return this.logger.error(`Failed to validate engine for ${this.symbol}, error: ${e}`, { error: e })
     }

@@ -11,7 +11,6 @@ describe('exponentialBackoff', () => {
   let logger
   let res
   let payload
-  let engine
 
   beforeEach(() => {
     res = 'response'
@@ -21,20 +20,19 @@ describe('exponentialBackoff', () => {
     logger = {
       error: sinon.stub()
     }
-    engine = { logger }
     delay = sinon.stub().resolves()
     payload = { symbol: 'BTC' }
     exponentialBackoff.__set__('delay', delay)
   })
 
   it('calls the call function', async () => {
-    await exponentialBackoff.call(engine, callFunction, payload, null, attempts)
+    await exponentialBackoff(callFunction, payload, { attempts, delayTime, logger })
 
     expect(callFunction).to.be.to.have.been.calledOnce()
   })
 
   it('returns the response of the callFunction if there were no errors', async () => {
-    const result = await exponentialBackoff.call(engine, callFunction, payload, null, attempts)
+    const result = await exponentialBackoff(callFunction, payload, { attempts, delayTime, logger })
     expect(result).to.eql(res)
   })
 
@@ -42,7 +40,7 @@ describe('exponentialBackoff', () => {
     callFunction = sinon.stub()
     callFunction.onCall(0).rejects('Error')
     callFunction.onCall(1).resolves()
-    await exponentialBackoff.call(engine, callFunction, payload, null, attempts, delayTime)
+    await exponentialBackoff(callFunction, payload, { attempts, delayTime, logger })
     expect(logger.error).to.have.been.called()
     expect(delay).to.have.been.calledWith(delayTime)
     expect(callFunction).to.have.been.calledTwice()
@@ -52,7 +50,7 @@ describe('exponentialBackoff', () => {
     callFunction = sinon.stub()
     callFunction.onCall(0).rejects('Error')
     callFunction.onCall(1).resolves()
-    await exponentialBackoff.call(engine, callFunction, payload, null, attempts)
+    await exponentialBackoff(callFunction, payload, { attempts, delayTime, logger })
 
     expect(delay.getCall(0).calledBefore(callFunction.getCall(1))).to.be.true()
   })
@@ -70,7 +68,7 @@ describe('exponentialBackoff', () => {
       })
     })
 
-    exponentialBackoff.call(engine, callFunction, payload, null, attempts, delayTime)
+    exponentialBackoff(callFunction, payload, { attempts, delayTime, logger })
 
     setImmediate(() => {
       expect(callFunction).to.have.been.calledOnce()
