@@ -18,8 +18,9 @@ class LndEngine {
    * @param {Logger} [options.logger=console] - logger used by the engine
    * @param {String} options.tlsCertPath - file path to the TLS certificate for LND
    * @param {String} options.macaroonPath - file path to the macaroon file for LND
+   * @param {Boolean} [options.validations=true]
    */
-  constructor (host, symbol, { logger = console, tlsCertPath, macaroonPath } = {}) {
+  constructor (host, symbol, { logger = console, tlsCertPath, macaroonPath, validations = true } = {}) {
     if (!host) {
       throw new Error('Host is required for lnd-engine initialization')
     }
@@ -64,24 +65,27 @@ class LndEngine {
     // We set validated to false by default, however this will be modified in the
     // `validateNodeConfig` action
     this.validated = false
-    this.validateEngine()
+
+    // We use a `validations` flag to determine if the engine should validate it self
+    // vs. if the parent application would like to run synchronous validations manually
+    if (validations) {
+      this.validateEngine()
+    }
   }
 
   /**
-   * Validates engine
+   * Validates the current engine
    *
-   * We do not await this function because we want the validations to run in the background.
-   * It can take time for the engines to be ready, so we use exponential backoff to retry validation
-   * for a period of time, until it is either successful or there is actually something wrong.
    * @returns {void}
    */
   async validateEngine () {
     try {
-      const validation = () => this.validateNodeConfig()
+      // We do not await this function because we want the validations to run in the background.
+      // It can take time for the engines to be ready, so we use exponential backoff to retry validation
+      // for a period of time, until it is either successful or there is actually something wrong.
+      const validationCall = () => this.validateNodeConfig()
       const payload = { symbol: this.symbol }
-      // const errorMessage = 'Engine failed to validate. Retrying'
-      const errorMessage = null
-      await exponentialBackoff.call(this, validation, payload, { errorMessage })
+      await exponentialBackoff.call(this, validationCall, payload, { errorMessage: 'Engine failed to validate. Retrying' })
     } catch (e) {
       return this.logger.error(`Failed to validate engine for ${this.symbol}, error: ${e}`)
     }
