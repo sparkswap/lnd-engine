@@ -42,7 +42,7 @@ describe('lnd-engine index', () => {
     let engine
 
     beforeEach(() => {
-      engine = new LndEngine(host, symbol, { logger, tlsCertPath: customTlsCertPath, macaroonPath: customMacaroonPath })
+      engine = new LndEngine(host, symbol, { logger, tlsCertPath: customTlsCertPath, macaroonPath: customMacaroonPath, validations: false })
     })
 
     it('generates an lnd client', () => expect(clientStub).to.have.been.calledWith(host, protoFilePath, customTlsCertPath, customMacaroonPath))
@@ -52,10 +52,12 @@ describe('lnd-engine index', () => {
     it('sets a logger', () => expect(engine.logger).to.eql(logger))
     it('sets a tlsCertPath', () => expect(engine.tlsCertPath).to.eql(customTlsCertPath))
     it('sets a macaroonPath', () => expect(engine.macaroonPath).to.eql(customMacaroonPath))
+    it('sets validated to false by default', () => expect(engine.validated).to.be.eql(false))
 
     it('throws if the currency is not in available configuration', () => {
       expect(() => { new LndEngine(host, 'XYZ') }).to.throw('not a valid symbol') // eslint-disable-line
     })
+
     it('fails if no host is specified', () => {
       expect(() => new LndEngine(null, symbol)).to.throw('Host is required')
     })
@@ -81,62 +83,41 @@ describe('lnd-engine index', () => {
   })
 
   describe('#validateEngines', () => {
-    let attempts
-    let delay
-    let btcEngine
-    let ltcEngine
+    const symbol = 'BTC'
+    const host = 'CUSTOM_HOST:1337'
+    const customTlsCertPath = '/custom/cert/path'
+    const customMacaroonPath = '/custom/macaroon/path'
+
+    let engine
+    let exponentialStub
+    let logger
 
     beforeEach(() => {
-      brokerDaemon = new BrokerDaemon(brokerDaemonOptions)
-
-      btcEngine = {
-        validateNodeConfig: sinon.stub().resolves()
+      exponentialStub = sinon.stub()
+      logger = {
+        info: sinon.stub(),
+        error: sinon.stub()
       }
-      ltcEngine = {
-        validateNodeConfig: sinon.stub().resolves()
-      }
-      brokerDaemon.engines = new Map([
-        [ 'BTC', btcEngine ],
-        [ 'LTC', ltcEngine ]
-      ])
 
-      attempts = BrokerDaemon.__get__('EXPONENTIAL_BACKOFF_ATTEMPTS')
-      delay = BrokerDaemon.__get__('EXPONENTIAL_BACKOFF_DELAY')
+      LndEngine.__set__('exponentialBackoff', exponentialStub)
+
+      engine = new LndEngine(host, symbol, { logger, tlsCertPath: customTlsCertPath, macaroonPath: customMacaroonPath, validations: false })
     })
 
-    it('validates the node config on each engine', () => {
-      brokerDaemon.validateEngines()
-
-      const validateBtcEngine = exponentialBackoff.args[0][0]
-      const btcEngineRes = validateBtcEngine()
-
-      expect(btcEngine.validateNodeConfig).to.have.been.called()
-      expect(btcEngineRes).to.be.instanceOf(Promise)
-
-      const validateLtcEngine = exponentialBackoff.args[1][0]
-      const ltcEngineRes = validateLtcEngine()
-
-      expect(ltcEngine.validateNodeConfig).to.have.been.called()
-      expect(ltcEngineRes).to.be.instanceOf(Promise)
+    it('wraps a function in exponential backoff', async () => {
+      await engine.validateEngine()
+      expect(exponentialStub).to.have.been.calledWith(sinon.match.func, { symbol }, { errorMessage: sinon.match('Engine failed') })
     })
 
-    it('validates the engines in exponentialBackoff to allow for retries', () => {
-      brokerDaemon.validateEngines()
+    it('logs if validation is successful', async () => {
+      await engine.validateEngine()
+      expect(logger.info).to.have.been.calledWith(sinon.match('Validated engine'))
+    })
 
-      expect(exponentialBackoff).to.have.been.calledTwice()
-      expect(exponentialBackoff).to.have.been.calledWith(
-        sinon.match.func,
-        attempts,
-        delay,
-        {symbol: 'BTC'}
-      )
-
-      expect(exponentialBackoff).to.have.been.calledWith(
-        sinon.match.func,
-        attempts,
-        delay,
-        {symbol: 'LTC'}
-      )
+    it('logs error if exponentialBackoff fails', async () => {
+      exponentialStub.throws()
+      await engine.validateEngine()
+      expect(logger.error).to.have.been.calledWith(sinon.match('Failed to validate engine'))
     })
   })
 })

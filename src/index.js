@@ -39,6 +39,16 @@ class LndEngine {
     this.protoPath = LND_PROTO_FILE_PATH
     this.client = generateLndClient(this.host, this.protoPath, this.tlsCertPath, this.macaroonPath)
 
+    // We set validated to false by default, however this will be modified in the
+    // `validateNodeConfig` action
+    this.validated = false
+
+    // We use a `validations` flag to determine if the engine should validate it self
+    // vs. if the parent application would like to run synchronous validations manually
+    if (validations) {
+      this.validateEngine()
+    }
+
     // We wrap all validation dependent actions in a callback so we can prevent
     // their use if the current engine is in an invalid state.
     //
@@ -61,16 +71,6 @@ class LndEngine {
     Object.entries(validationIndependentActions).forEach(([name, action]) => {
       this[name] = action
     })
-
-    // We set validated to false by default, however this will be modified in the
-    // `validateNodeConfig` action
-    this.validated = false
-
-    // We use a `validations` flag to determine if the engine should validate it self
-    // vs. if the parent application would like to run synchronous validations manually
-    if (validations) {
-      this.validateEngine()
-    }
   }
 
   /**
@@ -87,7 +87,7 @@ class LndEngine {
       const payload = { symbol: this.symbol }
       await exponentialBackoff.call(this, validationCall, payload, { errorMessage: 'Engine failed to validate. Retrying' })
     } catch (e) {
-      return this.logger.error(`Failed to validate engine for ${this.symbol}, error: ${e}`)
+      return this.logger.error(`Failed to validate engine for ${this.symbol}, error: ${e}`, { error: e })
     }
 
     this.logger.info(`Validated engine configuration for ${this.symbol}`)
