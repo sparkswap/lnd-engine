@@ -5,22 +5,6 @@ const LND_PROTO_FILE_PATH = require.resolve('../proto/lnd-rpc.proto')
 const { exponentialBackoff } = require('./utils')
 
 /**
- * Attempts to retry validating an engine
- *
- * @constant
- * @type {String}
- */
-const EXPONENTIAL_BACKOFF_ATTEMPTS = 24
-
-/**
- * Delay in each retry attempt to validating an engine
- *
- * @constant
- * @type {Integer} milliseconds
- */
-const EXPONENTIAL_BACKOFF_DELAY = 5000
-
-/**
  * The public interface for interaction with an LND instance
  */
 class LndEngine {
@@ -94,7 +78,9 @@ class LndEngine {
   async validateEngine () {
     try {
       const validation = () => this.validateNodeConfig()
-      await exponentialBackoff.call(this, validation, EXPONENTIAL_BACKOFF_ATTEMPTS, EXPONENTIAL_BACKOFF_DELAY, { symbol: this.symbol })
+      const payload = { symbol: this.symbol }
+      const errorMessage = 'Engine failed to validate. Retrying'
+      await exponentialBackoff.call(this, validation, payload, { errorMessage })
     } catch (e) {
       return this.logger.error(`Failed to validate engine for ${this.symbol}, error: ${e}`)
     }

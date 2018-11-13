@@ -1,36 +1,63 @@
 const delay = require('./delay')
 
 /**
- * Delay milliseconds multiplier - Value in milliseconds on How much to delay each retry by
+ * Delay multiplier - Value in milliseconds
  *
  * @constant
- * @type {Integer} milliseconds
+ * @type {Number} milliseconds
  * @default
  */
 const DELAY_MULTIPLIER = 1.5
 
 /**
+ * Attempts to retry validating an engine
+ *
+ * @constant
+ * @type {Number}
+ * @default
+ */
+const EXPONENTIAL_BACKOFF_ATTEMPTS = 24
+
+/**
+ * Delay in each retry attempt to validating an engine
+ *
+ * @constant
+ * @type {Number} milliseconds
+ * @default
+ */
+const EXPONENTIAL_BACKOFF_DELAY = 5000
+
+/**
  * Calls a function repeatedly until success or throws if it fails on final retry
  *
- * @param {Function} callFunction - function to be called
- * @param {Integer} attempts - attempts left
- * @param {Integer} delayTime - delay in milliseconds between calls
- * @param {Object} payload - information to log in the error log for backoff
+ * @param {Function} callFunction
+ * @param {Object} [payload={}] - information for error log during backoff failures
+ * @param {Object} [opts={}]
+ * @param {String} opts.errorMessage
+ * @param {Number} [attempts=EXPONENTIAL_BACKOFF_ATTEMPTS] attempts - attempts left
+ * @param {Number} [delayTime=EXPONENTIAL_BACKOFF_DELAY] delayTime - delay in milliseconds between calls
  * @return {Promise}
  */
-async function exponentialBackoff (callFunction, attempts, delayTime, payload = {}) {
+async function exponentialBackoff (callFunction, payload = {}, { errorMessage } = {}, attempts = EXPONENTIAL_BACKOFF_ATTEMPTS, delayTime = EXPONENTIAL_BACKOFF_DELAY) {
   try {
     var res = await callFunction()
   } catch (error) {
     if (attempts > 0) {
       const attemptsLeft = attempts - 1
-      this.logger.error(`Error calling ${callFunction}. Retrying in ${delayTime / 1000} seconds, attempts left: ${attemptsLeft}`, payload)
+
+      if (errorMessage) {
+        this.logger.error(errorMessage, payload, delayTime, attemptsLeft, error)
+      } else {
+        this.logger.error(`Error calling ${callFunction}. Retrying in ${delayTime / 1000} seconds, attempts left: ${attemptsLeft}`, payload, error)
+      }
+
       await delay(delayTime)
       res = await exponentialBackoff.call(this, callFunction, attemptsLeft, delayTime * DELAY_MULTIPLIER, payload)
     } else {
       throw new Error(error, `Error with ${callFunction}, no retry attempts left`)
     }
   }
+
   return res
 }
 
