@@ -79,7 +79,8 @@ class LndEngine {
     try {
       const validation = () => this.validateNodeConfig()
       const payload = { symbol: this.symbol }
-      const errorMessage = 'Engine failed to validate. Retrying'
+      // const errorMessage = 'Engine failed to validate. Retrying'
+      const errorMessage = null
       await exponentialBackoff.call(this, validation, payload, { errorMessage })
     } catch (e) {
       return this.logger.error(`Failed to validate engine for ${this.symbol}, error: ${e}`)
