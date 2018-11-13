@@ -94,7 +94,7 @@ class LndEngine {
   async validateEngine () {
     try {
       const validation = () => this.validateNodeConfig()
-      await exponentialBackoff(validation, EXPONENTIAL_BACKOFF_ATTEMPTS, EXPONENTIAL_BACKOFF_DELAY, { symbol: this.symbol })
+      await exponentialBackoff.call(this, validation, EXPONENTIAL_BACKOFF_ATTEMPTS, EXPONENTIAL_BACKOFF_DELAY, { symbol: this.symbol })
     } catch (e) {
       return this.logger.error(`Failed to validate engine for ${this.symbol}, error: ${e}`)
     }
