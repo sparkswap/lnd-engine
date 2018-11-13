@@ -52,7 +52,7 @@ async function exponentialBackoff (callFunction, payload = {}, { errorMessage } 
       }
 
       await delay(delayTime)
-      res = await exponentialBackoff.call(this, callFunction, attemptsLeft, delayTime * DELAY_MULTIPLIER, payload)
+      res = await exponentialBackoff.call(this, callFunction, payload, { errorMessage }, attempts, delayTime)
     } else {
       throw new Error(error, `Error with ${callFunction}, no retry attempts left`)
     }
