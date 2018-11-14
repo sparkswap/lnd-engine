@@ -18,7 +18,6 @@ class LndEngine {
    * @param {Logger} [options.logger=console] - logger used by the engine
    * @param {String} options.tlsCertPath - file path to the TLS certificate for LND
    * @param {String} options.macaroonPath - file path to the macaroon file for LND
-   * @param {Boolean} [options.validations=true]
    */
   constructor (host, symbol, { logger = console, tlsCertPath, macaroonPath } = {}) {
     if (!host) {
