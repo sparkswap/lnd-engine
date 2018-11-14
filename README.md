@@ -60,7 +60,7 @@ Documentation is up-to-date as of v0.2.0-alpha-release
 
 ```
 isAvailable
-validateNodeConfig
+validateEngine
 ```
 
 ### Addresses
