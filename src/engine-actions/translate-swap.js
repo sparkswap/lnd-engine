@@ -55,6 +55,7 @@ function calculateTimeLock (extendedTimeLockDelta, secondsPerBlock, blockHeight)
 function sendToRouteSync (paymentHash, routes, { logger, client }) {
   return new Promise((resolve, reject) => {
     try {
+      logger.debug('Setting up stream to sendToRoute', { paymentHash })
       const stream = sendToRoute(paymentHash, routes, { client })
 
       const errorListener = (err = new Error('Unknown LND Error')) => {
