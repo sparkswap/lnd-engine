@@ -1,5 +1,5 @@
 const path = require('path')
-const { expect, rewire, sinon } = require('test/test-helper')
+const { expect, rewire, sinon, delay } = require('test/test-helper')
 
 const translateSwap = rewire(path.resolve(__dirname, 'translate-swap'))
 
@@ -33,10 +33,108 @@ describe('translate-swap', () => {
     })
   })
 
+  describe('sendToRouteSync', () => {
+    let sendToRouteStream
+    let sendToRouteStub
+    let sendToRouteSync
+    let paymentHash
+    let routes
+    let client
+    let logger
+
+    function streamReturns (stream, response) {
+      stream.on.withArgs('data').callsFake(async (evt, listener) => {
+        await delay(10)
+        listener(response)
+      })
+    }
+
+    function streamErrors (stream, error) {
+      stream.on.withArgs('error').callsFake(async (evt, listener) => {
+        await delay(10)
+        listener(error)
+      })
+    }
+
+    function streamCloses (stream) {
+      stream.on.withArgs('end').callsFake(async (evt, listener) => {
+        await delay(10)
+        listener()
+      })
+    }
+
+    beforeEach(() => {
+      sendToRouteStream = {
+        on: sinon.stub(),
+        removeListener: sinon.stub()
+      }
+      sendToRouteStub = sinon.stub().returns(sendToRouteStream)
+      translateSwap.__set__('sendToRoute', sendToRouteStub)
+
+      sendToRouteSync = translateSwap.__get__('sendToRouteSync')
+
+      client = 'fakeclient'
+      logger = {
+        info: sinon.stub(),
+        error: sinon.stub(),
+        debug: sinon.stub()
+      }
+      routes = []
+      paymentHash = 'fakehash'
+    })
+
+    it('calls sendToRoute on the client', () => {
+      sendToRouteSync(paymentHash, routes, { client, logger })
+
+      expect(sendToRouteStub).to.have.been.calledOnce()
+      expect(sendToRouteStub).to.have.been.calledWith(paymentHash, routes, sinon.match({ client }))
+    })
+
+    it('rejects on error while setting up the stream', () => {
+      sendToRouteStub.throws(new Error('fake error'))
+
+      return expect(sendToRouteSync(paymentHash, routes, { client, logger })).to.eventually.be.rejectedWith('fake error')
+    })
+
+    it('throws if the stream errors', () => {
+      streamErrors(sendToRouteStream, new Error('fake error'))
+
+      return expect(sendToRouteSync(paymentHash, routes, { client, logger })).to.eventually.be.rejectedWith('fake error')
+    })
+
+    it('throws if the stream closes early', () => {
+      streamCloses(sendToRouteStream)
+
+      return expect(sendToRouteSync(paymentHash, routes, { client, logger })).to.eventually.be.rejectedWith('closed stream')
+    })
+
+    it('returns the response from the subscription', async () => {
+      streamReturns(sendToRouteStream, { paymentPreimage: 'fakePreimage', paymentError: null })
+
+      const { paymentPreimage, paymentError } = await sendToRouteSync(paymentHash, routes, { client, logger })
+
+      expect(paymentPreimage).to.be.eql('fakePreimage')
+      expect(paymentError).to.be.null()
+    })
+
+    it('removes listeners', async () => {
+      streamReturns(sendToRouteStream, {})
+      await sendToRouteSync(paymentHash, routes, { client, logger })
+      const dataListener = sendToRouteStream.on.withArgs('data').args[0][1]
+      const endListener = sendToRouteStream.on.withArgs('end').args[0][1]
+      const errorListener = sendToRouteStream.on.withArgs('error').args[0][1]
+
+      expect(sendToRouteStream.removeListener).to.have.been.calledThrice()
+      expect(sendToRouteStream.removeListener).to.have.been.calledWith('data', dataListener)
+      expect(sendToRouteStream.removeListener).to.have.been.calledWith('end', endListener)
+      expect(sendToRouteStream.removeListener).to.have.been.calledWith('error', errorListener)
+    })
+  })
+
   describe('translateSwap', () => {
     let networkAddressFormatter
     let queryRoutes
-    let sendToRoute
+    let sendToRouteSync
     let getInfo
     let client
     let engine
@@ -68,12 +166,12 @@ describe('translate-swap', () => {
         parse: sinon.stub().withArgs(address).returns({ publicKey: pubKey })
       }
       queryRoutes = sinon.stub().resolves({ routes })
-      sendToRoute = sinon.stub().resolves({ paymentPreimage: preimage })
+      sendToRouteSync = sinon.stub().resolves({ paymentPreimage: preimage })
       getInfo = sinon.stub().resolves({ blockHeight })
 
       translateSwap.__set__('networkAddressFormatter', networkAddressFormatter)
       translateSwap.__set__('queryRoutes', queryRoutes)
-      translateSwap.__set__('sendToRoute', sendToRoute)
+      translateSwap.__set__('sendToRouteSync', sendToRouteSync)
       translateSwap.__set__('getInfo', getInfo)
 
       client = 'fakeclient'
@@ -129,8 +227,8 @@ describe('translate-swap', () => {
     it('sends to routes that are below the maximum time lock', async () => {
       await translateSwap.call(engine, address, swapHash, amount, extendedTimeLock)
 
-      expect(sendToRoute).to.have.been.calledOnce()
-      expect(sendToRoute).to.have.been.calledWith(swapHash, routes.slice(0, 2), { client })
+      expect(sendToRouteSync).to.have.been.calledOnce()
+      expect(sendToRouteSync).to.have.been.calledWith(swapHash, routes.slice(0, 2), { client, logger: engine.logger })
     })
 
     it('returns permanent error if there are no routes below the maximum time lock', async () => {
@@ -142,7 +240,7 @@ describe('translate-swap', () => {
     })
 
     it('returns permanent error if there is a payment error', async () => {
-      sendToRoute.resolves({ paymentError: 'fake error' })
+      sendToRouteSync.resolves({ paymentError: 'fake error' })
       expect(await translateSwap.call(engine, address, swapHash, amount, extendedTimeLock)).to.be.eql({ permanentError: 'fake error' })
     })
 
