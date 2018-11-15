@@ -8,17 +8,12 @@ const { deadline } = require('../grpc-utils')
  * @param {Buffer} walletPassword - password in bytes
  * @param {Array} cipherSeedMnemonic - generated from lnd (24 string array)
  * @param {Object} opts
- * @param {Client}
+ * @param {grpc.Client} opts.client
  * @return {Object} res - empty object for success
  */
 function initWallet (walletPassword, cipherSeedMnemonic, { client }) {
-  const request = {
-    walletPassword,
-    cipherSeedMnemonic
-  }
-
   return new Promise((resolve, reject) => {
-    client.initWallet(request, { deadline: deadline() }, (err, res) => {
+    client.initWallet({ walletPassword, cipherSeedMnemonic }, { deadline: deadline() }, (err, res) => {
       if (err) return reject(err)
       return resolve(res)
     })
