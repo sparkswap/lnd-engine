@@ -5,7 +5,7 @@ const {
 /**
  * Unlocks an engine's wallet
  *
- * @param {String} addr
+ * @param {String} walletPassword
  * @return {void}
  */
 async function unlockWallet (walletPassword) {
