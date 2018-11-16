@@ -8,12 +8,8 @@
  * @param {grpc.Client} client - WalletUnlocker rpc client
  * @return {Promise}
  */
-function unlockWallet (walletPassword, { client }) {
-  // If we are given a string, we need to convert this to bytes
-  // in order for gRPC to accept it
-  if (typeof walletPassword === 'string') {
-    walletPassword = Buffer.from(walletPassword, 'utf8')
-  }
+function unlockWallet (password, { client }) {
+  const walletPassword = Buffer.from(password, 'utf8')
 
   return new Promise((resolve, reject) => {
     client.unlockWallet({ walletPassword }, (err, res) => {
