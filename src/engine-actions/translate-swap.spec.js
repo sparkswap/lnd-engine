@@ -44,7 +44,7 @@ describe('translate-swap', () => {
 
     function streamReturns (stream, response) {
       stream.on.withArgs('data').callsFake(async (evt, listener) => {
-        await delay(10)
+        await delay(5)
         listener(response)
       })
     }
@@ -134,13 +134,21 @@ describe('translate-swap', () => {
       expect(sendToRouteStream.cancel).to.have.been.calledOnce()
     })
 
-    it('removes listeners', async () => {
-      streamReturns(sendToRouteStream, {})
-      await sendToRouteSync(paymentHash, routes, { client, logger })
+    it('cleans up without throwing if we initiated a cancel', async () => {
+      streamReturns(sendToRouteStream, { paymentPreimage: 'fakePreimage' })
+      const cancelledError = new Error('CANCELLED')
+      cancelledError.code = 1
+      streamErrors(sendToRouteStream, cancelledError)
+
+      const { paymentPreimage } = await sendToRouteSync(paymentHash, routes, { client, logger })
+
+      await delay(10)
+
       const dataListener = sendToRouteStream.on.withArgs('data').args[0][1]
       const endListener = sendToRouteStream.on.withArgs('end').args[0][1]
       const errorListener = sendToRouteStream.on.withArgs('error').args[0][1]
 
+      expect(paymentPreimage).to.be.eql('fakePreimage')
       expect(sendToRouteStream.removeListener).to.have.been.calledThrice()
       expect(sendToRouteStream.removeListener).to.have.been.calledWith('data', dataListener)
       expect(sendToRouteStream.removeListener).to.have.been.calledWith('end', endListener)

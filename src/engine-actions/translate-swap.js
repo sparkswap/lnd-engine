@@ -45,6 +45,14 @@ function calculateTimeLock (extendedTimeLockDelta, secondsPerBlock, blockHeight)
 }
 
 /**
+ * gRPC error code for a CANCELLED request, either by a client or a server
+ * @see {@link https://github.com/grpc/grpc/blob/master/doc/statuscodes.md}
+ * @constant
+ * @type {Number}
+ */
+const CANCELLED_CODE = 1
+
+/**
  * Use the sendToRoute function as though it returned a promise
  * @param  {String}      paymentHash     Base64 string of the payment hash to pay for
  * @param  {Array}       routes          Routes to use
@@ -58,9 +66,20 @@ function sendToRouteSync (paymentHash, routes, { logger, client }) {
       logger.debug('Setting up stream to sendToRoute', { paymentHash })
       const stream = sendToRoute({ client })
 
+      // keep local state of whether we cancelled so that we can
+      // handle a CANCELLED error message appropriately
+      let clientCancel = false
+
       const errorListener = (err = new Error('Unknown LND Error')) => {
-        logger.error(`Error from sendToRoute stream`, err)
-        return finish(err)
+        // if we cancelled the request, we treat a CANCELLED code
+        // as a cleanup and not a true error
+        if (clientCancel && err.code && err.code === CANCELLED_CODE) {
+          logger.debug('Received CANCELLED after client cancelled, cleaning up')
+          finish()
+        } else {
+          logger.error(`Error from sendToRoute stream`, err)
+          finish(err)
+        }
       }
 
       const endListener = () => {
@@ -71,9 +90,13 @@ function sendToRouteSync (paymentHash, routes, { logger, client }) {
       const dataListener = (response) => {
         const { paymentError, paymentPreimage } = response
         logger.debug('Received sendToRoute response from LND', { paymentError, paymentPreimage })
+
+        // cancel will trigger cleanup through our errorListener
+        clientCancel = true
         stream.cancel()
+
         // TODO: do we need to ensure that this preimage matches the hash that we sent?
-        finish(null, { paymentError, paymentPreimage })
+        resolve({ paymentError, paymentPreimage })
       }
 
       // Helper to make sure we tear down our listeners
@@ -85,8 +108,6 @@ function sendToRouteSync (paymentHash, routes, { logger, client }) {
         if (err) {
           return reject(err)
         }
-
-        resolve(response)
       }
 
       stream.on('error', errorListener)
