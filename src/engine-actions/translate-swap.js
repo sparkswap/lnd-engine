@@ -66,8 +66,8 @@ function sendToRouteSync (paymentHash, routes, { logger, client }) {
       logger.debug('Setting up stream to sendToRoute', { paymentHash })
       const stream = sendToRoute({ client })
 
-      // keep local state of whether we cancelled so that we can
-      // handle a CANCELLED error message appropriately
+      // keep local state of whether we (as opposed to LND) cancelled so
+      // that we can handle a CANCELLED error message appropriately
       let clientCancel = false
 
       const errorListener = (err = new Error('Unknown LND Error')) => {
