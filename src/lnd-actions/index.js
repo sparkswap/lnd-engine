@@ -20,6 +20,7 @@ const closeChannel = require('./close-channel')
 const sendCoins = require('./send-coins')
 const genSeed = require('./gen-seed')
 const initWallet = require('./init-wallet')
+const unlockWallet = require('./unlock-wallet')
 
 module.exports = {
   addInvoice,
@@ -43,5 +44,6 @@ module.exports = {
   closeChannel,
   sendCoins,
   genSeed,
-  initWallet
+  initWallet,
+  unlockWallet
 }
