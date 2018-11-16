@@ -66,7 +66,9 @@ describe('translate-swap', () => {
     beforeEach(() => {
       sendToRouteStream = {
         on: sinon.stub(),
-        removeListener: sinon.stub()
+        write: sinon.stub(),
+        removeListener: sinon.stub(),
+        cancel: sinon.stub()
       }
       sendToRouteStub = sinon.stub().returns(sendToRouteStream)
       translateSwap.__set__('sendToRoute', sendToRouteStub)
@@ -83,11 +85,18 @@ describe('translate-swap', () => {
       paymentHash = 'fakehash'
     })
 
-    it('calls sendToRoute on the client', () => {
+    it('sets up a sendToRoute stream on the client', () => {
       sendToRouteSync(paymentHash, routes, { client, logger })
 
       expect(sendToRouteStub).to.have.been.calledOnce()
-      expect(sendToRouteStub).to.have.been.calledWith(paymentHash, routes, sinon.match({ client }))
+      expect(sendToRouteStub).to.have.been.calledWith(sinon.match({ client }))
+    })
+
+    it('writes a message to the stream', () => {
+      sendToRouteSync(paymentHash, routes, { client, logger })
+
+      expect(sendToRouteStream.write).to.have.been.calledOnce()
+      expect(sendToRouteStream.write).to.have.been.calledWith(sinon.match({ paymentHash, routes }))
     })
 
     it('rejects on error while setting up the stream', () => {
@@ -115,6 +124,14 @@ describe('translate-swap', () => {
 
       expect(paymentPreimage).to.be.eql('fakePreimage')
       expect(paymentError).to.be.null()
+    })
+
+    it('cancels the stream if we got what we wanted', async () => {
+      streamReturns(sendToRouteStream, { paymentPreimage: 'fakePreimage', paymentError: null })
+
+      await sendToRouteSync(paymentHash, routes, { client, logger })
+
+      expect(sendToRouteStream.cancel).to.have.been.calledOnce()
     })
 
     it('removes listeners', async () => {

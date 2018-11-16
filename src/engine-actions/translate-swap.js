@@ -56,7 +56,7 @@ function sendToRouteSync (paymentHash, routes, { logger, client }) {
   return new Promise((resolve, reject) => {
     try {
       logger.debug('Setting up stream to sendToRoute', { paymentHash })
-      const stream = sendToRoute(paymentHash, routes, { client })
+      const stream = sendToRoute({ client })
 
       const errorListener = (err = new Error('Unknown LND Error')) => {
         logger.error(`Error from sendToRoute stream`, err)
@@ -71,6 +71,7 @@ function sendToRouteSync (paymentHash, routes, { logger, client }) {
       const dataListener = (response) => {
         const { paymentError, paymentPreimage } = response
         logger.debug('Received sendToRoute response from LND', { paymentError, paymentPreimage })
+        stream.cancel()
         // TODO: do we need to ensure that this preimage matches the hash that we sent?
         finish(null, { paymentError, paymentPreimage })
       }
@@ -91,6 +92,9 @@ function sendToRouteSync (paymentHash, routes, { logger, client }) {
       stream.on('error', errorListener)
       stream.on('end', endListener)
       stream.on('data', dataListener)
+
+      logger.debug('Writing to sendToRoute stream', { paymentHash })
+      stream.write({ paymentHash, routes })
     } catch (e) {
       reject(e)
     }
