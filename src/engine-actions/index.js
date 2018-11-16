@@ -16,7 +16,6 @@ const payInvoice = require('./pay-invoice')
 const prepareSwap = require('./prepare-swap')
 const executeSwap = require('./execute-swap')
 const createRefundInvoice = require('./create-refund-invoice')
-const validateNodeConfig = require('./validate-node-config')
 const getPaymentChannelNetworkAddress = require('./get-payment-channel-network-address')
 const translateSwap = require('./translate-swap')
 const getSettledSwapPreimage = require('./get-settled-swap-preimage')
@@ -28,6 +27,8 @@ const getOpenChannelCapacities = require('./get-open-channel-capacities')
 const closeChannels = require('./close-channels')
 const getMaxChannel = require('./get-max-channel')
 const withdrawFunds = require('./withdraw-funds')
+const isNodeConfigValid = require('./is-node-config-valid')
+const isEngineUnlocked = require('./is-engine-unlocked')
 
 module.exports = {
   validationDependentActions: {
@@ -62,6 +63,7 @@ module.exports = {
     withdrawFunds
   },
   validationIndependentActions: {
-    validateNodeConfig
+    isNodeConfigValid,
+    isEngineUnlocked
   }
 }

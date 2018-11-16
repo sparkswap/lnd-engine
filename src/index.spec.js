@@ -4,20 +4,20 @@ const { expect, rewire, sinon } = require('test/test-helper')
 const LndEngine = rewire(path.resolve('src', 'index'))
 
 describe('lnd-engine index', () => {
-  const protoFilePath = LndEngine.__get__('LND_PROTO_FILE_PATH')
   let clientStub
+  let walletStub
   let currencies
   let validationIndependentActions
   let validationDependentActions
 
   beforeEach(() => {
     clientStub = sinon.stub()
+    walletStub = sinon.stub()
     currencies = [
       {
         symbol: 'BTC'
       }
     ]
-
     validationDependentActions = {
       getInvoices: sinon.stub().resolves()
     }
@@ -26,9 +26,10 @@ describe('lnd-engine index', () => {
       validateNodeConfig: sinon.stub()
     }
 
+    LndEngine.__set__('generateLightningClient', clientStub)
+    LndEngine.__set__('generateWalletUnlockerClient', walletStub)
     LndEngine.__set__('validationDependentActions', validationDependentActions)
     LndEngine.__set__('validationIndependentActions', validationIndependentActions)
-    LndEngine.__set__('generateLndClient', clientStub)
     LndEngine.__set__('currencies', currencies)
   })
 
@@ -45,7 +46,6 @@ describe('lnd-engine index', () => {
       engine = new LndEngine(host, symbol, { logger, tlsCertPath: customTlsCertPath, macaroonPath: customMacaroonPath, validations: false })
     })
 
-    it('generates an lnd client', () => expect(clientStub).to.have.been.calledWith(host, protoFilePath, customTlsCertPath, customMacaroonPath))
     it('sets a symbol', () => expect(engine.symbol).to.eql(symbol))
     it('retrieves currency config', () => expect(engine.currencyConfig).to.eql(currencies[0]))
     it('sets a host', () => expect(engine.host).to.eql(host))
@@ -53,6 +53,14 @@ describe('lnd-engine index', () => {
     it('sets a tlsCertPath', () => expect(engine.tlsCertPath).to.eql(customTlsCertPath))
     it('sets a macaroonPath', () => expect(engine.macaroonPath).to.eql(customMacaroonPath))
     it('sets validated to false by default', () => expect(engine.validated).to.be.eql(false))
+
+    it('generates an lnd lightning client', () => {
+      expect(clientStub).to.have.been.calledWith(engine)
+    })
+
+    it('generates an lnd wallet unlocker client', () => {
+      expect(walletStub).to.have.been.calledWith(engine)
+    })
 
     it('throws if the currency is not in available configuration', () => {
       expect(() => { new LndEngine(host, 'XYZ') }).to.throw('not a valid symbol') // eslint-disable-line
@@ -118,6 +126,35 @@ describe('lnd-engine index', () => {
       exponentialStub.throws()
       await engine.validateEngine()
       expect(logger.error).to.have.been.calledWith(sinon.match('Failed to validate engine'))
+    })
+
+    describe('validationCall', () => {
+      let validationCall
+
+      beforeEach(async () => {
+        engine.isEngineUnlocked = sinon.stub().resolves(true)
+        engine.isNodeConfigValid = sinon.stub().resolves(true)
+
+        await engine.validateEngine()
+
+        validationCall = exponentialStub.args[0][0]
+      })
+
+      it('checks if an engine is unlocked', async () => {
+        await validationCall()
+        expect(engine.isEngineUnlocked).to.have.been.calledOnce()
+      })
+
+      it('checks if node config is valid', async () => {
+        await validationCall()
+        expect(engine.isNodeConfigValid).to.have.been.calledOnce()
+        expect(engine.validated).to.be.eql(true)
+      })
+
+      it('throws an error if lnd engine is locked', () => {
+        engine.isEngineUnlocked.resolves(false)
+        return expect(validationCall()).to.eventually.be.rejectedWith('LndEngine is locked')
+      })
     })
   })
 })
