@@ -1,3 +1,7 @@
-const generateLndClient = require('./generate-lnd-client')
+const generateWalletUnlockerClient = require('./generate-wallet-unlocker-client')
+const generateLightningClient = require('./generate-lightning-client')
 
-module.exports = { generateLndClient }
+module.exports = {
+  generateWalletUnlockerClient,
+  generateLightningClient
+}
