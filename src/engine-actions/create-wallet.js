@@ -10,11 +10,14 @@ const {
  * @return {Array<String>} cipher seed
  */
 async function createWallet (password) {
-  const { cipherSeedMnemonic } = await genSeed({ client: this.walletUnlocker })
-
-  if (typeof password !== 'string') {
-    throw new Error('Provided password must be a string value')
+  // We want to enforce LND's password requirements instead of making unneeded
+  // calls to the engine. The only password requirement for LND is a password
+  // longer than 8 characters in length
+  if (password.length < 8) {
+    throw new Error('Password length must be greater than 8 characters')
   }
+
+  const { cipherSeedMnemonic } = await genSeed({ client: this.walletUnlocker })
 
   // Password must be converted to buffer in order for lnd to accept
   // as it does not accept String password types at this time.

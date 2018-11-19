@@ -31,8 +31,8 @@ describe('createWallet', () => {
     })
   })
 
-  it('errors if password is not of correct type', () => {
-    expect(createWallet.call(engine)).to.eventually.be.rejectedWith('Provided password must be a string value')
+  it('errors if a password does not meet lnd length requirements', () => {
+    return expect(createWallet.call(engine, 'shortpw')).to.eventually.be.rejectedWith('greater than 8')
   })
 
   it('converts a specified password to a buffer', async () => {
