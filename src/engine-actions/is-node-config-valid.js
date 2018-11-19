@@ -2,13 +2,17 @@ const { getInfo } = require('../lnd-actions')
 
 /**
  * Validates this engine's configuration against the node it is
- * hooked up to.
+ * hooked up to. Sets the engine validated flag to true if all validations pass.
  *
  * @function
- * @return {Boolean} Whether the configuration matches the node
+ * @throws {Error} Not Unlocked
+ * @throws {Error} No Chains Configured
+ * @throws {Error} Only allow, at most, one active chain
+ * @throws {Error} Mismatched Configuration
+ * @return {True}
  */
-async function validateNodeConfig () {
-  const { chains = [] } = await getInfo({ client: this.client })
+async function isNodeConfigValid () {
+  var { chains = [] } = await getInfo({ client: this.client })
 
   if (chains.length === 0) {
     throw new Error('LND has no chains configured.')
@@ -27,4 +31,4 @@ async function validateNodeConfig () {
   return true
 }
 
-module.exports = validateNodeConfig
+module.exports = isNodeConfigValid
