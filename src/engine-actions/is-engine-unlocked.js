@@ -29,7 +29,7 @@ async function isEngineUnlocked () {
     // is locked, but functional
     await genSeed({ client: this.walletUnlocker })
   } catch (e) {
-    // In GRPC, "unimplemented" indicates operation is not implemented or not
+    // In gRPC, "unimplemented" indicates operation is not implemented or not
     // supported/enabled in this specific service. In our case, this means the
     // WalletUnlocker RPC has been turned off and the Lightning RPC is now functional
     if (e.code && e.code === UNIMPLEMENTED_SERVICE_CODE) {

@@ -29,6 +29,7 @@ const getMaxChannel = require('./get-max-channel')
 const withdrawFunds = require('./withdraw-funds')
 const isNodeConfigValid = require('./is-node-config-valid')
 const isEngineUnlocked = require('./is-engine-unlocked')
+const createWallet = require('./create-wallet')
 
 module.exports = {
   validationDependentActions: {
@@ -63,6 +64,7 @@ module.exports = {
     withdrawFunds
   },
   validationIndependentActions: {
+    createWallet,
     isNodeConfigValid,
     isEngineUnlocked
   }

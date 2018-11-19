@@ -9,10 +9,7 @@ describe('isEngineUnlocked', () => {
 
   beforeEach(() => {
     engine = {
-      walletUnlocker: sinon.stub(),
-      logger: {
-        error: sinon.stub()
-      }
+      walletUnlocker: sinon.stub()
     }
     genSeedStub = sinon.stub()
 
