@@ -30,6 +30,7 @@ const withdrawFunds = require('./withdraw-funds')
 const isNodeConfigValid = require('./is-node-config-valid')
 const isEngineUnlocked = require('./is-engine-unlocked')
 const createWallet = require('./create-wallet')
+const unlockWallet = require('./unlock-wallet')
 
 module.exports = {
   validationDependentActions: {
@@ -66,6 +67,7 @@ module.exports = {
   validationIndependentActions: {
     createWallet,
     isNodeConfigValid,
-    isEngineUnlocked
+    isEngineUnlocked,
+    unlockWallet
   }
 }
