@@ -45,6 +45,84 @@ function calculateTimeLock (extendedTimeLockDelta, secondsPerBlock, blockHeight)
 }
 
 /**
+ * gRPC error code for a CANCELLED request, either by a client or a server
+ * @see {@link https://github.com/grpc/grpc/blob/master/doc/statuscodes.md}
+ * @constant
+ * @type {Number}
+ */
+const CANCELLED_CODE = 1
+
+/**
+ * Use the sendToRoute function as though it returned a promise
+ * @param  {String}      paymentHash     Base64 string of the payment hash to pay for
+ * @param  {Array}       routes          Routes to use
+ * @param  {Object}      options.logger
+ * @param  {grpc.Client} options.client
+ * @return {Promise<TranslateSwapOutcome>}
+ */
+function sendToRouteSync (paymentHash, routes, { logger, client }) {
+  return new Promise((resolve, reject) => {
+    try {
+      logger.debug('Setting up stream to sendToRoute', { paymentHash })
+      const stream = sendToRoute({ client })
+
+      // keep local state of whether we (as opposed to LND) cancelled so
+      // that we can handle a CANCELLED error message appropriately
+      let clientCancel = false
+
+      const errorListener = (err = new Error('Unknown LND Error')) => {
+        // if we cancelled the request, we treat a CANCELLED code
+        // as a cleanup and not a true error
+        if (clientCancel && err.code && err.code === CANCELLED_CODE) {
+          logger.debug('Received CANCELLED after client cancelled, cleaning up')
+          finish()
+        } else {
+          logger.error(`Error from sendToRoute stream`, err)
+          finish(err)
+        }
+      }
+
+      const endListener = () => {
+        logger.error(`LND closed sendToRoute stream before returning a value`)
+        return finish(new Error(`LND closed stream to send to route`))
+      }
+
+      const dataListener = (response) => {
+        const { paymentError, paymentPreimage } = response
+        logger.debug('Received sendToRoute response from LND', { paymentError, paymentPreimage })
+
+        // cancel will trigger cleanup through our errorListener
+        clientCancel = true
+        stream.cancel()
+
+        // TODO: do we need to ensure that this preimage matches the hash that we sent?
+        resolve({ paymentError, paymentPreimage })
+      }
+
+      // Helper to make sure we tear down our listeners
+      const finish = (err, response) => {
+        stream.removeListener('error', errorListener)
+        stream.removeListener('end', endListener)
+        stream.removeListener('data', dataListener)
+
+        if (err) {
+          return reject(err)
+        }
+      }
+
+      stream.on('error', errorListener)
+      stream.on('end', endListener)
+      stream.on('data', dataListener)
+
+      logger.debug('Writing to sendToRoute stream', { paymentHash })
+      stream.write({ paymentHash, routes })
+    } catch (e) {
+      reject(e)
+    }
+  })
+}
+
+/**
  * @typedef {Object} TranslateSwapOutcome
  * @property {String} paymentPreimage Base64 string of the preimage for the swapHash
  * @property {String} permanentError Error encountered that is permanent, and safe to cancel the upstream HTLC
@@ -135,7 +213,7 @@ async function translateSwap (takerAddress, swapHash, amount, extendedTimeLockDe
 
   this.logger.debug(`Found ${availableRoutes.length} routes with a timelock (in blocks) less than/equal to ${totalTimeLock}`, { swapHash })
 
-  const { paymentPreimage, paymentError } = await sendToRoute(swapHash, availableRoutes, { client: this.client })
+  const { paymentPreimage, paymentError } = await sendToRouteSync(swapHash, availableRoutes, { logger: this.logger, client: this.client })
 
   if (paymentError) {
     this.logger.error(`Payment error while sending to route`, { paymentError, swapHash })
