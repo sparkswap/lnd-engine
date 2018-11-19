@@ -6,9 +6,10 @@ const {
  * Unlocks an engine's wallet
  *
  * @param {String} walletPassword
- * @return {void}
+ * @return {Promise}
  */
-async function unlockWallet (walletPassword) {
+function unlockWallet (password) {
+  const walletPassword = Buffer.from(password, 'utf8')
   return lndUnlockWallet(walletPassword, { client: this.walletUnlocker })
 }
 

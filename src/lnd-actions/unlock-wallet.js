@@ -3,14 +3,12 @@
  *
  * @function
  * @see {@link http://api.lightning.community/#unlockWallet}
- * @param {String} walletPassword
+ * @param {Buffer} walletPassword - Buffer or base64 string
  * @param {Object} opts
  * @param {grpc.Client} client - WalletUnlocker rpc client
  * @return {Promise}
  */
-function unlockWallet (password, { client }) {
-  const walletPassword = Buffer.from(password, 'utf8')
-
+function unlockWallet (walletPassword, { client }) {
   return new Promise((resolve, reject) => {
     client.unlockWallet({ walletPassword }, (err, res) => {
       if (err) return reject(err)
