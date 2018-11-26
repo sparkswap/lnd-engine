@@ -15,7 +15,6 @@ if [[ "$NETWORK" == "regtest" ]] && [[ "$MINER" = true ]]; then
     # `cron` instead of `crond`, where the former does not import environment variables
     # from the user session and instead uses a bare-bones `sh` session to run these commands
     BITCOIN_CLI_PATH=/usr/local/bin/bitcoin-cli
-    echo "* * * * * ( $BITCOIN_CLI_PATH -regtest -rpcuser=$RPC_USER -rpcpassword=$RPC_PASS generate 101 >> /jobs/cron.log 2>&1 ) ; sleep infinity" >> /jobs/funding-cron.txt
     echo "* * * * * ( $BITCOIN_CLI_PATH -regtest -rpcuser=$RPC_USER -rpcpassword=$RPC_PASS generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
     echo "* * * * * ( sleep 10 ; $BITCOIN_CLI_PATH -regtest -rpcuser="$RPC_USER" -rpcpassword="$RPC_PASS" generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
     echo "* * * * * ( sleep 20 ; $BITCOIN_CLI_PATH -regtest -rpcuser="$RPC_USER" -rpcpassword="$RPC_PASS" generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
