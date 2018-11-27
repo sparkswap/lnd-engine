@@ -76,14 +76,20 @@ describe('lnd-engine index', () => {
     })
 
     it('throws an error if a validation dependent action is called and the engine is not validated', () => {
-      return expect(() => engine.getInvoices()).to.throw()
+      engine.unlocked = true
+      return expect(() => engine.getInvoices()).to.throw('is not validated')
+    })
+
+    it('throws an error if a validation dependent action is called and the engine is not validated', () => {
+      return expect(() => engine.getInvoices()).to.throw('is locked')
     })
 
     it('does not throw an error if a validation dependent action is called and the engine is not validated', () => {
       return expect(() => engine.validateNodeConfig()).to.not.throw()
     })
 
-    it('calls the action if the engine is validated', () => {
+    it('calls the action', () => {
+      engine.unlocked = true
       engine.validated = true
       engine.getInvoices('test', 'args')
       return expect(validationDependentActions.getInvoices).to.be.calledWith('test', 'args')
@@ -145,10 +151,19 @@ describe('lnd-engine index', () => {
         expect(engine.isEngineUnlocked).to.have.been.calledOnce()
       })
 
+      it('sets unlocked property on the class to true if unlocked', async () => {
+        await validationCall()
+        expect(engine.unlocked).to.be.eql(true)
+      })
+
+      it('sets validated property on the class to true if validated', async () => {
+        await validationCall()
+        expect(engine.validated).to.be.eql(true)
+      })
+
       it('checks if node config is valid', async () => {
         await validationCall()
         expect(engine.isNodeConfigValid).to.have.been.calledOnce()
-        expect(engine.validated).to.be.eql(true)
       })
 
       it('throws an error if lnd engine is locked', () => {

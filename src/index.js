@@ -51,6 +51,13 @@ class LndEngine {
     this.client = generateLightningClient(this)
     this.walletUnlocker = generateWalletUnlockerClient(this)
 
+    // This key identifies if the current Engine still requires additional setup
+    // before commands can be made against the LN RPC
+    //
+    // We set `unlocked` to false by default, however this will be modified in the
+    // `validateEngine` action
+    this.unlocked = false
+
     // This key identifies if the current Engine's configuration matches information
     // passed through the constructor of the Engine.
     //
@@ -58,7 +65,7 @@ class LndEngine {
     // currently supported, as well as providing assurance that communication to
     // an engine's node is available.
     //
-    // We set validated to false by default, however this will be modified in the
+    // We set `validated` to false by default, however this will be modified in the
     // `validateEngine` action
     this.validated = false
 
@@ -67,7 +74,8 @@ class LndEngine {
     // functioning correctly.
     Object.entries(validationDependentActions).forEach(([name, action]) => {
       this[name] = (...args) => {
-        if (!this.validated) throw new Error(`${symbol} Engine is not ready yet`)
+        if (!this.unlocked) throw new Error(`${symbol} Engine is locked`)
+        if (!this.validated) throw new Error(`${symbol} Engine is not validated`)
         return action.call(this, ...args)
       }
     })
@@ -92,9 +100,9 @@ class LndEngine {
         //
         // We make this initial call to check if engine is unlocked before continuing
         // to validate the current engine
-        const engineIsUnlocked = await this.isEngineUnlocked()
+        this.unlocked = await this.isEngineUnlocked()
 
-        if (!engineIsUnlocked) {
+        if (!this.unlocked) {
           throw new Error('LndEngine is locked, unable to validate config')
         }
 
