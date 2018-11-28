@@ -5,8 +5,8 @@ version: 2
 jobs:
   build:
     docker:
-      - image: node:8.11
-    working_directory: ~/relayer
+      - image: node:8.11.3
+    working_directory: ~/lnd-engine
 
     steps:
       - checkout
@@ -14,15 +14,13 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-          - v1-dependencies-{{ checksum "package.json" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+          - v2-dependencies-{{ checksum "package.json" }}
 
       - run: npm install
 
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+          key: v2-dependencies-{{ checksum "package.json" }}
 
       - run: npm run ci-test
