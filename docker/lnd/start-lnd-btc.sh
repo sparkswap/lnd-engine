@@ -19,7 +19,6 @@ if [[ "$NETWORK" != 'simnet' ]] && [[ "$EXTERNAL_ADDRESS" == *"sample.ip.address
 fi
 
 # Copy certs to the shared file
-
 if [[ -e /secure/lnd-engine-tls-btc.cert ]]; then
     rm -f /shared/lnd-engine-tls-btc.cert
     cp /secure/lnd-engine-tls-btc.cert /shared/lnd-engine-tls-btc.cert
@@ -29,9 +28,6 @@ else
     exit 1
 fi
 
-# USING THIS OPTION BECAUSE WE'RE BAD
-# BUT THIS WILL NEED TO BE REMOVED FOR MAINNET
-echo 'LND has --noseedbackup set. MAKE SURE TO REMOVE THIS'
 echo "LND BTC starting with network: $NETWORK $NODE"
 
 PARAMS=$(echo \
@@ -49,6 +45,15 @@ PARAMS=$(echo \
 if [[ "$NODE" == "bitcoind" ]]; then
     PARAMS="$PARAMS --bitcoind.zmqpubrawblock=$ZMQPUBRAWBLOCK"
     PARAMS="$PARAMS --bitcoind.zmqpubrawtx=$ZMQPUBRAWTX"
+fi
+
+# We want to make it easy for devs to test functionality of the engine which could
+# potentially involve the constant restarting of a particular daemon. It can get
+# annoying to continually have to unlock/create wallets so we will enable noseedbackup
+# ONLY if the network is outside of mainnet AND dev is set to true
+if [[ "$NO_SEED_BACKUP" == true ]] && [[ "$NETWORK" != 'mainnet' ]]; then
+    PARAMS="$PARAMS --noseedbackup"
+    echo 'LND has --noseedbackup set. You are at your own peril'
 fi
 
 exec lnd $PARAMS "$@"
