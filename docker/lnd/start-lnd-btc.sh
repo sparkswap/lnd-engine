@@ -50,7 +50,7 @@ fi
 # We want to make it easy for devs to test functionality of the engine which could
 # potentially involve the constant restarting of a particular daemon. It can get
 # annoying to continually have to unlock/create wallets so we will enable noseedbackup
-# ONLY if the network is outside of mainnet AND dev is set to true
+# ONLY if the network is outside of mainnet AND `NO_SEED_BACKUP` is set to true
 if [[ "$NO_SEED_BACKUP" == true ]] && [[ "$NETWORK" != 'mainnet' ]]; then
     PARAMS="$PARAMS --noseedbackup"
     echo 'LND has --noseedbackup set. You are at your own peril'
