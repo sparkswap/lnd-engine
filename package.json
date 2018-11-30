@@ -15,8 +15,7 @@
   "nyc": {
     "exclude": [
       "**/*.spec.js",
-      "src/lnd-actions/*",
-      "test/"
+      "src/lnd-actions/*"
     ]
   },
   "scripts": {
