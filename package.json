@@ -12,6 +12,12 @@
       "docs/*"
     ]
   },
+  "nyc": {
+    "exclude": [
+      "**/*.spec.js",
+      "src/lnd-actions/*"
+    ]
+  },
   "scripts": {
     "prebuild": "bash ./scripts/prebuild.sh",
     "build": "bash ./scripts/build.sh",
