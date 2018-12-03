@@ -1,32 +1,43 @@
 const {
   listChannels,
+  listPendingChannels,
   closeChannel
 } = require('../lnd-actions')
+
 /**
- * Closes a channel given the channel point
+ * Closes active channels on the given engine. Will try to close all channels
+ * if `force` option is given
  *
  * @param {Object} options
  * @param {Object} [options.force=false] force is true if you want to force close channels, false if not
  * @returns {Promise<Array.<Object>>}
  */
 async function closeChannels ({ force = false } = {}) {
-  const { channels = [] } = await listChannels({ client: this.client })
+  // This consists of channels that may be active or inactive
+  const { channels: openChannels = [] } = await listChannels({ client: this.client })
 
-  if (channels.length === 0) {
+  // We start by only including active channels to be closed
+  let channelsToClose = openChannels.filter(c => c.active === true)
+
+  // If we want to force close channels, we will include inactive and pending channels
+  // as these two types can only be closed w/ the force flag, resulting in a more
+  // thorough returning of funds
+  if (force) {
+    const { pendingOpenChannels = [] } = await listPendingChannels({ client: this.client })
+    const inactiveChannels = openChannels.filter(c => c.active === false)
+    channelsToClose = channelsToClose.concat(pendingOpenChannels)
+    channelsToClose = channelsToClose.concat(inactiveChannels)
+  }
+
+  if (channelsToClose.length === 0) {
     this.logger.debug('closeChannels: No channels exist')
     return []
   }
 
-  const activeChannels = channels.filter(c => c.active === true)
-
-  if (activeChannels.length === 0) {
-    this.logger.debug('closeChannels: No active channels exist')
-    return []
-  }
-
-  const closedChannelResponses = await Promise.all(activeChannels.map(channel => close(channel, force, this.client, this.logger)))
+  const closedChannelResponses = await Promise.all(channelsToClose.map(channel => close(channel, force, this.client, this.logger)))
 
   this.logger.info('Successfully closed channels', closedChannelResponses)
+
   return closedChannelResponses
 }
 
