@@ -13,12 +13,16 @@ describe('closeChannels', () => {
   let closeChannelStream
   let channel
   let channelInfo
+  let listPendingChannelsStub
 
-  function streamReturnsClosedChannel (stream, channelInfo) {
-    stream.on.withArgs('data').callsFake(async (evt, listener) => {
-      await delay(10)
-      listener(channelInfo)
-    })
+  function streamReturnsClosedChannel (stream, channelInfo, sequence = 0) {
+    stream.on
+      .withArgs('data')
+      .onCall(sequence)
+      .callsFake(async (evt, listener) => {
+        await delay(10)
+        listener(channelInfo)
+      })
   }
 
   function streamErrors (stream, error) {
@@ -44,6 +48,7 @@ describe('closeChannels', () => {
     channels = [channel]
     closeChannelStub = sinon.stub().returns(closeChannelStream)
     listChannelsStub = sinon.stub().resolves({channels})
+    listPendingChannelsStub = sinon.stub().resolves({})
     clientStub = sinon.stub()
     logger = {
       debug: sinon.stub(),
@@ -61,6 +66,7 @@ describe('closeChannels', () => {
     }
     closeChannels.__set__('closeChannel', closeChannelStub)
     closeChannels.__set__('listChannels', listChannelsStub)
+    closeChannels.__set__('listPendingChannels', listPendingChannelsStub)
     closeChannels.__set__('logger', logger)
   })
 
@@ -69,14 +75,6 @@ describe('closeChannels', () => {
     closeChannels.__set__('listChannels', listChannelsStub)
     const res = await closeChannels()
     expect(logger.debug).to.have.been.calledWith('closeChannels: No channels exist')
-    return expect(res).to.be.eql([])
-  })
-
-  it('returns an empty array if no active channels exist', async () => {
-    listChannelsStub = sinon.stub().resolves({channels: [{active: false}]})
-    closeChannels.__set__('listChannels', listChannelsStub)
-    const res = await closeChannels()
-    expect(logger.debug).to.have.been.calledWith('closeChannels: No active channels exist')
     return expect(res).to.be.eql([])
   })
 
@@ -117,5 +115,46 @@ describe('closeChannels', () => {
     expect(closeChannelStream.removeListener).to.have.been.calledWith('data', dataListener)
     expect(closeChannelStream.removeListener).to.have.been.calledWith('end', endListener)
     expect(closeChannelStream.removeListener).to.have.been.calledWith('error', errorListener)
+  })
+
+  context('force closing channels', () => {
+    it('calls pending channels', async () => {
+      streamReturnsClosedChannel(closeChannelStream, [ channel ])
+      await closeChannels.call(engine, { force: true })
+      expect(listPendingChannelsStub).to.have.been.calledOnce()
+    })
+
+    it('closes active and inactive channels', async () => {
+      const inactiveChannel = { active: true, channelPoint: 'dan:1337' }
+      streamReturnsClosedChannel(closeChannelStream, [ inactiveChannel ])
+      listChannelsStub.resolves({ channels: [inactiveChannel] })
+      await closeChannels.call(engine, { force: true })
+      expect(closeChannelStub).to.have.been.calledWith({ fundingTxidStr: 'dan', outputIndex: 1337 }, true, { client: clientStub })
+    })
+
+    it('closes pending channels', async () => {
+      const pendingChannel = { active: true, channelPoint: 'martine:1337' }
+      streamReturnsClosedChannel(closeChannelStream, [ pendingChannel ])
+      listChannelsStub.resolves({ channels: [] })
+      listPendingChannelsStub.resolves({ pendingOpenChannels: [pendingChannel] })
+      await closeChannels.call(engine, { force: true })
+      expect(closeChannelStub).to.have.been.calledWith({ fundingTxidStr: 'martine', outputIndex: 1337 }, true, { client: clientStub })
+    })
+
+    it('closes all channels', async () => {
+      const inactiveChannel = { active: true, channelPoint: 'dan:1337' }
+      const pendingChannel = { active: true, channelPoint: 'martine:1337' }
+      streamReturnsClosedChannel(closeChannelStream, [ inactiveChannel ], 0)
+      streamReturnsClosedChannel(closeChannelStream, [ pendingChannel ], 1)
+      streamReturnsClosedChannel(closeChannelStream, [ channel ], 2)
+      listChannelsStub.resolves({ channels: [channel, inactiveChannel] })
+      listPendingChannelsStub.resolves({ pendingOpenChannels: [pendingChannel] })
+
+      await closeChannels.call(engine, { force: true })
+
+      expect(closeChannelStub).to.have.been.calledWith({ fundingTxidStr: 'martine', outputIndex: 1337 }, true, { client: clientStub })
+      expect(closeChannelStub).to.have.been.calledWith({ fundingTxidStr: 'dan', outputIndex: 1337 }, true, { client: clientStub })
+      expect(closeChannelStub).to.have.been.calledWith({ fundingTxidStr: 'asdf', outputIndex: 1234 }, true, { client: clientStub })
+    })
   })
 })
