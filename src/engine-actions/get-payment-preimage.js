@@ -13,7 +13,6 @@ const PAYMENT_STATUSES = lookupPaymentStatus.STATUSES
  */
 const POLLING_INTERVAL = 10000
 
-
 /**
  * Retrieves the preimage for given payment hash. If the payment is
  * still in-flight, it will wait until the payment is completed and
