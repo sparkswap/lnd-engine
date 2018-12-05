@@ -3,6 +3,8 @@ const { deadline } = require('../grpc-utils')
 /**
  * Returns a list of completed payments
  *
+ * @function
+ * @see {@link https://api.lightning.community/#listpayments}
  * @param {Object} opts
  * @param {grpc#client} opts.client
  */
