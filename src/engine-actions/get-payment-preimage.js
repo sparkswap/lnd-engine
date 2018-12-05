@@ -57,7 +57,7 @@ async function getPaymentPreimage (paymentHash) {
  * {@link https://github.com/lightningnetwork/lnd/issues/2032}
  */
 async function getCompletedPreimage (paymentHash, { logger, client }) {
-  const { payments } = await listPayments({ client })
+  const { payments = [] } = await listPayments({ client })
 
   logger.debug(`Found ${payments.length} completed payments`)
 
