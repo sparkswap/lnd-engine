@@ -25,7 +25,7 @@ const POLLING_INTERVAL = 10000
  */
 async function getPaymentPreimage (paymentHash) {
   const { client, logger } = this
-  const status = await lookupPaymentStatus(paymentHash, { client })
+  const { status } = await lookupPaymentStatus(paymentHash, { client })
 
   if (status === PAYMENT_STATUSES.GROUNDED) {
     throw new Error(`No payment with hash '${paymentHash}' is in-flight or complete`)
@@ -73,6 +73,8 @@ async function getCompletedPreimage (paymentHash, { logger, client }) {
     throw new Error(`No completed payment with hash '${paymentHash}' exists.`)
   }
 
+  // like the `paymentHash`, the `paymentPreimage` is returned as a hex string from LND,
+  // so we convert to Base64 before returning
   return Buffer.from(payment.paymentPreimage, 'hex').toString('base64')
 }
 
