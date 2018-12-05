@@ -21,6 +21,8 @@ const sendCoins = require('./send-coins')
 const genSeed = require('./gen-seed')
 const initWallet = require('./init-wallet')
 const unlockWallet = require('./unlock-wallet')
+const listPayments = require('./list-payments')
+const lookupPaymentStatus = require('./lookup-payment-status')
 
 module.exports = {
   addInvoice,
@@ -45,5 +47,7 @@ module.exports = {
   sendCoins,
   genSeed,
   initWallet,
-  unlockWallet
+  unlockWallet,
+  listPayments,
+  lookupPaymentStatus
 }
