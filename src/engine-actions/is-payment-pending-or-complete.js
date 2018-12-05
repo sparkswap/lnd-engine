@@ -15,7 +15,7 @@ const PAYMENT_STATUSES = lookupPaymentStatus.STATUSES
 async function isPaymentPendingOrComplete (paymentHash) {
   const { client } = this
 
-  const status = await lookupPaymentStatus(paymentHash, { client })
+  const { status } = await lookupPaymentStatus(paymentHash, { client })
 
   if (status === PAYMENT_STATUSES.GROUNDED) {
     return false
