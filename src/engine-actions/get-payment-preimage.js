@@ -45,9 +45,13 @@ async function getPaymentPreimage (paymentHash) {
     return getCompletedPreimage(paymentHash, { logger, client })
   }
 
-  // if the payment is still in-flight, we'll wait and try again later
-  await delay(POLLING_INTERVAL)
-  return getPaymentPreimage.call(this, paymentHash)
+  if (status === PAYMENT_STATUSES.IN_FLIGHT) {
+    // if the payment is still in-flight, we'll wait and try again later
+    await delay(POLLING_INTERVAL)
+    return getPaymentPreimage.call(this, paymentHash)
+  }
+
+  throw new Error(`Unknown payment status ${status} for payment with hash '${paymentHash}'`)
 }
 
 /**
