@@ -31,10 +31,8 @@ docker build -t sparkswap_lnd_ltc ./docker/lnd --build-arg NODE=$LND_LTC_NODE --
 if [[ "$ARG" == "local" ]]; then
   LTCD_CERT_HOST=${LTCD_CERT_HOST:-host.docker.internal}
   BTCD_CERT_HOST=${BTCD_CERT_HOST:-host.docker.internal}
-  LTCD_VERSION='master'
-  BTCD_VERSION='master'
-  LTCD_COMMIT_SHA=`git ls-remote git://github.com/ltcsuite/ltcd | grep "refs/heads/$LTCD_VERSION$" | cut -f 1`
-  BTCD_COMMIT_SHA=`git ls-remote git://github.com/btcsuite/btcd | grep "refs/heads/$BTCD_VERSION$" | cut -f 1`
+  LTCD_COMMIT_SHA='01737289d815e0e32c91e55593ba2fbd8d090b2c'
+  BTCD_COMMIT_SHA='7d2daa5bfef28c5e282571bc06416516936115ee'
   docker build -t sparkswap_btcd ./docker/btcd --build-arg COMMIT_SHA=$BTCD_COMMIT_SHA --build-arg CERT_HOST=$BTCD_CERT_HOST
   docker build -t sparkswap_ltcd ./docker/ltcd --build-arg COMMIT_SHA=$LTCD_COMMIT_SHA --build-arg CERT_HOST=$LTCD_CERT_HOST
 else

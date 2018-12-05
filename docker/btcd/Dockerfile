@@ -1,11 +1,10 @@
-FROM golang:1.10-alpine as builder
+FROM golang:1.11-alpine as builder
 
 LABEL maintainer="sparkswap <dev@sparkswap.com>"
 
 # Install build dependencies such as git and glide.
 RUN apk add --no-cache \
-    git \
-&&  go get -u github.com/Masterminds/glide
+    git
 
 WORKDIR $GOPATH/src/github.com/btcsuite/btcd
 
@@ -18,8 +17,7 @@ RUN : "${COMMIT_SHA:?COMMIT_SHA Build argument needs to be set.}"
 # Grab and install the latest version of btcd
 RUN git clone https://github.com/btcsuite/btcd . \
 && git checkout ${COMMIT_SHA} \
-&&  glide install \
-&&  go install . ./cmd/...
+&& CGO_ENABLED=0 GO111MODULE=on go install . ./cmd/...
 
 # Start a new image
 FROM alpine as final
