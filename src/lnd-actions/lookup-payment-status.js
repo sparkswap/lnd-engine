@@ -13,12 +13,14 @@ const PAYMENT_STATUSES = Object.freeze({
 })
 
 /**
- * Check's a payment's status
+ * Checks a payment's status
  *
  * @function
- * @param {String} paymentHash Base64 encoded payment hash for the desired payment
+ * @param  {String} paymentHash Base64 encoded payment hash for the desired payment
+ * @param  {Object} options
+ * @param  {Object} options.client
  * @return {Object} response
- * @return {String} response.status
+ * @return {String} response.status One of the statuses defined in PAYMENT_STATUSES
  */
 function lookupPaymentStatus (paymentHash, { client }) {
   return new Promise((resolve, reject) => {
