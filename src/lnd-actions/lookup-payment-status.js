@@ -1,6 +1,18 @@
 const { deadline } = require('../grpc-utils')
 
 /**
+ * Payment Status corresponding to the output of
+ * LND's LookupPaymentStatus RPC
+ * @constant
+ * @type {Object}
+ */
+const PAYMENT_STATUSES = Object.freeze({
+  GROUNDED: 'GROUNDED',
+  IN_FLIGHT: 'IN_FLIGHT',
+  COMPLETE: 'COMPLETE'
+})
+
+/**
  * Check's a payment's status
  *
  * @function
@@ -16,5 +28,7 @@ function lookupPaymentStatus (paymentHash, { client }) {
     })
   })
 }
+
+lookupPaymentStatus.STATUSES = PAYMENT_STATUSES
 
 module.exports = lookupPaymentStatus

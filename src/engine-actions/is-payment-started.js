@@ -1,16 +1,6 @@
 const { lookupPaymentStatus } = require('../lnd-actions')
 
-/**
- * Payment Status corresponding to the output of
- * LND's LookupPaymentStatus RPC
- * @constant
- * @type {Object}
- */
-const PAYMENT_STATUSES = Object.freeze({
-  GROUNDED: 'GROUNED',
-  IN_FLIGHT: 'IN_FLIGHT',
-  COMPLETE: 'COMPLETE'
-})
+const PAYMENT_STATUSES = lookupPaymentStatus.STATUSES
 
 /**
  * Retrieves whether a given payment (as indicated by its hash) has

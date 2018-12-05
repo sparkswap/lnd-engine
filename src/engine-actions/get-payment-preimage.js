@@ -4,6 +4,8 @@ const {
   listPayments
 } = require('../lnd-actions')
 
+const PAYMENT_STATUSES = lookupPaymentStatus.STATUSES
+
 /**
  * Milliseconds to wait between polling attempts on payment's
  * status.
@@ -11,17 +13,6 @@ const {
  */
 const POLLING_INTERVAL = 10000
 
-/**
- * Payment Status corresponding to the output of
- * LND's LookupPaymentStatus RPC
- * @constant
- * @type {Object}
- */
-const PAYMENT_STATUSES = Object.freeze({
-  GROUNDED: 'GROUNED',
-  IN_FLIGHT: 'IN_FLIGHT',
-  COMPLETE: 'COMPLETE'
-})
 
 /**
  * Retrieves the preimage for given payment hash. If the payment is
