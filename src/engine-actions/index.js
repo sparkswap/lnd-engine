@@ -32,7 +32,7 @@ const isEngineUnlocked = require('./is-engine-unlocked')
 const createWallet = require('./create-wallet')
 const unlockWallet = require('./unlock-wallet')
 const getPaymentPreimage = require('./get-payment-preimage')
-const isPaymentStarted = require('./is-payment-started')
+const isPaymentPendingOrComplete = require('./is-payment-pending-or-complete')
 
 module.exports = {
   validationDependentActions: {
@@ -66,7 +66,7 @@ module.exports = {
     getMaxChannel,
     withdrawFunds,
     getPaymentPreimage,
-    isPaymentStarted
+    isPaymentPendingOrComplete
   },
   validationIndependentActions: {
     createWallet,

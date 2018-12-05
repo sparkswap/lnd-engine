@@ -3,17 +3,17 @@ const { lookupPaymentStatus } = require('../lnd-actions')
 const PAYMENT_STATUSES = lookupPaymentStatus.STATUSES
 
 /**
- * Retrieves whether a given payment (as indicated by its hash) has
- * started. Payments that are currently in-progress or completed are
- * considered to have started, whereas payments that have failed
- * or have never been started are considered not to have started.
+ * Retrieves whether a given payment (as indicated by its hash) is
+ * currently in-progress or has successfully completed. Payments that
+ * have failedor have never been started are considered not to be
+ * pending or complete.
  *
  * @function
  * @param  {String} paymentHash Base64 encoded payment hash
  * @return {Boolean} true if a payment is in progress or completed; false otherwise
  */
-async function isPaymentStarted (paymentHash) {
-  const client = this.client
+async function isPaymentPendingOrComplete (paymentHash) {
+  const { client } = this
 
   const status = await lookupPaymentStatus(paymentHash, { client })
 
@@ -28,4 +28,4 @@ async function isPaymentStarted (paymentHash) {
   throw new Error(`Unknown payment status ${status} for payment with hash '${paymentHash}'`)
 }
 
-module.exports = isPaymentStarted
+module.exports = isPaymentPendingOrComplete
