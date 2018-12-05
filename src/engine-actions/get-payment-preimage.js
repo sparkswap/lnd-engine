@@ -64,6 +64,9 @@ async function getCompletedPreimage (paymentHash, { logger, client }) {
 
   const paymentHashBuf = Buffer.from(paymentHash, 'base64')
   const payment = payments.find(({ paymentHash }) => {
+    // `paymentHash` returned from ListPayments {@link https://api.lightning.community/#payment}
+    // is a hex string. We need to compare to our payment hash which is a base64 string,
+    // so we convert both to buffers to do the comparison.
     return paymentHashBuf.equals(Buffer.from(paymentHash, 'hex'))
   })
 
