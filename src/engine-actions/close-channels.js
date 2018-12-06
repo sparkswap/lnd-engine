@@ -16,6 +16,8 @@ async function closeChannels ({ force = false } = {}) {
   // This consists of channels that may be active or inactive
   const { channels: openChannels = [] } = await listChannels({ client: this.client })
 
+  this.logger.debug('Received channels from engine: ', { openChannels })
+
   // We start by only including active channels to be closed
   let channelsToClose = openChannels.filter(c => c.active === true)
 
