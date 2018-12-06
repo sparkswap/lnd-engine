@@ -125,7 +125,7 @@ describe('closeChannels', () => {
     })
 
     it('closes active and inactive channels', async () => {
-      const inactiveChannel = { active: true, channelPoint: 'dan:1337' }
+      const inactiveChannel = { active: false, channelPoint: 'dan:1337' }
       streamReturnsClosedChannel(closeChannelStream, [ inactiveChannel ])
       listChannelsStub.resolves({ channels: [inactiveChannel] })
       await closeChannels.call(engine, { force: true })
@@ -142,7 +142,7 @@ describe('closeChannels', () => {
     })
 
     it('closes all channels', async () => {
-      const inactiveChannel = { active: true, channelPoint: 'dan:1337' }
+      const inactiveChannel = { active: false, channelPoint: 'dan:1337' }
       const pendingChannel = { active: true, channelPoint: 'martine:1337' }
       streamReturnsClosedChannel(closeChannelStream, [ inactiveChannel ], 0)
       streamReturnsClosedChannel(closeChannelStream, [ pendingChannel ], 1)
