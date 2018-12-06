@@ -5,11 +5,11 @@ const {
 } = require('../lnd-actions')
 
 /**
- * Closes active channels on the given engine. Will try to close all channels
+ * Closes active channels on the given engine. Will try to close pending channels
  * if `force` option is given
  *
  * @param {Object} options
- * @param {Object} [options.force=false] force is true if you want to force close channels, false if not
+ * @param {Object} [options.force=false] force is true if you want to force close all channels, false if not
  * @returns {Promise<Array.<Object>>}
  */
 async function closeChannels ({ force = false } = {}) {
@@ -18,17 +18,15 @@ async function closeChannels ({ force = false } = {}) {
 
   this.logger.debug('Received channels from engine: ', { openChannels })
 
-  // We start by only including active channels to be closed
-  let channelsToClose = openChannels.filter(c => c.active === true)
+  // We will start by including all active/inactive channels to be closed
+  let channelsToClose = openChannels
 
-  // If we want to force close channels, we will include inactive and pending channels
-  // as these two types can only be closed w/ the force flag, resulting in a more
-  // thorough returning of funds
+  // If we want to force close channels, we will include pending channels as this
+  // type can only be closed w/ the force flag. This will result in a more thorough
+  // returning of funds
   if (force) {
     const { pendingOpenChannels = [] } = await listPendingChannels({ client: this.client })
-    const inactiveChannels = openChannels.filter(c => c.active === false)
     channelsToClose = channelsToClose.concat(pendingOpenChannels)
-    channelsToClose = channelsToClose.concat(inactiveChannels)
   }
 
   if (channelsToClose.length === 0) {
