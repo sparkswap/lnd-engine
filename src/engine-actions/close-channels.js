@@ -5,40 +5,58 @@ const {
 } = require('../lnd-actions')
 
 /**
- * Closes active channels on the given engine. Will try to close all channels
+ * Closes active channels on the given engine. Will try to close inactive/pending channels
  * if `force` option is given
  *
  * @param {Object} options
- * @param {Object} [options.force=false] force is true if you want to force close channels, false if not
- * @returns {Promise<Array.<Object>>}
+ * @param {Object} [options.force=false] force is true if you want to force close all channels, false if not
+ * @returns {Promise<void>} returns void on success
+ * @throws {Error} Inactive/Pending channels exist and can not be closed unless 'force' is set to true
  */
 async function closeChannels ({ force = false } = {}) {
-  // This consists of channels that may be active or inactive
-  const { channels: openChannels = [] } = await listChannels({ client: this.client })
+  const [
+    { channels: openChannels = [] } = {},
+    { pendingOpenChannels = [] } = {}
+  ] = await Promise.all([
+    // The response from listChannels consists of channels that may be active or inactive
+    listChannels({ client: this.client }),
+    listPendingChannels({ client: this.client })
+  ])
 
-  // We start by only including active channels to be closed
-  let channelsToClose = openChannels.filter(c => c.active === true)
-
-  // If we want to force close channels, we will include inactive and pending channels
-  // as these two types can only be closed w/ the force flag, resulting in a more
-  // thorough returning of funds
-  if (force) {
-    const { pendingOpenChannels = [] } = await listPendingChannels({ client: this.client })
-    const inactiveChannels = openChannels.filter(c => c.active === false)
-    channelsToClose = channelsToClose.concat(pendingOpenChannels)
-    channelsToClose = channelsToClose.concat(inactiveChannels)
+  if (!openChannels.length && !pendingOpenChannels.length) {
+    this.logger.debug('closeChannels: No channels exist')
+    return
   }
 
-  if (channelsToClose.length === 0) {
-    this.logger.debug('closeChannels: No channels exist')
-    return []
+  this.logger.debug('Received channels from engine: ', { openChannels, pendingOpenChannels })
+
+  const activeChannels = openChannels.filter(chan => chan.active)
+  const inactiveChannels = openChannels.filter(chan => !chan.active)
+
+  // By default, we will always try to cancel active channels
+  let channelsToClose = activeChannels
+
+  // If we are force-closing channels, then we are safe to add inactive and pending
+  // channels to be closed
+  if (force) {
+    channelsToClose = channelsToClose.concat(inactiveChannels)
+    channelsToClose = channelsToClose.concat(pendingOpenChannels)
   }
 
   const closedChannelResponses = await Promise.all(channelsToClose.map(channel => close(channel, force, this.client, this.logger)))
 
-  this.logger.info('Successfully closed channels', closedChannelResponses)
+  if (force) {
+    this.logger.debug('Successfully closed channels', closedChannelResponses)
+  } else {
+    this.logger.debug('Successfully closed active channels', closedChannelResponses)
+  }
 
-  return closedChannelResponses
+  // If we have attempted to close channels, but still have inactive or pending channels
+  // on the engine, then we want to fail and let the consumer know that they must force close
+  // these channels in order to release ALL funds
+  if (!force && (inactiveChannels.length || pendingOpenChannels.length)) {
+    throw new Error('Inactive/pending channels exist. You must use `force` to close')
+  }
 }
 
 async function close (channel, force, client, logger) {
