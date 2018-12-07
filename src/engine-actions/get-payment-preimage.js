@@ -28,11 +28,11 @@ async function getPaymentPreimage (paymentHash) {
   const { status } = await lookupPaymentStatus(paymentHash, { client })
 
   if (status === PAYMENT_STATUSES.GROUNDED) {
-    throw new Error(`No payment with hash '${paymentHash}' is in-flight or complete`)
+    return { permanentError: `No payment with hash '${paymentHash}' is in-flight or complete` }
   }
 
   if (status === PAYMENT_STATUSES.COMPLETE) {
-    return getCompletedPreimage(paymentHash, { logger, client })
+    return { paymentPreimage: getCompletedPreimage(paymentHash, { logger, client }) }
   }
 
   if (status === PAYMENT_STATUSES.IN_FLIGHT) {
