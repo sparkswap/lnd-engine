@@ -27,9 +27,15 @@ const MEMO_PREFIX = 'sparkswap-swap-terminus:'
  * @returns {String} rHash hash of invoice from lnd
  */
 async function createSwapHash (orderId, value) {
-  const expiry = SWAP_EXPIRY
-  const memo = `${MEMO_PREFIX}${orderId}`
-  const { rHash } = await addInvoice({ memo, expiry, value }, { client: this.client })
+  const params = {
+    memo: `${MEMO_PREFIX}${orderId}`,
+    value,
+    expiry: SWAP_EXPIRY,
+    externalPreimage: true,
+    rHash: '20/REAranviIs1SBeMUPwsMhgMwuo/62scpMsJS9frg='
+  }
+
+  const { rHash } = await addInvoice(params, { client: this.client })
   return rHash
 }
 
