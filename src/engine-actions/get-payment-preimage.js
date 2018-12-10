@@ -15,7 +15,7 @@ const POLLING_INTERVAL = 10000
 
 /**
  * @typedef {Object} GetPaymentPreimageOutcome
- * @property {String} paymentPreimage Base64 string of the preimage for the paymentHashf
+ * @property {String} paymentPreimage Base64 string of the preimage for the paymentHash
  * @property {String} permanentError Error encountered that is permanent, and safe to cancel the upstream HTLC
  */
 
