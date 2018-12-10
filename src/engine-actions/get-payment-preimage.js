@@ -15,7 +15,7 @@ const POLLING_INTERVAL = 10000
 
 /**
  * @typedef {Object} GetPaymentPreimageOutcome
- * @property {String} paymentPreimage Base64 string of the preimage for the swapHash
+ * @property {String} paymentPreimage Base64 string of the preimage for the paymentHash
  * @property {String} permanentError Error encountered that is permanent, and safe to cancel the upstream HTLC
  */
 
@@ -27,7 +27,7 @@ const POLLING_INTERVAL = 10000
  * @function
  * @param  {String} paymentHash Base64 encoded payment hash
  * @return {GetPaymentPreimageOutcome}
- * @throws {Error} This will be a temporary error if payment is not in a known status
+ * @throws {Error} If payment is in an unknown status
  */
 async function getPaymentPreimage (paymentHash) {
   const { client, logger } = this
