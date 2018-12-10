@@ -1,5 +1,5 @@
 const { Big } = require('../utils')
-const { listChannels } = require('../lnd-actions')
+const { listChannels, listPendingChannels } = require('../lnd-actions')
 
 /**
  * Get local balance of all channels for a specific daemon
@@ -8,16 +8,40 @@ const { listChannels } = require('../lnd-actions')
  * @return {String} res.maxBalance - the max balance in all open channels.
  */
 async function getMaxChannel ({ outbound = true } = {}) {
-  const { channels = [] } = await listChannels({ client: this.client })
+  const [
+    { channels = [] } = {},
+    { pendingOpenChannels = [] } = {}
+  ] = await Promise.all([
+    // The response from listChannels consists of channels that may be active or inactive
+    listChannels({ client: this.client }),
+    listPendingChannels({ client: this.client })
+  ])
   const balance = outbound ? 'localBalance' : 'remoteBalance'
 
-  if (channels.length === 0) {
-    this.logger.debug('getMaxChannel: No channels exist')
+  if (channels.length === 0 && pendingOpenChannels.length === 0) {
+    this.logger.debug('getMaxChannel: No open or pending channels exist')
     return {}
   }
 
-  const maxBalance = channels.reduce((max, channel) => Big(channel[balance]).gt(max) ? Big(channel[balance]) : max, Big(channels[0][balance]))
-  return { maxBalance: maxBalance.toString() }
+  const maxBalance = channels.reduce((max, channel) => {
+    if (Big(channel[balance]).gt(max)) {
+      return Big(channel[balance])
+    } else {
+      return max
+    }
+  }, Big('0'))
+
+  const maxPendingBalance = pendingOpenChannels.reduce((max, pendingChannel) => {
+    if (Big(pendingChannel.channel[balance]).gt(max)) {
+      return Big(pendingChannel.channel[balance])
+    } else {
+      return max
+    }
+  }, Big('0'))
+
+  const finalMaxBalance = maxBalance.gt(maxPendingBalance) ? maxBalance : maxPendingBalance
+
+  return { maxBalance: finalMaxBalance.toString() }
 }
 
 module.exports = getMaxChannel
