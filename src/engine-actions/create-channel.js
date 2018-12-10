@@ -51,7 +51,14 @@ async function createChannel (paymentChannelNetworkAddress, fundingAmount) {
   const balance = await getUncommittedBalance.call(this)
   const balanceWithFeeEstimate = Big(fundingAmount).plus(feeEstimate)
 
-  if (balanceWithFeeEstimate.gt(balance)) {
+  // If the funding amount and fees are greater than our current uncommitted balance
+  // AND the funding amount cannot cover the fees, then we should error to the user
+  // because we would fail to fund a channel. This also prevents against having negative
+  // values for a fundingAmount after a fee estimate has been taken
+  if (balanceWithFeeEstimate.gt(balance) && Big(feeEstimate).gt(fundingAmount)) {
+    throw new Error('fundingAmount does not cover estimated fees', { fundingAmount, feeEstimate })
+  } else if (balanceWithFeeEstimate.gt(balance)) {
+    this.logger.debug('Current engine balance does not have enough funds for channel and fees', { fundingAmount, feeEstimate, balance })
     const fundingAmountSubFees = Big(fundingAmount).minus(feeEstimate).toString()
     await openChannel(publicKey, fundingAmountSubFees, { client: this.client })
   } else {
