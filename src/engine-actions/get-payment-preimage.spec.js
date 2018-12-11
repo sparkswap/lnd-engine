@@ -73,16 +73,17 @@ describe('get-payment-preimage', () => {
       expect(lookupPaymentStatusStub).to.have.been.calledWith(paymentHash, { client })
     })
 
-    it('throws if the payment is grounded', () => {
+    it('returns a permanent error if the payment is grounded', async () => {
       status = 'GROUNDED'
       lookupPaymentStatusStub.resolves({ status })
-      return expect(getPaymentPreimage.call(engine, paymentHash)).to.eventually.be.rejected()
+      const res = await getPaymentPreimage.call(engine, paymentHash)
+      expect(res).to.eql({permanentError: `No payment with hash '${paymentHash}' is in-flight or complete`})
     })
 
     it('returns the preimage if the payment is complete', async () => {
       lookupPaymentStatusStub.resolves({ status })
 
-      expect(await getPaymentPreimage.call(engine, paymentHash)).to.be.eql(preimage)
+      expect(await getPaymentPreimage.call(engine, paymentHash)).to.be.eql({ paymentPreimage: preimage })
       expect(getCompletedPreimageStub).to.have.been.calledOnce()
       expect(getCompletedPreimageStub).to.have.been.calledWith(paymentHash, { client, logger })
     })
@@ -99,7 +100,7 @@ describe('get-payment-preimage', () => {
     it('returns the preimage after waiting', async () => {
       lookupPaymentStatusStub.onCall(0).resolves({ status: 'IN_FLIGHT' })
 
-      expect(await getPaymentPreimage.call(engine, paymentHash)).to.be.eql(preimage)
+      expect(await getPaymentPreimage.call(engine, paymentHash)).to.be.eql({ paymentPreimage: preimage })
       expect(getCompletedPreimageStub).to.have.been.calledAfter(delayStub)
     })
   })
