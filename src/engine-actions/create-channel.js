@@ -8,7 +8,7 @@ const {
 } = require('../utils')
 const {
   getUncommittedBalance
-} = require('./index')
+} = require('./get-uncommitted-balance')
 
 /**
  * Executes a connection and opens a channel w/ another lnd instance
