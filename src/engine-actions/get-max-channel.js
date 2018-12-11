@@ -23,11 +23,6 @@ async function getMaxChannel ({ outbound = true } = {}) {
     return {}
   }
 
-  this.logger.info('channels.length', channels.length)
-  this.logger.info('pendingOpenChannels.length', pendingOpenChannels.length)
-  this.logger.info('channels', channels)
-  this.logger.info('pendingOpenChannels', pendingOpenChannels)
-
   const maxBalance = channels.reduce((max, channel) => {
     if (Big(channel[balance]).gt(max)) {
       return Big(channel[balance])
@@ -44,8 +39,7 @@ async function getMaxChannel ({ outbound = true } = {}) {
     }
   }, Big('0'))
 
-  this.logger.info('maxBalance', maxBalance)
-  this.logger.info('maxPendingBalance', maxPendingBalance)
+  this.logger.debug(`getMaxChannel: max open channel is: ${maxBalance.toString()}, max pending channel balance is: ${maxPendingBalance.toString()}`)
 
   const finalMaxBalance = maxBalance.gt(maxPendingBalance) ? maxBalance : maxPendingBalance
 
