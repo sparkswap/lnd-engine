@@ -50,7 +50,7 @@ async function createChannel (paymentChannelNetworkAddress, fundingAmount) {
   const balanceWithFeeEstimate = Big(fundingAmount).plus(feeEstimate)
   const balanceCantCoverFees = balanceWithFeeEstimate.gt(balance)
 
-  this.logger.debug('Receive balance information', { balance, balanceWithFeeEstimate, balanceCantCoverFees })
+  this.logger.debug('Received balance information', { balance, balanceWithFeeEstimate, balanceCantCoverFees })
 
   // If the funding amount and fees are greater than our current uncommitted balance
   // AND the funding amount cannot cover the fees, then we should error to the user
