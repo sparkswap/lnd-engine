@@ -14,25 +14,31 @@ const PAYMENT_STATUSES = lookupPaymentStatus.STATUSES
 const POLLING_INTERVAL = 10000
 
 /**
+ * @typedef {Object} GetPaymentPreimageOutcome
+ * @property {String} paymentPreimage Base64 string of the preimage for the paymentHash
+ * @property {String} permanentError Error encountered that is permanent, and safe to cancel the upstream HTLC
+ */
+
+/**
  * Retrieves the preimage for given payment hash. If the payment is
  * still in-flight, it will wait until the payment is completed and
  * then return the hash.
  *
  * @function
  * @param  {String} paymentHash Base64 encoded payment hash
- * @return {String} Base64 encoded payment preimage associated with the hash
- * @throws {Error} If payment is not in-flight or completed
+ * @return {GetPaymentPreimageOutcome}
+ * @throws {Error} If payment is in an unknown status
  */
 async function getPaymentPreimage (paymentHash) {
   const { client, logger } = this
   const { status } = await lookupPaymentStatus(paymentHash, { client })
 
   if (status === PAYMENT_STATUSES.GROUNDED) {
-    throw new Error(`No payment with hash '${paymentHash}' is in-flight or complete`)
+    return { permanentError: `No payment with hash '${paymentHash}' is in-flight or complete` }
   }
 
   if (status === PAYMENT_STATUSES.COMPLETE) {
-    return getCompletedPreimage(paymentHash, { logger, client })
+    return { paymentPreimage: await getCompletedPreimage(paymentHash, { logger, client }) }
   }
 
   if (status === PAYMENT_STATUSES.IN_FLIGHT) {
