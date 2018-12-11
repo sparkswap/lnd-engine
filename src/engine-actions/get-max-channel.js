@@ -16,34 +16,30 @@ async function getMaxChannel ({ outbound = true } = {}) {
     listChannels({ client: this.client }),
     listPendingChannels({ client: this.client })
   ])
-  const balance = outbound ? 'localBalance' : 'remoteBalance'
+  const balanceType = outbound ? 'localBalance' : 'remoteBalance'
 
-  if (channels.length === 0 && pendingOpenChannels.length === 0) {
+  if (!channels.length && !pendingOpenChannels.length) {
     this.logger.debug('getMaxChannel: No open or pending channels exist')
     return {}
   }
 
-  const maxBalance = channels.reduce((max, channel) => {
-    if (Big(channel[balance]).gt(max)) {
-      return Big(channel[balance])
+  // We need to normalize pendingChannels here because their format is different
+  // than those received from `listChannels`
+  const pendingChannels = pendingOpenChannels.map(chan => chan.channel)
+
+  const allChannels = channels.concat(pendingChannels)
+
+  const maxBalance = allChannels.reduce((max, channel) => {
+    if (Big(channel[balanceType]).gt(max)) {
+      return Big(channel[balanceType])
     } else {
       return max
     }
   }, Big('0'))
 
-  const maxPendingBalance = pendingOpenChannels.reduce((max, pendingChannel) => {
-    if (Big(pendingChannel.channel[balance]).gt(max)) {
-      return Big(pendingChannel.channel[balance])
-    } else {
-      return max
-    }
-  }, Big('0'))
+  this.logger.debug(`getMaxChannel: max open channel is: ${maxBalance.toString()}`)
 
-  this.logger.debug(`getMaxChannel: max open channel is: ${maxBalance.toString()}, max pending channel balance is: ${maxPendingBalance.toString()}`)
-
-  const finalMaxBalance = maxBalance.gt(maxPendingBalance) ? maxBalance : maxPendingBalance
-
-  return { maxBalance: finalMaxBalance.toString() }
+  return { maxBalance: maxBalance.toString() }
 }
 
 module.exports = getMaxChannel
