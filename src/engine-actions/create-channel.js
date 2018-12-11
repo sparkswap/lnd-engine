@@ -6,9 +6,7 @@ const {
   Big,
   networkAddressFormatter
 } = require('../utils')
-const {
-  getUncommittedBalance
-} = require('./get-uncommitted-balance')
+const getUncommittedBalance = require('./get-uncommitted-balance')
 
 /**
  * Executes a connection and opens a channel w/ another lnd instance
