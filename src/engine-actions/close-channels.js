@@ -39,8 +39,12 @@ async function closeChannels ({ force = false } = {}) {
   // If we are force-closing channels, then we are safe to add inactive and pending
   // channels to be closed
   if (force) {
+    // We need to normalize pendingChannels here because their format is different
+    // than those received from `listChannels`
+    const pendingChannels = pendingOpenChannels.map(chan => chan.channel)
+
     channelsToClose = channelsToClose.concat(inactiveChannels)
-    channelsToClose = channelsToClose.concat(pendingOpenChannels)
+    channelsToClose = channelsToClose.concat(pendingChannels)
   }
 
   const closedChannelResponses = await Promise.all(channelsToClose.map(channel => close(channel, force, this.client, this.logger)))
