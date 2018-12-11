@@ -70,7 +70,7 @@ describe('close-channels', () => {
       })
 
       it('errors if there are pending channels', () => {
-        const pendingChannel = { channelPoint: 'lol' }
+        const pendingChannel = { channel: { channelPoint: 'lol' } }
         listPendingChannelsStub.resolves({ pendingOpenChannels: [pendingChannel] })
         return expect(closeChannels.call(engine)).to.eventually.be.rejectedWith('Inactive/pending channels exist')
       })
@@ -85,7 +85,7 @@ describe('close-channels', () => {
 
       beforeEach(async () => {
         inactiveChannel = { active: false, channelPoint: 'lol' }
-        pendingChannel = { channelPoint: 'lol' }
+        pendingChannel = { channel: { channelPoint: 'lol' } }
         openChannels = [activeChannel, inactiveChannel]
         pendingOpenChannels = [pendingChannel]
 
@@ -100,7 +100,7 @@ describe('close-channels', () => {
       })
 
       it('includes pending open channels', () => {
-        expect(closeStub).to.have.been.calledWith(pendingChannel, force, sinon.match.any, sinon.match.any)
+        expect(closeStub).to.have.been.calledWith(pendingChannel.channel, force, sinon.match.any, sinon.match.any)
       })
 
       it('force closes channels', () => {
