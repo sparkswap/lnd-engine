@@ -61,8 +61,8 @@ async function createChannel (paymentChannelNetworkAddress, fundingAmount) {
   } else if (balanceCantCoverFees) {
     this.logger.debug('Current engine balance does not have enough funds for channel and fees', { fundingAmount, feeEstimate, balance })
 
-    const fundingAmountSubFees = Big(fundingAmount).minus(feeEstimate).toString()
-    await openChannel(publicKey, fundingAmountSubFees, { client: this.client })
+    const fundingAmountLessFees = Big(fundingAmount).minus(feeEstimate).toString()
+    await openChannel(publicKey, fundingAmountLessFees, { client: this.client })
   } else {
     await openChannel(publicKey, fundingAmount, { client: this.client })
   }
