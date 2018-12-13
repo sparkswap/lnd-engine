@@ -23,7 +23,7 @@ ENV CHECKSUM_FILENAME litecoin-${VERSION}-x86_64-linux-gnu.tar.gz.asc
 # Verify litecoin installation files and install litecoind
 RUN wget -q https://download.litecoin.org/litecoin-${VERSION}/linux/${FILENAME}
 RUN wget -q https://download.litecoin.org/litecoin-${VERSION}/linux/${CHECKSUM_FILENAME}
-RUN gpg2 --keyserver pool.sks-keyservers.net --recv-key FE3348877809386C
+RUN gpg2 --keyserver hkp://ha.pool.sks-keyservers.net --recv-key FE3348877809386C
 RUN gpg2 --verify ./${CHECKSUM_FILENAME}
 RUN tar xfz /litecoin-${VERSION}-x86_64-linux-gnu.tar.gz
 RUN mv litecoin-${VERSION}/bin/* /usr/local/bin/
