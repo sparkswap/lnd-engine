@@ -23,7 +23,19 @@ ENV CHECKSUM_FILENAME litecoin-${VERSION}-x86_64-linux-gnu.tar.gz.asc
 # Verify litecoin installation files and install litecoind
 RUN wget -q https://download.litecoin.org/litecoin-${VERSION}/linux/${FILENAME}
 RUN wget -q https://download.litecoin.org/litecoin-${VERSION}/linux/${CHECKSUM_FILENAME}
-RUN gpg2 --keyserver hkp://ha.pool.sks-keyservers.net --recv-key FE3348877809386C
+
+# We iterate through multiple keyservers to prevent docker failures in the case a
+# single gpg server fails
+RUN for KEYSERVER_NAME in ha.pool.sks-keyservers.net \
+      hkp://p80.pool.sks-keyservers.net:80 \
+      keyserver.ubuntu.com \
+      hkp://keyserver.ubuntu.com:80 \
+      pgp.mit.edu; \
+    do \
+      gpg2 --keyserver $KEYSERVER_NAME --recv-keys FE3348877809386C && \
+      break || echo "$KEYSERVER_NAME failed: Trying another gpg server"; \
+    done
+
 RUN gpg2 --verify ./${CHECKSUM_FILENAME}
 RUN tar xfz /litecoin-${VERSION}-x86_64-linux-gnu.tar.gz
 RUN mv litecoin-${VERSION}/bin/* /usr/local/bin/
