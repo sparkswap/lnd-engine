@@ -7,9 +7,6 @@ LABEL maintainer="Sparkswap <dev@sparkswap.com>"
 ARG VERSION
 RUN : "${VERSION:?VERSION Build argument needs to be set.}"
 
-ENV FILENAME bitcoin-${VERSION}-x86_64-linux-gnu.tar.gz
-ENV CHECKSUM_FILENAME SHA256SUMS.asc
-
 # Install all deps needed for bitcoind verification
 RUN apt-get update
 RUN apt-get install -y software-properties-common
@@ -20,9 +17,13 @@ RUN apt-get install -y --no-install-recommends \
   gpg-agent \
   dirmngr
 
-RUN wget https://bitcoin.org/bin/bitcoin-core-${VERSION}/${FILENAME}
-RUN wget https://bitcoin.org/bin/bitcoin-core-${VERSION}/${CHECKSUM_FILENAME}
-RUN gpg2 --keyserver pgp.mit.edu --recv-keys 0x90C8019E36C2E964
+ENV FILENAME bitcoin-${VERSION}-x86_64-linux-gnu.tar.gz
+ENV CHECKSUM_FILENAME SHA256SUMS.asc
+
+# Verify bitcoin installation files and install bitcoind
+RUN wget -q https://bitcoin.org/bin/bitcoin-core-${VERSION}/${FILENAME}
+RUN wget -q https://bitcoin.org/bin/bitcoin-core-${VERSION}/${CHECKSUM_FILENAME}
+RUN gpg2 --keyserver pool.sks-keyservers.net --recv-keys 0x90C8019E36C2E964
 RUN gpg2 --verify ./${CHECKSUM_FILENAME}
 RUN tar xfz /${FILENAME}
 RUN mv bitcoin-${VERSION}/bin/* /usr/local/bin/
