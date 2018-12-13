@@ -1,3 +1,4 @@
+
 FROM golang:1.10-alpine as builder
 
 LABEL maintainer="sparkswap <dev@sparkswap.com>"
