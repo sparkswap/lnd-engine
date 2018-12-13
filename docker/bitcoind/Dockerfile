@@ -23,7 +23,19 @@ ENV CHECKSUM_FILENAME SHA256SUMS.asc
 # Verify bitcoin installation files and install bitcoind
 RUN wget -q https://bitcoin.org/bin/bitcoin-core-${VERSION}/${FILENAME}
 RUN wget -q https://bitcoin.org/bin/bitcoin-core-${VERSION}/${CHECKSUM_FILENAME}
-RUN gpg2 --keyserver hkp://ha.pool.sks-keyservers.net --recv-keys 0x90C8019E36C2E964
+
+# We iterate through multiple keyservers to prevent docker failures in the case a
+# single gpg server fails
+RUN for KEYSERVER_NAME in ha.pool.sks-keyservers.net \
+      hkp://p80.pool.sks-keyservers.net:80 \
+      keyserver.ubuntu.com \
+      hkp://keyserver.ubuntu.com:80 \
+      pgp.mit.edu; \
+    do \
+      gpg2 --keyserver $KEYSERVER_NAME --recv-keys 0x90C8019E36C2E964 && \
+      break || echo "$KEYSERVER_NAME failed: Trying another gpg server"; \
+    done
+
 RUN gpg2 --verify ./${CHECKSUM_FILENAME}
 RUN tar xfz /${FILENAME}
 RUN mv bitcoin-${VERSION}/bin/* /usr/local/bin/
