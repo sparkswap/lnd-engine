@@ -13,7 +13,7 @@ RUN apt-get install -y software-properties-common
 RUN apt-get install -y --no-install-recommends \
   ca-certificates \
   wget \
-  gpg \
+  gnupg2 \
   gpg-agent \
   dirmngr
 
@@ -21,10 +21,10 @@ ENV FILENAME litecoin-${VERSION}-x86_64-linux-gnu.tar.gz
 ENV CHECKSUM_FILENAME litecoin-${VERSION}-x86_64-linux-gnu.tar.gz.asc
 
 # Verify litecoin installation files and install litecoind
-RUN wget https://download.litecoin.org/litecoin-${VERSION}/linux/${FILENAME}}
-RUN wget https://download.litecoin.org/litecoin-${VERSION}/linux/${CHECKSUM_FILENAME}}
-RUN gpg --keyserver pool.sks-keyservers.net --recv-key FE3348877809386C
-RUN gpg --verify ./${CHECKSUM_FILENAME}}
+RUN wget https://download.litecoin.org/litecoin-${VERSION}/linux/${FILENAME}
+RUN wget https://download.litecoin.org/litecoin-${VERSION}/linux/${CHECKSUM_FILENAME}
+RUN gpg2 --keyserver pool.sks-keyservers.net --recv-key FE3348877809386C
+RUN gpg2 --verify ./${CHECKSUM_FILENAME}
 RUN tar xfz /litecoin-${VERSION}-x86_64-linux-gnu.tar.gz
 RUN mv litecoin-${VERSION}/bin/* /usr/local/bin/
 RUN rm -rf litecoin-* /root/.gnupg/
