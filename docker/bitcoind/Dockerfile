@@ -21,8 +21,8 @@ ENV FILENAME bitcoin-${VERSION}-x86_64-linux-gnu.tar.gz
 ENV CHECKSUM_FILENAME SHA256SUMS.asc
 
 # Verify bitcoin installation files and install bitcoind
-RUN wget https://bitcoin.org/bin/bitcoin-core-${VERSION}/${FILENAME}
-RUN wget https://bitcoin.org/bin/bitcoin-core-${VERSION}/${CHECKSUM_FILENAME}
+RUN wget -q https://bitcoin.org/bin/bitcoin-core-${VERSION}/${FILENAME}
+RUN wget -q https://bitcoin.org/bin/bitcoin-core-${VERSION}/${CHECKSUM_FILENAME}
 RUN gpg2 --keyserver pool.sks-keyservers.net --recv-keys 0x90C8019E36C2E964
 RUN gpg2 --verify ./${CHECKSUM_FILENAME}
 RUN tar xfz /${FILENAME}
