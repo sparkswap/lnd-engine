@@ -106,6 +106,10 @@ class LndEngine {
           throw new Error('LndEngine is locked, unable to validate config')
         }
 
+        // Regenerate lightning client just in-case we went through setup and the
+        // macaroons didn't exist for lnd (this happens when an engine was previously locked)
+        this.client = generateLightningClient(this)
+
         // Once the engine is unlocked, we will attempt to validate our engine's
         // configuration. If we call `isNodeConfigValid` before the engine is unlocked
         // the call will fail without a friendly error
