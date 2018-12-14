@@ -106,8 +106,12 @@ class LndEngine {
           throw new Error('LndEngine is locked, unable to validate config')
         }
 
-        // Regenerate lightning client just in-case we went through setup and the
-        // macaroons didn't exist for lnd (this happens when an engine was previously locked)
+        // A macaroon file for lnd will only exist if the Lightning RPC has been started
+        // which means that the engine needs to be unlocked before this file is available.
+        //
+        // We regenerate the 'client' here in-case macaroons did not exist during the
+        // creation of a new LndEngine.
+        // TODO: Should we only generate the client here?
         this.client = generateLightningClient(this)
 
         // Once the engine is unlocked, we will attempt to validate our engine's
