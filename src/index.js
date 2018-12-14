@@ -100,7 +100,6 @@ class LndEngine {
         //
         // We regenerate the 'client' here in-case macaroons did not exist during the
         // creation of a new LndEngine.
-        // TODO: Should we only generate the client here?
         this.client = generateLightningClient(this)
 
         // An Engine is `locked` when no wallet is present OR if LND Engine requires
