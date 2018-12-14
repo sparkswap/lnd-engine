@@ -13,6 +13,13 @@ const {
 const UNIMPLEMENTED_SERVICE_CODE = 12
 
 /**
+ * @constant
+ * @type {String}
+ * @default
+ */
+const WALLET_EXISTS_ERROR_MESSAGE = 'wallet already exists'
+
+/**
  * Rough estimate if the engine's node unlocked or not. Sets the `unlocked` flag
  * on an engine.
  *
@@ -33,6 +40,16 @@ async function isEngineUnlocked () {
     // supported/enabled in this specific service. In our case, this means the
     // WalletUnlocker RPC has been turned off and the Lightning RPC is now functional
     if (e.code && e.code === UNIMPLEMENTED_SERVICE_CODE) {
+      return true
+    }
+
+    // If an error has been received that states a wallet exists, then this means that
+    // either the user has just created a wallet (and we are revalidating the engine) or
+    // the user has just unlocked the engine successfully.
+    //
+    // Unfortunately we have to string match on the error, since the error code returned
+    // is generic (code 2)
+    if (e.message && e.message.includes(WALLET_EXISTS_ERROR_MESSAGE)) {
       return true
     }
 
