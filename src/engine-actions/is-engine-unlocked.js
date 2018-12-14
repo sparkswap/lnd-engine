@@ -64,6 +64,7 @@ async function isEngineUnlocked () {
         if (e.code && e.code === UNIMPLEMENTED_SERVICE_CODE) {
           return false
         }
+        throw e
       }
 
       return true
