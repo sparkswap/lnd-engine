@@ -74,6 +74,8 @@ async function isEngineUnlocked () {
       try {
         await isAvailable.call(this)
       } catch (e) {
+        // If a 'wallet already exists', but lnrpc (Lighting RPC) is not implemented
+        // then the engine is still locked and the user needs to unlock the wallet
         if (e.code && e.code === UNIMPLEMENTED_SERVICE_CODE) {
           return false
         }
