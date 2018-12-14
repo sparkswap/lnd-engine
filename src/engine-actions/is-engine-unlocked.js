@@ -1,6 +1,5 @@
-const {
-  genSeed
-} = require('../lnd-actions')
+const { genSeed } = require('../lnd-actions')
+const isAvailable = require('./is-available')
 
 /**
  * CODE 12 for gRPC is equal to 'unimplemented'
@@ -57,6 +56,16 @@ async function isEngineUnlocked () {
     // Unfortunately we have to string match on the error, since the error code returned
     // is generic (code 2)
     if (e.message && e.message.includes(WALLET_EXISTS_ERROR_MESSAGE)) {
+      // At this point, genSeed is up and a wallet exists on the server, however
+      // we need to make sure that this isn't because of
+      try {
+        await isAvailable.call(this)
+      } catch (e) {
+        if (e.code && e.code === UNIMPLEMENTED_SERVICE_CODE) {
+          return false
+        }
+      }
+
       return true
     }
 
