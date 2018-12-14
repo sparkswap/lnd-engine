@@ -105,15 +105,20 @@ describe('lnd-engine index', () => {
     let engine
     let exponentialStub
     let logger
+    let clientStub
+    let lndClient
 
     beforeEach(() => {
       exponentialStub = sinon.stub()
+      lndClient = sinon.stub()
+      clientStub = sinon.stub().returns(lndClient)
       logger = {
         info: sinon.stub(),
         error: sinon.stub()
       }
 
       LndEngine.__set__('exponentialBackoff', exponentialStub)
+      LndEngine.__set__('generateLightningClient', clientStub)
 
       engine = new LndEngine(host, symbol, { logger, tlsCertPath: customTlsCertPath, macaroonPath: customMacaroonPath, validations: false })
     })
@@ -154,6 +159,12 @@ describe('lnd-engine index', () => {
       it('sets unlocked property on the class to true if unlocked', async () => {
         await validationCall()
         expect(engine.unlocked).to.be.eql(true)
+      })
+
+      it('regenerates an lnd client after an engine has been unlocked', async () => {
+        await validationCall()
+        expect(engine.client).to.be.eql(lndClient)
+        expect(clientStub).to.have.been.calledTwice()
       })
 
       it('sets validated property on the class to true if validated', async () => {
