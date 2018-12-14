@@ -43,30 +43,30 @@ async function isEngineUnlocked () {
     // supported/enabled in this specific service. In our case, this means the
     // WalletUnlocker RPC has never been started and the Lightning RPC is functional
     //
-    // This state typically happens when a wallet doesn't exist OR the engine is
-    // being used in development mode (noseedbackup)
+    // This state happens when an engine is being used in development mode (noseedbackup)
     if (e.code && e.code === UNIMPLEMENTED_SERVICE_CODE) {
       return true
     }
 
-    // If we receive an `wallet already exists` error, than two things may be happening:
+    // If we receive an `wallet already exists` error, then one of two things
+    // may be happening:
     //
-    // 1. the consumer just restarted there node and the engine is now re-locked
-    // 2. The consumer has just successfully unlocked their engine but we are waiting
+    // 1. the consumer just restarted their nodes and the engine is now locked
+    // 2. The consumer has successfully unlocked their engine but we are waiting
     //    for re-validation
     //
     // In the first case (#1), if we receive an `wallet already exists` error AND
-    // the lightning RPC is not implemented, than we can safetly say that the engine
-    // is locked.
+    // lnrpc (Lightning RPC) is not implemented, we can safely assume that the engine
+    // is still locked.
     //
-    // However, if the error exists AND the RPC is available, then we can determine
-    // that the engine is unlocked and we can proceed to the next step.
+    // However, if the error exists AND lnrpc (Lightning RPC) is available, we can
+    // assume that the engine is unlocked
     //
-    // We must identify these cases because 'genSeeds' will return `wallet already exists`
-    // for any state on the engine outside of development mode (noseedbackup)
+    // The issue lies in 'genSeeds', which will return `wallet already exists` for
+    // any state (locked or unlocked) on the engine.
     //
-    // Unfortunately we have to string match on the error, since the error code returned
-    // is generic (code 2)
+    // Unfortunately, we have to string match on the error since the error code
+    // returned is generic (code 2)
     if (e.message && e.message.includes(WALLET_EXISTS_ERROR_MESSAGE)) {
       // At this point, `genSeed` has returns a `wallet already exists` error message
       // however we still don't know if the engine is locked or unlocked because this
