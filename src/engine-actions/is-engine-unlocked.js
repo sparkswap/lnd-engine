@@ -61,7 +61,6 @@ async function isEngineUnlocked () {
       try {
         await isAvailable.call(this)
       } catch (e) {
-        console.log(e)
         if (e.code && e.code === UNIMPLEMENTED_SERVICE_CODE) {
           return false
         }

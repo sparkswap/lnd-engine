@@ -95,6 +95,14 @@ class LndEngine {
       const payload = { symbol: this.symbol }
       const errorMessage = 'Engine failed to validate. Retrying'
       const validationCall = async () => {
+        // A macaroon file for lnd will only exist if the Lightning RPC has been started
+        // which means that the engine needs to be unlocked before this file is available.
+        //
+        // We regenerate the 'client' here in-case macaroons did not exist during the
+        // creation of a new LndEngine.
+        // TODO: Should we only generate the client here?
+        this.client = generateLightningClient(this)
+
         // An Engine is `locked` when no wallet is present OR if LND Engine requires
         // a password to unlock the current wallet
         //
@@ -105,14 +113,6 @@ class LndEngine {
         if (!this.unlocked) {
           throw new Error('LndEngine is locked, unable to validate config')
         }
-
-        // A macaroon file for lnd will only exist if the Lightning RPC has been started
-        // which means that the engine needs to be unlocked before this file is available.
-        //
-        // We regenerate the 'client' here in-case macaroons did not exist during the
-        // creation of a new LndEngine.
-        // TODO: Should we only generate the client here?
-        this.client = generateLightningClient(this)
 
         // Once the engine is unlocked, we will attempt to validate our engine's
         // configuration. If we call `isNodeConfigValid` before the engine is unlocked
