@@ -1,3 +1,5 @@
+const grpc = require('grpc')
+
 const { genSeed } = require('../lnd-actions')
 const isAvailable = require('./is-available')
 
@@ -9,7 +11,7 @@ const isAvailable = require('./is-available')
  * @type {Number}
  * @default
  */
-const UNIMPLEMENTED_SERVICE_CODE = 12
+const UNIMPLEMENTED_SERVICE_CODE = grpc.status.UNIMPLEMENTED
 
 /**
  * @constant
