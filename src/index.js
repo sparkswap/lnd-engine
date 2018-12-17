@@ -5,8 +5,7 @@ const {
 } = require('./lnd-setup')
 const {
   validationDependentActions,
-  validationIndependentActions,
-  isNodeConfigValid
+  validationIndependentActions
 } = require('./engine-actions')
 const {
   exponentialBackoff,
@@ -84,6 +83,10 @@ class LndEngine {
     )
   }
 
+  get needsWallet () {
+    return (this.status === ENGINE_STATUS.NEEDS_WALLET)
+  }
+
   get unlocked () {
     return (this.status === ENGINE_STATUS.UNLOCKED)
   }
@@ -112,6 +115,10 @@ class LndEngine {
 
         if (!this.available) {
           throw new Error('Engine is not available')
+        }
+
+        if (this.needsWallet) {
+          throw new Error('Engine is not setup. Please create a wallet')
         }
 
         if (!this.unlocked) {
