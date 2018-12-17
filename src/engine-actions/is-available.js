@@ -1,36 +1,9 @@
+const grpc = require('grpc')
+
 const {
   getInfo,
   genSeed
 } = require('../lnd-actions')
-
-/**
- * CODE 4 for gRPC is equal to 'deadline exceeded'
- *
- * @see https://github.com/grpc/grpc-go/blob/master/codes/codes.go
- * @constant
- * @type {Number}
- * @default
- */
-const DEADLINE_EXCEEDED_CODE = 4
-
-/**
- * CODE 12 for gRPC is equal to 'unimplemented'
- *
- * @see https://github.com/grpc/grpc-go/blob/master/codes/codes.go
- * @constant
- * @type {Number}
- * @default
- */
-const UNIMPLEMENTED_SERVICE_CODE = 12
-
-/**
- * CODE 14 for gRPC is equal to 'unavailable' or 'could not connect'
- * @see https://github.com/grpc/grpc-go/blob/master/codes/codes.go
- * @constant
- * @type {Number}
- * @default
- */
-const UNAVAILABLE_CODE = 14
 
 /**
  * Queries LND for a response as an assumption if the engine is down or not
@@ -46,7 +19,7 @@ function isAvailable () {
       .catch((e) => {
         // If we receive a timeout, then it means the engine is down and we can simply
         // return
-        if (e.code === DEADLINE_EXCEEDED_CODE || e.code === UNAVAILABLE_CODE) {
+        if (e.code === grpc.status.DEADLINE_EXCEEDED || e.code === grpc.status.UNAVAILABLE) {
           return resolve(false)
         }
 
@@ -58,7 +31,7 @@ function isAvailable () {
         //
         // TODO: Need to figure out a better way to handle development mode for
         //       validations
-        if (e.code !== UNIMPLEMENTED_SERVICE_CODE) {
+        if (e.code !== grpc.status.UNIMPLEMENTED) {
           return resolve(true)
         }
 
@@ -68,7 +41,7 @@ function isAvailable () {
         getInfo({ client: this.client })
           .then(() => resolve(true))
           .catch((e) => {
-            if (e.code === UNAVAILABLE_CODE || e.code === DEADLINE_EXCEEDED_CODE) {
+            if (e.code === grpc.status.DEADLINE_EXCEEDED || e.code === grpc.status.UNAVAILABLE) {
               resolve(false)
             }
 

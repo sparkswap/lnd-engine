@@ -1,3 +1,4 @@
+const grpc = require('grpc')
 const path = require('path')
 const { expect, rewire, sinon } = require('test/test-helper')
 
@@ -43,9 +44,8 @@ describe('is-available', () => {
       })
 
       it('returns true if the call to getInfo has succeeded', async () => {
-        const UNIMPLEMENTED = isAvailable.__get__('UNIMPLEMENTED_SERVICE_CODE')
         const error = new Error('Unimplemented')
-        error.code = UNIMPLEMENTED
+        error.code = grpc.status.UNIMPLEMENTED
         genSeedStub.rejects(error)
 
         const res = await isAvailable.call(engine)
@@ -54,9 +54,8 @@ describe('is-available', () => {
       })
 
       it('returns true if the call to getInfo has succeeded, but method has failed', async () => {
-        const UNIMPLEMENTED = isAvailable.__get__('UNIMPLEMENTED_SERVICE_CODE')
         const unimplementedError = new Error('Unimplemented')
-        unimplementedError.code = UNIMPLEMENTED
+        unimplementedError.code = grpc.status.UNIMPLEMENTED
         genSeedStub.rejects(unimplementedError)
 
         const error = new Error('Something Happened')
@@ -71,9 +70,8 @@ describe('is-available', () => {
 
     context('engine are unavailable', () => {
       it('returns false if deadline exceeded', async () => {
-        const DEADLINE_EXCEEDED_CODE = isAvailable.__get__('DEADLINE_EXCEEDED_CODE')
         const error = new Error('Deadline Exceeded')
-        error.code = DEADLINE_EXCEEDED_CODE
+        error.code = grpc.status.DEADLINE_EXCEEDED
         genSeedStub.rejects(error)
         const res = await isAvailable.call(engine)
         expect(res).to.be.false()
@@ -81,9 +79,8 @@ describe('is-available', () => {
       })
 
       it('returns false if deadline exceeded', async () => {
-        const UNAVAILABLE_CODE = isAvailable.__get__('UNAVAILABLE_CODE')
         const error = new Error('Deadline Exceeded')
-        error.code = UNAVAILABLE_CODE
+        error.code = grpc.status.DEADLINE_EXCEEDED
         genSeedStub.rejects(error)
         const res = await isAvailable.call(engine)
         expect(res).to.be.false()
@@ -91,9 +88,8 @@ describe('is-available', () => {
       })
 
       it('calls getInfo if the engines is available but genSeed is unimplemented', async () => {
-        const UNIMPLEMENTED = isAvailable.__get__('UNIMPLEMENTED_SERVICE_CODE')
         const error = new Error('Unimplemented')
-        error.code = UNIMPLEMENTED
+        error.code = grpc.status.UNIMPLEMENTED
         genSeedStub.rejects(error)
         await isAvailable.call(engine)
         expect(getInfoStub).to.have.been.calledWith(sinon.match({ client: engine.client }))
@@ -101,16 +97,14 @@ describe('is-available', () => {
 
       describe('getInfo rpc check', () => {
         beforeEach(() => {
-          const UNIMPLEMENTED = isAvailable.__get__('UNIMPLEMENTED_SERVICE_CODE')
           const error = new Error('Unimplemented')
-          error.code = UNIMPLEMENTED
+          error.code = grpc.status.UNIMPLEMENTED
           genSeedStub.rejects(error)
         })
 
         it('returns false if getInfo returns unavailable', async () => {
-          const UNAVAILABLE = isAvailable.__get__('UNAVAILABLE_CODE')
           const error = new Error('Unavailable')
-          error.code = UNAVAILABLE
+          error.code = grpc.status.UNAVAILABLE
           getInfoStub.rejects(error)
           const res = await isAvailable.call(engine)
           expect(res).to.be.false()
@@ -118,9 +112,8 @@ describe('is-available', () => {
         })
 
         it('returns false if getInfo returns deadline exceeded', async () => {
-          const DEADLINE_EXCEEDED_CODE = isAvailable.__get__('DEADLINE_EXCEEDED_CODE')
-          const error = new Error('Unavailable')
-          error.code = DEADLINE_EXCEEDED_CODE
+          const error = new Error('Deadline Exceeded')
+          error.code = grpc.status.DEADLINE_EXCEEDED
           getInfoStub.rejects(error)
           const res = await isAvailable.call(engine)
           expect(res).to.be.false()
