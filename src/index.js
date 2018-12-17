@@ -53,7 +53,6 @@ class LndEngine {
     this.protoPath = LND_PROTO_FILE_PATH
     this.client = generateLightningClient(this)
     this.walletUnlocker = generateWalletUnlockerClient(this)
-    this.statuses = ENGINE_STATUS
 
     // Default status of the lnd-engine is unknown as we have not ran any validations
     // up to this point
@@ -64,9 +63,10 @@ class LndEngine {
     // functioning correctly.
     Object.entries(validationDependentActions).forEach(([name, action]) => {
       this[name] = (...args) => {
-        if (!this.available) throw new Error(`${symbol} Engine is not available`)
-        if (!this.unlocked) throw new Error(`${symbol} Engine is locked`)
-        if (!this.validated) throw new Error(`${symbol} Engine is not validated`)
+        if (!this.validated) {
+          throw new Error(`${symbol} Engine is not validated. Engine Status: ${this.status}`)
+        }
+
         return action.call(this, ...args)
       }
     })
@@ -74,25 +74,6 @@ class LndEngine {
     Object.entries(validationIndependentActions).forEach(([name, action]) => {
       this[name] = action
     })
-  }
-
-  get available () {
-    return (
-      this.status !== ENGINE_STATUS.UNKNOWN ||
-      this.status !== ENGINE_STATUS.UNAVAILABLE
-    )
-  }
-
-  get needsWallet () {
-    return (this.status === ENGINE_STATUS.NEEDS_WALLET)
-  }
-
-  get unlocked () {
-    return (this.status === ENGINE_STATUS.UNLOCKED)
-  }
-
-  get validated () {
-    return (this.status === ENGINE_STATUS.VALIDATED)
   }
 
   /**
@@ -113,20 +94,8 @@ class LndEngine {
         // Returns a status `ENGINE_STATUS`
         this.status = await this.getStatus()
 
-        if (!this.available) {
-          throw new Error('Engine is not available')
-        }
-
-        if (this.needsWallet) {
-          throw new Error('Engine is not setup. Please create a wallet')
-        }
-
-        if (!this.unlocked) {
-          throw new Error(this.status)
-        }
-
         if (!this.validated) {
-          throw new Error('Engine failed to validate. Retrying')
+          throw new Error(`Engine failed to validate. Current status: ${this.status}`)
         }
       }
 
@@ -135,7 +104,9 @@ class LndEngine {
       // it is either successful or there is something wrong.
       await exponentialBackoff(validationCall, payload, { debugName: 'validateEngine', logger: this.logger })
     } catch (e) {
-      return this.logger.error(`Failed to validate engine for ${this.symbol}, error: ${e}`, { error: e })
+      this.logger.error(`Failed to validate engine for ${this.symbol}, error: ${e}`, { error: e })
+      this.status = ENGINE_STATUS.UNKNOWN
+      return
     }
 
     this.logger.info(`Validated engine configuration for ${this.symbol}`)
