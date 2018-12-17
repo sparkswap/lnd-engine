@@ -65,7 +65,7 @@ async function isEngineUnlocked () {
     //
     // Unfortunately, we have to string match on the error since the error code
     // returned is generic (code 2)
-    if (e.message.includes(WALLET_EXISTS_ERROR_MESSAGE)) {
+    if (e.message && e.message.includes(WALLET_EXISTS_ERROR_MESSAGE)) {
       // At this point, `genSeed` has returns a `wallet already exists` error message
       // however we still don't know if the engine is locked or unlocked because this
       // error message is returned for any state.
