@@ -5,9 +5,13 @@ const {
 } = require('./lnd-setup')
 const {
   validationDependentActions,
-  validationIndependentActions
+  validationIndependentActions,
+  isNodeConfigValid
 } = require('./engine-actions')
-const { exponentialBackoff } = require('./utils')
+const {
+  exponentialBackoff,
+  ENGINE_STATUS
+} = require('./utils')
 
 /**
  * @constant
@@ -50,32 +54,11 @@ class LndEngine {
     this.protoPath = LND_PROTO_FILE_PATH
     this.client = generateLightningClient(this)
     this.walletUnlocker = generateWalletUnlockerClient(this)
+    this.statuses = ENGINE_STATUS
 
-    // This key identifies if the current Engine can handle any requests from
-    // the user. This typically means that an engine is syncing or permanently
-    // down, where we do not have access to any RPCs
-    //
-    // We set `available` to false by default, however this will be modified in the
-    // `validateEngine` action
-    this.available = false
-
-    // This key identifies if the current Engine still requires additional setup
-    // before commands can be made against the LN RPC
-    //
-    // We set `unlocked` to false by default, however this will be modified in the
-    // `validateEngine` action
-    this.unlocked = false
-
-    // This key identifies if the current Engine's configuration matches information
-    // passed through the constructor of the Engine.
-    //
-    // The configuration of the Engine lets the user know what currencies/chains are
-    // currently supported, as well as providing assurance that communication to
-    // an engine's node is available.
-    //
-    // We set `validated` to false by default, however this will be modified in the
-    // `validateEngine` action
-    this.validated = false
+    // Default status of the lnd-engine is unknown as we have not ran any validations
+    // up to this point
+    this.status = ENGINE_STATUS.UNKNOWN
 
     // We wrap all validation dependent actions in a callback so we can prevent
     // their use if the current engine is in a state that prevents a call from
@@ -94,6 +77,21 @@ class LndEngine {
     })
   }
 
+  get available () {
+    return (
+      this.status !== ENGINE_STATUS.UNKNOWN ||
+      this.status !== ENGINE_STATUS.UNAVAILABLE
+    )
+  }
+
+  get unlocked () {
+    return (this.status === ENGINE_STATUS.UNLOCKED)
+  }
+
+  get validated () {
+    return (this.status === ENGINE_STATUS.VALIDATED)
+  }
+
   /**
    * Validates and sets the current state of an engine
    *
@@ -104,30 +102,18 @@ class LndEngine {
       const payload = { symbol: this.symbol }
       const errorMessage = 'Engine failed to validate. Retrying'
       const validationCall = async () => {
-        // We want to check if the engine is `available` before we continue with any
-        // validations measures. The engine may not be available if we are still waiting
-        // for a blockchain to sync, or if the node is down permanently
-        this.available = await this.isAvailable()
+        // A macaroon file for lnd will only exist if lnrpc (Lightning RPC) has been started
+        // on LND. Since an engine can become unlocked during any validation call, we
+        // need to ensure that we are updating LndEngine's client in the situation that
+        // a macaroon file becomes available (meaning an engine has been unlocked).
+        this.client = generateLightningClient(this)
 
-        if (!this.available) {
-          throw new Error('LndEngine is not available, unable to validate config')
+        // Returns a status `ENGINE_STATUS`
+        this.status = await this.getStatus()
+
+        if (!this.validated) {
+          throw new Error(errorMessage)
         }
-
-        // An Engine is `locked` when no wallet is present OR if LND Engine requires
-        // a password to unlock the current wallet
-        //
-        // We make this initial call to check if engine is unlocked before continuing
-        // to validate the current engine
-        this.unlocked = await this.isEngineUnlocked()
-
-        if (!this.unlocked) {
-          throw new Error('LndEngine is locked, unable to validate config')
-        }
-
-        // Once the engine is unlocked, we will attempt to validate our engine's
-        // configuration. If we call `isNodeConfigValid` before the engine is unlocked
-        // the call will fail without a friendly error
-        this.validated = await this.isNodeConfigValid()
       }
 
       // It can take an extended period time for the engines to be ready, due to blockchain
