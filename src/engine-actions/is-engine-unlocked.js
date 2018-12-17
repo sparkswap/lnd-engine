@@ -43,7 +43,7 @@ async function isEngineUnlocked () {
     // WalletUnlocker RPC has never been started and the Lightning RPC is functional
     //
     // This state happens when an engine is being used in development mode (noseedbackup)
-    if (e.code && e.code === UNIMPLEMENTED_SERVICE_CODE) {
+    if (e.code === UNIMPLEMENTED_SERVICE_CODE) {
       return true
     }
 
@@ -74,7 +74,7 @@ async function isEngineUnlocked () {
       } catch (e) {
         // If a 'wallet already exists', but lnrpc (Lighting RPC) is not implemented
         // then the engine is still locked and the user needs to unlock the wallet
-        if (e.code && e.code === UNIMPLEMENTED_SERVICE_CODE) {
+        if (e.code === UNIMPLEMENTED_SERVICE_CODE) {
           return false
         }
       }
