@@ -46,6 +46,7 @@ function getStatus () {
       })
       .catch((e) => {
         if (e.code !== grpc.status.UNIMPLEMENTED) {
+          this.logger.error('LndEngine failed to call getInfo', { error: e.message })
           return resolve(ENGINE_STATUS.UNAVAILABLE)
         }
 
@@ -56,6 +57,7 @@ function getStatus () {
               return resolve(ENGINE_STATUS.LOCKED)
             }
 
+            this.logger.error('LndEngine failed to call genSeed', { error: e.message })
             return resolve(ENGINE_STATUS.UNAVAILABLE)
           })
       })
