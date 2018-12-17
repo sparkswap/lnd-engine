@@ -122,7 +122,7 @@ class LndEngine {
         }
 
         if (!this.unlocked) {
-          throw new Error('Engine is locked')
+          throw new Error(this.status)
         }
 
         if (!this.validated) {
