@@ -126,7 +126,7 @@ class LndEngine {
       // It can take an extended period time for the engines to be ready, due to blockchain
       // syncing or setup, so we use exponential backoff to retry validation until
       // it is either successful or there is something wrong.
-      await exponentialBackoff(validationCall, payload, { logger: this.logger })
+      await exponentialBackoff(validationCall, payload, { debugName: 'validateEngine', logger: this.logger })
     } catch (e) {
       return this.logger.error(`Failed to validate engine for ${this.symbol}, error: ${e}`, { error: e })
     }
