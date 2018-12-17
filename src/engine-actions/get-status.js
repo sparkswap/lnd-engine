@@ -5,7 +5,7 @@ const {
   genSeed
 } = require('../lnd-actions')
 
-const { ENGINE_STATUS } = require('./utils')
+const { ENGINE_STATUS } = require('../utils')
 
 /**
  * @constant
