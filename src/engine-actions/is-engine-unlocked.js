@@ -31,11 +31,10 @@ const WALLET_EXISTS_ERROR_MESSAGE = 'wallet already exists'
  */
 async function isEngineUnlocked () {
   try {
-    // If the call to `genSeed` succeeds, then there are two possible states that
-    // the engine could be in:
-    //
+    // If the call to `genSeed` succeeds, there will be two possible states that
+    // an engine could be in:
     // 1. The engine is locked and the user needs to either create a wallet or unlock the wallet
-    // 2. The engine has been unlocked during exponential backoff, in which case
+    // 2. The engine has been unlocked during an exponential backoff, in which case
     //    the WalletUnlocked RPC is still available
     await genSeed({ client: this.walletUnlocker })
   } catch (e) {
@@ -48,22 +47,21 @@ async function isEngineUnlocked () {
       return true
     }
 
-    // If we receive an `wallet already exists` error, then one of two things
+    // The call to 'genSeeds', which will return `wallet already exists` for
+    // any state (locked or unlocked) on the engine.
+    //
+    // If we receive a `wallet already exists` error, then one of two things
     // may be happening:
     //
-    // 1. the consumer just restarted their nodes and the engine is now locked
-    // 2. The consumer has successfully unlocked their engine but we are waiting
-    //    for re-validation
+    // 1. The user just restarted their node and the engine is now locked
+    // 2. The user has successfully unlocked their engine but are waiting
+    //    for re-validation of the engine
     //
-    // In the first case (#1), if we receive an `wallet already exists` error AND
-    // lnrpc (Lightning RPC) is not implemented, we can safely assume that the engine
-    // is still locked.
+    // In the first case (#1), if we receive `wallet already exists` AND lnrpc (Lightning RPC)
+    // is not implemented, we can safely assume that the engine is still locked.
     //
-    // However, if the error exists AND lnrpc (Lightning RPC) is available, we can
-    // assume that the engine is unlocked
-    //
-    // The issue lies in 'genSeeds', which will return `wallet already exists` for
-    // any state (locked or unlocked) on the engine.
+    // If the error exists AND lnrpc (Lightning RPC) is available, we can assume
+    // that the engine is unlocked
     //
     // Unfortunately, we have to string match on the error since the error code
     // returned is generic (code 2)
