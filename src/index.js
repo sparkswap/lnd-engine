@@ -76,6 +76,10 @@ class LndEngine {
     })
   }
 
+  get validated () {
+    return (this.status === ENGINE_STATUS.VALIDATED)
+  }
+
   /**
    * Validates and sets the current state of an engine
    *
