@@ -100,7 +100,6 @@ class LndEngine {
   async validateEngine () {
     try {
       const payload = { symbol: this.symbol }
-      const errorMessage = 'Engine failed to validate. Retrying'
       const validationCall = async () => {
         // A macaroon file for lnd will only exist if lnrpc (Lightning RPC) has been started
         // on LND. Since an engine can become unlocked during any validation call, we
@@ -111,15 +110,23 @@ class LndEngine {
         // Returns a status `ENGINE_STATUS`
         this.status = await this.getStatus()
 
+        if (!this.available) {
+          throw new Error('Engine is not available')
+        }
+
+        if (!this.unlocked) {
+          throw new Error('Engine is locked')
+        }
+
         if (!this.validated) {
-          throw new Error(errorMessage)
+          throw new Error('Engine failed to validate. Retrying')
         }
       }
 
       // It can take an extended period time for the engines to be ready, due to blockchain
       // syncing or setup, so we use exponential backoff to retry validation until
       // it is either successful or there is something wrong.
-      await exponentialBackoff(validationCall, payload, { errorMessage, logger: this.logger })
+      await exponentialBackoff(validationCall, payload, { logger: this.logger })
     } catch (e) {
       return this.logger.error(`Failed to validate engine for ${this.symbol}, error: ${e}`, { error: e })
     }
