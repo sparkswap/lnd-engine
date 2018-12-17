@@ -8,8 +8,7 @@ const {
   validationIndependentActions
 } = require('./engine-actions')
 const {
-  exponentialBackoff,
-  ENGINE_STATUS
+  exponentialBackoff
 } = require('./utils')
 
 /**
@@ -18,6 +17,29 @@ const {
  * @default
  */
 const LND_PROTO_FILE_PATH = require.resolve('../proto/lnd-rpc.proto')
+
+/**
+ * The current states of an lnd-engine
+ *
+ * UNKNOWN - Default state
+ * UNAVAILABLE - lnrpc UNAVAILABLE, wallet unlocker rpc UNAVAILABLE
+ * NEEDS_WALLET - Wallet does not exist,	lnrpc UNIMPLEMENTED, genSeeds does not throw
+ * LOCKED - lnrpc UNIMPLEMENTED, genSeeds throws "wallet exists"
+ * UNLOCKED - lnrpc getInfo does not throw
+ * VALIDATED - lnrpc getInfo matches our configuration
+ *
+ * @constant
+ * @type {Object<key, String>}
+ * @default
+ */
+const ENGINE_STATUS = Object.freeze({
+  UNKNOWN: 'UNKNOWN',
+  UNAVAILABLE: 'UNAVAILABLE',
+  NEEDS_WALLET: 'NEEDS_WALLET',
+  LOCKED: 'LOCKED',
+  UNLOCKED: 'UNLOCKED',
+  VALIDATED: 'VALIDATED'
+})
 
 /**
  * The public interface for interaction with an LND instance
@@ -57,6 +79,7 @@ class LndEngine {
     // Default status of the lnd-engine is unknown as we have not ran any validations
     // up to this point
     this.status = ENGINE_STATUS.UNKNOWN
+    this.statuses = ENGINE_STATUS
 
     // We wrap all validation dependent actions in a callback so we can prevent
     // their use if the current engine is in a state that prevents a call from

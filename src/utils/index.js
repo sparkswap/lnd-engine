@@ -5,7 +5,6 @@ const CLTV_DELTA = require('./cltv-delta')
 const loadProto = require('./load-proto')
 const exponentialBackoff = require('./exponential-backoff')
 const delay = require('./delay')
-const ENGINE_STATUS = require('./engine-status')
 
 module.exports = {
   Big,
@@ -14,6 +13,5 @@ module.exports = {
   CLTV_DELTA,
   loadProto,
   exponentialBackoff,
-  delay,
-  ENGINE_STATUS
+  delay
 }
