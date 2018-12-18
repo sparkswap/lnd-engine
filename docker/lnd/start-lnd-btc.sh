@@ -52,7 +52,7 @@ if [[ "$NODE" == "bitcoind" ]]; then
 fi
 
 if [[ "$NETWORK" == 'simnet' ]]; then
-  PARAMS="$PARAMS ----noseedbackup=1"
+  PARAMS="$PARAMS --noseedbackup=1"
 fi
 
 exec lnd $PARAMS "$@"
