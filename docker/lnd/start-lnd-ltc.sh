@@ -43,4 +43,8 @@ if [[ "$NODE" == "litecoind" ]]; then
     PARAMS="$PARAMS --$NODE.zmqpubrawtx=$ZMQPUBRAWTX"
 fi
 
+if [[ "$NETWORK" == 'simnet' ]]; then
+  PARAMS="$PARAMS ----noseedbackup=1"
+fi
+
 exec lnd $PARAMS "$@"
