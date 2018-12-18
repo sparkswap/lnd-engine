@@ -139,9 +139,16 @@ describe('lnd-engine index', () => {
     })
 
     describe('get validated', () => {
-      it('defines a property `validated`', () => {
+      it('returns false if engines status is not validated', () => {
         const { UNKNOWN } = LndEngine.__get__('ENGINE_STATUS')
-        expect(engine.status).to.be.eql(UNKNOWN)
+        engine.status = UNKNOWN
+        expect(engine.validated).to.be.false()
+      })
+
+      it('returns true if engines status is validated', () => {
+        const { VALIDATED } = LndEngine.__get__('ENGINE_STATUS')
+        engine.status = VALIDATED
+        expect(engine.validated).to.be.true()
       })
     })
 

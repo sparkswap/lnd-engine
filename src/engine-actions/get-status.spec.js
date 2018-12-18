@@ -5,7 +5,7 @@ const { expect, rewire, sinon } = require('test/test-helper')
 const LndEngine = rewire(path.resolve(__dirname, '..', 'index'))
 const getStatus = rewire(path.resolve(__dirname, 'get-status'))
 
-describe.only('get-status', () => {
+describe('get-status', () => {
   describe('getStatus', () => {
     let reverts = []
 
