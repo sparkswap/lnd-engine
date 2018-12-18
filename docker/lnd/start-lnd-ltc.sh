@@ -22,9 +22,6 @@ else
     exit 1
 fi
 
-# USING THIS OPTION BECAUSE WE'RE BAD
-# BUT THIS WILL NEED TO BE REMOVED FOR MAINNET
-echo 'LND has --noseedbackup set. MAKE SURE TO REMOVE THIS'
 echo "LND LTC starting with network: $NETWORK $NODE"
 
 PARAMS=$(echo \
@@ -44,6 +41,7 @@ if [[ "$NODE" == "litecoind" ]]; then
 fi
 
 if [[ "$NETWORK" == 'simnet' ]]; then
+  echo "Setting --noseedbackup for $NETWORK"
   PARAMS="$PARAMS --noseedbackup=1"
 fi
 
