@@ -23,7 +23,7 @@ const LND_PROTO_FILE_PATH = require.resolve('../proto/lnd-rpc.proto')
  *
  * UNKNOWN - Default state
  * UNAVAILABLE - lnrpc UNAVAILABLE, wallet unlocker rpc UNAVAILABLE
- * NEEDS_WALLET - Wallet does not exist,	lnrpc UNIMPLEMENTED, genSeeds does not throw
+ * NEEDS_WALLET - Wallet does not exist, lnrpc UNIMPLEMENTED, genSeeds does not throw
  * LOCKED - lnrpc UNIMPLEMENTED, genSeeds throws "wallet exists"
  * UNLOCKED - lnrpc getInfo does not throw
  * VALIDATED - lnrpc getInfo matches our configuration
