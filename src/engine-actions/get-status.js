@@ -1,11 +1,16 @@
 const grpc = require('grpc')
 
+const { ENGINE_STATUSES } = require('../constants')
 const {
   getInfo,
   genSeed
 } = require('../lnd-actions')
 
 /**
+ * Error message that is returned from LND to let us identify if a wallet exists
+ * on the current LND instance when using `genSeed`.
+ *
+ * @see {@link https://github.com/lightningnetwork/lnd/blob/master/walletunlocker/service.go}
  * @constant
  * @type {String}
  * @default
@@ -29,22 +34,22 @@ async function getStatus () {
 
     if (chains.length === 0) {
       this.logger.error('LND has no chains configured.')
-      return this.statuses.UNLOCKED
+      return ENGINE_STATUSES.UNLOCKED
     }
 
     if (chains.length > 1) {
       this.logger.error(`LndEngine cannot support an LND instance with more than one active chain. Found: ${chains}`)
-      return this.statuses.UNLOCKED
+      return ENGINE_STATUSES.UNLOCKED
     }
 
     const [ chainName ] = chains
 
     if (chainName !== this.currencyConfig.chainName) {
       this.logger.error(`Mismatched configuration: Engine is configured for ${this.currencyConfig.chainName}, LND is configured for ${chainName}.`)
-      return this.statuses.UNLOCKED
+      return ENGINE_STATUSES.UNLOCKED
     }
 
-    return this.statuses.VALIDATED
+    return ENGINE_STATUSES.VALIDATED
   } catch (e) {
     // If we received an error from the `getInfo` call above, then we want to check
     // the error status. If the error status is anything but UNIMPLEMENTED, we can
@@ -54,21 +59,21 @@ async function getStatus () {
     // engine's lnd instance
     if (e.code !== grpc.status.UNIMPLEMENTED) {
       this.logger.error('LndEngine failed to call getInfo', { error: e.message })
-      return this.statuses.UNAVAILABLE
+      return ENGINE_STATUSES.UNAVAILABLE
     }
 
     // If the error code IS unimplemented, then we call `genSeed` and make
     // a determination if the wallet is locked or needs to be created.
     try {
       await genSeed({ client: this.walletUnlocker })
-      return this.statuses.NEEDS_WALLET
+      return ENGINE_STATUSES.NEEDS_WALLET
     } catch (e) {
       if (e.message && e.message.includes(WALLET_EXISTS_ERROR_MESSAGE)) {
-        return this.statuses.LOCKED
+        return ENGINE_STATUSES.LOCKED
       }
 
       this.logger.error('LndEngine failed to call genSeed', { error: e.message })
-      return this.statuses.UNAVAILABLE
+      return ENGINE_STATUSES.UNAVAILABLE
     }
   }
 }

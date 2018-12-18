@@ -1,7 +1,7 @@
 {
   "name": "lnd-engine",
   "version": "0.3.0-beta-rc1",
-  "description": "A SparkSwap Engine for LND lightning implementation",
+  "description": "A Sparkswap Engine for LND lightning implementation",
   "main": "src/index.js",
   "standard": {
     "env": [

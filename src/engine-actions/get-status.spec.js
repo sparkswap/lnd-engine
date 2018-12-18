@@ -13,6 +13,7 @@ describe('get-status', () => {
     let getInfoStub
     let genSeedStub
     let getInfoResponse
+    let statuses
 
     beforeEach(() => {
       getInfoResponse = {
@@ -20,10 +21,10 @@ describe('get-status', () => {
       }
       getInfoStub = sinon.stub().resolves(getInfoResponse)
       genSeedStub = sinon.stub().resolves(true)
+      statuses = LndEngine.__get__('ENGINE_STATUSES')
       engine = {
         client: sinon.stub(),
         walletUnlocker: sinon.stub(),
-        statuses: LndEngine.__get__('ENGINE_STATUS'),
         logger: {
           error: sinon.stub()
         },
@@ -42,7 +43,7 @@ describe('get-status', () => {
 
     context('engine is valid', () => {
       it('returns VALIDATED if the lnd engine is valid', async () => {
-        expect(await getStatus.call(engine)).to.be.eql(engine.statuses.VALIDATED)
+        expect(await getStatus.call(engine)).to.be.eql(statuses.VALIDATED)
       })
     })
 
@@ -51,14 +52,14 @@ describe('get-status', () => {
         const error = new Error('Something Happened')
         error.code = grpc.status.UNIMPLEMENTED
         getInfoStub.rejects(error)
-        expect(await getStatus.call(engine)).to.be.eql(engine.statuses.NEEDS_WALLET)
+        expect(await getStatus.call(engine)).to.be.eql(statuses.NEEDS_WALLET)
       })
     })
 
     context('engine is unlocked', () => {
       it('returns UNLOCKED if getInfo returns a blank response', async () => {
         getInfoStub.resolves({})
-        expect(await getStatus.call(engine)).to.be.eql(engine.statuses.UNLOCKED)
+        expect(await getStatus.call(engine)).to.be.eql(statuses.UNLOCKED)
       })
     })
 
@@ -70,7 +71,7 @@ describe('get-status', () => {
         const WALLET_EXISTS_ERROR_MESSAGE = getStatus.__get__('WALLET_EXISTS_ERROR_MESSAGE')
         const walletExistsError = new Error(WALLET_EXISTS_ERROR_MESSAGE)
         genSeedStub.rejects(walletExistsError)
-        expect(await getStatus.call(engine)).to.be.eql(engine.statuses.LOCKED)
+        expect(await getStatus.call(engine)).to.be.eql(statuses.LOCKED)
       })
     })
 
@@ -79,7 +80,7 @@ describe('get-status', () => {
         const error = new Error('Something Happened')
         error.code = 2
         getInfoStub.rejects(error)
-        expect(await getStatus.call(engine)).to.be.eql(engine.statuses.UNAVAILABLE)
+        expect(await getStatus.call(engine)).to.be.eql(statuses.UNAVAILABLE)
       })
 
       it('if getInfo rejects with UNIMPLEMENTED AND genSeed reject with real errors', async () => {
@@ -88,24 +89,24 @@ describe('get-status', () => {
         getInfoStub.rejects(error)
         const walletExistsError = new Error('Something else happened')
         genSeedStub.rejects(walletExistsError)
-        expect(await getStatus.call(engine)).to.be.eql(engine.statuses.UNAVAILABLE)
+        expect(await getStatus.call(engine)).to.be.eql(statuses.UNAVAILABLE)
       })
     })
 
     context('engine is unlocked', () => {
       it('returns UNLOCKED if getInfo returns a blank response', async () => {
         getInfoStub.resolves({})
-        expect(await getStatus.call(engine)).to.be.eql(engine.statuses.UNLOCKED)
+        expect(await getStatus.call(engine)).to.be.eql(statuses.UNLOCKED)
       })
 
       it('returns UNLOCKED if getInfo returns more than one chain', async () => {
         getInfoStub.resolves({ chains: ['testnet', 'mainnet'] })
-        expect(await getStatus.call(engine)).to.be.eql(engine.statuses.UNLOCKED)
+        expect(await getStatus.call(engine)).to.be.eql(statuses.UNLOCKED)
       })
 
       it('returns UNLOCKED if chain names do not match', async () => {
         getInfoStub.resolves({ chains: ['badnet'] })
-        expect(await getStatus.call(engine)).to.be.eql(engine.statuses.UNLOCKED)
+        expect(await getStatus.call(engine)).to.be.eql(statuses.UNLOCKED)
       })
     })
   })

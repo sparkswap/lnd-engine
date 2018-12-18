@@ -1,12 +1,13 @@
 const { currencies } = require('./config')
-const {
-  generateLightningClient,
-  generateWalletUnlockerClient
-} = require('./lnd-setup')
+const { ENGINE_STATUSES } = require('./constants')
 const {
   validationDependentActions,
   validationIndependentActions
 } = require('./engine-actions')
+const {
+  generateLightningClient,
+  generateWalletUnlockerClient
+} = require('./lnd-setup')
 const {
   exponentialBackoff
 } = require('./utils')
@@ -17,29 +18,6 @@ const {
  * @default
  */
 const LND_PROTO_FILE_PATH = require.resolve('../proto/lnd-rpc.proto')
-
-/**
- * The current states of an lnd-engine
- *
- * UNKNOWN - Default state
- * UNAVAILABLE - lnrpc UNAVAILABLE, wallet unlocker rpc UNAVAILABLE
- * NEEDS_WALLET - Wallet does not exist, lnrpc UNIMPLEMENTED, genSeeds does not throw
- * LOCKED - lnrpc UNIMPLEMENTED, genSeeds throws "wallet exists"
- * UNLOCKED - lnrpc getInfo does not throw
- * VALIDATED - lnrpc getInfo matches our configuration
- *
- * @constant
- * @type {Object<key, String>}
- * @default
- */
-const ENGINE_STATUS = Object.freeze({
-  UNKNOWN: 'UNKNOWN',
-  UNAVAILABLE: 'UNAVAILABLE',
-  NEEDS_WALLET: 'NEEDS_WALLET',
-  LOCKED: 'LOCKED',
-  UNLOCKED: 'UNLOCKED',
-  VALIDATED: 'VALIDATED'
-})
 
 /**
  * The public interface for interaction with an LND instance
@@ -76,10 +54,11 @@ class LndEngine {
     this.client = generateLightningClient(this)
     this.walletUnlocker = generateWalletUnlockerClient(this)
 
-    // Default status of the lnd-engine is unknown as we have not ran any validations
+    // Default status of the lnd-engine is unknown as we have not run any validations
     // up to this point
-    this.status = ENGINE_STATUS.UNKNOWN
-    this.statuses = ENGINE_STATUS
+    console.log('lol what')
+    console.log(ENGINE_STATUSES)
+    this.status = ENGINE_STATUSES.UNKNOWN
 
     // We wrap all validation dependent actions in a callback so we can prevent
     // their use if the current engine is in a state that prevents a call from
@@ -100,7 +79,9 @@ class LndEngine {
   }
 
   get validated () {
-    return (this.status === ENGINE_STATUS.VALIDATED)
+    console.log('what')
+    console.log(this.status)
+    return (this.status === ENGINE_STATUSES.VALIDATED)
   }
 
   /**
@@ -132,12 +113,14 @@ class LndEngine {
       await exponentialBackoff(validationCall, payload, { debugName: 'validateEngine', logger: this.logger })
     } catch (e) {
       this.logger.error(`Failed to validate engine for ${this.symbol}, error: ${e}`, { error: e })
-      this.status = ENGINE_STATUS.UNKNOWN
+      this.status = ENGINE_STATUSES.UNKNOWN
       return
     }
 
     this.logger.info(`Validated engine configuration for ${this.symbol}`)
   }
 }
+
+LndEngine.STATUSES = ENGINE_STATUSES
 
 module.exports = LndEngine

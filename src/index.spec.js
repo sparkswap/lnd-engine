@@ -84,16 +84,12 @@ describe('lnd-engine index', () => {
     })
 
     it('defaults to an UNKNOWN status', () => {
-      const { UNKNOWN } = LndEngine.__get__('ENGINE_STATUS')
+      const { UNKNOWN } = LndEngine.__get__('ENGINE_STATUSES')
       expect(engine.status).to.be.eql(UNKNOWN)
     })
 
-    it('sets a statuses property on the engine', () => {
-      expect(engine.statuses).to.not.be.null()
-    })
-
     it('calls the action', () => {
-      const { VALIDATED } = LndEngine.__get__('ENGINE_STATUS')
+      const { VALIDATED } = LndEngine.__get__('ENGINE_STATUSES')
       engine.status = VALIDATED
       engine.getInvoices('test', 'args')
       return expect(validationDependentActions.getInvoices).to.be.calledWith('test', 'args')
@@ -140,13 +136,13 @@ describe('lnd-engine index', () => {
 
     describe('get validated', () => {
       it('returns false if engines status is not validated', () => {
-        const { UNKNOWN } = LndEngine.__get__('ENGINE_STATUS')
+        const { UNKNOWN } = LndEngine.__get__('ENGINE_STATUSES')
         engine.status = UNKNOWN
         expect(engine.validated).to.be.false()
       })
 
       it('returns true if engines status is validated', () => {
-        const { VALIDATED } = LndEngine.__get__('ENGINE_STATUS')
+        const { VALIDATED } = LndEngine.__get__('ENGINE_STATUSES')
         engine.status = VALIDATED
         expect(engine.validated).to.be.true()
       })
@@ -157,7 +153,7 @@ describe('lnd-engine index', () => {
       let getStatusStub
 
       beforeEach(async () => {
-        const { VALIDATED } = LndEngine.__get__('ENGINE_STATUS')
+        const { VALIDATED } = LndEngine.__get__('ENGINE_STATUSES')
         getStatusStub = sinon.stub().resolves(VALIDATED)
         engine.getStatus = getStatusStub
         await engine.validateEngine()
@@ -171,19 +167,19 @@ describe('lnd-engine index', () => {
       })
 
       it('sets a status on the engine', async () => {
-        const { VALIDATED } = LndEngine.__get__('ENGINE_STATUS')
+        const { VALIDATED } = LndEngine.__get__('ENGINE_STATUSES')
         await validationCall()
         expect(engine.status).to.be.eql(VALIDATED)
       })
 
       it('throws an error if engine failed to validate', () => {
-        const { UNLOCKED } = LndEngine.__get__('ENGINE_STATUS')
+        const { UNLOCKED } = LndEngine.__get__('ENGINE_STATUSES')
         getStatusStub.resolves(UNLOCKED)
         expect(validationCall()).to.eventually.be.rejectedWith('Engine failed to validate')
       })
 
       it('throws an error if the validation call fails', async () => {
-        const { UNKNOWN } = LndEngine.__get__('ENGINE_STATUS')
+        const { UNKNOWN } = LndEngine.__get__('ENGINE_STATUSES')
         exponentialStub.throws('BAD')
 
         try {
