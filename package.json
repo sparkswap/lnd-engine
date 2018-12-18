@@ -1,7 +1,7 @@
 {
   "name": "lnd-engine",
   "version": "0.2.3-alpha-preview",
-  "description": "A SparkSwap Engine for LND lightning implementation",
+  "description": "A Sparkswap Engine for LND lightning implementation",
   "main": "src/index.js",
   "standard": {
     "env": [
@@ -46,8 +46,8 @@
     "ltc",
     "litecoin"
   ],
-  "author": "SparkSwap <dev@sparkswap.com>",
-  "license": "ISC",
+  "author": "Sparkswap <dev@sparkswap.com>",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/sparkswap/lnd-engine/issues"
   },

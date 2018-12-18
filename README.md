@@ -2,19 +2,19 @@
 
 [![CircleCI](https://circleci.com/gh/sparkswap/lnd-engine.svg?style=svg&circle-token=47c81b3a717f062885f159dfded078e134413db1)](https://circleci.com/gh/sparkswap/lnd-engine)
 
-sparkswap LND Engine
+Sparkswap LND Engine
 ====================
 
-The following repo contains 2 modules that make up a SparkSwap Payment Channel Network Engine:
+The following repo contains 2 modules that make up a Sparkswap Payment Channel Network Engine:
 
 1. NPM module w/ LND abstraction layer (located in `src`)
 2. Dockerfiles for all containers needed for the LND Engine to run on a broker daemon
 
 A current docker setup a functional BTC/LTC LND Engine:
 1. Bitcoin node (currently bitcoind)
-2. LND BTC node (SparkSwap fork)
+2. LND BTC node (Sparkswap fork)
 3. Litecoin node (currently litecoind)
-4. LND LTC node (SparkSwap fork)
+4. LND LTC node (Sparkswap fork)
 
 #### Installation (lnd-engine only)
 
@@ -119,3 +119,7 @@ closeChannels
 ```
 withdrawFunds
 ```
+
+## License
+
+The Sparkswap LND Engine is licensed under the [MIT License](./LICENSE).
