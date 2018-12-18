@@ -46,8 +46,8 @@
     "ltc",
     "litecoin"
   ],
-  "author": "SparkSwap <dev@sparkswap.com>",
-  "license": "ISC",
+  "author": "Sparkswap <dev@sparkswap.com>",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/sparkswap/lnd-engine/issues"
   },
