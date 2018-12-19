@@ -44,7 +44,7 @@ describe('isPaymentPendingOrComplete', () => {
   })
 
   it('returns true for completed payments', async () => {
-    status = 'COMPLETE'
+    status = 'COMPLETED'
     lookupPaymentStatusStub.resolves({ status })
     expect(await isPaymentPendingOrComplete.call(engine, paymentHash)).to.be.true()
   })
