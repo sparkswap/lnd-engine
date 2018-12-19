@@ -18,7 +18,7 @@ describe('get-payment-preimage', () => {
   beforeEach(() => {
     reverts = []
 
-    status = 'COMPLETE'
+    status = 'COMPLETED'
     lookupPaymentStatusStub = sinon.stub().resolves({ status })
     reverts.push(getPaymentPreimage.__set__('lookupPaymentStatus', lookupPaymentStatusStub))
 

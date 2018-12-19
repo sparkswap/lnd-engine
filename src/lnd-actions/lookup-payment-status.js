@@ -9,7 +9,7 @@ const { deadline } = require('../grpc-utils')
 const PAYMENT_STATUSES = Object.freeze({
   GROUNDED: 'GROUNDED',
   IN_FLIGHT: 'IN_FLIGHT',
-  COMPLETE: 'COMPLETE'
+  COMPLETED: 'COMPLETED'
 })
 
 /**
