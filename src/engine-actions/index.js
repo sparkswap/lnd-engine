@@ -9,7 +9,6 @@ const createChannel = require('./create-channel')
 const createInvoice = require('./create-invoice')
 const createNewAddress = require('./create-new-address')
 const createSwapHash = require('./create-swap-hash')
-const isAvailable = require('./is-available')
 const isInvoicePaid = require('./is-invoice-paid')
 const isBalanceSufficient = require('./is-balance-sufficient')
 const payInvoice = require('./pay-invoice')
@@ -27,12 +26,11 @@ const getOpenChannelCapacities = require('./get-open-channel-capacities')
 const closeChannels = require('./close-channels')
 const getMaxChannel = require('./get-max-channel')
 const withdrawFunds = require('./withdraw-funds')
-const isNodeConfigValid = require('./is-node-config-valid')
-const isEngineUnlocked = require('./is-engine-unlocked')
 const createWallet = require('./create-wallet')
 const unlockWallet = require('./unlock-wallet')
 const getPaymentPreimage = require('./get-payment-preimage')
 const isPaymentPendingOrComplete = require('./is-payment-pending-or-complete')
+const getStatus = require('./get-status')
 
 module.exports = {
   validationDependentActions: {
@@ -47,7 +45,6 @@ module.exports = {
     createInvoice,
     createNewAddress,
     createSwapHash,
-    isAvailable,
     isInvoicePaid,
     isBalanceSufficient,
     payInvoice,
@@ -70,8 +67,7 @@ module.exports = {
   },
   validationIndependentActions: {
     createWallet,
-    isNodeConfigValid,
-    isEngineUnlocked,
+    getStatus,
     unlockWallet
   }
 }

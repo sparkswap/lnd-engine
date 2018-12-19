@@ -33,13 +33,13 @@ const EXPONENTIAL_BACKOFF_DELAY = 5000
  * @param {Function} callFunction
  * @param {Object} [payload={}] - information for error log during backoff failures
  * @param {Object} opts
- * @param {String} opts.errorMessage
+ * @param {String} opts.debugName
  * @param {Number} [attempts=EXPONENTIAL_BACKOFF_ATTEMPTS] opts.attempts - attempts left
  * @param {Number} [delayTime=EXPONENTIAL_BACKOFF_DELAY] opts.delayTime - delay in milliseconds between calls
  * @param {Logger} [delayTime=EXPONENTIAL_BACKOFF_DELAY] opts.logger
  * @return {Promise}
  */
-async function exponentialBackoff (callFunction, payload = {}, { errorMessage = null, attempts = EXPONENTIAL_BACKOFF_ATTEMPTS, delayTime = EXPONENTIAL_BACKOFF_DELAY, logger = console }) {
+async function exponentialBackoff (callFunction, payload = {}, { debugName = null, attempts = EXPONENTIAL_BACKOFF_ATTEMPTS, delayTime = EXPONENTIAL_BACKOFF_DELAY, logger = console }) {
   try {
     var res = await callFunction()
   } catch (error) {
@@ -47,14 +47,14 @@ async function exponentialBackoff (callFunction, payload = {}, { errorMessage = 
       const attemptsLeft = attempts - 1
       const nextDelayTime = delayTime * DELAY_MULTIPLIER
 
-      if (errorMessage) {
-        logger.error(errorMessage, { payload, delayTime, attemptsLeft, error })
+      if (debugName) {
+        logger.error(`Error calling ${debugName}. Retrying in ${Math.round(delayTime / 1000)} seconds, attempts left: ${attemptsLeft}`, { payload, error: error.message })
       } else {
-        logger.error(`Error calling ${callFunction}. Retrying in ${Math.round(delayTime / 1000)} seconds, attempts left: ${attemptsLeft}`, { payload, error })
+        logger.error(`Error calling ${callFunction}. Retrying in ${Math.round(delayTime / 1000)} seconds, attempts left: ${attemptsLeft}`, { payload, error: error.message })
       }
 
       await delay(delayTime)
-      res = await exponentialBackoff(callFunction, payload, { errorMessage, attempts: attemptsLeft, delayTime: nextDelayTime, logger })
+      res = await exponentialBackoff(callFunction, payload, { debugName, attempts: attemptsLeft, delayTime: nextDelayTime, logger })
     } else {
       throw new Error(error, `Error with ${callFunction}, no retry attempts left`)
     }

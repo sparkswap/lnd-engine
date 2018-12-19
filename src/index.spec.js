@@ -23,7 +23,7 @@ describe('lnd-engine index', () => {
     }
 
     validationIndependentActions = {
-      validateNodeConfig: sinon.stub()
+      getStatus: sinon.stub()
     }
 
     LndEngine.__set__('generateLightningClient', clientStub)
@@ -71,26 +71,26 @@ describe('lnd-engine index', () => {
     })
 
     it('assigns actions', () => {
-      expect(engine.validateNodeConfig).to.not.be.undefined()
       expect(engine.getInvoices).to.not.be.undefined()
+      expect(engine.getStatus).to.not.be.undefined()
     })
 
     it('throws an error if a validation dependent action is called and the engine is not validated', () => {
-      engine.unlocked = true
       return expect(() => engine.getInvoices()).to.throw('is not validated')
     })
 
-    it('throws an error if a validation dependent action is called and the engine is not validated', () => {
-      return expect(() => engine.getInvoices()).to.throw('is locked')
+    it('does not throw an error if a validation dependent action is called and the engine is not validated', () => {
+      return expect(() => engine.getStatus()).to.not.throw()
     })
 
-    it('does not throw an error if a validation dependent action is called and the engine is not validated', () => {
-      return expect(() => engine.validateNodeConfig()).to.not.throw()
+    it('defaults to an UNKNOWN status', () => {
+      const { UNKNOWN } = LndEngine.__get__('ENGINE_STATUSES')
+      expect(engine.status).to.be.eql(UNKNOWN)
     })
 
     it('calls the action', () => {
-      engine.unlocked = true
-      engine.validated = true
+      const { VALIDATED } = LndEngine.__get__('ENGINE_STATUSES')
+      engine.status = VALIDATED
       engine.getInvoices('test', 'args')
       return expect(validationDependentActions.getInvoices).to.be.calledWith('test', 'args')
     })
@@ -120,7 +120,7 @@ describe('lnd-engine index', () => {
 
     it('wraps a function in exponential backoff', async () => {
       await engine.validateEngine()
-      expect(exponentialStub).to.have.been.calledWith(sinon.match.func, { symbol }, { errorMessage: sinon.match('Engine failed'), logger })
+      expect(exponentialStub).to.have.been.calledWith(sinon.match.func, { symbol }, { debugName: 'validateEngine', logger })
     })
 
     it('logs if validation is successful', async () => {
@@ -134,41 +134,60 @@ describe('lnd-engine index', () => {
       expect(logger.error).to.have.been.calledWith(sinon.match('Failed to validate engine'))
     })
 
+    describe('get validated', () => {
+      it('returns false if engines status is not validated', () => {
+        const { UNKNOWN } = LndEngine.__get__('ENGINE_STATUSES')
+        engine.status = UNKNOWN
+        expect(engine.validated).to.be.false()
+      })
+
+      it('returns true if engines status is validated', () => {
+        const { VALIDATED } = LndEngine.__get__('ENGINE_STATUSES')
+        engine.status = VALIDATED
+        expect(engine.validated).to.be.true()
+      })
+    })
+
     describe('validationCall', () => {
       let validationCall
+      let getStatusStub
 
       beforeEach(async () => {
-        engine.isEngineUnlocked = sinon.stub().resolves(true)
-        engine.isNodeConfigValid = sinon.stub().resolves(true)
-
+        const { VALIDATED } = LndEngine.__get__('ENGINE_STATUSES')
+        getStatusStub = sinon.stub().resolves(VALIDATED)
+        engine.getStatus = getStatusStub
         await engine.validateEngine()
 
         validationCall = exponentialStub.args[0][0]
       })
 
-      it('checks if an engine is unlocked', async () => {
+      it('generates a lightning client', async () => {
         await validationCall()
-        expect(engine.isEngineUnlocked).to.have.been.calledOnce()
+        expect(clientStub).to.have.been.calledTwice()
       })
 
-      it('sets unlocked property on the class to true if unlocked', async () => {
+      it('sets a status on the engine', async () => {
+        const { VALIDATED } = LndEngine.__get__('ENGINE_STATUSES')
         await validationCall()
-        expect(engine.unlocked).to.be.eql(true)
+        expect(engine.status).to.be.eql(VALIDATED)
       })
 
-      it('sets validated property on the class to true if validated', async () => {
-        await validationCall()
-        expect(engine.validated).to.be.eql(true)
+      it('throws an error if engine failed to validate', () => {
+        const { UNLOCKED } = LndEngine.__get__('ENGINE_STATUSES')
+        getStatusStub.resolves(UNLOCKED)
+        expect(validationCall()).to.eventually.be.rejectedWith('Engine failed to validate')
       })
 
-      it('checks if node config is valid', async () => {
-        await validationCall()
-        expect(engine.isNodeConfigValid).to.have.been.calledOnce()
-      })
+      it('throws an error if the validation call fails', async () => {
+        const { UNKNOWN } = LndEngine.__get__('ENGINE_STATUSES')
+        exponentialStub.throws('BAD')
 
-      it('throws an error if lnd engine is locked', () => {
-        engine.isEngineUnlocked.resolves(false)
-        return expect(validationCall()).to.eventually.be.rejectedWith('LndEngine is locked')
+        try {
+          await validationCall()
+        } catch (e) {
+          expect(logger.error).to.have.been.called()
+          expect(engine.status).to.be.eql(UNKNOWN)
+        }
       })
     })
   })
