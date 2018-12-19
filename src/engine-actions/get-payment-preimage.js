@@ -37,7 +37,7 @@ async function getPaymentPreimage (paymentHash) {
     return { permanentError: `No payment with hash '${paymentHash}' is in-flight or complete` }
   }
 
-  if (status === PAYMENT_STATUSES.COMPLETE) {
+  if (status === PAYMENT_STATUSES.COMPLETED) {
     return { paymentPreimage: await getCompletedPreimage(paymentHash, { logger, client }) }
   }
 

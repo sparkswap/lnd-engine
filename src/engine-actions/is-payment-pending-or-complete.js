@@ -21,7 +21,7 @@ async function isPaymentPendingOrComplete (paymentHash) {
     return false
   }
 
-  if (status === PAYMENT_STATUSES.IN_FLIGHT || status === PAYMENT_STATUSES.COMPLETE) {
+  if (status === PAYMENT_STATUSES.IN_FLIGHT || status === PAYMENT_STATUSES.COMPLETED) {
     return true
   }
 
