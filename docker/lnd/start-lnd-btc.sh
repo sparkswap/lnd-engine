@@ -51,4 +51,9 @@ if [[ "$NODE" == "bitcoind" ]]; then
     PARAMS="$PARAMS --bitcoind.zmqpubrawtx=$ZMQPUBRAWTX"
 fi
 
+if [[ "$NETWORK" == 'simnet' ]]; then
+  echo "Setting --noseedbackup for $NETWORK"
+  PARAMS="$PARAMS --noseedbackup=1"
+fi
+
 exec lnd $PARAMS "$@"
