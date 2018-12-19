@@ -53,7 +53,7 @@ fi
 
 if [[ "$NETWORK" == 'simnet' ]]; then
   echo "Setting --noseedbackup for $NETWORK"
-  PARAMS="$PARAMS --noseedbackup=1"
+  PARAMS="$PARAMS --noseedbackup"
 fi
 
 exec lnd $PARAMS "$@"
