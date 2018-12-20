@@ -56,8 +56,6 @@ class LndEngine {
 
     // Default status of the lnd-engine is unknown as we have not run any validations
     // up to this point
-    console.log('lol what')
-    console.log(ENGINE_STATUSES)
     this.status = ENGINE_STATUSES.UNKNOWN
 
     // We wrap all validation dependent actions in a callback so we can prevent
@@ -79,8 +77,6 @@ class LndEngine {
   }
 
   get validated () {
-    console.log('what')
-    console.log(this.status)
     return (this.status === ENGINE_STATUSES.VALIDATED)
   }
 
