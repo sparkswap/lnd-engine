@@ -19,7 +19,6 @@ if [[ "$NETWORK" != 'simnet' ]] && [[ "$EXTERNAL_ADDRESS" == *"sample.ip.address
 fi
 
 # Copy certs to the shared file
-
 if [[ -e /secure/lnd-engine-tls-btc.cert ]]; then
     rm -f /shared/lnd-engine-tls-btc.cert
     cp /secure/lnd-engine-tls-btc.cert /shared/lnd-engine-tls-btc.cert
@@ -29,9 +28,6 @@ else
     exit 1
 fi
 
-# USING THIS OPTION BECAUSE WE'RE BAD
-# BUT THIS WILL NEED TO BE REMOVED FOR MAINNET
-echo 'LND has --noseedbackup set. MAKE SURE TO REMOVE THIS'
 echo "LND BTC starting with network: $NETWORK $NODE"
 
 PARAMS=$(echo \
