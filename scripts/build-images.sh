@@ -13,7 +13,10 @@ LND_VERSION='v0.5.1-sparkswap-beta-rc1'
 # We add a COMMIT_SHA argument to the lnd dockerfile to trigger cache-invalidation
 # when get git clone the sparkswap/lnd repo. Without it, docker would continue
 # to cache old code and we would never receive updates from the fork.
-COMMIT_SHA=`git ls-remote git://github.com/sparkswap/lnd | grep "refs/heads/$LND_VERSION$" | cut -f 1`
+# COMMIT_SHA=`git ls-remote git://github.com/sparkswap/lnd | grep "refs/heads/$LND_VERSION$" | cut -f 1`
+
+# If our LND_VERSION is a tag or a commit, we can use it directly
+COMMIT_SHA=${LND_VERSION}
 
 if [[ "$ARG" == "local" ]]; then
   LND_BTC_NODE=btcd
