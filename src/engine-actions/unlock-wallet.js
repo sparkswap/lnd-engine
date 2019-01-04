@@ -8,9 +8,14 @@ const {
  * @param {String} walletPassword
  * @return {Promise}
  */
-function unlockWallet (password) {
+async function unlockWallet (password) {
   const walletPassword = Buffer.from(password, 'utf8')
-  return lndUnlockWallet(walletPassword, { client: this.walletUnlocker })
+
+  try {
+    await lndUnlockWallet(walletPassword, { client: this.walletUnlocker })
+  } catch (e) {
+    throw e
+  }
 }
 
 module.exports = unlockWallet
