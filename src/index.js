@@ -80,6 +80,10 @@ class LndEngine {
     return (this.status === ENGINE_STATUSES.VALIDATED)
   }
 
+  get locked () {
+    return (this.status === ENGINE_STATUSES.LOCKED)
+  }
+
   /**
    * Validates and sets the current state of an engine
    *
