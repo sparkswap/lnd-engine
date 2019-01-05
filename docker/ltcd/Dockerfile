@@ -46,7 +46,7 @@ RUN apk add --no-cache \
 # We set the cert host for btcd (set as --build-arg on docker build)
 ARG CERT_HOST
 RUN : "${CERT_HOST:?CERT_HOST Build argument needs to be set.}" \
-&&  "/bin/gencerts" --host=${CERT_HOST} --directory="/secure" --force
+&&  "/bin/gencerts" --host=${CERT_HOST} --host="localhost" --directory="/secure" --force
 
 # TODO: figure out correct ports for ltcd
 # Mainnet ports (p2p, rpc)

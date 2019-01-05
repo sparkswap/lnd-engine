@@ -13,7 +13,11 @@ ENV GODEBUG netdns=cgo
 RUN apk add --no-cache \
     git \
     make \
-    openssl
+    openssl \
+    # We need to install bash here so that we can properly add subjectAltNames to
+    # the certs for lnd later in the Dockerfile. This dep can be removed once
+    # openssl is updated to 1.1.1 in alpine (version 3.9)
+    bash
 
 # Create certs for LND Engine
 RUN mkdir "/secure"
@@ -29,9 +33,20 @@ ARG TLS_CSR="/secure/lnd-engine-csr-${NETWORK}.csr"
 #
 # More info here: https://github.com/mably/lncli-web#generate-lnd-certificates-compatible-with-nodejs-grpc
 #
+# We generate certs for the container itself (lnd) and for localhost so you can
+# run cli commands from within the lnd containers
 RUN openssl ecparam -genkey -name prime256v1 -out ${TLS_KEY}
-RUN openssl req -new -sha256 -key ${TLS_KEY} -out ${TLS_CSR} -subj "/CN=lnd_${NETWORK}/O=lnd"
-RUN openssl req -x509 -sha256 -days 36500 -key ${TLS_KEY} -in ${TLS_CSR} -out ${TLS_CERT}
+
+# TODO: Once openssl 1.1.1 becomes available, we can remove bash and change the
+#       openssl command to use -addext="subjectAltName = localhost"
+RUN bash -c 'openssl req -new -sha256 -key ${TLS_KEY} -out ${TLS_CSR} -subj "/CN=lnd_${NETWORK}/O=lnd" \
+    -reqexts SAN \
+    -extensions SAN \
+    -config <(cat /etc/ssl/openssl.cnf <(printf "\n[SAN]\nsubjectAltName=DNS:lnd_${NETWORK},DNS:localhost"))'
+RUN bash -c 'openssl req -x509 -sha256 -days 36500 -key ${TLS_KEY} -in ${TLS_CSR} -out ${TLS_CERT} \
+    -reqexts SAN \
+    -extensions SAN \
+    -config <(cat /etc/ssl/openssl.cnf <(printf "\n[SAN]\nsubjectAltName=DNS:lnd_${NETWORK},DNS:localhost"))'
 
 RUN rm ${TLS_CSR}
 
