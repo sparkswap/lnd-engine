@@ -7,7 +7,8 @@
       "quantumsPerCommon": "100000000",
       "secondsPerBlock": 600,
       "feeEstimate": "20000",
-      "maxChannelBalance": "16777215"
+      "maxChannelBalance": "16777215",
+      "maxPaymentSize": "4194304"
     },
     {
       "name": "Litecoin",
@@ -16,7 +17,8 @@
       "quantumsPerCommon": "100000000",
       "secondsPerBlock": 150,
       "feeEstimate": "2000000",
-      "maxChannelBalance": "1006632900"
+      "maxChannelBalance": "1006632900",
+      "maxPaymentSize": "251658225"
     }
   ]
 }
