@@ -38,7 +38,8 @@ describe('createChannel', () => {
       error: sinon.stub()
     }
     currencyConfigStub = {
-      feeEstimate: '1000'
+      feeEstimate: '1000',
+      maxChannelBalance: '20000000'
     }
 
     createChannel.__set__('connectPeer', connectPeerStub)
@@ -75,6 +76,15 @@ describe('createChannel', () => {
       const res = await createChannel(paymentChannelNetworkAddress, fundingAmount)
       expect(res).to.eql(undefined)
     })
+
+    it('errors if the funding amount exceeds the max channel balance', () => {
+      fundingAmount = '30000000'
+      return expect(createChannel(paymentChannelNetworkAddress, fundingAmount)).to.eventually.be.rejectedWith('exceeds max channel balance')
+    })
+  })
+
+  context('balance is too large', () => {
+
   })
 
   context('balance does not cover fees', () => {
@@ -93,7 +103,8 @@ describe('createChannel', () => {
       fundingAmount = '1000000'
       balanceStub.resolves(balance)
       createChannel.__set__('currencyConfig', {
-        feeEstimate: '10000000'
+        feeEstimate: '10000000',
+        maxChannelBalance: '20000000'
       })
 
       return expect(createChannel(paymentChannelNetworkAddress, fundingAmount)).to.have.been.rejectedWith('fundingAmount does not cover')

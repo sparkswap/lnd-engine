@@ -6,7 +6,8 @@
       "symbol": "BTC",
       "quantumsPerCommon": "100000000",
       "secondsPerBlock": 600,
-      "feeEstimate": "20000"
+      "feeEstimate": "20000",
+      "maxChannelBalance": "16777215"
     },
     {
       "name": "Litecoin",
@@ -14,7 +15,8 @@
       "symbol": "LTC",
       "quantumsPerCommon": "100000000",
       "secondsPerBlock": 150,
-      "feeEstimate": "2000000"
+      "feeEstimate": "2000000",
+      "maxChannelBalance": "1006632900"
     }
   ]
 }
