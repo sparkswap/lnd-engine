@@ -31,7 +31,6 @@ const unlockWallet = require('./unlock-wallet')
 const getPaymentPreimage = require('./get-payment-preimage')
 const isPaymentPendingOrComplete = require('./is-payment-pending-or-complete')
 const getStatus = require('./get-status')
-const isSynced = require('./is-synced')
 
 module.exports = {
   validationDependentActions: {
@@ -69,7 +68,6 @@ module.exports = {
   validationIndependentActions: {
     createWallet,
     getStatus,
-    unlockWallet,
-    isSynced
+    unlockWallet
   }
 }
