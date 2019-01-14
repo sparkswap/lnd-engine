@@ -75,11 +75,13 @@ describe('lnd-engine index', () => {
     })
 
     it('throws if the currency is not in available configuration', () => {
-      expect(() => { new LndEngine(host, 'XYZ') }).to.throw('not a valid symbol') // eslint-disable-line
+      // eslint-disable-next-line
+      expect(() => { new LndEngine(host, 'XYZ') }).to.throw('not a valid symbol')
     })
 
     it('throws if chainName is missing from the configuration', () => {
       delete currencies[0].chainName
+      // eslint-disable-next-line
       expect(() => { new LndEngine(host, symbol) }).to.throw(`Currency config for ${symbol} is missing for 'chainName'`)
     })
 
@@ -90,6 +92,7 @@ describe('lnd-engine index', () => {
 
     it('throws if quantumsPerCommon is missing from the configuration', () => {
       delete currencies[0].quantumsPerCommon
+      // eslint-disable-next-line
       expect(() => { new LndEngine(host, symbol) }).to.throw(`Currency config for ${symbol} is missing for 'quantumsPerCommon'`)
     })
 
@@ -100,6 +103,7 @@ describe('lnd-engine index', () => {
 
     it('throws if secondsPerBlock is missing from the configuration', () => {
       delete currencies[0].secondsPerBlock
+      // eslint-disable-next-line
       expect(() => { new LndEngine(host, symbol) }).to.throw(`Currency config for ${symbol} is missing for 'secondsPerBlock'`)
     })
 
@@ -110,6 +114,7 @@ describe('lnd-engine index', () => {
 
     it('throws if feeEstimate is missing from the configuration', () => {
       delete currencies[0].feeEstimate
+      // eslint-disable-next-line
       expect(() => { new LndEngine(host, symbol) }).to.throw(`Currency config for ${symbol} is missing for 'feeEstimate'`)
     })
 
@@ -120,6 +125,7 @@ describe('lnd-engine index', () => {
 
     it('throws if maxChannelBalance is missing from the configuration', () => {
       delete currencies[0].maxChannelBalance
+      // eslint-disable-next-line
       expect(() => { new LndEngine(host, symbol) }).to.throw(`Currency config for ${symbol} is missing for 'maxChannelBalance'`)
     })
 
@@ -130,6 +136,7 @@ describe('lnd-engine index', () => {
 
     it('throws if maxPaymentSize is missing from the configuration', () => {
       delete currencies[0].maxPaymentSize
+      // eslint-disable-next-line
       expect(() => { new LndEngine(host, symbol) }).to.throw(`Currency config for ${symbol} is missing for 'maxPaymentSize'`)
     })
 
@@ -139,6 +146,7 @@ describe('lnd-engine index', () => {
     })
 
     it('fails if no host is specified', () => {
+      // eslint-disable-next-line
       expect(() => new LndEngine(null, symbol)).to.throw('Host is required')
     })
 
