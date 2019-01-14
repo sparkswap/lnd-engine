@@ -67,7 +67,11 @@ class LndEngine {
       if (this.currencyConfig[configKey] == null) {
         throw new Error(`Currency config for ${this.symbol} is missing for '${configKey}'`)
       }
-      this[configKey] = this.currencyConfig[configKey]
+      Object.defineProperty(this, configKey, {
+        value: this.currencyConfig[configKey],
+        // we define the config as non-writable to avoid an inadvertent collision
+        writable: false
+      })
     })
 
     this.logger = logger
