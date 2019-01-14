@@ -26,6 +26,7 @@ async function getStatus () {
   // Make a call to getInfo to see if lnrpc is up on the current engine. If
   // this calls returns successful, then we will attempt to validate the node config.
   try {
+    console.log('the loggggerrrr', this.logger)
     const info = await getInfo({ client: this.client })
 
     // We validate an engines configuration here and return either an UNLOCKED
