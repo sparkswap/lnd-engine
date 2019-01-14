@@ -28,9 +28,7 @@ describe('get-status', () => {
         logger: {
           error: sinon.stub()
         },
-        currencyConfig: {
-          chainName: 'testnet'
-        }
+        chainName: 'testnet'
       }
 
       reverts.push(getStatus.__set__('getInfo', getInfoStub))

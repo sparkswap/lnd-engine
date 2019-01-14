@@ -44,8 +44,8 @@ async function getStatus () {
 
     const [ chainName ] = chains
 
-    if (chainName !== this.currencyConfig.chainName) {
-      this.logger.error(`Mismatched configuration: Engine is configured for ${this.currencyConfig.chainName}, LND is configured for ${chainName}.`)
+    if (chainName !== this.chainName) {
+      this.logger.error(`Mismatched configuration: Engine is configured for ${this.chainName}, LND is configured for ${chainName}.`)
       return ENGINE_STATUSES.UNLOCKED
     }
 

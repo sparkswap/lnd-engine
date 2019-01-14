@@ -25,7 +25,7 @@ async function createChannel (paymentChannelNetworkAddress, fundingAmount) {
   //
   // TODO: Expose fee estimation in LND to provide a better way to estimate fees
   //       for the user
-  const { feeEstimate, maxChannelBalance } = this.currencyConfig
+  const { feeEstimate, maxChannelBalance } = this
 
   if (!feeEstimate) {
     throw new Error(`Currency configuration for ${this.symbol} has not been setup with a fee estimate`)
