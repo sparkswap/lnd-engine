@@ -8,7 +8,7 @@
       "secondsPerBlock": 600,
       "feeEstimate": "20000",
       "maxChannelBalance": "16777215",
-      "maxPaymentSize": "4194304"
+      "maxPaymentSize": "4294967"
     },
     {
       "name": "Litecoin",
@@ -18,7 +18,7 @@
       "secondsPerBlock": 150,
       "feeEstimate": "2000000",
       "maxChannelBalance": "1006632900",
-      "maxPaymentSize": "251658225"
+      "maxPaymentSize": "257698037"
     }
   ]
 }
