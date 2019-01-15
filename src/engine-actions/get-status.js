@@ -33,6 +33,7 @@ async function getStatus () {
     const { chains = [], syncedToChain } = info
 
     this.logger.info('SYNCED TO CHAIN', syncedToChain)
+    this.logger.info('SYNCED TO CHAIN info', info)
 
     if (chains.length === 0) {
       this.logger.error('LND has no chains configured.')
