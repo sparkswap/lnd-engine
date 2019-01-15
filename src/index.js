@@ -25,7 +25,6 @@ const LND_PROTO_FILE_PATH = require.resolve('../proto/lnd-rpc.proto')
  * @type {Array<String>}
  */
 const PUBLIC_CONFIG = [
-  'symbol',
   'chainName',
   'quantumsPerCommon',
   'secondsPerBlock',
@@ -67,11 +66,7 @@ class LndEngine {
       if (this.currencyConfig[configKey] == null) {
         throw new Error(`Currency config for ${this.symbol} is missing for '${configKey}'`)
       }
-      Object.defineProperty(this, configKey, {
-        value: this.currencyConfig[configKey],
-        // we define the config as non-writable to avoid an inadvertent collision
-        writable: false
-      })
+      this[configKey] = this.currencyConfig[configKey]
     })
 
     this.logger = logger

@@ -85,20 +85,10 @@ describe('lnd-engine index', () => {
       expect(() => { new LndEngine(host, symbol) }).to.throw(`Currency config for ${symbol} is missing for 'chainName'`)
     })
 
-    it('prevents overwriting the chainName in configuration', () => {
-      engine.chainName = 'fakeChainName'
-      expect(engine.chainName).to.be.eql(currencies[0].chainName)
-    })
-
     it('throws if quantumsPerCommon is missing from the configuration', () => {
       delete currencies[0].quantumsPerCommon
       // eslint-disable-next-line
       expect(() => { new LndEngine(host, symbol) }).to.throw(`Currency config for ${symbol} is missing for 'quantumsPerCommon'`)
-    })
-
-    it('prevents overwriting the quantumsPerCommon in configuration', () => {
-      engine.quantumsPerCommon = 'fakeQuantumsPerCommon'
-      expect(engine.quantumsPerCommon).to.be.eql(currencies[0].quantumsPerCommon)
     })
 
     it('throws if secondsPerBlock is missing from the configuration', () => {
@@ -107,20 +97,10 @@ describe('lnd-engine index', () => {
       expect(() => { new LndEngine(host, symbol) }).to.throw(`Currency config for ${symbol} is missing for 'secondsPerBlock'`)
     })
 
-    it('prevents overwriting the secondsPerBlock in configuration', () => {
-      engine.secondsPerBlock = 'fakeSecondsPerBlock'
-      expect(engine.secondsPerBlock).to.be.eql(currencies[0].secondsPerBlock)
-    })
-
     it('throws if feeEstimate is missing from the configuration', () => {
       delete currencies[0].feeEstimate
       // eslint-disable-next-line
       expect(() => { new LndEngine(host, symbol) }).to.throw(`Currency config for ${symbol} is missing for 'feeEstimate'`)
-    })
-
-    it('prevents overwriting the feeEstimate in configuration', () => {
-      engine.feeEstimate = 'fakeFeeEstimate'
-      expect(engine.feeEstimate).to.be.eql(currencies[0].feeEstimate)
     })
 
     it('throws if maxChannelBalance is missing from the configuration', () => {
@@ -129,20 +109,10 @@ describe('lnd-engine index', () => {
       expect(() => { new LndEngine(host, symbol) }).to.throw(`Currency config for ${symbol} is missing for 'maxChannelBalance'`)
     })
 
-    it('prevents overwriting the maxChannelBalance in configuration', () => {
-      engine.maxChannelBalance = 'fakeMaxChannelBalance'
-      expect(engine.maxChannelBalance).to.be.eql(currencies[0].maxChannelBalance)
-    })
-
     it('throws if maxPaymentSize is missing from the configuration', () => {
       delete currencies[0].maxPaymentSize
       // eslint-disable-next-line
       expect(() => { new LndEngine(host, symbol) }).to.throw(`Currency config for ${symbol} is missing for 'maxPaymentSize'`)
-    })
-
-    it('prevents overwriting the maxPaymentSize in configuration', () => {
-      engine.maxPaymentSize = 'fakeMaxPaymentSize'
-      expect(engine.maxPaymentSize).to.be.eql(currencies[0].maxPaymentSize)
     })
 
     it('fails if no host is specified', () => {
