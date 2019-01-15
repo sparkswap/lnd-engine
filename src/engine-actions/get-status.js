@@ -33,6 +33,7 @@ async function getStatus () {
     // or VALIDATED status if the code doesn't error out
     const { chains = [], syncedToChain } = info
 
+    throw new Error('why isnt the logger owrking', {logger: this.logger, syncedToChain})
     this.logger.info('SYNCED TO CHAIN', syncedToChain)
 
     if (chains.length === 0) {
