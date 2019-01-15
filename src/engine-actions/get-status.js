@@ -32,9 +32,6 @@ async function getStatus () {
     // or VALIDATED status if the code doesn't error out
     const { chains = [], syncedToChain } = info
 
-    this.logger.info('SYNCED TO CHAIN', syncedToChain)
-    this.logger.info('SYNCED TO CHAIN info', info)
-
     if (chains.length === 0) {
       this.logger.error('LND has no chains configured.')
       return ENGINE_STATUSES.UNLOCKED
