@@ -72,7 +72,7 @@ class LndEngine {
     })
 
     Object.entries(validationIndependentActions).forEach(([name, action]) => {
-      this[name] = action
+      this[name] = action.bind(this)
     })
   }
 

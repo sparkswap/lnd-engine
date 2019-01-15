@@ -17,7 +17,8 @@ describe('get-status', () => {
 
     beforeEach(() => {
       getInfoResponse = {
-        chains: ['testnet']
+        chains: ['testnet'],
+        syncedToChain: true
       }
       getInfoStub = sinon.stub().resolves(getInfoResponse)
       genSeedStub = sinon.stub().resolves(true)
@@ -107,6 +108,16 @@ describe('get-status', () => {
       it('returns UNLOCKED if chain names do not match', async () => {
         getInfoStub.resolves({ chains: ['badnet'] })
         expect(await getStatus.call(engine)).to.be.eql(statuses.UNLOCKED)
+      })
+    })
+
+    context('engine is not synced', () => {
+      it('returns NOT_SYNCED if getInfo returns syncedToChain as false', async () => {
+        getInfoStub.resolves({
+          chains: ['testnet'],
+          syncedToChain: false
+        })
+        expect(await getStatus.call(engine)).to.be.eql(statuses.NOT_SYNCED)
       })
     })
   })

@@ -30,7 +30,7 @@ async function getStatus () {
 
     // We validate an engines configuration here and return either an UNLOCKED
     // or VALIDATED status if the code doesn't error out
-    const { chains = [] } = info
+    const { chains = [], syncedToChain } = info
 
     if (chains.length === 0) {
       this.logger.error('LND has no chains configured.')
@@ -47,6 +47,11 @@ async function getStatus () {
     if (chainName !== this.currencyConfig.chainName) {
       this.logger.error(`Mismatched configuration: Engine is configured for ${this.currencyConfig.chainName}, LND is configured for ${chainName}.`)
       return ENGINE_STATUSES.UNLOCKED
+    }
+
+    if (!syncedToChain) {
+      this.logger.error(`Wallet is not yet synced to the main chain`)
+      return ENGINE_STATUSES.NOT_SYNCED
     }
 
     return ENGINE_STATUSES.VALIDATED
