@@ -6,7 +6,11 @@
       "symbol": "BTC",
       "quantumsPerCommon": "100000000",
       "secondsPerBlock": 600,
-      "feeEstimate": "20000"
+      "feeEstimate": "20000",
+      "//": "from bolt-0002, max channel size is 2^24 - 1 satoshis",
+      "maxChannelBalance": "16777215",
+      "//": "LND specifies max payment size as UInt32 - 1 millisatohis (https://github.com/lightningnetwork/lnd/blob/v0.5.1-beta/rpcserver.go#L49-L58)",
+      "maxPaymentSize": "4294967"
     },
     {
       "name": "Litecoin",
@@ -14,7 +18,11 @@
       "symbol": "LTC",
       "quantumsPerCommon": "100000000",
       "secondsPerBlock": 150,
-      "feeEstimate": "2000000"
+      "feeEstimate": "2000000",
+      "//": "LND specifies max channel size as (2^24 - 1)*60 millilitoshis (https://github.com/lightningnetwork/lnd/blob/v0.5.1-beta/fundingmanager.go#L68)", 
+      "maxChannelBalance": "1006632900",
+      "//": "LND specifies max payment size as (UInt32 - 1)*60 millilitoshis (https://github.com/lightningnetwork/lnd/blob/v0.5.1-beta/rpcserver.go#L49-L58)",
+      "maxPaymentSize": "257698037"
     }
   ]
 }

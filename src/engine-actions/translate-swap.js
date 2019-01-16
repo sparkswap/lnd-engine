@@ -144,13 +144,7 @@ async function translateSwap (takerAddress, swapHash, amount, extendedTimeLockDe
 
   const { publicKey } = networkAddressFormatter.parse(takerAddress)
 
-  const secondsPerBlock = this.currencyConfig.secondsPerBlock
-
-  if (!secondsPerBlock) {
-    const err = 'secondsPerBlock is not specified in the currencyConfig for lnd-engine'
-    this.logger.error(err)
-    return { permanentError: err }
-  }
+  const secondsPerBlock = this.secondsPerBlock
 
   // We specifically use Math.ceil here to ensure that the swap succeeds by providing
   // the terminating node (Taker) additional timelock. This allows enough time so that
@@ -195,7 +189,7 @@ async function translateSwap (takerAddress, swapHash, amount, extendedTimeLockDe
   this.logger.debug('Calculating timelock with params:', { extendedTimeLockDelta, blockHeight })
 
   try {
-    var totalTimeLock = calculateTimeLock(extendedTimeLockDelta, this.currencyConfig.secondsPerBlock, blockHeight)
+    var totalTimeLock = calculateTimeLock(extendedTimeLockDelta, secondsPerBlock, blockHeight)
   } catch (err) {
     this.logger.error(err)
     return { permanentError: err.message }

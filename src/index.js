@@ -20,6 +20,20 @@ const {
 const LND_PROTO_FILE_PATH = require.resolve('../proto/lnd-rpc.proto')
 
 /**
+ * Config properties that should be exposed directly on the engine
+ * @constant
+ * @type {Array<String>}
+ */
+const PUBLIC_CONFIG = [
+  'chainName',
+  'quantumsPerCommon',
+  'secondsPerBlock',
+  'feeEstimate',
+  'maxChannelBalance',
+  'maxPaymentSize'
+]
+
+/**
  * The public interface for interaction with an LND instance
  */
 class LndEngine {
@@ -46,6 +60,14 @@ class LndEngine {
     if (!this.currencyConfig) {
       throw new Error(`${symbol} is not a valid symbol for this engine.`)
     }
+
+    // Expose config publicly that we expect to be used by consumers
+    PUBLIC_CONFIG.forEach((configKey) => {
+      if (!this.currencyConfig.hasOwnProperty(configKey)) {
+        throw new Error(`Currency config for ${this.symbol} is missing for '${configKey}'`)
+      }
+      this[configKey] = this.currencyConfig[configKey]
+    })
 
     this.logger = logger
     this.tlsCertPath = tlsCertPath

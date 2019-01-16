@@ -34,11 +34,7 @@ async function executeSwap (makerAddress, swapHash, amount) {
   this.logger.info(`Executing swap for ${swapHash} with ${makerAddress}`, { makerAddress, swapHash, amount })
 
   const { publicKey: counterpartyPubKey } = networkAddressFormatter.parse(makerAddress)
-  const secondsPerBlock = this.currencyConfig.secondsPerBlock
-
-  if (!secondsPerBlock) {
-    throw new Error('secondsPerBlock is not specified in the currencyConfig for lnd-engine')
-  }
+  const secondsPerBlock = this.secondsPerBlock
 
   // TotalTimeLock includes `Maker -> Relayer -> Taker` deltas (in seconds), where
   // our current node is the Taker.

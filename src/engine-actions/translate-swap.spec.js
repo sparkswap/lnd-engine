@@ -202,9 +202,7 @@ describe('translate-swap', () => {
       client = 'fakeclient'
       engine = {
         client,
-        currencyConfig: {
-          secondsPerBlock: 600
-        },
+        secondsPerBlock: 600,
         logger: {
           info: sinon.stub(),
           error: sinon.stub(),
@@ -216,7 +214,7 @@ describe('translate-swap', () => {
     it('finds routes to the taker for the given amount', async () => {
       await translateSwap.call(engine, address, swapHash, amount, extendedTimeLock)
 
-      const finalCltvDelta = translateSwap.__get__('DEFAULT_MAKER_FWD_DELTA') / engine.currencyConfig.secondsPerBlock
+      const finalCltvDelta = translateSwap.__get__('DEFAULT_MAKER_FWD_DELTA') / engine.secondsPerBlock
       const numRoutes = translateSwap.__get__('NUM_OF_ROUTES')
 
       expect(networkAddressFormatter.parse).to.have.been.calledOnce()

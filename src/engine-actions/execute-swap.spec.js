@@ -37,9 +37,7 @@ describe('executeSwap', () => {
         error: sinon.stub(),
         info: sinon.stub()
       },
-      currencyConfig: {
-        secondsPerBlock: 600
-      }
+      secondsPerBlock: 600
     }
   })
 

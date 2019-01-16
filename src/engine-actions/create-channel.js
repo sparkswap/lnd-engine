@@ -25,10 +25,18 @@ async function createChannel (paymentChannelNetworkAddress, fundingAmount) {
   //
   // TODO: Expose fee estimation in LND to provide a better way to estimate fees
   //       for the user
-  const { feeEstimate } = this.currencyConfig
+  const { feeEstimate, maxChannelBalance } = this
 
   if (!feeEstimate) {
     throw new Error(`Currency configuration for ${this.symbol} has not been setup with a fee estimate`)
+  }
+
+  if (!maxChannelBalance) {
+    throw new Error(`Currency configuration for ${this.symbol} has not been setup with a max channel balance`)
+  }
+
+  if (Big(fundingAmount).gt(maxChannelBalance)) {
+    throw new Error(`Funding amount of ${fundingAmount} exceeds max channel balance of ${maxChannelBalance}`)
   }
 
   const { publicKey, host } = networkAddressFormatter.parse(paymentChannelNetworkAddress)
