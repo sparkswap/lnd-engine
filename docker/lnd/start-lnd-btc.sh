@@ -12,16 +12,6 @@ if [[ "$NETWORK" != 'regtest' ]] && [[ "$EXTERNAL_ADDRESS" == *"sample.ip.addres
     exit 1
 fi
 
-# Copy certs to the shared file
-if [[ -e /secure/lnd-engine-tls-btc.cert ]]; then
-    rm -f /shared/lnd-engine-tls-btc.cert
-    cp /secure/lnd-engine-tls-btc.cert /shared/lnd-engine-tls-btc.cert
-else
-    echo "/secure/lnd-engine-tls-btc.cert does not exist inside of the lnd docker container."
-    echo "Please check your dockerfile changes or rebuild images w/ npm run build-images"
-    exit 1
-fi
-
 echo "LND BTC starting with network: $NETWORK $NODE"
 
 PARAMS=$(echo \
