@@ -63,7 +63,7 @@ class LndEngine {
 
     // Expose config publicly that we expect to be used by consumers
     PUBLIC_CONFIG.forEach((configKey) => {
-      if (this.currencyConfig[configKey] == null) {
+      if (!this.currencyConfig.hasOwnProperty(configKey)) {
         throw new Error(`Currency config for ${this.symbol} is missing for '${configKey}'`)
       }
       this[configKey] = this.currencyConfig[configKey]
