@@ -1,3 +1,5 @@
+const { deadline } = require('../grpc-utils')
+
 /**
  * Unlock an LND wallet
  *
@@ -10,7 +12,7 @@
  */
 function unlockWallet (walletPassword, { client }) {
   return new Promise((resolve, reject) => {
-    client.unlockWallet({ walletPassword }, (err, res) => {
+    client.unlockWallet({ walletPassword }, { deadline: deadline() }, (err, res) => {
       if (err) return reject(err)
       return resolve(res)
     })
