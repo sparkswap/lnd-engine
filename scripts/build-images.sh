@@ -7,8 +7,7 @@ ARG=${1:-remote}
 echo "Building images with arg: $ARG"
 
 # Default branches for each repo
-# TODO: Lock these to a specific commit
-LND_VERSION='v0.5.1-sparkswap-beta'
+LND_VERSION='v0.5.2-sparkswap-beta'
 
 # We add a COMMIT_SHA argument to the lnd dockerfile to trigger cache-invalidation
 # when get git clone the sparkswap/lnd repo. Without it, docker would continue
