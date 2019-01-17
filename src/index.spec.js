@@ -198,6 +198,20 @@ describe('lnd-engine index', () => {
       })
     })
 
+    describe('get isLocked', () => {
+      it('returns false if engines status is not locked', () => {
+        const { UNKNOWN } = LndEngine.__get__('ENGINE_STATUSES')
+        engine.status = UNKNOWN
+        expect(engine.isLocked).to.be.false()
+      })
+
+      it('returns true if engines status is locked', () => {
+        const { LOCKED } = LndEngine.__get__('ENGINE_STATUSES')
+        engine.status = LOCKED
+        expect(engine.isLocked).to.be.true()
+      })
+    })
+
     describe('validationCall', () => {
       let validationCall
       let getStatusStub
