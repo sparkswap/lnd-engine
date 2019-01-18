@@ -4,12 +4,6 @@ set -e
 
 NODE=${NODE:-bitcoind}
 CONFIG_FILE=/home/lnd/lnd.conf
-NODE=${NODE}
-
-if [ -z "$NODE" ]; then
-    echo "NODE is not set for lnd-btc"
-    exit 1
-fi
 
 # Simple check to make sure that the user has changed the external url of lnd_btc
 # outside of regtest. This will cause unintended issues w/ routing through the relayer
@@ -33,15 +27,14 @@ echo "LND BTC starting with network: $NETWORK $NODE"
 PARAMS=$(echo \
     "--configfile=$CONFIG_FILE" \
     "--bitcoin.$NETWORK" \
-    "--bitcoin.node=$NODE" \
     "--debuglevel=$DEBUG" \
     "--externalip=$EXTERNAL_ADDRESS" \
     "--extpreimage.rpchost=$EXTPREIMAGE_HOST" \
     "--$NODE.rpcuser=$RPC_USER" \
     "--$NODE.rpcpass=$RPC_PASS" \
     "--$NODE.rpchost=$RPC_HOST" \
-    "--bitcoind.zmqpubrawblock=$ZMQPUBRAWBLOCK" \
-    "--bitcoind.zmqpubrawtx=$ZMQPUBRAWTX"
+    "--$NODE.zmqpubrawblock=$ZMQPUBRAWBLOCK" \
+    "--$NODE.zmqpubrawtx=$ZMQPUBRAWTX"
 )
 
 exec lnd $PARAMS "$@"
