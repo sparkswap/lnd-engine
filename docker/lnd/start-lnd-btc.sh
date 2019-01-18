@@ -2,7 +2,7 @@
 
 set -e
 
-NODE=${NODE:-btcd}
+NODE=${NODE:-bitcoind}
 CONFIG_FILE=/home/lnd/lnd.conf
 NODE=${NODE}
 
@@ -12,8 +12,8 @@ if [ -z "$NODE" ]; then
 fi
 
 # Simple check to make sure that the user has changed the external url of lnd_btc
-# outside of simnet. This will cause unintended issues w/ routing through the relayer
-if [[ "$NETWORK" != 'simnet' ]] && [[ "$EXTERNAL_ADDRESS" == *"sample.ip.address"* ]]; then
+# outside of regtest. This will cause unintended issues w/ routing through the relayer
+if [[ "$NETWORK" != 'regtest' ]] && [[ "$EXTERNAL_ADDRESS" == *"sample.ip.address"* ]]; then
     echo "Your current external address for LND_BTC is set to an internal address. Please change this for $NETWORK"
     exit 1
 fi
@@ -39,17 +39,9 @@ PARAMS=$(echo \
     "--extpreimage.rpchost=$EXTPREIMAGE_HOST" \
     "--$NODE.rpcuser=$RPC_USER" \
     "--$NODE.rpcpass=$RPC_PASS" \
-    "--$NODE.rpchost=$RPC_HOST"
+    "--$NODE.rpchost=$RPC_HOST" \
+    "--bitcoind.zmqpubrawblock=$ZMQPUBRAWBLOCK" \
+    "--bitcoind.zmqpubrawtx=$ZMQPUBRAWTX"
 )
-
-if [[ "$NODE" == "bitcoind" ]]; then
-    PARAMS="$PARAMS --bitcoind.zmqpubrawblock=$ZMQPUBRAWBLOCK"
-    PARAMS="$PARAMS --bitcoind.zmqpubrawtx=$ZMQPUBRAWTX"
-fi
-
-if [[ "$NETWORK" == 'simnet' ]]; then
-  echo "Setting --noseedbackup for $NETWORK"
-  PARAMS="$PARAMS --noseedbackup"
-fi
 
 exec lnd $PARAMS "$@"

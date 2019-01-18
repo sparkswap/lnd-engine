@@ -32,7 +32,7 @@ const DEFAULT_MIN_FINAL_DELTA = 86400
 
 /**
  * The amount of time, in seconds, that we'd like to buffer any output timelock by to account for block ticks during a swap
- * This is especially problematic on simnet where we mine blocks every 10 seconds and is a known issue on mainnet.
+ * This is especially problematic on regtest where we mine blocks every 10 seconds and is a known issue on mainnet.
  *
  * @see {@link https://github.com/lightningnetwork/lnd/issues/535}
  * @type {Number}
