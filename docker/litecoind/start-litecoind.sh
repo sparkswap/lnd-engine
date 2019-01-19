@@ -9,7 +9,16 @@ MINER=${MINER:-false}
 if [[ "$NETWORK" == "regtest" ]] && [[ "$MINER" = true ]]; then
     echo "Setting up litecoind instance as MINER"
     mkdir -p "/jobs"
+
+    # Remove the cron file if it exists so we can prevent adding more lines to the file
+    # if we ever restart litecoind
+    if [ -f /jobs/funding-cron.txt ]; then
+        rm /jobs/funding-cron.txt
+    fi
+
     touch "/jobs/cron.log"
+    touch "/jobs/funding-cron.txt"
+
     # We must add the `funding-cron` txt file here because we are forced to use
     # `cron` instead of `crond`, where the former does not import environment variables
     # from the user session and instead uses a bare-bones `sh` session to run these commands
