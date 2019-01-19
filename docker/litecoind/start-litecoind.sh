@@ -11,7 +11,7 @@ if [[ "$NETWORK" == "regtest" ]] && [[ "$MINER" = true ]]; then
     mkdir -p "/jobs"
 
     # Remove the cron file if it exists so we can prevent adding more lines to the file
-    # if we ever restart bitcoind
+    # if we ever restart litecoind
     if [ -f /jobs/funding-cron.txt ]; then
         rm /jobs/funding-cron.txt
     fi
