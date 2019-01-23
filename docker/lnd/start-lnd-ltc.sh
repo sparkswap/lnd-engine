@@ -2,12 +2,12 @@
 
 set -e
 
-NODE=${NODE:-ltcd}
+NODE=${NODE:-litecoind}
 CONFIG_FILE=/home/lnd/lnd.conf
 
 # Simple check to make sure that the user has changed the external url of lnd_btc
-# outside of simnet. This will cause unintended issues w/ routing through the relayer
-if [[ "$NETWORK" != 'simnet' ]] && [[ "$EXTERNAL_ADDRESS" == *"sample.ip.address"* ]]; then
+# outside of regtest. This will cause unintended issues w/ routing through the relayer
+if [[ "$NETWORK" != 'regtest' ]] && [[ "$EXTERNAL_ADDRESS" == *"sample.ip.address"* ]]; then
     echo "Your current external address for LND_LTC is set to an internal address. Please change this for $NETWORK"
     exit 1
 fi
@@ -32,17 +32,9 @@ PARAMS=$(echo \
     "--extpreimage.rpchost=$EXTPREIMAGE_HOST" \
     "--$NODE.rpcuser=$RPC_USER" \
     "--$NODE.rpcpass=$RPC_PASS" \
-    "--$NODE.rpchost=$RPC_HOST"
+    "--$NODE.rpchost=$RPC_HOST" \
+    "--$NODE.zmqpubrawblock=$ZMQPUBRAWBLOCK" \
+    "--$NODE.zmqpubrawtx=$ZMQPUBRAWTX"
 )
-
-if [[ "$NODE" == "litecoind" ]]; then
-    PARAMS="$PARAMS --$NODE.zmqpubrawblock=$ZMQPUBRAWBLOCK"
-    PARAMS="$PARAMS --$NODE.zmqpubrawtx=$ZMQPUBRAWTX"
-fi
-
-if [[ "$NETWORK" == 'simnet' ]]; then
-  echo "Setting --noseedbackup for $NETWORK"
-  PARAMS="$PARAMS --noseedbackup"
-fi
 
 exec lnd $PARAMS "$@"
