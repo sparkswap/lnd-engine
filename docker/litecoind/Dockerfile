@@ -1,6 +1,6 @@
-FROM ubuntu:18.04 as builder
+FROM alpine as builder
 
-LABEL maintainer "sparkswap <dev@sparkswap.com>"
+LABEL maintainer "Sparkswap <dev@sparkswap.com>"
 
 # We set the version externally so we are not required to edit the Dockerfile in the
 # case of updating for security patches
@@ -8,14 +8,8 @@ ARG VERSION
 RUN : "${VERSION:?VERSION Build argument needs to be set.}"
 
 # Install all deps needed for litecoind verification
-RUN apt-get update
-RUN apt-get install -y software-properties-common
-RUN apt-get install -y --no-install-recommends \
-  ca-certificates \
-  wget \
-  gnupg2 \
-  gpg-agent \
-  dirmngr
+RUN apk update
+RUN apk --no-cache add bash ca-certificates gnupg wget
 
 ENV FILENAME litecoin-${VERSION}-x86_64-linux-gnu.tar.gz
 ENV CHECKSUM_FILENAME litecoin-${VERSION}-x86_64-linux-gnu.tar.gz.asc
@@ -37,11 +31,22 @@ RUN for KEYSERVER_NAME in ha.pool.sks-keyservers.net \
     done
 
 RUN gpg2 --verify ./${CHECKSUM_FILENAME}
-RUN tar xfz /litecoin-${VERSION}-x86_64-linux-gnu.tar.gz
-RUN mv litecoin-${VERSION}/bin/* /usr/local/bin/
-RUN rm -rf litecoin-* /root/.gnupg/
+RUN tar xfz ./litecoin-${VERSION}-x86_64-linux-gnu.tar.gz
+RUN mv ./litecoin-${VERSION}/bin/* /usr/local/bin/
+RUN rm -rf ./litecoin-* /root/.gnupg/
+
+# Final alpine
+FROM alpine as final
+
+RUN apk update
+RUN apk --no-cache add bash g++ gcc libgcc wget && \
+    wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub && \
+    wget -q https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.28-r0/glibc-2.28-r0.apk && \
+    apk add glibc-2.28-r0.apk
 
 WORKDIR /home/litecoind
+
+COPY --from=builder /usr/local/bin/* /usr/local/bin/
 
 # Mainnet (rpc, http)
 EXPOSE 9332 9333

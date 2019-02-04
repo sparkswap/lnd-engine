@@ -32,7 +32,7 @@ if [[ "$NETWORK" == "regtest" ]] && [[ "$MINER" = true ]]; then
     echo "* * * * * ( sleep 50 ; $LITECOIN_CLI_PATH -regtest -rpcuser="$RPC_USER" -rpcpassword="$RPC_PASS" generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
     chmod 755 /jobs/funding-cron.txt
     /usr/bin/crontab /jobs/funding-cron.txt
-    cron
+    crond
 fi
 
 PARAMS=$(echo \
