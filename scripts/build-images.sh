@@ -2,9 +2,7 @@
 
 set -e -u
 
-ARG=${1:-remote}
-
-echo "Building images with arg: $ARG"
+echo "Building images for lnd-engine"
 
 # Default branches for each repo
 LND_VERSION='v0.5.3-sparkswap-beta'
