@@ -41,7 +41,8 @@ function normalizeChannel (channel) {
  */
 function normalizeChannels (channels) {
   return channels.reduce((map, channel) => {
-    map.set(channel.chanId, normalizeChannel(channel))
+    const normalized = normalizeChannel(channel)
+    map.set(normalized.channelId, normalized)
     return map
   }, new Map())
 }
