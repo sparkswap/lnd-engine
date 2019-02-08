@@ -16,35 +16,26 @@ const { networkAddressFormatter } = require('../utils')
  */
 
 /**
- * Convert a channel from a returned value from LND into
- * a standard format.
- * @external Channel
- * @see {@link https://api.lightning.community/#channel}
- * @param {Channel} channel channel object from LND
- * @return {NormalizedChannel} Channel with standard field names
+ * Returns all channels, both open and closed (but not pending)
+ * @return {Array<NormalizedChannel>}
  */
-function normalizeChannel (channel) {
-  return {
-    channelId: channel.chanId,
-    active: channel.active,
-    remoteAddress: networkAddressFormatter.serialize({ publicKey: channel.remotePubkey }),
-    openTransaction: channel.channelPoint,
-    closeTransaction: channel.closingTxHash,
-    capacity: channel.capacity
-  }
-}
+async function getChannels () {
+  const { client } = this
 
-/**
- * Normalize an array of LND channels
- * @param  {Array<Channel>} channels Array of channels returned from LND
- * @return {Map<string, NormalizedChannel>} Map of normalized channels keyed by their ID
- */
-function normalizeChannels (channels) {
-  return channels.reduce((map, channel) => {
-    const normalized = normalizeChannel(channel)
-    map.set(normalized.channelId, normalized)
-    return map
-  }, new Map())
+  const [
+    openChannels,
+    closedChannels
+  ] = await Promise.all([
+    getOpenChannels({ client }),
+    getClosedChannels({ client })
+  ])
+
+  // merge open and closed channels, with closed channels overwriting
+  // open ones since they contain more data (close transactions)
+  const channels = new Map([...openChannels, ...closedChannels])
+
+  // return an array of all channels
+  return Array.from(channels.values())
 }
 
 /**
@@ -72,26 +63,35 @@ async function getClosedChannels ({ client }) {
 }
 
 /**
- * Returns all channels, both open and closed (but not pending)
- * @return {Array<NormalizedChannel>}
+ * Normalize an array of LND channels
+ * @param  {Array<Channel>} channels Array of channels returned from LND
+ * @return {Map<string, NormalizedChannel>} Map of normalized channels keyed by their ID
  */
-async function getChannels () {
-  const { client } = this
+function normalizeChannels (channels) {
+  return channels.reduce((map, channel) => {
+    const normalized = normalizeChannel(channel)
+    map.set(normalized.channelId, normalized)
+    return map
+  }, new Map())
+}
 
-  const [
-    openChannels,
-    closedChannels
-  ] = await Promise.all([
-    getOpenChannels({ client }),
-    getClosedChannels({ client })
-  ])
-
-  // merge open and closed channels, with closed channels overwriting
-  // open ones since they contain more data (close transactions)
-  const channels = new Map([...openChannels, ...closedChannels])
-
-  // return an array of all channels
-  return Array.from(channels.values())
+/**
+ * Convert a channel from a returned value from LND into
+ * a standard format.
+ * @external Channel
+ * @see {@link https://api.lightning.community/#channel}
+ * @param {Channel} channel channel object from LND
+ * @return {NormalizedChannel} Channel with standard field names
+ */
+function normalizeChannel (channel) {
+  return {
+    channelId: channel.chanId,
+    active: channel.active,
+    remoteAddress: networkAddressFormatter.serialize({ publicKey: channel.remotePubkey }),
+    openTransaction: channel.channelPoint,
+    closeTransaction: channel.closingTxHash,
+    capacity: channel.capacity
+  }
 }
 
 module.exports = getChannels
