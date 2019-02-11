@@ -1,7 +1,7 @@
 const { deadline } = require('../grpc-utils')
 
 /**
- * Returns a list of active channels
+ * Returns a list of open channels
  * @external ListChannelsResponse
  * @see {@link https://api.lightning.community/#listchannels}
  *

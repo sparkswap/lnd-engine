@@ -23,6 +23,7 @@ const initWallet = require('./init-wallet')
 const unlockWallet = require('./unlock-wallet')
 const listPayments = require('./list-payments')
 const lookupPaymentStatus = require('./lookup-payment-status')
+const listClosedChannels = require('./list-closed-channels')
 
 module.exports = {
   addInvoice,
@@ -49,5 +50,6 @@ module.exports = {
   initWallet,
   unlockWallet,
   listPayments,
-  lookupPaymentStatus
+  lookupPaymentStatus,
+  listClosedChannels
 }
