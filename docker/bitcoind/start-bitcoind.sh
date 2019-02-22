@@ -17,6 +17,7 @@ if [[ "$NETWORK" == "regtest" ]] && [[ "$MINER" = true ]]; then
         rm /jobs/funding-cron.txt
     fi
 
+
     touch "/jobs/cron.log"
     touch "/jobs/funding-cron.txt"
 
@@ -35,8 +36,16 @@ if [[ "$NETWORK" == "regtest" ]] && [[ "$MINER" = true ]]; then
     cron
 
     # Kick off the initial generation of 101 blocks which will occur 1 minute
-    # into the start of the instance
-    $BITCOIN_CLI_PATH -regtest -rpcuser=$RPC_USER -rpcpassword=$RPC_PASS generate 101 >> /jobs/cron.log 2>&1 | at now + 1 minute
+    # into the start of the instance. We only want this action to happen once
+    # so we create a separate file that runs with `at`.
+    if [ -f /jobs/funding-inital.sh ]; then
+        rm /jobs/funding-initial.sh
+    fi
+
+    touch "/jobs/initial-funding.sh"
+    echo "$BITCOIN_CLI_PATH -regtest -rpcuser=$RPC_USER -rpcpassword=$RPC_PASS generate 101 >> /jobs/cron.log 2>&1" >> /jobs/initial-funding.sh
+    atd
+    at -f /jobs/initial-funding.sh now + 1 minute
 fi
 
 PARAMS=$(echo \
