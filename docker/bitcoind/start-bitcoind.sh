@@ -38,14 +38,16 @@ if [[ "$NETWORK" == "regtest" ]] && [[ "$MINER" = true ]]; then
     # Kick off the initial generation of 101 blocks which will occur 1 minute
     # into the start of the instance. We only want this action to happen once
     # so we create a separate file that runs with `at`.
-    if [ -f /jobs/funding-inital.sh ]; then
-        rm /jobs/funding-initial.sh
+    INITIAL_FUNDING_FILEPATH=/jobs/initial-funding.sh
+
+    if [ -f "$INITIAL_FUNDING_FILEPATH" ]; then
+        rm $INITIAL_FUNDING_FILEPATH
     fi
 
-    touch "/jobs/initial-funding.sh"
-    echo "$BITCOIN_CLI_PATH -regtest -rpcuser=$RPC_USER -rpcpassword=$RPC_PASS generate 101 >> /jobs/cron.log 2>&1" >> /jobs/initial-funding.sh
+    touch $INITIAL_FUNDING_FILEPATH
+    echo "$BITCOIN_CLI_PATH -regtest -rpcuser=$RPC_USER -rpcpassword=$RPC_PASS generate 101 >> /jobs/cron.log 2>&1" >> $INITIAL_FUNDING_FILEPATH
     atd
-    at -f /jobs/initial-funding.sh now + 1 minute
+    at -f $INITIAL_FUNDING_FILEPATH now + 1 minute
 fi
 
 PARAMS=$(echo \
