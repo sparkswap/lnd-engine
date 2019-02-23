@@ -15,7 +15,8 @@ RUN apt-get install -y --no-install-recommends \
   wget \
   gnupg2 \
   gpg-agent \
-  dirmngr
+  dirmngr \
+  at
 
 ENV FILENAME bitcoin-${VERSION}-x86_64-linux-gnu.tar.gz
 ENV CHECKSUM_FILENAME SHA256SUMS.asc

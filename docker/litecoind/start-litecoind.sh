@@ -23,7 +23,6 @@ if [[ "$NETWORK" == "regtest" ]] && [[ "$MINER" = true ]]; then
     # `cron` instead of `crond`, where the former does not import environment variables
     # from the user session and instead uses a bare-bones `sh` session to run these commands
     LITECOIN_CLI_PATH=/usr/local/bin/litecoin-cli
-    echo "* * * * * ( $LITECOIN_CLI_PATH -regtest -rpcuser=$RPC_USER -rpcpassword=$RPC_PASS generate 101 >> /jobs/cron.log 2>&1 ) ; sleep infinity" >> /jobs/funding-cron.txt
     echo "* * * * * ( $LITECOIN_CLI_PATH -regtest -rpcuser=$RPC_USER -rpcpassword=$RPC_PASS generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
     echo "* * * * * ( sleep 10 ; $LITECOIN_CLI_PATH -regtest -rpcuser="$RPC_USER" -rpcpassword="$RPC_PASS" generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
     echo "* * * * * ( sleep 20 ; $LITECOIN_CLI_PATH -regtest -rpcuser="$RPC_USER" -rpcpassword="$RPC_PASS" generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
@@ -33,6 +32,20 @@ if [[ "$NETWORK" == "regtest" ]] && [[ "$MINER" = true ]]; then
     chmod 755 /jobs/funding-cron.txt
     /usr/bin/crontab /jobs/funding-cron.txt
     cron
+
+    # Kick off the initial generation of 101 blocks which will occur 1 minute
+    # into the start of the instance. We only want this action to happen once
+    # so we create a separate file that runs with `at`.
+    INITIAL_FUNDING_FILEPATH=/jobs/initial-funding.sh
+
+    if [ -f "$INITIAL_FUNDING_FILEPATH" ]; then
+        rm $INITIAL_FUNDING_FILEPATH
+    fi
+
+    touch $INITIAL_FUNDING_FILEPATH
+    echo "$LITECOIN_CLI_PATH -regtest -rpcuser=$RPC_USER -rpcpassword=$RPC_PASS generate 101 >> /jobs/cron.log 2>&1" >> $INITIAL_FUNDING_FILEPATH
+    atd
+    at -f $INITIAL_FUNDING_FILEPATH now + 1 minute
 fi
 
 PARAMS=$(echo \
