@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-# exit from script if error was raised.
 set -e
 
 MINER=${MINER:-false}
@@ -16,7 +15,6 @@ if [[ "$NETWORK" == "regtest" ]] && [[ "$MINER" = true ]]; then
     if [ -f /jobs/funding-cron.txt ]; then
         rm /jobs/funding-cron.txt
     fi
-
 
     touch "/jobs/cron.log"
     touch "/jobs/funding-cron.txt"
