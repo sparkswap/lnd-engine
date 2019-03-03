@@ -17,7 +17,7 @@
     "test": "npm run check-for-cycles && npm run test-engine",
     "test-engine": "NODE_PATH=. mocha 'src/**/*.spec.js'",
     "coverage": "nyc npm run test",
-    "lint": "eslint src test --ext .js",
+    "lint": "eslint src test --ext .js --max-warnings=0",
     "lint-watch": "esw -f simple -w --clear",
     "format": "npm run lint -- --fix",
     "docs": "jsdoc -c .jsdoc.json",
