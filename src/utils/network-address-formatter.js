@@ -2,21 +2,23 @@
 /**
  * Payment Channel Network Type delimiter
  * @constant
- * @type {String}
+ * @type {string}
+ * @default
  */
 const DELIMITER = ':'
 
 /**
  * Network type for payment channel networks compatible with BOLT
  * @constant
- * @type {String}
+ * @type {string}
+ * @default
  */
 const NETWORK_TYPE = 'bolt'
 
 /**
  * Parse a given payment channel network address string into a public key and host
- * @param  {String}
- * @return {Object}
+ * @param {string} paymentChannelNetworkAddress
+ * @returns {Object}
  * @throws {Error} If network type is not `bolt`
  */
 function parse (paymentChannelNetworkAddress) {
@@ -40,9 +42,10 @@ function parse (paymentChannelNetworkAddress) {
 
 /**
  * Serialize a public key and host into a standard payment channel network address
- * @param  {String} publicKey public key of the node
- * @param  {String} host      host of the node - if omitted, it will be ommitted from the address
- * @return {String} serialized payment channel network address
+ * @param {Object} args
+ * @param  {string} args.publicKey - public key of the node
+ * @param  {string} args.host      - host of the node - if omitted, it will be ommitted from the address
+ * @returns {string} serialized payment channel network address
  */
 function serialize ({ publicKey, host }) {
   let address = `${NETWORK_TYPE}${DELIMITER}${publicKey}`

@@ -5,8 +5,8 @@ const {
 /**
  * Unlocks an engine's wallet
  *
- * @param {String} walletPassword
- * @return {Promise}
+ * @param {string} password - wallet password
+ * @returns {Promise}
  */
 function unlockWallet (password) {
   const walletPassword = Buffer.from(password, 'utf8')

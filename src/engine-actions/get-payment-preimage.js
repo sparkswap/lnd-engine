@@ -9,14 +9,16 @@ const PAYMENT_STATUSES = lookupPaymentStatus.STATUSES
 /**
  * Milliseconds to wait between polling attempts on payment's
  * status.
- * @type {Number}
+ * @constant
+ * @type {number}
+ * @default
  */
 const POLLING_INTERVAL = 10000
 
 /**
  * @typedef {Object} GetPaymentPreimageOutcome
- * @property {String} paymentPreimage Base64 string of the preimage for the paymentHash
- * @property {String} permanentError Error encountered that is permanent, and safe to cancel the upstream HTLC
+ * @property {string} paymentPreimage Base64 string of the preimage for the paymentHash
+ * @property {string} permanentError Error encountered that is permanent, and safe to cancel the upstream HTLC
  */
 
 /**
@@ -24,9 +26,8 @@ const POLLING_INTERVAL = 10000
  * still in-flight, it will wait until the payment is completed and
  * then return the hash.
  *
- * @function
- * @param  {String} paymentHash Base64 encoded payment hash
- * @return {GetPaymentPreimageOutcome}
+ * @param  {string} paymentHash - Base64 encoded payment hash
+ * @returns {GetPaymentPreimageOutcome}
  * @throws {Error} If payment is in an unknown status
  */
 async function getPaymentPreimage (paymentHash) {
@@ -53,14 +54,14 @@ async function getPaymentPreimage (paymentHash) {
 /**
  * Retrieve the preimage for a completed payment specified by the payment
  * hash.
- * @param  {String} paymentHash Base64 encoded payment hash
- * @param  {Object} options
- * @param  {Object} options.client
- * @return {String} Base64 encoded payment preimage associated with the hash
- * @throws {Error} If payment is not completed
  * @todo LND has a known issue preventing payments that are settled after a restart
- * showing up in this list, which will mistakenly throw an error.
- * {@link https://github.com/lightningnetwork/lnd/issues/2032}
+ *       showing up in this list, which will mistakenly throw an error.
+ *       {@link https://github.com/lightningnetwork/lnd/issues/2032}
+ * @param  {string} paymentHash - Base64 encoded payment hash
+ * @param  {Object} options
+ * @param  {LndClient} options.client
+ * @returns {string} Base64 encoded payment preimage associated with the hash
+ * @throws {Error} If payment is not completed
  */
 async function getCompletedPreimage (paymentHash, { logger, client }) {
   const { payments = [] } = await listPayments({ client })

@@ -149,7 +149,7 @@ describe('close-channels', () => {
         on: sinon.stub(),
         removeListener: sinon.stub()
       }
-      channel = {active: true, channelPoint: 'asdf:1234'}
+      channel = { active: true, channelPoint: 'asdf:1234' }
       closeChannelStub = sinon.stub().returns(closeChannelStream)
       clientStub = sinon.stub()
       logger = {

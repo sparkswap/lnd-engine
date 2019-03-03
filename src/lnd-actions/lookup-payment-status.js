@@ -5,6 +5,7 @@ const { deadline } = require('../grpc-utils')
  * LND's LookupPaymentStatus RPC
  * @constant
  * @type {Object}
+ * @default
  */
 const PAYMENT_STATUSES = Object.freeze({
   GROUNDED: 'GROUNDED',
@@ -15,12 +16,10 @@ const PAYMENT_STATUSES = Object.freeze({
 /**
  * Checks a payment's status
  *
- * @function
- * @param  {String} paymentHash Base64 encoded payment hash for the desired payment
- * @param  {Object} options
- * @param  {Object} options.client
- * @return {Object} response
- * @return {String} response.status One of the statuses defined in PAYMENT_STATUSES
+ * @param {string} paymentHash - Base64 encoded payment hash for the desired payment
+ * @param {Object} options
+ * @param {Object} options.client
+ * @returns {Promise<Object>} response
  */
 function lookupPaymentStatus (paymentHash, { client }) {
   return new Promise((resolve, reject) => {

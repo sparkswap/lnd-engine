@@ -2,12 +2,10 @@ const { deadline } = require('../grpc-utils')
 
 /**
  * Returns a list of pending channels
- * @external PendingChannelsResponse
- * @see {@link https://api.lightning.community/#pendingchannels}
- *
- * @param {grpc#client} opts.client
- *
- * @return {Promise<Array>} channels
+ * @see https://api.lightning.community/#pendingchannels
+ * @param {Object} opts
+ * @param {LndClient} opts.client
+ * @returns {Promise<Array>} channels
  */
 function listPendingChannels ({ client }) {
   return new Promise((resolve, reject) => {

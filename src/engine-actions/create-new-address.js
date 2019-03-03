@@ -6,17 +6,17 @@ const { newAddress } = require('../lnd-actions')
  *
  * This value is taken from grpc enums located in lnd's rpc.proto
  *
- * @see {https://github.com/lightningnetwork/lnd/blob/master/lnrpc/rpc.proto}
+ * @see https://github.com/lightningnetwork/lnd/blob/master/lnrpc/rpc.proto
  * @constant
- * @type {Number}
+ * @type {number}
  * @default
  */
-const NESTED_WITNESS_ADDRESS_TYPE = 1 // np2wkh
+const NESTED_WITNESS_ADDRESS_TYPE = 1
 
 /**
  * Creates a new wallet address
  *
- * @return {String} address
+ * @returns {string} address
  */
 async function createNewAddress () {
   const address = await newAddress(NESTED_WITNESS_ADDRESS_TYPE, { client: this.client })

@@ -3,29 +3,25 @@ const { deadline } = require('../grpc-utils')
 /**
  * SendPayment deadline (in seconds)
  * @constant
- * @type {Number}
+ * @type {number}
  * @default
  */
 const SEND_PAYMENT_DEADLINE = 30
 
 /**
- * @typedef {Object} FeeLimit
- * @property {String} fixed Int64 string of max number of satoshis to pay in fees
- */
-
-/**
  * Sends a payment to a specified invoice
  *
- * @function
- * @see {@link http://api.lightning.community/#sendPaymentSync}
- * @param {String}   paymentOptions.paymentRequest LN invoice
- * @param {String}   paymentOptions.paymentHash    Base64 string of the payment hash to use
- * @param {String}   paymentOptions.destString     destination public key
- * @param {String}   paymentOptions.amt            Int64 string of number of satoshis to send
- * @param {Number}   paymentOptions.finalCltvDelta Delta from the current block height to be used for the final hop
- * @param {FeeLimit} paymentOptions.feeLimit       Int64 string of maximum number of satoshis to pay in fees
- * @param {LND}      opts.client                   LND client to use
- * @return {Promise<Object>} Resolves with the response from LND
+ * @see http://api.lightning.community/#sendPaymentSync
+ * @param {Object} paymentOptions
+ * @param {string} paymentOptions.paymentRequest - LN invoice
+ * @param {string} paymentOptions.paymentHash    - Base64 string of the payment hash to use
+ * @param {string} paymentOptions.destString     - destination public key
+ * @param {string} paymentOptions.amt            - Int64 string of number of satoshis to send
+ * @param {number} paymentOptions.finalCltvDelta - Delta from the current block height to be used for the final hop
+ * @param {string} paymentOptions.feeLimit       - Int64 string of maximum number of satoshis to pay in fees
+ * @param {Object} opts
+ * @param {LndClient} opts.client - LND client to use
+ * @returns {Promise<Object>} Resolves with the response from LND
  */
 function sendPayment ({ paymentRequest, paymentHash, destString, amt, finalCltvDelta, feeLimit }, { client }) {
   const request = { paymentRequest, paymentHash, destString, amt, finalCltvDelta, feeLimit }

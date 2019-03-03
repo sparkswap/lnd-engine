@@ -4,7 +4,7 @@ const delay = require('./delay')
  * Delay multiplier - Value in milliseconds
  *
  * @constant
- * @type {Number} milliseconds
+ * @type {number} milliseconds
  * @default
  */
 const DELAY_MULTIPLIER = 1.5
@@ -13,7 +13,7 @@ const DELAY_MULTIPLIER = 1.5
  * Attempts to retry validating an engine
  *
  * @constant
- * @type {Number}
+ * @type {number}
  * @default
  */
 const EXPONENTIAL_BACKOFF_ATTEMPTS = 24
@@ -22,7 +22,7 @@ const EXPONENTIAL_BACKOFF_ATTEMPTS = 24
  * Delay in each retry attempt to validating an engine
  *
  * @constant
- * @type {Number} milliseconds
+ * @type {number} milliseconds
  * @default
  */
 const EXPONENTIAL_BACKOFF_DELAY = 5000
@@ -33,11 +33,11 @@ const EXPONENTIAL_BACKOFF_DELAY = 5000
  * @param {Function} callFunction
  * @param {Object} [payload={}] - information for error log during backoff failures
  * @param {Object} opts
- * @param {String} opts.debugName
- * @param {Number} [attempts=EXPONENTIAL_BACKOFF_ATTEMPTS] opts.attempts - attempts left
- * @param {Number} [delayTime=EXPONENTIAL_BACKOFF_DELAY] opts.delayTime - delay in milliseconds between calls
- * @param {Logger} [delayTime=EXPONENTIAL_BACKOFF_DELAY] opts.logger
- * @return {Promise}
+ * @param {string} [opts.debugName=null]
+ * @param {number} [opts.attempts=EXPONENTIAL_BACKOFF_ATTEMPTS] - attempts left
+ * @param {number} [opts.delayTime=EXPONENTIAL_BACKOFF_DELAY] - delay in milliseconds between calls
+ * @param {Logger} [opts.logger=console]
+ * @returns {Promise}
  */
 async function exponentialBackoff (callFunction, payload = {}, { debugName = null, attempts = EXPONENTIAL_BACKOFF_ATTEMPTS, delayTime = EXPONENTIAL_BACKOFF_DELAY, logger = console }) {
   try {

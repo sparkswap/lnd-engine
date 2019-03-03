@@ -1,20 +1,23 @@
 const { deadline } = require('../grpc-utils')
+
 /**
  * @typedef {Object} FeeLimit
- * @property {String} fixed Int64 string of max number of satoshis to pay in fees
+ * @property {String} fixed
  */
 
 /**
  * Find available routes to a destination
  *
  * @function
- * @param {String}   params.pubKey         Public key of the node to find routes to
- * @param {String}   params.amt            Number of satoshis to send
- * @param {Number}   params.numRoutes      Max number of routes to return
- * @param {Number}   params.finalCltvDelta CLTV delta to be used for the final hop
- * @param {FeeLimit} params.feeLimit       Fee Limit
- * @param {LND}      opts.client           LND client to use
- * @return {Promise}
+ * @param {Object} params
+ * @param {string}  params.pubKey         - Public key of the node to find routes to
+ * @param {string}  params.amt            - Number of satoshis to send
+ * @param {number}  params.numRoutes      - Max number of routes to return
+ * @param {number}  params.finalCltvDelta - CLTV delta to be used for the final hop
+ * @param {FeeLimit} params.feeLimit      - Int64 string of max number of satoshis to pay in fees
+ * @param {Object} opts
+ * @param {LndClient} opts.client         - LND client to use
+ * @returns {Promise}
  */
 function queryRoutes ({ pubKey, amt, numRoutes, finalCltvDelta, feeLimit }, { client }) {
   return new Promise((resolve, reject) => {
