@@ -27,14 +27,14 @@ describe('getUncommittedPendingBalance', () => {
     unconfirmedBalance = '1234'
     balanceResponse = { unconfirmedBalance }
     walletBalanceStub = sinon.stub().returns(balanceResponse)
-    listPendingChannelsStub = sinon.stub().resolves({pendingClosingChannels, pendingForceClosingChannels, waitingCloseChannels})
+    listPendingChannelsStub = sinon.stub().resolves({ pendingClosingChannels, pendingForceClosingChannels, waitingCloseChannels })
     getUncommittedPendingBalance.__set__('walletBalance', walletBalanceStub)
     getUncommittedPendingBalance.__set__('logger', logger)
   })
 
   it('returns 0 if no unconfirmed balance and no channels exist', async () => {
     listPendingChannelsStub.resolves({})
-    walletBalanceStub.resolves({unconfirmedBalance: '0'})
+    walletBalanceStub.resolves({ unconfirmedBalance: '0' })
     getUncommittedPendingBalance.__set__('listPendingChannels', listPendingChannelsStub)
     return expect(await getUncommittedPendingBalance()).to.be.eql('0')
   })
@@ -46,13 +46,13 @@ describe('getUncommittedPendingBalance', () => {
   })
 
   it('adds pendingClosingChannels to the unconfirmed balance if the pendingClosingChannels exist', async () => {
-    listPendingChannelsStub.resolves({pendingClosingChannels})
+    listPendingChannelsStub.resolves({ pendingClosingChannels })
     getUncommittedPendingBalance.__set__('listPendingChannels', listPendingChannelsStub)
     return expect(await getUncommittedPendingBalance()).to.be.eql('2244')
   })
 
   it('adds pendingClosingChannels and pendingForceClosingChannels to the unconfirmed balance if the channels exist', async () => {
-    listPendingChannelsStub.resolves({pendingClosingChannels, pendingForceClosingChannels})
+    listPendingChannelsStub.resolves({ pendingClosingChannels, pendingForceClosingChannels })
     getUncommittedPendingBalance.__set__('listPendingChannels', listPendingChannelsStub)
     return expect(await getUncommittedPendingBalance()).to.be.eql('2274')
   })

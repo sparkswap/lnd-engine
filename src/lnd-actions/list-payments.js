@@ -3,10 +3,10 @@ const { deadline } = require('../grpc-utils')
 /**
  * Returns a list of completed payments
  *
- * @function
- * @see {@link https://api.lightning.community/#listpayments}
+ * @see https://api.lightning.community/#listpayments
  * @param {Object} opts
- * @param {grpc#client} opts.client
+ * @param {LndClient} opts.client
+ * @returns {Promise<Object>}
  */
 function listPayments ({ client }) {
   return new Promise((resolve, reject) => {

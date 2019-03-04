@@ -9,9 +9,9 @@ const { deadline } = require('../grpc-utils')
 /**
  * Returns a description of the graph state
  *
- * @param {grpc#client} opts.client
- *
- * @return {Promise<LND~ChannelGraph>}
+ * @param {Object} opts
+ * @param {LndClient} opts.client
+ * @returns {Promise<LND~ChannelGraph>}
  */
 function describeGraph ({ client }) {
   return new Promise((resolve, reject) => {

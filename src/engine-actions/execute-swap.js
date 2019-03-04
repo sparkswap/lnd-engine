@@ -3,10 +3,6 @@ const { networkAddressFormatter, sha256, CLTV_DELTA } = require('../utils')
 
 /**
  * Timelock delta constants
- *
- * @constant
- * @type {Object<key, Number}
- * @default
  */
 const {
   DEFAULT_MAKER_FWD_DELTA,
@@ -25,10 +21,10 @@ const {
  * We add one additional block to create a buffer in case of a block tick during the swap
  *
  * @todo use the channel graph or pre-agreed lock times to create this delta to avoid rejections and allow for more flexibility
- * @param {String} makerAddress Payment Channel Network Address for the Maker of the swap
- * @param {String} swapHash     base64 string of the swap hash associated with this swap
- * @param {String} amount       Int64 string of the amount of outbound currency in its integer units
- * @returns {Promise<void>}     Promise that resolves when the swap is settled
+ * @param {string} makerAddress - Payment Channel Network Address for the Maker of the swap
+ * @param {string} swapHash     - base64 string of the swap hash associated with this swap
+ * @param {string} amount       - Int64 string of the amount of outbound currency in its integer units
+ * @returns {void} Promise that resolves when the swap is settled
  */
 async function executeSwap (makerAddress, swapHash, amount) {
   this.logger.info(`Executing swap for ${swapHash} with ${makerAddress}`, { makerAddress, swapHash, amount })

@@ -3,8 +3,7 @@ const { getInfo } = require('../lnd-actions')
 /**
  * Returns the lnd instance's public key
  *
- * @function
- * @return {String} identityPubkey
+ * @returns {string} identityPubkey
  */
 async function getPublicKey () {
   const { identityPubkey } = await getInfo({ client: this.client })

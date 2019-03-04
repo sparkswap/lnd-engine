@@ -8,9 +8,9 @@ const PAYMENT_STATUSES = lookupPaymentStatus.STATUSES
  * have failedor have never been started are considered not to be
  * pending or complete.
  *
- * @function
- * @param  {String} paymentHash Base64 encoded payment hash
- * @return {Boolean} true if a payment is in progress or completed; false otherwise
+ * @param {string} paymentHash - Base64 encoded payment hash
+ * @returns {boolean} true if a payment is in progress or completed; false otherwise
+ * @throws {Error} unknown payment status
  */
 async function isPaymentPendingOrComplete (paymentHash) {
   const { client } = this

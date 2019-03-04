@@ -3,15 +3,6 @@
   "version": "0.3.6-beta",
   "description": "A Sparkswap Engine for LND lightning implementation",
   "main": "src/index.js",
-  "standard": {
-    "env": [
-      "mocha",
-      "chai"
-    ],
-    "ignore": [
-      "docs/*"
-    ]
-  },
   "nyc": {
     "exclude": [
       "**/*.spec.js",
@@ -22,14 +13,15 @@
     "prebuild": "bash ./scripts/prebuild.sh",
     "build": "bash ./scripts/build.sh",
     "build-images": "bash ./scripts/build-images.sh",
-    "pretest": "npm run format-no-fail",
+    "pretest": "npm run format",
     "test": "npm run check-for-cycles && npm run test-engine",
     "test-engine": "NODE_PATH=. mocha 'src/**/*.spec.js'",
     "coverage": "nyc npm run test",
-    "format": "standard --fix",
+    "lint": "eslint src test --ext .js --max-warnings=0",
+    "lint-watch": "esw -f simple -w --clear",
+    "format": "npm run lint -- --fix",
     "docs": "jsdoc -c .jsdoc.json",
     "postdoc": "http-server docs",
-    "format-no-fail": "standard --fix; exit 0",
     "ci-test": "npm run format && npm run test-engine",
     "check-for-cycles": "madge --circular src/"
   },
@@ -56,6 +48,14 @@
     "chai": "4.1.2",
     "chai-as-promised": "7.1.1",
     "dirty-chai": "2.0.1",
+    "eslint": "5.15.0",
+    "eslint-config-standard": "12.0.0",
+    "eslint-plugin-import": "2.16.0",
+    "eslint-plugin-jsdoc": "4.1.1",
+    "eslint-plugin-node": "8.0.1",
+    "eslint-plugin-promise": "4.0.1",
+    "eslint-plugin-standard": "4.0.0",
+    "eslint-watch": "4.0.2",
     "http-server": "0.11.1",
     "jsdoc": "3.5.5",
     "madge": "3.3.0",
@@ -65,7 +65,6 @@
     "rewire": "4.0.1",
     "sinon": "7.2.4",
     "sinon-chai": "3.3.0",
-    "standard": "12.0.1",
     "timekeeper": "2.1.2",
     "timeout-as-promise": "1.0.0"
   },

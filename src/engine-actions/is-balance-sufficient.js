@@ -5,10 +5,11 @@ const { Big, networkAddressFormatter } = require('../utils')
  * Returns a boolean, true if there is an active channel between caller and remote
  * parties that sufficient funds for an order, false if they are not
  *
- * @param {String} paymentChannelNetworkAddress
+ * @param {string} paymentChannelNetworkAddress
  * @param {Integer} minValue - minimum value that needs to be in the channel
- * @param {Boolean} [options.outbound=true] outbound is true if checking outbound channels, false if inbound
- * @return {Promise<Boolean>} if a channel with sufficient funds exists
+ * @param {Object} [options={}]
+ * @param {boolean} [options.outbound=true] - outbound is true if checking outbound channels, false if inbound
+ * @returns {Promise<boolean>} if a channel with sufficient funds exists
  */
 async function isBalanceSufficient (paymentChannelNetworkAddress, minValue, { outbound = true } = {}) {
   const balance = outbound ? 'localBalance' : 'remoteBalance'

@@ -3,7 +3,9 @@ const { deadline } = require('../grpc-utils')
 /**
  * Returns a list of peers connected to the specified lnd instance
  *
- * @return {Promise<Array>}
+ * @param {Object} opts
+ * @param {LndClient} opts.client
+ * @returns {Promise<Array>}
  */
 function listPeers ({ client }) {
   return new Promise((resolve, reject) => {

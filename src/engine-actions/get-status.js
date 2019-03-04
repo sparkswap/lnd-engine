@@ -20,7 +20,7 @@ const WALLET_EXISTS_ERROR_MESSAGE = 'wallet already exists'
 /**
  * Returns the state of the current lnd-engine.
  * @see {LndEngine#ENGINE_STATUS}
- * @returns {String} status - ENGINE_STATUS
+ * @returns {string} status - ENGINE_STATUS
  */
 async function getStatus () {
   // Make a call to getInfo to see if lnrpc is up on the current engine. If

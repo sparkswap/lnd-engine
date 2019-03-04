@@ -2,8 +2,8 @@ const { listChannels, listPendingChannels } = require('../lnd-actions')
 const { networkAddressFormatter } = require('../utils')
 /**
  * Returns a number of channels that have the remotePubkey
- * @param {String} paymentChannelNetworkAddress
- * @return {number} number of active and pending channels
+ * @param {string} address - Payment channel network address
+ * @returns {number} number of active and pending channels
  */
 async function numChannelsForAddress (address) {
   const { channels = [] } = listChannels({ client: this.client })

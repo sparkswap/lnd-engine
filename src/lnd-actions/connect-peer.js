@@ -6,7 +6,7 @@ const { deadline } = require('../grpc-utils')
  *
  * @private
  * @param {Error} err
- * @return {Boolean}
+ * @returns {boolean}
  */
 function alreadyConnected (err) {
   return (err && err.code === 2 && err.details && err.details.includes('already connected to peer'))
@@ -15,9 +15,12 @@ function alreadyConnected (err) {
 /**
  * Creates a new connection to an lnd node
  *
- * @param {String} publicKey
- * @param {String} host
- * @return {Promise<void>}
+ * @param {string} publicKey
+ * @param {string} host
+ * @param {Object} opts
+ * @param {LndClient} opts.client
+ * @param {Logger} opts.logger
+ * @returns {Promise<void>}
  */
 function connectPeer (publicKey, host, { client, logger }) {
   const addr = {

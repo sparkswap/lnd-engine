@@ -11,8 +11,8 @@ const {
  * a swap.
  * NOTE: 20 is the max value for numRoutes on lnd
  *
- * @type {Number}
  * @constant
+ * @type {number}
  * @default
  */
 const NUM_OF_ROUTES = 10
@@ -20,10 +20,10 @@ const NUM_OF_ROUTES = 10
 /**
  * Calculates a timelock based on the Maker's default fowarding policy
  *
- * @param  {String} extendedTimeLockDelta Int64 string of the number of seconds extended to us in the inbound HTLC
- * @param  {Number} secondsPerBlock       Block time of the current block chain
- * @param  {Number} blockHeight           Current height of the current block chain
- * @return {String} Maximum block height for the downstream payment
+ * @param  {string} extendedTimeLockDelta - Int64 string of the number of seconds extended to us in the inbound HTLC
+ * @param  {number} secondsPerBlock       - Block time of the current block chain
+ * @param  {number} blockHeight           - Current height of the current block chain
+ * @returns {string} Maximum block height for the downstream payment
  */
 function calculateTimeLock (extendedTimeLockDelta, secondsPerBlock, blockHeight) {
   // maxTimeLockDelta represents the max time lock to use on the path from
@@ -48,17 +48,22 @@ function calculateTimeLock (extendedTimeLockDelta, secondsPerBlock, blockHeight)
  * gRPC error code for a CANCELLED request, either by a client or a server
  * @see {@link https://github.com/grpc/grpc/blob/master/doc/statuscodes.md}
  * @constant
- * @type {Number}
+ * @type {number}
+ * @default
  */
 const CANCELLED_CODE = 1
 
 /**
  * Use the sendToRoute function as though it returned a promise
- * @param  {String}      paymentHash     Base64 string of the payment hash to pay for
- * @param  {Array}       routes          Routes to use
- * @param  {Object}      options.logger
- * @param  {grpc.Client} options.client
- * @return {Promise<TranslateSwapOutcome>}
+ * @param {string} paymentHash - Base64 string of the payment hash to pay for
+ * @param {Array} routes - Routes to use
+ * @param {Object} options
+ * @param {Object} options.logger
+ * @param {LndClient} options.client
+ * @returns {Promise<TranslateSwapOutcome>}
+ * @throws {Error} unknow lnd error
+ * @throws {Error} lnd closed stream to send to route
+ * @throws {Error} stream failed to finish
  */
 function sendToRouteSync (paymentHash, routes, { logger, client }) {
   return new Promise((resolve, reject) => {
@@ -132,10 +137,10 @@ function sendToRouteSync (paymentHash, routes, { logger, client }) {
  * Translates a swap to a new payment channel network by making a payment
  * to the counterparty (Taker) node on this network
  *
- * @param {String} takerAddress Payment channel network address fo the Taker node we are paying
- * @param {String} swapHash     swap hash that will be associated with the swap
- * @param {String} amount       Int64 string of the amount of outbound currency in integer units
- * @param {String} extendedTimeLockDelta  Int64 string of the time lock extended to us by on the first chain in seconds
+ * @param {string} takerAddress - Payment channel network address fo the Taker node we are paying
+ * @param {string} swapHash     - swap hash that will be associated with the swap
+ * @param {string} amount       - Int64 string of the amount of outbound currency in integer units
+ * @param {string} extendedTimeLockDelta  - Int64 string of the time lock extended to us by on the first chain in seconds
  * @returns {TranslateSwapOutcome}
  * @todo make time lock dynamic based on pre-agreed or advertised routes
  */

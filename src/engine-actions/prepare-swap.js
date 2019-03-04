@@ -22,10 +22,10 @@ const MEMO_PREFIX = 'sparkswap-swap-pivot:'
 /**
  * Prepares for a swap in which this node is the counterparty to the intiating node
  *
- * @param {String} orderId Order for which the swap is being executed
- * @param {String} swapHash        swap hash that will be associated with the swap
- * @param {String} value   Int64 string of the value of inbound currency
- * @returns {String} swapHash      Hash that will be translated
+ * @param {string} orderId - Order for which the swap is being executed
+ * @param {string} swapHash        - swap hash that will be associated with the swap
+ * @param {string} value   - Int64 string of the value of inbound currency
+ * @returns {string} swapHash      Hash that will be translated
  */
 async function prepareSwap (orderId, swapHash, value) {
   this.logger.info(`Preparing swap for ${swapHash}`, { value })

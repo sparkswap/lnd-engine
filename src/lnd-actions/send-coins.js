@@ -3,12 +3,12 @@ const { deadline } = require('../grpc-utils')
 /**
  * Sends coins from lnd wallet to address
  *
- * @function
- * @see {@link http://api.lightning.community/#sendCoins}
- * @param {String} addr
- * @param {Integer} amount
- * @return {Object} response
- * @return {String} response.txid
+ * @see http://api.lightning.community/#sendCoins
+ * @param {string} addr
+ * @param {number} amount
+ * @param {Object} opts
+ * @param {LndClient} opts.client
+ * @returns {Object} response
  */
 function sendCoins (addr, amount, { client }) {
   return new Promise((resolve, reject) => {

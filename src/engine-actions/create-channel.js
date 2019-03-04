@@ -11,9 +11,9 @@ const getUncommittedBalance = require('./get-uncommitted-balance')
 /**
  * Executes a connection and opens a channel w/ another lnd instance
  *
- * @param {String} paymentChannelNetworkAddress
- * @param {String} fundingAmount - int64 string
- * @returns {Promise<void>} returns void on success
+ * @param {string} paymentChannelNetworkAddress
+ * @param {string} fundingAmount - int64 string
+ * @returns {void} returns void on success
  */
 async function createChannel (paymentChannelNetworkAddress, fundingAmount) {
   // A very archaic fee estimation amount. These numbers were taken from default

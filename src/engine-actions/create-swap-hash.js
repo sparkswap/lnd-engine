@@ -22,9 +22,9 @@ const MEMO_PREFIX = 'sparkswap-swap-terminus:'
 /**
  * Creates a swap hash to prepare for a swap
  *
- * @param {String} orderId order ID for the swap hash
- * @param {Number} value
- * @returns {String} rHash hash of invoice from lnd
+ * @param {string} orderId - order ID for the swap hash
+ * @param {number} value
+ * @returns {string} rHash hash of invoice from lnd
  */
 async function createSwapHash (orderId, value) {
   const expiry = SWAP_EXPIRY

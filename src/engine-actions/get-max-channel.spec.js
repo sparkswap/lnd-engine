@@ -29,8 +29,8 @@ describe('getMaxChannel', () => {
       debug: sinon.stub()
     }
 
-    listChannelsStub = sinon.stub().resolves({channels})
-    listPendingChannelsStub = sinon.stub().resolves({pendingOpenChannels: pendingChannels})
+    listChannelsStub = sinon.stub().resolves({ channels })
+    listPendingChannelsStub = sinon.stub().resolves({ pendingOpenChannels: pendingChannels })
 
     getMaxChannel.__set__('logger', logger)
     revertChannels = getMaxChannel.__set__('listChannels', listChannelsStub)
@@ -77,20 +77,20 @@ describe('getMaxChannel', () => {
   context('checking inbound channels', () => {
     it('returns max balance of open channels if there are open channels only', async () => {
       listPendingChannelsStub.resolves({})
-      const res = await getMaxChannel({outbound: false})
+      const res = await getMaxChannel({ outbound: false })
       const expectedRes = { maxBalance: '1000' }
       return expect(res).to.eql(expectedRes)
     })
 
     it('returns max pending balance of pending channels if there are pending channels only', async () => {
       listChannelsStub.resolves({})
-      const res = await getMaxChannel({outbound: false})
+      const res = await getMaxChannel({ outbound: false })
       const expectedRes = { maxBalance: '100' }
       return expect(res).to.eql(expectedRes)
     })
 
     it('returns max balance of both open and pending channels if open and pending channels exist', async () => {
-      const res = await getMaxChannel({outbound: false})
+      const res = await getMaxChannel({ outbound: false })
       const expectedRes = { maxBalance: '1000' }
       return expect(res).to.eql(expectedRes)
     })

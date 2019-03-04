@@ -3,9 +3,10 @@ const { deadline } = require('../grpc-utils')
 /**
  * Queries LND for its public key
  *
- * @function
- * @see {@link http://api.lightning.community/#getInfo}
- * @return {String} identityPubkey
+ * @see http://api.lightning.community/#getInfo
+ * @param {Object} opts
+ * @param {LndClient} opts.client
+ * @returns {Promise<Object>}
  */
 function getInfo ({ client }) {
   return new Promise((resolve, reject) => {
