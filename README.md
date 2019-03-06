@@ -25,13 +25,11 @@ the lnd-engine codebase and will build all docker images
 npm run build
 ```
 
-Additionally, You can then use `npm run build-images` to build docker images separately.
-
 To run tests, use `npm run test`
 
 #### Installation w/ Docker
 
-The lnd-engine docker files make use of Docker's internal image storage (to replicate the functionality of docker hub locally). Run the `npm run build-images` command to
+The lnd-engine docker files make use of Docker's internal image storage (to replicate the functionality of docker hub locally). Run the `npm run build` command to
 update all docker images on your local docker installation.
 
 #### Library Usage
