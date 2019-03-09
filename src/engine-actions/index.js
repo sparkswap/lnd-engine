@@ -32,6 +32,7 @@ const getPaymentPreimage = require('./get-payment-preimage')
 const isPaymentPendingOrComplete = require('./is-payment-pending-or-complete')
 const getStatus = require('./get-status')
 const getChannels = require('./get-channels')
+const getMaxChannelForAddress = require('./get-max-channel-for-address')
 
 module.exports = {
   validationDependentActions: {
@@ -65,7 +66,8 @@ module.exports = {
     withdrawFunds,
     getPaymentPreimage,
     isPaymentPendingOrComplete,
-    getChannels
+    getChannels,
+    getMaxChannelForAddress
   },
   validationIndependentActions: {
     createWallet,

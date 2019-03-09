@@ -2,7 +2,7 @@ const { Big } = require('../utils')
 const getChannelsForAddress = require('./get-channels-for-address')
 
 /**
- * Get local balance of all channels for a specific daemon
+ * Get maximum balance from all channels (inbound or outbound) for a given address
  * @param {string} address
  * @param {Object} [options={}]
  * @param {boolean} [options.outbound=true] - outbound is true if checking outbound channels, false if inbound
