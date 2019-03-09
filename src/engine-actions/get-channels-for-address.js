@@ -1,0 +1,33 @@
+const { networkAddressFormatter } = require('../utils')
+const { listChannels, listPendingChannels } = require('../lnd-actions')
+
+/**
+ * Get local balance of all channels for a specific daemon
+ * @param {string} address
+ * @returns {Array} channels
+ */
+async function getChannelsForAddress (address) {
+  const [
+    { channels = [] } = {},
+    { pendingOpenChannels = [] } = {}
+  ] = await Promise.all([
+    // The response from listChannels consists of channels that may be active or inactive
+    listChannels({ client: this.client }),
+    listPendingChannels({ client: this.client })
+  ])
+
+  const normalizedPendingChannels = pendingOpenChannels.map(chan => chan.channel)
+
+  if (channels.length === 0 && normalizedPendingChannels.length === 0) {
+    this.logger.debug('getChannelsForAddress: No channels exist')
+  }
+
+  const { publicKey } = networkAddressFormatter.parse(address)
+
+  const channelsForPubkey = channels.filter(channel => channel.remotePubkey === publicKey)
+  const pendingChannelsForPubkey = normalizedPendingChannels.filter(channel => channel.remoteNodePub === publicKey)
+
+  return channelsForPubkey + pendingChannelsForPubkey
+}
+
+module.exports = getChannelsForAddress
