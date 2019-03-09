@@ -4,10 +4,12 @@ const getChannelsForAddress = require('./get-channels-for-address')
 /**
  * Get local balance of all channels for a specific daemon
  * @param {string} address
+ * @param {Object} [options={}]
+ * @param {boolean} [options.outbound=true] - outbound is true if checking outbound channels, false if inbound
  * @returns {Object} res
  * @returns {string} res.maxBalance - the max balance in all open channels.
  */
-async function getMaxChannelForAddress (address) {
+async function getMaxChannelForAddress (address, { outbound = true } = {}) {
   const channelsForAddress = await getChannelsForAddress(address)
 
   if (!channelsForAddress.length) {
@@ -15,15 +17,17 @@ async function getMaxChannelForAddress (address) {
     return {}
   }
 
+  const balanceType = outbound ? 'localBalance' : 'remoteBalance'
+
   const maxBalance = channelsForAddress.reduce((max, channel) => {
-    if (Big(channel['localBalance']).gt(max)) {
-      return Big(channel['localBalance'])
+    if (Big(channel[balanceType]).gt(max)) {
+      return Big(channel[balanceType])
     } else {
       return max
     }
   }, Big('0'))
 
-  this.logger.debug(`getMaxChannel: max open channel is: ${maxBalance.toString()}`)
+  this.logger.debug(`getMaxChannelForAddress: max open channel to address is: ${maxBalance.toString()}`)
 
   return { maxBalance: maxBalance.toString() }
 }
