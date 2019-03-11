@@ -1,4 +1,4 @@
-const getChannelsForAddress = require('./get-channels-for-address')
+const getChannelsForRemoteAddress = require('./get-channels-for-remote-address')
 
 /**
  * Returns a number of channels that have the remotePubkey
@@ -6,7 +6,7 @@ const getChannelsForAddress = require('./get-channels-for-address')
  * @returns {number} number of active and pending channels
  */
 async function numChannelsForAddress (address) {
-  const channelsForAddress = await getChannelsForAddress(address)
+  const channelsForAddress = await getChannelsForRemoteAddress(address)
 
   return channelsForAddress.length
 }

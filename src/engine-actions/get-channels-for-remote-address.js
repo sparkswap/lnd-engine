@@ -6,7 +6,7 @@ const { listChannels, listPendingChannels } = require('../lnd-actions')
  * @param {string} address
  * @returns {Array} channels
  */
-async function getChannelsForAddress (address) {
+async function getChannelsForRemoteAddress (address) {
   const [
     { channels = [] },
     { pendingOpenChannels = [] }
@@ -19,7 +19,8 @@ async function getChannelsForAddress (address) {
   const normalizedPendingChannels = pendingOpenChannels.map(chan => chan.channel)
 
   if (channels.length === 0 && normalizedPendingChannels.length === 0) {
-    this.logger.debug('getChannelsForAddress: No channels exist')
+    this.logger.debug('getChannelsForRemoteAddress: No channels exist')
+    return []
   }
 
   const { publicKey } = networkAddressFormatter.parse(address)
@@ -31,4 +32,4 @@ async function getChannelsForAddress (address) {
   return channelsForPubkey.concat(pendingChannelsForPubkey)
 }
 
-module.exports = getChannelsForAddress
+module.exports = getChannelsForRemoteAddress

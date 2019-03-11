@@ -1,5 +1,5 @@
 const { Big } = require('../utils')
-const getChannelsForAddress = require('./get-channels-for-address')
+const getChannelsForRemoteAddress = require('./get-channels-for-remote-address')
 
 /**
  * Get maximum balance from all channels (inbound or outbound) for a given address
@@ -10,7 +10,7 @@ const getChannelsForAddress = require('./get-channels-for-address')
  * @returns {string} res.maxBalance - the max balance in all open channels.
  */
 async function getMaxChannelForAddress (address, { outbound = true } = {}) {
-  const channelsForAddress = await getChannelsForAddress(address)
+  const channelsForAddress = await getChannelsForRemoteAddress(address)
 
   if (!channelsForAddress.length) {
     this.logger.debug('getMaxChannelForAddress: No open or pending channels exist')

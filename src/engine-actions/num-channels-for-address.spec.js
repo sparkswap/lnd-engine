@@ -4,7 +4,7 @@ const { expect, rewire, sinon } = require('test/test-helper')
 const numChannelsForAddress = rewire(path.resolve(__dirname, 'num-channels-for-address'))
 
 describe('numChannelsForAddress', () => {
-  let getChannelsForAddress
+  let getChannelsForRemoteAddress
   let channels
   let channel
   let reverts
@@ -19,9 +19,9 @@ describe('numChannelsForAddress', () => {
       debug: sinon.stub(),
       error: sinon.stub()
     }
-    getChannelsForAddress = sinon.stub().resolves(channels)
+    getChannelsForRemoteAddress = sinon.stub().resolves(channels)
     reverts = []
-    reverts.push(numChannelsForAddress.__set__('getChannelsForAddress', getChannelsForAddress))
+    reverts.push(numChannelsForAddress.__set__('getChannelsForRemoteAddress', getChannelsForRemoteAddress))
     reverts.push(numChannelsForAddress.__set__('logger', loggerStub))
   })
 
@@ -31,8 +31,8 @@ describe('numChannelsForAddress', () => {
 
   it('gets all channels for the given address', async () => {
     await numChannelsForAddress(address)
-    expect(getChannelsForAddress).to.have.been.called()
-    expect(getChannelsForAddress).to.have.been.calledWith(address)
+    expect(getChannelsForRemoteAddress).to.have.been.called()
+    expect(getChannelsForRemoteAddress).to.have.been.calledWith(address)
   })
 
   it('returns the number of active and pending channels for the given pubkey', async () => {

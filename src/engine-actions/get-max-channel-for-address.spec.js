@@ -5,7 +5,7 @@ const getMaxChannelForAddress = rewire(path.resolve(__dirname, 'get-max-channel-
 
 describe('getMaxChannelForAddress', () => {
   let channels
-  let getChannelsForAddressStub
+  let getChannelsForRemoteAddressStub
   let address
   let logger
   let revertChannels
@@ -25,10 +25,10 @@ describe('getMaxChannelForAddress', () => {
       debug: sinon.stub()
     }
 
-    getChannelsForAddressStub = sinon.stub().resolves(channels)
+    getChannelsForRemoteAddressStub = sinon.stub().resolves(channels)
 
     getMaxChannelForAddress.__set__('logger', logger)
-    revertChannels = getMaxChannelForAddress.__set__('getChannelsForAddress', getChannelsForAddressStub)
+    revertChannels = getMaxChannelForAddress.__set__('getChannelsForRemoteAddress', getChannelsForRemoteAddressStub)
   })
 
   afterEach(() => {
@@ -37,12 +37,12 @@ describe('getMaxChannelForAddress', () => {
 
   it('gets all channels for the given address', async () => {
     await getMaxChannelForAddress(address)
-    expect(getChannelsForAddressStub).to.have.been.called()
-    expect(getChannelsForAddressStub).to.have.been.calledWith(address)
+    expect(getChannelsForRemoteAddressStub).to.have.been.called()
+    expect(getChannelsForRemoteAddressStub).to.have.been.calledWith(address)
   })
 
   it('returns empty if no channels exist', async () => {
-    getChannelsForAddressStub.resolves({})
+    getChannelsForRemoteAddressStub.resolves({})
 
     const expectedRes = {}
     const res = await getMaxChannelForAddress(address)
