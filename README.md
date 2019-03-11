@@ -105,6 +105,7 @@ getUncommittedPendingBalance
 getPendingChannelCapacities
 getOpenChannelCapacities
 getMaxChannel
+getMaxChannelForAddress
 ```
 
 ### Channels
@@ -113,6 +114,7 @@ getMaxChannel
 createChannel
 numChannelsForAddress
 closeChannels
+getChannelsForRemoteAddress
 ```
 
 ### Wallets
