@@ -6,7 +6,7 @@ const getChannelsForRemoteAddress = require('./get-channels-for-remote-address')
  * @returns {number} number of active and pending channels
  */
 async function numChannelsForAddress (address) {
-  const channelsForAddress = await getChannelsForRemoteAddress().call(this, address)
+  const channelsForAddress = await getChannelsForRemoteAddress.call(this, address)
 
   return channelsForAddress.length
 }
