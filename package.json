@@ -14,7 +14,7 @@
     "build": "bash ./scripts/build.sh",
     "build-images": "bash ./scripts/build-images.sh",
     "pretest": "npm run format",
-    "test": "npm run check-for-cycles && npm run test-engine",
+    "test": "npm run check-for-cycles && npm run check-unused && npm run test-engine",
     "test-engine": "NODE_PATH=. mocha 'src/**/*.spec.js'",
     "coverage": "nyc npm run test",
     "lint": "eslint src test --ext .js --max-warnings=0",
@@ -23,7 +23,8 @@
     "docs": "jsdoc -c .jsdoc.json",
     "postdoc": "http-server docs",
     "ci-test": "npm run format && npm run test-engine",
-    "check-for-cycles": "madge --circular src/"
+    "check-for-cycles": "madge --circular src/",
+    "check-unused": "node ./scripts/check-unused.js"
   },
   "repository": {
     "type": "git",
