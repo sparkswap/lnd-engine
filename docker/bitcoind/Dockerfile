@@ -8,9 +8,11 @@ ARG VERSION
 RUN : "${VERSION:?VERSION Build argument needs to be set.}"
 
 # Install all deps needed for bitcoind verification
-RUN apt-get update
-RUN apt-get install -y software-properties-common
-RUN apt-get install -y --no-install-recommends \
+RUN apt-get update && \
+  # We want to install recommended packages for software-props
+  apt-get install -y software-properties-common && \
+  # We do not want to install recommended packages for the rest of these utils
+  apt-get install -y --no-install-recommends \
   ca-certificates \
   wget \
   gnupg2 \
