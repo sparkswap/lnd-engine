@@ -27,4 +27,14 @@ PARAMS=$(echo \
     "--$NODE.zmqpubrawtx=$ZMQPUBRAWTX"
 )
 
+if [[ -n "$LND_BASE_FEE" ]]; then
+    echo "Setting custom base fee for bitcoin: $LND_BASE_FEE"
+    PARAMS="$PARAMS --bitcoin.basefee=$LND_BASE_FEE"
+fi
+
+if [[ -n "$LND_FEE_RATE" ]]; then
+    echo "Setting custom fee rate for bitcoin: $LND_FEE_RATE"
+    PARAMS="$PARAMS --bitcoin.feerate=$LND_FEE_RATE"
+fi
+
 exec lnd $PARAMS "$@"
