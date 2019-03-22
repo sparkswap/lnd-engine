@@ -38,7 +38,7 @@ const DEFAULT_MIN_FINAL_DELTA = 86400
  * @type {Number}
  * @constant
  */
-const BLOCK_BUFFER = 1800
+const BLOCK_BUFFER = 1200
 
 module.exports = {
   DEFAULT_MAKER_FWD_DELTA,
