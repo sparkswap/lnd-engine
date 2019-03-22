@@ -21,7 +21,7 @@ describe('withdrawFunds', () => {
     }
 
     txid = 'asdfasdfasdfsdf2134'
-    sendCoinsStub = sinon.stub().resolves({txid})
+    sendCoinsStub = sinon.stub().resolves({ txid })
     withdrawFunds.__set__('sendCoins', sendCoinsStub)
     withdrawFunds.__set__('client', clientStub)
     withdrawFunds.__set__('logger', logger)

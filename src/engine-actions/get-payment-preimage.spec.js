@@ -77,7 +77,7 @@ describe('get-payment-preimage', () => {
       status = 'GROUNDED'
       lookupPaymentStatusStub.resolves({ status })
       const res = await getPaymentPreimage.call(engine, paymentHash)
-      expect(res).to.eql({permanentError: `No payment with hash '${paymentHash}' is in-flight or complete`})
+      expect(res).to.eql({ permanentError: `No payment with hash '${paymentHash}' is in-flight or complete` })
     })
 
     it('returns the preimage if the payment is complete', async () => {
