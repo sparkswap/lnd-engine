@@ -9,6 +9,11 @@ async function getUncommittedPendingBalance () {
   const { unconfirmedBalance } = await walletBalance({ client: this.client })
   const { pendingClosingChannels = [], pendingForceClosingChannels = [], waitingCloseChannels = [] } = await listPendingChannels({ client: this.client })
 
+  this.logger.error('pendingClosingChannels', pendingForceClosingChannels)
+  this.logger.error('pendingForceClosingChannels', pendingForceClosingChannels)
+  this.logger.error('waitingCloseChannels', waitingCloseChannels)
+
+
   if (pendingClosingChannels.length === 0 && pendingForceClosingChannels.length === 0 && waitingCloseChannels.length === 0) {
     this.logger.debug('getUncommittedPendingBalance: No channels exist')
     return Big(unconfirmedBalance).toString()
