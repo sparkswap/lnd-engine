@@ -7,21 +7,14 @@ const { Big } = require('../utils')
  */
 async function getUncommittedPendingBalance () {
   const { unconfirmedBalance } = await walletBalance({ client: this.client })
-  const { pendingClosingChannels = [], pendingForceClosingChannels = [], waitingCloseChannels = [] } = await listPendingChannels({ client: this.client })
+  const { pendingForceClosingChannels = [] } = await listPendingChannels({ client: this.client })
 
-  this.logger.error('unconfirmedBalance', unconfirmedBalance)
-  this.logger.error('pendingClosingChannels', pendingForceClosingChannels)
-  this.logger.error('pendingForceClosingChannels', pendingForceClosingChannels)
-  this.logger.error('waitingCloseChannels', waitingCloseChannels)
-
-
-  if (pendingClosingChannels.length === 0 && pendingForceClosingChannels.length === 0 && waitingCloseChannels.length === 0) {
-    this.logger.debug('getUncommittedPendingBalance: No channels exist')
+  if (!pendingForceClosingChannels.length) {
+    this.logger.debug('getUncommittedPendingBalance: No pendingForceClosingChannels exist')
     return Big(unconfirmedBalance).toString()
   }
 
-  const allPendingChannels = pendingClosingChannels.concat(pendingForceClosingChannels).concat(waitingCloseChannels)
-  const totalPendingLocalBalance = allPendingChannels.reduce((acc, c) => {
+  const totalPendingLocalBalance = pendingForceClosingChannels.reduce((acc, c) => {
     return acc.plus(c.channel.localBalance)
   }, Big(0))
 
