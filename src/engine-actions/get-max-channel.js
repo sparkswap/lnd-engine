@@ -2,10 +2,11 @@ const { Big } = require('../utils')
 const { listChannels, listPendingChannels } = require('../lnd-actions')
 
 /**
- * Get local balance of all channels for a specific daemon
- * @param {Boolean} [options.outbound=true] outbound is true if checking outbound channels, false if inbound
- * @return {Object} res
- * @return {String} res.maxBalance - the max balance in all open channels.
+ * Get maximum balance from all channels (inbound or outbound)
+ * @param {Object} [options={}]
+ * @param {boolean} [options.outbound=true] - outbound is true if checking outbound channels, false if inbound
+ * @returns {Object} res
+ * @returns {string} res.maxBalance - the max balance in all open channels.
  */
 async function getMaxChannel ({ outbound = true } = {}) {
   const [

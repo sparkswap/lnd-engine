@@ -3,14 +3,11 @@ const { deadline } = require('../grpc-utils')
 /**
  * Check's an invoice status
  *
- * @function
- * @see {@link http://api.lightning.community/#lookupInvoice}
- * @param {String} paymentHash
- * @return {Object} response
- * @return {String} response.memo
- * @return {Number} response.value
- * @return {Date} response.settledDate
- * @return {Bool} response.settled
+ * @see http://api.lightning.community/#lookupInvoice
+ * @param {string} paymentHash
+ * @param {Object} opts
+ * @param {LndClient} opts.client
+ * @returns {Promise<Object>}
  */
 function lookupInvoice (paymentHash, { client }) {
   return new Promise((resolve, reject) => {

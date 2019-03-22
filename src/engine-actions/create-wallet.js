@@ -6,8 +6,8 @@ const {
 /**
  * Creates a wallet
  *
- * @param {String} password - wallet password, used to unlock lnd wallet
- * @return {Array<String>} cipher seed
+ * @param {string} password - wallet password, used to unlock lnd wallet
+ * @returns {Array<string>} 24 word cipher seed mnemonic
  */
 async function createWallet (password) {
   const { cipherSeedMnemonic } = await genSeed({ client: this.walletUnlocker })

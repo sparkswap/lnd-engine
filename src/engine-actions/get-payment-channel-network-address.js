@@ -1,13 +1,19 @@
 const { getInfo } = require('../lnd-actions')
 const { networkAddressFormatter } = require('../utils')
 
+/**
+ * @constant
+ * @type {string}
+ * @default
+ */
 const HOST_DELIMITER = '@'
 
 /**
  * Returns the payment channel network address for this node
  *
- * @function
- * @return {PaymentChannelNetworkAddress}
+ * @param {Object} [opts={}]
+ * @param {boolean} [opts.includeHost=true]
+ * @returns {string}
  */
 async function getPaymentChannelNetworkAddress ({ includeHost = true } = {}) {
   const { uris = [] } = await getInfo({ client: this.client })

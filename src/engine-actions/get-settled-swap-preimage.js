@@ -8,10 +8,10 @@ const {
  * it will wait for the settlement before returning to the caller
  *
  * @see {lnd-actions#lookupinvoice}
- * @see {@link http://api.lightning.community/#addinvoice}
+ * @see http://api.lightning.community/#addinvoice
  * @see {lnd-actions#subscribeInvoices}
- * @param {String} swapHash
- * @returns {Boolean} true if the invoice is settled, false if not
+ * @param {string} swapHash
+ * @returns {boolean} true if the invoice is settled, false if not
  */
 function getSettledSwapPreimage (swapHash) {
   return new Promise(async (resolve, reject) => {

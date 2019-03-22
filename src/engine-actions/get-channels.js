@@ -17,7 +17,7 @@ const { networkAddressFormatter } = require('../utils')
 
 /**
  * Returns all channels, both open and closed (but not pending)
- * @return {Array<NormalizedChannel>}
+ * @returns {Array<NormalizedChannel>}
  */
 async function getChannels () {
   const { client } = this
@@ -40,9 +40,9 @@ async function getChannels () {
 
 /**
  * Get all open channels
- * @param {object} options
- * @param {object} options.client
- * @return {Map<string, NormalizedChannel>} Map of channels by channel ID
+ * @param {Object} options
+ * @param {Object} options.client
+ * @returns {Map<string, NormalizedChannel>} Map of channels by channel ID
  */
 async function getOpenChannels ({ client }) {
   const { channels } = await listChannels({ client })
@@ -52,9 +52,9 @@ async function getOpenChannels ({ client }) {
 
 /**
  * Get all closed channels
- * @param {object} options
- * @param {object} options.client
- * @return {Map<string, NormalizedChannel>} Map of channels by channel ID
+ * @param {Object} options
+ * @param {Object} options.client
+ * @returns {Map<string, NormalizedChannel>} Map of channels by channel ID
  */
 async function getClosedChannels ({ client }) {
   const { channels } = await listClosedChannels({ client })
@@ -64,8 +64,8 @@ async function getClosedChannels ({ client }) {
 
 /**
  * Normalize an array of LND channels
- * @param  {Array<Channel>} channels Array of channels returned from LND
- * @return {Map<string, NormalizedChannel>} Map of normalized channels keyed by their ID
+ * @param  {Array<Channel>} channels - Array of channels returned from LND
+ * @returns {Map<string, NormalizedChannel>} Map of normalized channels keyed by their ID
  */
 function normalizeChannels (channels) {
   return channels.reduce((map, channel) => {
@@ -78,10 +78,9 @@ function normalizeChannels (channels) {
 /**
  * Convert a channel from a returned value from LND into
  * a standard format.
- * @external Channel
- * @see {@link https://api.lightning.community/#channel}
- * @param {Channel} channel channel object from LND
- * @return {NormalizedChannel} Channel with standard field names
+ * @see https://api.lightning.community/#channel
+ * @param {Object} channel - channel object from LND
+ * @returns {NormalizedChannel} Channel with standard field names
  */
 function normalizeChannel (channel) {
   return {

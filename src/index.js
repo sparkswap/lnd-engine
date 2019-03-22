@@ -41,12 +41,12 @@ class LndEngine {
    * LndEngine Constructor
    *
    * @class
-   * @param {String} host - host gRPC address
-   * @param {String} symbol Common symbol of the currency this engine supports (e.g. `BTC`)
+   * @param {string} host - host gRPC address
+   * @param {string} symbol - Common symbol of the currency this engine supports (e.g. `BTC`)
    * @param {Object} [options={}]
    * @param {Logger} [options.logger=console] - logger used by the engine
-   * @param {String} options.tlsCertPath - file path to the TLS certificate for LND
-   * @param {String} options.macaroonPath - file path to the macaroon file for LND
+   * @param {string} options.tlsCertPath - file path to the TLS certificate for LND
+   * @param {string} options.macaroonPath - file path to the macaroon file for LND
    */
   constructor (host, symbol, { logger = console, tlsCertPath, macaroonPath } = {}) {
     if (!host) {

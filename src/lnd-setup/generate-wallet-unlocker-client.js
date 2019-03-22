@@ -11,12 +11,11 @@ const fs = require('fs')
  * Generates a lnrpc.WalletUnlocker client which is only used on initialization of the LND
  * node.
  *
- * @function
- * @param {LndEngine} - engine
- * @param {String} engine.host
- * @param {String} engine.protoPath
- * @param {String} engine.tlsCertPath
- * @returns {grpc.Client} lnrpc WalletUnlocker client definition
+ * @param {Object} args
+ * @param {string} args.host
+ * @param {string} args.protoPath
+ * @param {string} args.tlsCertPath
+ * @returns {Object} lnrpc WalletUnlocker client definition
  */
 function generateWalletUnlockerClient ({ host, protoPath, tlsCertPath }) {
   const { lnrpc } = loadProto(protoPath)

@@ -3,12 +3,11 @@ const { deadline } = require('../grpc-utils')
 /**
  * Unlock an LND wallet
  *
- * @function
- * @see {@link http://api.lightning.community/#unlockWallet}
+ * @see http://api.lightning.community/#unlockWallet
  * @param {Buffer} walletPassword - Buffer or base64 string
  * @param {Object} opts
- * @param {grpc.Client} client - WalletUnlocker rpc client
- * @return {Promise}
+ * @param {LndClient} opts.client - WalletUnlocker rpc client
+ * @returns {Promise}
  */
 function unlockWallet (walletPassword, { client }) {
   return new Promise((resolve, reject) => {

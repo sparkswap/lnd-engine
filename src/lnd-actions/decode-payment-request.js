@@ -4,9 +4,11 @@ const { deadline } = require('../grpc-utils')
  * Given an lnd payment request hash, try to decode the hash w/ a specified
  * lnd node
  *
- * @function
- * @see {@link https://api.lightning.community/#decodepayreq}
- * @return {Object} paymentHash, numSatoshis
+ * @see https://api.lightning.community/#decodepayreq
+ * @param {string} paymentRequest
+ * @param {Object} opts
+ * @param {LndClient} opts.client
+ * @returns {Promise<Object>}
  */
 function decodePaymentRequest (paymentRequest, { client }) {
   return new Promise((resolve, reject) => {

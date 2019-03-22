@@ -13,10 +13,10 @@ const fs = require('fs')
  *
  * @function
  * @param {LndEngine} engine
- * @param {String} engine.host
- * @param {String} engine.protoPath
- * @param {String} engine.tlsCertPath
- * @param {String} engine.macaroonPath
+ * @param {string} engine.host
+ * @param {string} engine.protoPath
+ * @param {string} engine.tlsCertPath
+ * @param {string} engine.macaroonPath
  * @param {Logger} engine.logger
  * @returns {grpc.Client} lnrpc Lightning client definition
  */

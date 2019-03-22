@@ -3,9 +3,11 @@ const { deadline } = require('../grpc-utils')
 /**
  * Open a channel w/ LND
  *
- * @param {String} publicKey - lnd public key to open channel with
- * @param {String} fundingAmount - the amount to fund the channel w/
- * @return {Promise}
+ * @param {string} publicKey - lnd public key to open channel with
+ * @param {string} fundingAmount - the amount to fund the channel w/
+ * @param {Object} opts
+ * @param {LndClient} opts.client
+ * @returns {Promise}
  */
 function openChannel (publicKey, fundingAmount, { client }) {
   const params = {

@@ -11,7 +11,6 @@ const fs = require('fs')
  * Default values for grpc/proto-loader that mimic the default behaivor
  * of grpc.
  *
- * @global
  * @constant
  * @type {Object}
  * @default
@@ -29,8 +28,8 @@ const GRPC_OPTIONS = {
  *
  * @function
  * @private
- * @param {String} path - lnd protofile path
- * @return {grpc.Object}
+ * @param {string} path - lnd protofile path
+ * @returns {Object}
  * @throws {Error} proto file not found
  */
 function loadProto (path) {
