@@ -6,20 +6,13 @@ const getUncommittedPendingBalance = rewire(path.resolve(__dirname, 'get-uncommi
 describe('getUncommittedPendingBalance', () => {
   let listPendingChannelsStub
   let logger
-  let pendingClosingChannels
   let pendingForceClosingChannels
-  let waitingCloseChannels
   let unconfirmedBalance
   let balanceResponse
   let walletBalanceStub
 
   beforeEach(() => {
-    pendingClosingChannels = [
-      { channel: { localBalance: '10' } },
-      { channel: { localBalance: '1000' } }
-    ]
     pendingForceClosingChannels = [{ channel: { localBalance: '30' } }]
-    waitingCloseChannels = []
 
     logger = {
       debug: sinon.stub()
@@ -27,7 +20,7 @@ describe('getUncommittedPendingBalance', () => {
     unconfirmedBalance = '1234'
     balanceResponse = { unconfirmedBalance }
     walletBalanceStub = sinon.stub().returns(balanceResponse)
-    listPendingChannelsStub = sinon.stub().resolves({ pendingClosingChannels, pendingForceClosingChannels, waitingCloseChannels })
+    listPendingChannelsStub = sinon.stub().resolves({ pendingForceClosingChannels })
     getUncommittedPendingBalance.__set__('walletBalance', walletBalanceStub)
     getUncommittedPendingBalance.__set__('logger', logger)
   })
@@ -45,20 +38,9 @@ describe('getUncommittedPendingBalance', () => {
     return expect(await getUncommittedPendingBalance()).to.be.eql('1234')
   })
 
-  it('adds pendingClosingChannels to the unconfirmed balance if the pendingClosingChannels exist', async () => {
-    listPendingChannelsStub.resolves({ pendingClosingChannels })
+  it('adds pendingForceClosingChannels to the unconfirmed balance if the channels exist', async () => {
+    listPendingChannelsStub.resolves({ pendingForceClosingChannels })
     getUncommittedPendingBalance.__set__('listPendingChannels', listPendingChannelsStub)
-    return expect(await getUncommittedPendingBalance()).to.be.eql('2244')
-  })
-
-  it('adds pendingClosingChannels and pendingForceClosingChannels to the unconfirmed balance if the channels exist', async () => {
-    listPendingChannelsStub.resolves({ pendingClosingChannels, pendingForceClosingChannels })
-    getUncommittedPendingBalance.__set__('listPendingChannels', listPendingChannelsStub)
-    return expect(await getUncommittedPendingBalance()).to.be.eql('2274')
-  })
-
-  it('adds pendingClosingChannels, pendingForceClosingChannels,and waitingCloseChannels to the unconfirmed balance if the channels exist', async () => {
-    getUncommittedPendingBalance.__set__('listPendingChannels', listPendingChannelsStub)
-    return expect(await getUncommittedPendingBalance()).to.be.eql('2274')
+    return expect(await getUncommittedPendingBalance()).to.be.eql('1264')
   })
 })
