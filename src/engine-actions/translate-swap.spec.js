@@ -214,7 +214,7 @@ describe('translate-swap', () => {
     it('finds routes to the taker for the given amount', async () => {
       await translateSwap.call(engine, address, swapHash, amount, extendedTimeLock)
 
-      const finalCltvDelta = translateSwap.__get__('DEFAULT_MAKER_FWD_DELTA') / engine.secondsPerBlock
+      const finalCltvDelta = (translateSwap.__get__('DEFAULT_MAKER_FWD_DELTA') + translateSwap.__get__('BLOCK_BUFFER')) / engine.secondsPerBlock
       const numRoutes = translateSwap.__get__('NUM_OF_ROUTES')
 
       expect(networkAddressFormatter.parse).to.have.been.calledOnce()

@@ -3,7 +3,8 @@ const { queryRoutes, sendToRoute, getInfo } = require('../lnd-actions')
 
 const {
   DEFAULT_MAKER_FWD_DELTA,
-  DEFAULT_MIN_FINAL_DELTA
+  DEFAULT_MIN_FINAL_DELTA,
+  BLOCK_BUFFER
 } = CLTV_DELTA
 
 /**
@@ -153,8 +154,9 @@ async function translateSwap (takerAddress, swapHash, amount, extendedTimeLockDe
 
   // We specifically use Math.ceil here to ensure that the swap succeeds by providing
   // the terminating node (Taker) additional timelock. This allows enough time so that
-  // the Taker will not reject the HTLC as having too little timelock.
-  const finalCltvDelta = Math.ceil(DEFAULT_MIN_FINAL_DELTA / secondsPerBlock)
+  // the Taker will not reject the HTLC as having too little timelock. We add a Block buffer
+  // to account for blocks that are mined during swap execution.
+  const finalCltvDelta = Math.ceil((DEFAULT_MIN_FINAL_DELTA + BLOCK_BUFFER) / secondsPerBlock)
 
   const queryRoutesReq = {
     pubKey: publicKey,

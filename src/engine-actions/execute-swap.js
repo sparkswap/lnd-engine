@@ -39,8 +39,9 @@ async function executeSwap (makerAddress, swapHash, amount) {
   // We specifically use Math.ceil here to ensure that the swap succeeds by providing
   // the maker (who is translating between chains) additional timelock. As the Taker,
   // we would prefer to add additional time (in blocks) to our finalCltvDelta than to
-  // have to hltc be rejected.
-  const finalCltvDelta = Math.ceil((totalTimeLockInSeconds + BLOCK_BUFFER) / secondsPerBlock)
+  // have to hltc be rejected. We double the block buffer to allow for the Maker to
+  // buffer their own output to us.
+  const finalCltvDelta = Math.ceil((totalTimeLockInSeconds + (BLOCK_BUFFER * 2)) / secondsPerBlock)
 
   const request = {
     destString: counterpartyPubKey,
