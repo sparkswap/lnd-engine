@@ -104,7 +104,7 @@ describe('createChannel', () => {
       engine.feeEstimate = '10000000'
       engine.maxChannelBalance = '20000000'
 
-      return expect(createChannel.call(engine, paymentChannelNetworkAddress, fundingAmount)).to.have.been.rejectedWith('fundingAmount does not cover')
+      return expect(createChannel.call(engine, paymentChannelNetworkAddress, fundingAmount)).to.have.been.rejectedWith('Requested fundingAmount plus fees are larger than uncommitted balance')
     })
   })
 })
