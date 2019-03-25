@@ -16,8 +16,6 @@ echo ""
 echo "It's time to BUILD! All resistance is futile."
 echo ""
 
-npm i
-
 # Downloads an LND proto file from the sparkswap/lnd fork
 LND_PROTO_URL=${LND_PROTO_URL:-https://raw.githubusercontent.com/sparkswap/lnd/k%23epic/cross-chain-preimage/lnrpc/rpc.proto}
 
