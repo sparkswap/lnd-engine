@@ -1,6 +1,16 @@
 const { deadline } = require('../grpc-utils')
 
 /**
+ * We need to extend the deadline to 6 because currently LND uses a deadline of 5 for
+ * the handshakeReadTimeout. Because our deadline will be hit before LND's,
+ * we won't get the actual error accompanied by the peer failing to connect.
+ * @constant
+ * @type {number}
+ * @default
+ */
+const TIMEOUT_IN_SECONDS = 6
+
+/**
  * Given an error, detects if the error message says that the peer is already
  * connected
  *
@@ -29,7 +39,7 @@ function connectPeer (publicKey, host, { client, logger }) {
   }
 
   return new Promise((resolve, reject) => {
-    client.connectPeer({ addr }, { deadline: deadline() }, (err, res) => {
+    client.connectPeer({ addr }, { deadline: deadline(TIMEOUT_IN_SECONDS) }, (err, res) => {
       if (alreadyConnected(err)) {
         logger.info(`Peer already connected: ${publicKey}`)
         return resolve()
