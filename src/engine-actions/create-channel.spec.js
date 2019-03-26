@@ -41,7 +41,9 @@ describe('createChannel', () => {
       client: clientStub,
       feeEstimate: '1000',
       maxChannelBalance: '20000000',
-      logger: loggerStub
+      quantumsPerCommon: '100000000',
+      logger: loggerStub,
+      symbol: 'LTC'
     }
 
     createChannel.__set__('connectPeer', connectPeerStub)
@@ -80,10 +82,20 @@ describe('createChannel', () => {
       fundingAmount = '30000000'
       return expect(createChannel.call(engine, paymentChannelNetworkAddress, fundingAmount)).to.eventually.be.rejectedWith('exceeds max channel balance')
     })
-  })
 
-  context('balance is too large', () => {
+    it('errors if the feeEstimate is not defined', () => {
+      engine.feeEstimate = undefined
+      return expect(
+        createChannel.call(engine, paymentChannelNetworkAddress, fundingAmount)
+      ).to.eventually.be.rejectedWith(`Currency configuration for LTC has not been setup with a fee estimate`)
+    })
 
+    it('errors if the maxChannelBalance is not defined', () => {
+      engine.maxChannelBalance = undefined
+      return expect(
+        createChannel.call(engine, paymentChannelNetworkAddress, fundingAmount)
+      ).to.eventually.be.rejectedWith(`Currency configuration for LTC has not been setup with a max channel balance`)
+    })
   })
 
   context('balance does not cover fees', () => {
@@ -101,10 +113,12 @@ describe('createChannel', () => {
       balance = '1670000'
       fundingAmount = '1000000'
       balanceStub.resolves(balance)
-      engine.feeEstimate = '10000000'
+      engine.feeEstimate = '2000000'
       engine.maxChannelBalance = '20000000'
 
-      return expect(createChannel.call(engine, paymentChannelNetworkAddress, fundingAmount)).to.have.been.rejectedWith('fundingAmount does not cover')
+      return expect(
+        createChannel.call(engine, paymentChannelNetworkAddress, fundingAmount)
+      ).to.have.been.rejectedWith('Requested amount of 0.01 LTC plus fees of 0.02 LTC is larger than uncommitted balance')
     })
   })
 })

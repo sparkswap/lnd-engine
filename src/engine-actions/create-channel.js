@@ -25,14 +25,14 @@ async function createChannel (paymentChannelNetworkAddress, fundingAmount) {
   //
   // TODO: Expose fee estimation in LND to provide a better way to estimate fees
   //       for the user
-  const { feeEstimate, maxChannelBalance } = this
+  const { feeEstimate, maxChannelBalance, quantumsPerCommon, symbol } = this
 
   if (!feeEstimate) {
-    throw new Error(`Currency configuration for ${this.symbol} has not been setup with a fee estimate`)
+    throw new Error(`Currency configuration for ${symbol} has not been setup with a fee estimate`)
   }
 
   if (!maxChannelBalance) {
-    throw new Error(`Currency configuration for ${this.symbol} has not been setup with a max channel balance`)
+    throw new Error(`Currency configuration for ${symbol} has not been setup with a max channel balance`)
   }
 
   if (Big(fundingAmount).gt(maxChannelBalance)) {
@@ -65,7 +65,10 @@ async function createChannel (paymentChannelNetworkAddress, fundingAmount) {
   // because we would fail to fund a channel. This also prevents against having negative
   // values for a fundingAmount after a fee estimate has been taken
   if (balanceCantCoverFees && Big(feeEstimate).gt(fundingAmount)) {
-    throw new Error('fundingAmount does not cover estimated fees', { fundingAmount, feeEstimate })
+    const fundingCommon = Big(fundingAmount).div(quantumsPerCommon).toString()
+    const feeEstimateCommon = Big(feeEstimate).div(quantumsPerCommon).toString()
+
+    throw new Error(`Requested amount of ${fundingCommon} ${symbol} plus fees of ${feeEstimateCommon} ${symbol} is larger than uncommitted balance`)
   } else if (balanceCantCoverFees) {
     this.logger.debug('Current engine balance does not have enough funds for channel and fees', { fundingAmount, feeEstimate, balance })
 
