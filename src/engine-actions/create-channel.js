@@ -65,7 +65,7 @@ async function createChannel (paymentChannelNetworkAddress, fundingAmount) {
   // because we would fail to fund a channel. This also prevents against having negative
   // values for a fundingAmount after a fee estimate has been taken
   if (balanceCantCoverFees && Big(feeEstimate).gt(fundingAmount)) {
-    throw new Error('Requested fundingAmount plus fees are larger than uncommitted balance', { fundingAmount, feeEstimate })
+    throw new Error(`Requested fundingAmount of ${fundingAmount} plus fees of ${feeEstimate} are larger than uncommitted balance`)
   } else if (balanceCantCoverFees) {
     this.logger.debug('Current engine balance does not have enough funds for channel and fees', { fundingAmount, feeEstimate, balance })
 
