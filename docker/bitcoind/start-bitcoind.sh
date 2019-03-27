@@ -3,7 +3,7 @@
 set -e
 
 MINER=${MINER:-false}
-MINER_LOCAL_REGTEST=${MINER_LOCAL_REGTEST:-false}
+MINER_ENV=${MINER_ENV:-false}
 
 # Start a cron if network is regtest and the current node is setup to be the networks
 # miner.
@@ -24,7 +24,7 @@ if [[ "$NETWORK" == "regtest" ]] && [[ "$MINER" = true ]]; then
     # `cron` instead of `crond`, where the former does not import environment variables
     # from the user session and instead uses a bare-bones `sh` session to run these commands
     BITCOIN_CLI_PATH=/usr/local/bin/bitcoin-cli
-    if [[ "$MINER_LOCAL_REGTEST" = true ]]; then
+    if [[ "$MINER_ENV" = local ]]; then
         # If we're running in a local environment, we use 10 second block times
         echo "* * * * * ( $BITCOIN_CLI_PATH -regtest -rpcuser=$RPC_USER -rpcpassword=$RPC_PASS generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
         echo "* * * * * ( sleep 10 ; $BITCOIN_CLI_PATH -regtest -rpcuser="$RPC_USER" -rpcpassword="$RPC_PASS" generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
