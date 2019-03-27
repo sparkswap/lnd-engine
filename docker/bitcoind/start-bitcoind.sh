@@ -3,6 +3,7 @@
 set -e
 
 MINER=${MINER:-false}
+MINER_ENV=${MINER_ENV:-"production"}
 
 # Start a cron if network is regtest and the current node is setup to be the networks
 # miner.
@@ -23,12 +24,19 @@ if [[ "$NETWORK" == "regtest" ]] && [[ "$MINER" = true ]]; then
     # `cron` instead of `crond`, where the former does not import environment variables
     # from the user session and instead uses a bare-bones `sh` session to run these commands
     BITCOIN_CLI_PATH=/usr/local/bin/bitcoin-cli
-    echo "* * * * * ( $BITCOIN_CLI_PATH -regtest -rpcuser=$RPC_USER -rpcpassword=$RPC_PASS generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
-    echo "* * * * * ( sleep 10 ; $BITCOIN_CLI_PATH -regtest -rpcuser="$RPC_USER" -rpcpassword="$RPC_PASS" generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
-    echo "* * * * * ( sleep 20 ; $BITCOIN_CLI_PATH -regtest -rpcuser="$RPC_USER" -rpcpassword="$RPC_PASS" generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
-    echo "* * * * * ( sleep 30 ; $BITCOIN_CLI_PATH -regtest -rpcuser="$RPC_USER" -rpcpassword="$RPC_PASS" generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
-    echo "* * * * * ( sleep 40 ; $BITCOIN_CLI_PATH -regtest -rpcuser="$RPC_USER" -rpcpassword="$RPC_PASS" generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
-    echo "* * * * * ( sleep 50 ; $BITCOIN_CLI_PATH -regtest -rpcuser="$RPC_USER" -rpcpassword="$RPC_PASS" generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
+    if [[ "$MINER_ENV" = "local" ]]; then
+        # If we're running in a local environment, we use 10 second block times
+        echo "* * * * * ( $BITCOIN_CLI_PATH -regtest -rpcuser=$RPC_USER -rpcpassword=$RPC_PASS generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
+        echo "* * * * * ( sleep 10 ; $BITCOIN_CLI_PATH -regtest -rpcuser="$RPC_USER" -rpcpassword="$RPC_PASS" generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
+        echo "* * * * * ( sleep 20 ; $BITCOIN_CLI_PATH -regtest -rpcuser="$RPC_USER" -rpcpassword="$RPC_PASS" generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
+        echo "* * * * * ( sleep 30 ; $BITCOIN_CLI_PATH -regtest -rpcuser="$RPC_USER" -rpcpassword="$RPC_PASS" generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
+        echo "* * * * * ( sleep 40 ; $BITCOIN_CLI_PATH -regtest -rpcuser="$RPC_USER" -rpcpassword="$RPC_PASS" generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
+        echo "* * * * * ( sleep 50 ; $BITCOIN_CLI_PATH -regtest -rpcuser="$RPC_USER" -rpcpassword="$RPC_PASS" generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
+    else
+        # If we're running a hosted regtest environment, we use 30 second block times so it's less taxing for users to download historical data
+        echo "* * * * * ( $BITCOIN_CLI_PATH -regtest -rpcuser=$RPC_USER -rpcpassword=$RPC_PASS generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
+        echo "* * * * * ( sleep 30 ; $BITCOIN_CLI_PATH -regtest -rpcuser="$RPC_USER" -rpcpassword="$RPC_PASS" generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
+    fi
     chmod 755 /jobs/funding-cron.txt
     /usr/bin/crontab /jobs/funding-cron.txt
     cron
