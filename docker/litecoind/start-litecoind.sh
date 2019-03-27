@@ -25,6 +25,7 @@ if [[ "$NETWORK" == "regtest" ]] && [[ "$MINER" = true ]]; then
     # from the user session and instead uses a bare-bones `sh` session to run these commands
     LITECOIN_CLI_PATH=/usr/local/bin/litecoin-cli
     if [[ "$MINER_ENV" = "local" ]]; then
+        # If we're running in a local environment, we use 10 second block times
         echo "* * * * * ( $LITECOIN_CLI_PATH -regtest -rpcuser=$RPC_USER -rpcpassword=$RPC_PASS generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
         echo "* * * * * ( sleep 10 ; $LITECOIN_CLI_PATH -regtest -rpcuser="$RPC_USER" -rpcpassword="$RPC_PASS" generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
         echo "* * * * * ( sleep 20 ; $LITECOIN_CLI_PATH -regtest -rpcuser="$RPC_USER" -rpcpassword="$RPC_PASS" generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
@@ -32,6 +33,7 @@ if [[ "$NETWORK" == "regtest" ]] && [[ "$MINER" = true ]]; then
         echo "* * * * * ( sleep 40 ; $LITECOIN_CLI_PATH -regtest -rpcuser="$RPC_USER" -rpcpassword="$RPC_PASS" generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
         echo "* * * * * ( sleep 50 ; $LITECOIN_CLI_PATH -regtest -rpcuser="$RPC_USER" -rpcpassword="$RPC_PASS" generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
     else
+        # If we're running a hosted regtest environment, we use 30 second block times so it's less taxing for users to download historical data
         echo "* * * * * ( $LITECOIN_CLI_PATH -regtest -rpcuser=$RPC_USER -rpcpassword=$RPC_PASS generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
         echo "* * * * * ( sleep 30 ; $LITECOIN_CLI_PATH -regtest -rpcuser="$RPC_USER" -rpcpassword="$RPC_PASS" generate 1 >> /jobs/cron.log 2>&1 )" >> /jobs/funding-cron.txt
     fi
