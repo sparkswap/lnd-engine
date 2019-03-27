@@ -3,7 +3,7 @@
 set -e
 
 MINER=${MINER:-false}
-MINER_ENV=${MINER_ENV:-false}
+MINER_ENV=${MINER_ENV:-"production"}
 
 # Start a cron if network is regtest and the current node is setup to be the networks
 # miner.
