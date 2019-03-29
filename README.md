@@ -113,6 +113,7 @@ createChannel
 numChannelsForAddress
 closeChannels
 getChannelsForRemoteAddress
+connectUser
 ```
 
 ### Wallets
