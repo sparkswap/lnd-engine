@@ -19,6 +19,10 @@ async function getPaymentChannelNetworkAddress () {
     uris = []
   } = await getInfo({ client: this.client })
 
+  if (!identityPubkey) {
+    throw new Error('No pubkey exists for engine')
+  }
+
   // The uri will only exist if a user has set the `--external-ip` flag on the
   // LND instance. If this uri does not exist, we will simply use the lnd public key
   if (!uris.length) {

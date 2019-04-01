@@ -35,6 +35,11 @@ describe('getPaymentChannelNetworkAddress', () => {
     expect(res).to.be.eql('bolt:1234@localhost:100789')
   })
 
+  it('throws an error if no pubkey is returned from lnd', () => {
+    getInfoStub.returns({})
+    expect(getPaymentChannelNetworkAddress.call(engine)).to.eventually.be.rejectedWith(' No pubkey exists')
+  })
+
   it('excludes host if no uris exist', async () => {
     getInfoStub.returns({ identityPubkey: getInfoResponse.identityPubkey })
     res = await getPaymentChannelNetworkAddress.call(engine, { includeHost: false })

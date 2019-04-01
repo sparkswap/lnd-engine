@@ -9,7 +9,7 @@ const {
   generateWalletUnlockerClient
 } = require('./lnd-setup')
 const {
-  exponentialBackoff
+  retry
 } = require('./utils')
 
 /**
@@ -112,32 +112,26 @@ class LndEngine {
    * @returns {void}
    */
   async validateEngine () {
-    try {
-      const payload = { symbol: this.symbol }
-      const validationCall = async () => {
-        // A macaroon file for lnd will only exist if lnrpc (Lightning RPC) has been started
-        // on LND. Since an engine can become unlocked during any validation call, we
-        // need to ensure that we are updating LndEngine's client in the situation that
-        // a macaroon file becomes available (meaning an engine has been unlocked).
-        this.client = generateLightningClient(this)
+    const payload = { symbol: this.symbol }
+    const validationCall = async () => {
+      // A macaroon file for lnd will only exist if lnrpc (Lightning RPC) has been started
+      // on LND. Since an engine can become unlocked during any validation call, we
+      // need to ensure that we are updating LndEngine's client in the situation that
+      // a macaroon file becomes available (meaning an engine has been unlocked).
+      this.client = generateLightningClient(this)
 
-        // Returns a status `ENGINE_STATUS`
-        this.status = await this.getStatus()
+      // Returns a status `ENGINE_STATUS`
+      this.status = await this.getStatus()
 
-        if (!this.validated) {
-          throw new Error(`Engine failed to validate. Current status: ${this.status}`)
-        }
+      if (!this.validated) {
+        throw new Error(`Engine failed to validate. Current status: ${this.status}`)
       }
-
-      // It can take an extended period time for the engines to be ready, due to blockchain
-      // syncing or setup, so we use exponential backoff to retry validation until
-      // it is either successful or there is something wrong.
-      await exponentialBackoff(validationCall, payload, { debugName: 'validateEngine', logger: this.logger })
-    } catch (e) {
-      this.logger.error(`Failed to validate engine for ${this.symbol}, error: ${e}`, { error: e })
-      this.status = ENGINE_STATUSES.UNKNOWN
-      return
     }
+
+    // It can take an extended period time for the engines to be ready, due to blockchain
+    // syncing or setup, so we use `retry` to retry validation until
+    // it is successful
+    await retry(validationCall, payload, { debugName: 'validateEngine', logger: this.logger })
 
     this.logger.info(`Validated engine configuration for ${this.symbol}`)
   }
