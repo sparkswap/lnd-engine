@@ -1,11 +1,10 @@
 const { sinon, rewire, expect } = require('test/test-helper')
 const path = require('path')
 
-const exponentialBackoff = rewire(path.resolve(__dirname, 'exponential-backoff'))
+const retry = rewire(path.resolve(__dirname, 'retry'))
 
-describe('exponentialBackoff', () => {
+describe('retry', () => {
   let callFunction
-  let attempts
   let delayTime
   let delay
   let logger
@@ -15,32 +14,31 @@ describe('exponentialBackoff', () => {
   beforeEach(() => {
     res = 'response'
     callFunction = sinon.stub().resolves(res)
-    attempts = 2
     delayTime = 100
     logger = {
       error: sinon.stub()
     }
     delay = sinon.stub().resolves()
     payload = { symbol: 'BTC' }
-    exponentialBackoff.__set__('delay', delay)
+    retry.__set__('delay', delay)
   })
 
   it('calls the call function', async () => {
-    await exponentialBackoff(callFunction, payload, { attempts, delayTime, logger })
+    await retry(callFunction, payload, { delayTime, logger })
 
     expect(callFunction).to.be.to.have.been.calledOnce()
   })
 
   it('returns the response of the callFunction if there were no errors', async () => {
-    const result = await exponentialBackoff(callFunction, payload, { attempts, delayTime, logger })
+    const result = await retry(callFunction, payload, { delayTime, logger })
     expect(result).to.eql(res)
   })
 
-  it('retries the callFunction if there was an error and there are still retries left', async () => {
+  it('retries the callFunction if there was an error', async () => {
     callFunction = sinon.stub()
     callFunction.onCall(0).rejects('Error')
     callFunction.onCall(1).resolves()
-    await exponentialBackoff(callFunction, payload, { attempts, delayTime, logger })
+    await retry(callFunction, payload, { delayTime, logger })
     expect(logger.error).to.have.been.called()
     expect(delay).to.have.been.calledWith(delayTime)
     expect(callFunction).to.have.been.calledTwice()
@@ -50,7 +48,7 @@ describe('exponentialBackoff', () => {
     callFunction = sinon.stub()
     callFunction.onCall(0).rejects('Error')
     callFunction.onCall(1).resolves()
-    await exponentialBackoff(callFunction, payload, { attempts, delayTime, logger })
+    await retry(callFunction, payload, { delayTime, logger })
 
     expect(delay.getCall(0).calledBefore(callFunction.getCall(1))).to.be.true()
   })
@@ -68,7 +66,7 @@ describe('exponentialBackoff', () => {
       })
     })
 
-    exponentialBackoff(callFunction, payload, { attempts, delayTime, logger })
+    retry(callFunction, payload, { delayTime, logger })
 
     setImmediate(() => {
       expect(callFunction).to.have.been.calledOnce()
