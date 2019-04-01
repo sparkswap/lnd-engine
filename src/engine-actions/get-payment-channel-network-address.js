@@ -11,27 +11,28 @@ const HOST_DELIMITER = '@'
 /**
  * Returns the payment channel network address for this node
  *
- * @param {Object} [opts={}]
- * @param {boolean} [opts.includeHost=true]
  * @returns {string}
  */
-async function getPaymentChannelNetworkAddress ({ includeHost = true } = {}) {
-  const { uris = [] } = await getInfo({ client: this.client })
-  const uri = uris[0]
+async function getPaymentChannelNetworkAddress () {
+  const {
+    identityPubkey,
+    uris = []
+  } = await getInfo({ client: this.client })
 
-  if (!uri) {
-    throw new Error(`LND has no uri avaialble`)
+  if (!identityPubkey) {
+    throw new Error('No pubkey exists for engine')
   }
 
+  // The uri will only exist if a user has set the `--external-ip` flag on the
+  // LND instance. If this uri does not exist, we will simply use the lnd public key
+  if (!uris.length) {
+    return networkAddressFormatter.serialize({ publicKey: identityPubkey })
+  }
+
+  const uri = uris[0]
   const [ publicKey, host ] = uri.split(HOST_DELIMITER)
 
-  const networkInfo = { publicKey }
-
-  if (includeHost) {
-    networkInfo.host = host
-  }
-
-  return networkAddressFormatter.serialize(networkInfo)
+  return networkAddressFormatter.serialize({ publicKey, host })
 }
 
 module.exports = getPaymentChannelNetworkAddress

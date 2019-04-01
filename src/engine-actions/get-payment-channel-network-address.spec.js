@@ -11,7 +11,10 @@ describe('getPaymentChannelNetworkAddress', () => {
   let res
 
   beforeEach(() => {
-    getInfoResponse = { uris: [ '1234@localhost:100789' ] }
+    getInfoResponse = {
+      identityPubkey: '1234',
+      uris: [ '1234@localhost:100789' ]
+    }
     getInfoStub = sinon.stub().returns(getInfoResponse)
     clientStub = sinon.stub()
 
@@ -32,9 +35,14 @@ describe('getPaymentChannelNetworkAddress', () => {
     expect(res).to.be.eql('bolt:1234@localhost:100789')
   })
 
-  it('excludes the host if required', async () => {
-    res = await getPaymentChannelNetworkAddress.call(engine, { includeHost: false })
+  it('throws an error if no pubkey is returned from lnd', () => {
+    getInfoStub.returns({})
+    expect(getPaymentChannelNetworkAddress.call(engine)).to.eventually.be.rejectedWith(' No pubkey exists')
+  })
 
+  it('excludes host if no uris exist', async () => {
+    getInfoStub.returns({ identityPubkey: getInfoResponse.identityPubkey })
+    res = await getPaymentChannelNetworkAddress.call(engine, { includeHost: false })
     expect(res).to.be.eql('bolt:1234')
   })
 })
