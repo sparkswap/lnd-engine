@@ -19,9 +19,9 @@ PARAMS=$(echo \
     "--$NODE.zmqpubrawtx=$ZMQPUBRAWTX"
 )
 
-if [[ -n "$EXTERNAL_ADDRESS" ]]; then
-    echo "Setting external address for lnd $EXTERNAL_ADDRESS"
-    PARAMS="$PARAMS --externalip=$EXTERNAL_ADDRESS"
+if [[ -n "$EXTERNAL_ADDRESS" ]] && [[ -n "$EXTERNAL_PORT" ]]; then
+    echo "Setting external address for lnd $EXTERNAL_ADDRESS:$EXTERNAL_PORT"
+    PARAMS="$PARAMS --externalip=$EXTERNAL_ADDRESS:$EXTERNAL_PORT"
 fi
 
 if [[ -n "$LND_BASE_FEE" ]]; then
