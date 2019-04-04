@@ -4,7 +4,8 @@ const {
 } = require('../lnd-actions')
 const {
   Big,
-  networkAddressFormatter
+  networkAddressFormatter,
+  loggablePubKey
 } = require('../utils')
 const getUncommittedBalance = require('./get-uncommitted-balance')
 
@@ -40,12 +41,13 @@ async function createChannel (paymentChannelNetworkAddress, fundingAmount) {
   }
 
   const { publicKey, host } = networkAddressFormatter.parse(paymentChannelNetworkAddress)
+  const loggablePublicKey = loggablePubKey(publicKey)
 
-  this.logger.debug(`Attempting to create channel with ${host}`)
+  this.logger.debug(`Attempting to create channel with ${loggablePublicKey}`)
 
   await connectPeer(publicKey, host, { client: this.client, logger: this.logger })
 
-  this.logger.debug(`Successfully connected to peer: ${host}`)
+  this.logger.debug(`Successfully connected to peer: ${loggablePublicKey}`)
 
   // We add fees onto the funding amount and make sure the user has enough funds for
   // the transaction, if they do not, we will then subtract the feeEstimate from
@@ -78,6 +80,6 @@ async function createChannel (paymentChannelNetworkAddress, fundingAmount) {
     await openChannel(publicKey, fundingAmount, { client: this.client })
   }
 
-  this.logger.debug(`Successfully opened channel with: ${host}`)
+  this.logger.debug(`Successfully opened channel with: ${loggablePublicKey}`)
 }
 module.exports = createChannel

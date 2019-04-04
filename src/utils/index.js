@@ -5,6 +5,7 @@ const CLTV_DELTA = require('./cltv-delta')
 const loadProto = require('./load-proto')
 const retry = require('./retry')
 const delay = require('./delay')
+const loggablePubKey = require('./loggable-pubkey')
 
 module.exports = {
   Big,
@@ -13,5 +14,6 @@ module.exports = {
   CLTV_DELTA,
   loadProto,
   delay,
-  retry
+  retry,
+  loggablePubKey
 }
