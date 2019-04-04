@@ -78,6 +78,6 @@ async function createChannel (paymentChannelNetworkAddress, fundingAmount) {
     await openChannel(publicKey, fundingAmount, { client: this.client })
   }
 
-  this.logger.debug(`Successfully opened channel with: ${host}`)
+  this.logger.debug(`Successfully opened channel with: ${publicKey}`)
 }
 module.exports = createChannel
