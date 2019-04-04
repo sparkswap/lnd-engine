@@ -41,11 +41,11 @@ async function createChannel (paymentChannelNetworkAddress, fundingAmount) {
 
   const { publicKey, host } = networkAddressFormatter.parse(paymentChannelNetworkAddress)
 
-  this.logger.debug(`Attempting to create channel with ${host}`)
+  this.logger.debug(`Attempting to create channel with ${publicKey}`)
 
   await connectPeer(publicKey, host, { client: this.client, logger: this.logger })
 
-  this.logger.debug(`Successfully connected to peer: ${host}`)
+  this.logger.debug(`Successfully connected to peer: ${publicKey}`)
 
   // We add fees onto the funding amount and make sure the user has enough funds for
   // the transaction, if they do not, we will then subtract the feeEstimate from
