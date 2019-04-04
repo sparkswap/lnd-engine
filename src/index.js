@@ -69,16 +69,17 @@ class LndEngine {
       this[configKey] = this.currencyConfig[configKey]
     })
 
+    // Default status of the lnd-engine is unknown as we have not run any validations
+    // up to this point. We need to define this BEFORE generating the Lightning client
+    // to suppress invalid macaroon warnings.
+    this.status = ENGINE_STATUSES.UNKNOWN
+
     this.logger = logger
     this.tlsCertPath = tlsCertPath
     this.macaroonPath = macaroonPath
     this.protoPath = LND_PROTO_FILE_PATH
     this.client = generateLightningClient(this)
     this.walletUnlocker = generateWalletUnlockerClient(this)
-
-    // Default status of the lnd-engine is unknown as we have not run any validations
-    // up to this point
-    this.status = ENGINE_STATUSES.UNKNOWN
 
     // We wrap all validation dependent actions in a callback so we can prevent
     // their use if the current engine is in a state that prevents a call from

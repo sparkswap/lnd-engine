@@ -7,6 +7,7 @@
 const grpc = require('grpc')
 const loadProto = require('../utils/load-proto')
 const fs = require('fs')
+const { ENGINE_STATUSES } = require('../constants')
 
 /**
  * Generates a lnrpc.Lightning client which allows full functionality of the LND node
@@ -17,10 +18,11 @@ const fs = require('fs')
  * @param {string} engine.protoPath
  * @param {string} engine.tlsCertPath
  * @param {string} engine.macaroonPath
+ * @param {string} engine.status
  * @param {Logger} engine.logger
  * @returns {grpc.Client} lnrpc Lightning client definition
  */
-function generateLightningClient ({ host, protoPath, tlsCertPath, macaroonPath, logger }) {
+function generateLightningClient ({ host, protoPath, tlsCertPath, macaroonPath, status, logger }) {
   const { lnrpc } = loadProto(protoPath)
 
   const macaroonExists = fs.existsSync(macaroonPath)
@@ -34,15 +36,19 @@ function generateLightningClient ({ host, protoPath, tlsCertPath, macaroonPath, 
   const tls = fs.readFileSync(tlsCertPath)
 
   let rpcCredentials
+
   // We do not require a macaroon to be available to use the lnd-engine, as the user
   // may have used the configuration `--no-macaroons` for testing.
   //
   // A macaroon will not be created if:
-  // 1. An LND wallet hasn't been initialized
-  // 2. The daemon/docker has messed up
-  //
+  // 1. An LND wallet hasn't been initialized (NEEDS_WALLET or UNKNOWN): expected
+  // 2. The daemon/docker has messed up: unexpected
+  const showMacaroonWarn = ![ ENGINE_STATUSES.UNKNOWN, ENGINE_STATUSES.NEEDS_WALLET ].includes(status)
+
   if (!macaroonExists) {
-    logger.warn(`LND-ENGINE warning - macaroon path not found at path: ${macaroonPath}`)
+    if (showMacaroonWarn) {
+      logger.warn(`LND-ENGINE warning - macaroon not found at path: ${macaroonPath}`)
+    }
     rpcCredentials = grpc.credentials.createSsl(tls)
   } else {
     const macaroon = fs.readFileSync(macaroonPath)
