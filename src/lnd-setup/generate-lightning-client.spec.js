@@ -9,6 +9,7 @@ describe('generateLightningClient', () => {
   const tlsCertPath = 'tlscertpath'
   const macaroonPath = 'macaroonpath'
 
+  let status
   let loggerStub
   let engineStub
   let loadProtoStub
@@ -33,6 +34,8 @@ describe('generateLightningClient', () => {
     tlsCert = 'tlscert'
     combinedCreds = 'combined'
     macaroon = 'macaroon'
+
+    status = 'UNKNOWN'
     loggerErrorStub = sinon.stub()
     loggerWarnStub = sinon.stub()
     loggerStub = {
@@ -45,6 +48,7 @@ describe('generateLightningClient', () => {
       protoPath,
       tlsCertPath,
       macaroonPath,
+      status,
       logger: loggerStub
     }
     lightningStub = sinon.stub()
@@ -117,9 +121,39 @@ describe('generateLightningClient', () => {
       existsSyncStub.withArgs(macaroonPath).returns(false)
     })
 
-    it('logs a warning if macaroon was not found', () => {
+    it('does not log a warning if the engine status is unknown', () => {
       generateLightningClient(engineStub)
-      expect(loggerWarnStub).to.have.been.calledWith(sinon.match('macaroon path not found'))
+      expect(loggerWarnStub).to.not.have.been.called()
+    })
+
+    it('does not log a warning if the engine needs a wallet', () => {
+      engineStub.status = 'NEEDS_WALLET'
+      generateLightningClient(engineStub)
+      expect(loggerWarnStub).to.not.have.been.called()
+    })
+
+    it('logs a warning if macaroon was not found and the engine is locked', () => {
+      engineStub.status = 'LOCKED'
+      generateLightningClient(engineStub)
+      expect(loggerWarnStub).to.have.been.calledWith(sinon.match('macaroon not found'))
+    })
+
+    it('logs a warning if macaroon was not found and the engine is unlocked', () => {
+      engineStub.status = 'UNLOCKED'
+      generateLightningClient(engineStub)
+      expect(loggerWarnStub).to.have.been.calledWith(sinon.match('macaroon not found'))
+    })
+
+    it('logs a warning if macaroon was not found and the engine is not synced', () => {
+      engineStub.status = 'NOT_SYNCED'
+      generateLightningClient(engineStub)
+      expect(loggerWarnStub).to.have.been.calledWith(sinon.match('macaroon not found'))
+    })
+
+    it('logs a warning if macaroon was not found and the engine is validated', () => {
+      engineStub.status = 'VALIDATED'
+      generateLightningClient(engineStub)
+      expect(loggerWarnStub).to.have.been.calledWith(sinon.match('macaroon not found'))
     })
 
     it('it only uses ssl credentials', () => {

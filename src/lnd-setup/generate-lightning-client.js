@@ -7,6 +7,7 @@
 const grpc = require('grpc')
 const loadProto = require('../utils/load-proto')
 const fs = require('fs')
+const { ENGINE_STATUSES } = require('../constants')
 
 /**
  * Generates a lnrpc.Lightning client which allows full functionality of the LND node
@@ -17,13 +18,19 @@ const fs = require('fs')
  * @param {string} engine.protoPath
  * @param {string} engine.tlsCertPath
  * @param {string} engine.macaroonPath
+ * @param {string} engine.status
  * @param {Logger} engine.logger
  * @returns {grpc.Client} lnrpc Lightning client definition
  */
-function generateLightningClient ({ host, protoPath, tlsCertPath, macaroonPath, logger }) {
+function generateLightningClient ({ host, protoPath, tlsCertPath, macaroonPath, status, logger }) {
   const { lnrpc } = loadProto(protoPath)
 
   const macaroonExists = fs.existsSync(macaroonPath)
+
+  // A macaroon file should exist if the Wallets have been created, so if the engine is
+  // in any state other than NEEDS_WALLET or UNKNOWN, we should show a warning.
+  // UNKNOWN is exempted since the engine could be in a NEEDS_WALLET state.
+  const showMacaroonWarn = ![ ENGINE_STATUSES.UNKNOWN, ENGINE_STATUSES.NEEDS_WALLET ].includes(status)
 
   // We require all communication to be done via TLS, if there is no cert available,
   // we will throw
@@ -42,7 +49,9 @@ function generateLightningClient ({ host, protoPath, tlsCertPath, macaroonPath, 
   // 2. The daemon/docker has messed up
   //
   if (!macaroonExists) {
-    logger.warn(`LND-ENGINE warning - macaroon path not found at path: ${macaroonPath}`)
+    if (showMacaroonWarn) {
+      logger.warn(`LND-ENGINE warning - macaroon not found at path: ${macaroonPath}`)
+    }
     rpcCredentials = grpc.credentials.createSsl(tls)
   } else {
     const macaroon = fs.readFileSync(macaroonPath)
