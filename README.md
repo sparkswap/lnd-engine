@@ -114,6 +114,7 @@ numChannelsForAddress
 closeChannels
 getChannelsForRemoteAddress
 connectUser
+getPeers
 ```
 
 ### Wallets

@@ -35,6 +35,7 @@ const getChannels = require('./get-channels')
 const getMaxChannelForAddress = require('./get-max-channel-for-address')
 const getChannelsForRemoteAddress = require('./get-channels-for-remote-address')
 const connectUser = require('./connect-user')
+const getPeers = require('./get-peers')
 
 module.exports = {
   validationDependentActions: {
@@ -71,7 +72,8 @@ module.exports = {
     getChannels,
     getMaxChannelForAddress,
     getChannelsForRemoteAddress,
-    connectUser
+    connectUser,
+    getPeers
   },
   validationIndependentActions: {
     createWallet,
