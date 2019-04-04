@@ -6,7 +6,7 @@ const { listPeers } = require('../lnd-actions')
  * @returns {Array<Object>} list of peers with pubkey, address and inbound flag
  */
 async function getPeers () {
-  const { peers } = await listPeers({ client: this.client })
+  const { peers = [] } = await listPeers({ client: this.client })
 
   return peers.map(peer => {
     return {
