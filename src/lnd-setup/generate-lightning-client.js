@@ -27,11 +27,6 @@ function generateLightningClient ({ host, protoPath, tlsCertPath, macaroonPath, 
 
   const macaroonExists = fs.existsSync(macaroonPath)
 
-  // A macaroon file should exist if the Wallets have been created, so if the engine is
-  // in any state other than NEEDS_WALLET or UNKNOWN, we should show a warning.
-  // UNKNOWN is exempted since the engine could be in a NEEDS_WALLET state.
-  const showMacaroonWarn = ![ ENGINE_STATUSES.UNKNOWN, ENGINE_STATUSES.NEEDS_WALLET ].includes(status)
-
   // We require all communication to be done via TLS, if there is no cert available,
   // we will throw
   if (!fs.existsSync(tlsCertPath)) {
@@ -41,13 +36,15 @@ function generateLightningClient ({ host, protoPath, tlsCertPath, macaroonPath, 
   const tls = fs.readFileSync(tlsCertPath)
 
   let rpcCredentials
+
   // We do not require a macaroon to be available to use the lnd-engine, as the user
   // may have used the configuration `--no-macaroons` for testing.
   //
   // A macaroon will not be created if:
-  // 1. An LND wallet hasn't been initialized
-  // 2. The daemon/docker has messed up
-  //
+  // 1. An LND wallet hasn't been initialized (NEEDS_WALLET or UNKNOWN): expected
+  // 2. The daemon/docker has messed up: unexpected
+  const showMacaroonWarn = ![ ENGINE_STATUSES.UNKNOWN, ENGINE_STATUSES.NEEDS_WALLET ].includes(status)
+
   if (!macaroonExists) {
     if (showMacaroonWarn) {
       logger.warn(`LND-ENGINE warning - macaroon not found at path: ${macaroonPath}`)
