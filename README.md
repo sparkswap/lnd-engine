@@ -1,6 +1,6 @@
 <img src="https://sparkswap.com/img/logo.svg" alt="sparkswap - sparkswap.com" width="400">
 
-[![CircleCI](https://circleci.com/gh/sparkswap/lnd-engine.svg?style=svg&circle-token=47c81b3a717f062885f159dfded078e134413db1)](https://circleci.com/gh/sparkswap/lnd-engine)
+[![CircleCI](https://circleci.com/gh/sparkswap/lnd-engine.svg?style=svg&circle-token=47c81b3a717f062885f159dfded078e134413db1)](https://circleci.com/gh/sparkswap/lnd-engine) [![Greenkeeper badge](https://badges.greenkeeper.io/sparkswap/lnd-engine.svg)](https://greenkeeper.io/)
 
 Sparkswap LND Engine
 ====================
