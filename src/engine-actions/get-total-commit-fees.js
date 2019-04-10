@@ -14,16 +14,10 @@ async function getTotalCommitFees () {
     return Big(0).toString()
   }
 
-  console.log('channels', channels)
-  channels.forEach(c => {
-    console.log('initiator', c.initiator)
-    console.log('typeof initiator', typeof c.initiator)
-  })
-
-  const totalCommitFees = channels.reduce((acc, c) => {
-    // We include commit fees only if the channel was the initiator
-    const commitFee = c.initiator ? Big(c.commitFee) : Big(0)
-    return acc.plus(commitFee)
+  // We include commit fees only if the channel was the initiator
+  const initiatorChannels = channels.filter(c => c.initiator)
+  const totalCommitFees = initiatorChannels.reduce((acc, c) => {
+    return acc.plus(Big(c.commitFee))
   }, Big(0))
 
   return totalCommitFees.toString()
