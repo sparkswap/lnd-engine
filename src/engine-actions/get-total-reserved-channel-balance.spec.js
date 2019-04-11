@@ -1,10 +1,10 @@
 const path = require('path')
 const { expect, rewire, sinon } = require('test/test-helper')
 
-const getTotalCommitFees = rewire(path.resolve(__dirname, 'get-total-commit-fees'))
+const getTotalReservedChannelBalance = rewire(path.resolve(__dirname, 'get-total-reserved-channel-balance'))
 
-describe('get-total-channel-balance', () => {
-  describe('getTotalChannelBalance', () => {
+describe('get-total-reserved-channel-balance', () => {
+  describe('getTotalReservedChannelBalance', () => {
     let channels
     let listChannelsStub
     let logger
@@ -20,13 +20,13 @@ describe('get-total-channel-balance', () => {
         debug: sinon.stub()
       }
 
-      getTotalCommitFees.__set__('logger', logger)
+      getTotalReservedChannelBalance.__set__('logger', logger)
     })
 
     it('returns 0 if no channels exist', async () => {
       listChannelsStub = sinon.stub().returns({})
-      getTotalCommitFees.__set__('listChannels', listChannelsStub)
-      return expect(await getTotalCommitFees()).to.be.eql('0')
+      getTotalReservedChannelBalance.__set__('listChannels', listChannelsStub)
+      return expect(await getTotalReservedChannelBalance()).to.be.eql('0')
     })
 
     it('returns 0 if no channels were initiator', async () => {
@@ -36,14 +36,14 @@ describe('get-total-channel-balance', () => {
       ]
 
       listChannelsStub = sinon.stub().returns({ channels })
-      getTotalCommitFees.__set__('listChannels', listChannelsStub)
-      return expect(await getTotalCommitFees()).to.be.eql('0')
+      getTotalReservedChannelBalance.__set__('listChannels', listChannelsStub)
+      return expect(await getTotalReservedChannelBalance()).to.be.eql('0')
     })
 
-    it('returns the total commit fees of all channels that were initiator on a daemon', async () => {
+    it('returns the total reserved channel balance of all channels that were initiator', async () => {
       listChannelsStub = sinon.stub().returns({ channels })
-      getTotalCommitFees.__set__('listChannels', listChannelsStub)
-      return expect(await getTotalCommitFees()).to.be.eql('1010')
+      getTotalReservedChannelBalance.__set__('listChannels', listChannelsStub)
+      return expect(await getTotalReservedChannelBalance()).to.be.eql('1010')
     })
   })
 })
