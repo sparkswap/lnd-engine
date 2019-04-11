@@ -14,7 +14,9 @@ async function getTotalCommitFees () {
     return Big(0).toString()
   }
 
-  // We include commit fees only if the channel was the initiator
+  // We filter for channels where the engine was the initiator because available balances for
+  // a channel are calculated less commit fees when a party was the initiator. The rationale of
+  // this calculation is to put the responsibility on the initiator for paying fees on a force-close
   const initiatorChannels = channels.filter(c => c.initiator)
   const totalCommitFees = initiatorChannels.reduce((acc, c) => {
     return acc.plus(Big(c.commitFee))
