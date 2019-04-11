@@ -18,7 +18,7 @@ async function getTotalReservedChannelBalance () {
   this.logger.debug(`getTotalReservedChannelBalance: ${channels.length} channels exist, ${initiatorChannels.length} channels as initiator`)
 
   const totalReservedChannelBalance = initiatorChannels.reduce((acc, c) => {
-    return acc.plus(Big(c.commitFee))
+    return acc.plus(c.commitFee)
   }, Big(0))
 
   return totalReservedChannelBalance.toString()
