@@ -10,7 +10,7 @@ async function getUncommittedPendingBalance () {
   const { pendingForceClosingChannels = [] } = await listPendingChannels({ client: this.client })
 
   if (!pendingForceClosingChannels.length) {
-    this.logger.debug('getUncommittedPendingBalance: No pendingForceClosingChannels exist')
+    this.logger.debug('getUncommittedPendingBalance: No pendingForceClosingChannels exist', { symbol: this.symbol })
     return Big(unconfirmedBalance).toString()
   }
 
