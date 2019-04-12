@@ -32,6 +32,7 @@ const getPaymentPreimage = require('./get-payment-preimage')
 const isPaymentPendingOrComplete = require('./is-payment-pending-or-complete')
 const getStatus = require('./get-status')
 const getChannels = require('./get-channels')
+const getTotalReservedChannelBalance = require('./get-total-reserved-channel-balance')
 const getMaxChannelForAddress = require('./get-max-channel-for-address')
 const getChannelsForRemoteAddress = require('./get-channels-for-remote-address')
 const connectUser = require('./connect-user')
@@ -70,6 +71,7 @@ module.exports = {
     getPaymentPreimage,
     isPaymentPendingOrComplete,
     getChannels,
+    getTotalReservedChannelBalance,
     getMaxChannelForAddress,
     getChannelsForRemoteAddress,
     connectUser,
