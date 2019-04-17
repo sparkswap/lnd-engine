@@ -26,7 +26,7 @@ const TRANSACTION_TYPES = Object.freeze({
  */
 async function getTxIdsForChannels (channels) {
   return channels.reduce((channelTxIds, { closingTxHash, channelPoint }) => {
-    const [ openingTxHash, _ ] = channelPoint.split(':') // eslint-disable-line
+    const [ openingTxHash ] = channelPoint.split(':') // eslint-disable-line
 
     // The closingTxHash will be missing from open or pending channels
     if (closingTxHash) {
