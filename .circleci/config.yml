@@ -1,31 +1,150 @@
 # Sparkswap CircleCI Config
-# Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
-version: 2
+version: 2.1
+executors:
+  docker-publisher:
+    environment:
+      - BTC_IMAGE_NAME: sparkswap/bitcoind
+      - LTC_IMAGE_NAME: sparkswap/litecoind
+      - BTC_ENGINE_IMAGE_NAME: sparkswap/lnd_btc
+      - LTC_ENGINE_IMAGE_NAME: sparkswap/lnd_ltc
+    # This is the docker image that we use to help us build all of the docker images
+    # on circle ci
+    docker:
+      - image: circleci/buildpack-deps:stretch
+
 jobs:
   build:
     docker:
       - image: node:8.11
-    working_directory: ~/relayer
-
     steps:
       - checkout
-
-      # Make sure we are on atleast v6 npm
+      # Make sure we are on v6.x.x+ npm
       - run: npm i -g npm@6
-
       # Download and cache dependencies
       - restore_cache:
           keys:
           - v1-dependencies-{{ checksum "package.json" }}
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
-
       - run: npm install
-
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
-
       - run: npm run ci-test
+
+  publish-bitcoind:
+    executor: docker-publisher
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build Docker images
+          command: docker build -t $BTC_IMAGE_NAME ./docker/bitcoind --build-arg VERSION=0.17.1
+      - run:
+          name: Publish Docker Image to Docker Hub
+          command: |
+            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            IMAGE_TAG=${CIRCLE_TAG/v/''}
+            echo $IMAGE_TAG
+            docker tag $BTC_IMAGE_NAME:latest $BTC_IMAGE_NAME:$IMAGE_TAG
+            docker push $BTC_IMAGE_NAME:test
+            docker push $BTC_IMAGE_NAME:$IMAGE_TAG
+
+  publish-litecoind:
+    executor: docker-publisher
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build Docker images
+          command: docker build -t $LTC_IMAGE_NAME ./docker/litecoind --build-arg VERSION=0.16.3
+      - run:
+          name: Publish Docker Image to Docker Hub
+          command: |
+            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            IMAGE_TAG=${CIRCLE_TAG/v/''}
+            echo $IMAGE_TAG
+            docker tag $LTC_IMAGE_NAME:latest $LTC_IMAGE_NAME:$IMAGE_TAG
+            docker push $LTC_IMAGE_NAME:latest
+            docker push $LTC_IMAGE_NAME:$IMAGE_TAG
+
+  publish-lnd-btc:
+    executor: docker-publisher
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build Docker images
+          command: docker build -t $BTC_ENGINE_IMAGE_NAME ./docker/lnd --build-arg NODE=bitcoind --build-arg NETWORK=btc --build-arg COMMIT_SHA=v0.5.4-sparkswap-beta
+      - run:
+          name: Publish Docker Image to Docker Hub
+          command: |
+            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            IMAGE_TAG=${CIRCLE_TAG/v/''}
+            echo $IMAGE_TAG
+            docker tag $BTC_ENGINE_IMAGE_NAME:latest $BTC_ENGINE_IMAGE_NAME:$IMAGE_TAG
+            docker push $BTC_ENGINE_IMAGE_NAME:latest
+            docker push $BTC_ENGINE_IMAGE_NAME:$IMAGE_TAG
+
+  publish-lnd-ltc:
+    executor: docker-publisher
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build Docker images
+          command: docker build -t $LTC_ENGINE_IMAGE_NAME ./docker/lnd --build-arg NODE=litecoind --build-arg NETWORK=ltc --build-arg COMMIT_SHA=v0.5.4-sparkswap-beta
+      - run:
+          name: Publish Docker Image to Docker Hub
+          command: |
+            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            IMAGE_TAG=${CIRCLE_TAG/v/''}
+            echo $IMAGE_TAG
+            docker tag $LTC_ENGINE_IMAGE_NAME:latest $LTC_ENGINE_IMAGE_NAME:$IMAGE_TAG
+            docker push $LTC_ENGINE_IMAGE_NAME:latest
+            docker push $LTC_ENGINE_IMAGE_NAME:$IMAGE_TAG
+
+workflows:
+  version: 2
+  build-master:
+    jobs:
+      - build
+      # All publishes are dependent on tests passing
+      - publish-bitcoind:
+          requires:
+            - build
+          filters:
+            tags:
+              # TODO: only use tags without RCs
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+      - publish-litecoind:
+          requires:
+            - build
+          filters:
+            tags:
+              # TODO: only use tags without RCs
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+      - publish-lnd-btc:
+          requires:
+            - build
+          filters:
+            tags:
+              # TODO: only use tags without RCs
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+      - publish-lnd-ltc:
+          requires:
+            - build
+          filters:
+            tags:
+              # TODO: only use tags without RCs
+              only: /^v.*/
+            branches:
+              ignore: /.*/
