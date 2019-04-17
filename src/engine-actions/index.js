@@ -38,6 +38,7 @@ const getChannelsForRemoteAddress = require('./get-channels-for-remote-address')
 const connectUser = require('./connect-user')
 const getPeers = require('./get-peers')
 const getChainTransactions = require('./get-chain-transactions')
+const changeWalletPassword = require('./change-wallet-password')
 
 module.exports = {
   validationDependentActions: {
@@ -82,6 +83,7 @@ module.exports = {
   validationIndependentActions: {
     createWallet,
     getStatus,
-    unlockWallet
+    unlockWallet,
+    changeWalletPassword
   }
 }

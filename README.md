@@ -120,6 +120,7 @@ getPeers
 ### Wallets
 ```
 withdrawFunds
+changeWalletPassword
 ```
 
 ## License
