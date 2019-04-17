@@ -42,7 +42,7 @@ async function getStatus () {
       return ENGINE_STATUSES.UNLOCKED
     }
 
-    const [ chainName ] = chains
+    const { chain: chainName } = chains[0]
 
     if (chainName !== this.chainName) {
       this.logger.error(`Mismatched configuration: Engine is configured for ${this.chainName}, LND is configured for ${chainName}.`)

@@ -1,4 +1,4 @@
-FROM golang:1.10-alpine as builder
+FROM golang:1.12-alpine as builder
 
 LABEL maintainer="sparkswap <dev@sparkswap.com>"
 
@@ -10,11 +10,11 @@ RUN : "${NETWORK:?NETWORK Build argument needs to be set.}"
 ENV GODEBUG netdns=cgo
 
 # Install dependencies and install/build lnd.
-RUN apk add --no-cache \
+RUN apk add --no-cache --update alpine-sdk \
     git \
     make
 
-WORKDIR $GOPATH/src/github.com/lightningnetwork/lnd
+WORKDIR $GOPATH/src/github.com/dannypaz/lnd
 
 # We use this cache date to always build LND instead of caching the files. This allows us
 # to continually grab changes from the LND_VERSION without tagging the release.
@@ -22,10 +22,13 @@ WORKDIR $GOPATH/src/github.com/lightningnetwork/lnd
 ARG COMMIT_SHA
 RUN : "${COMMIT_SHA:?COMMIT_SHA Build argument needs to be set.}"
 
-RUN git clone https://github.com/sparkswap/lnd . \
+ARG LND_ORG_NAME
+RUN : "${LND_ORG_NAME:?LND_ORG_NAME Build argument needs to be set.}"
+
+RUN git clone https://github.com/${LND_ORG_NAME}/lnd . \
 &&  git checkout ${COMMIT_SHA} \
 &&  make \
-&&  make install
+&&  make install tags="signrpc walletrpc chainrpc invoicesrpc"
 
 # Start a new, final image to reduce size.
 FROM alpine as final

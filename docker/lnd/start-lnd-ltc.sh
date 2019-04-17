@@ -11,7 +11,6 @@ PARAMS=$(echo \
     "--configfile=$CONFIG_FILE" \
     "--litecoin.$NETWORK" \
     "--debuglevel=$DEBUG" \
-    "--extpreimage.rpchost=$EXTPREIMAGE_HOST" \
     "--$NODE.rpcuser=$RPC_USER" \
     "--$NODE.rpcpass=$RPC_PASS" \
     "--$NODE.rpchost=$RPC_HOST" \

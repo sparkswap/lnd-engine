@@ -17,7 +17,7 @@ describe('get-status', () => {
 
     beforeEach(() => {
       getInfoResponse = {
-        chains: ['testnet'],
+        chains: [{ chain: 'bitcoin', network: 'testnet' }],
         syncedToChain: true
       }
       getInfoStub = sinon.stub().resolves(getInfoResponse)
@@ -29,7 +29,7 @@ describe('get-status', () => {
         logger: {
           error: sinon.stub()
         },
-        chainName: 'testnet'
+        chainName: 'bitcoin'
       }
 
       reverts.push(getStatus.__set__('getInfo', getInfoStub))
@@ -99,12 +99,19 @@ describe('get-status', () => {
       })
 
       it('returns UNLOCKED if getInfo returns more than one chain', async () => {
-        getInfoStub.resolves({ chains: ['testnet', 'mainnet'] })
+        getInfoStub.resolves({
+          chains: [
+            { chain: 'bitcoin', network: 'testnet' },
+            { chain: 'litecoin', network: 'mainnet' }
+          ]
+        })
         expect(await getStatus.call(engine)).to.be.eql(statuses.UNLOCKED)
       })
 
       it('returns UNLOCKED if chain names do not match', async () => {
-        getInfoStub.resolves({ chains: ['badnet'] })
+        getInfoStub.resolves({
+          chains: [{ chain: 'badnet', network: 'testnet' }]
+        })
         expect(await getStatus.call(engine)).to.be.eql(statuses.UNLOCKED)
       })
     })
@@ -112,7 +119,7 @@ describe('get-status', () => {
     context('engine is not synced', () => {
       it('returns NOT_SYNCED if getInfo returns syncedToChain as false', async () => {
         getInfoStub.resolves({
-          chains: ['testnet'],
+          chains: [{ chain: 'bitcoin', network: 'testnet' }],
           syncedToChain: false
         })
         expect(await getStatus.call(engine)).to.be.eql(statuses.NOT_SYNCED)
