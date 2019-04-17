@@ -172,8 +172,7 @@ async function getChainTransactions () {
     // will be 0. We calculate the fee based on information from the closing transaction
     // but this is only available if the transaction has hit the blockchain
     if (type === TRANSACTION_TYPES.CHANNEL_CLOSE && !isPending) {
-      // TODO: We should only re-assign `fees` if we are the initiator of the channel
-      // because the initiator balance is used for fees
+      // TODO: Only re-assign `fees` if we are the initiator of the channel.
       fees = Big(closedChannelFees.get(txHash))
     }
 
