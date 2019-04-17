@@ -176,7 +176,7 @@ describe('getChainTransactions', () => {
       getChainTransactions.__set__('listClosedChannels', listClosedChannelsStub)
       getChainTransactions.__set__('listPendingChannels', listPendingChannelsStub)
 
-      getTransactionsStub = sinon.stub().resolves(transactions)
+      getTransactionsStub = sinon.stub().resolves({ transactions })
 
       getChainTransactions.__set__('getTransactions', getTransactionsStub)
     })
@@ -195,7 +195,7 @@ describe('getChainTransactions', () => {
       const TYPES = getChainTransactions.__get__('TRANSACTION_TYPES')
 
       it('returns a deposit transaction', async () => {
-        getTransactionsStub.resolves([transactions[0]])
+        getTransactionsStub.resolves({ transactions: [transactions[0]] })
         const res = await getChainTransactions.call(engine)
         expect(res[0].type).to.be.eql(TYPES.DEPOSIT)
         expect(res[0].pending).to.be.false()
@@ -203,7 +203,7 @@ describe('getChainTransactions', () => {
       })
 
       it('returns a channel open transaction', async () => {
-        getTransactionsStub.resolves([transactions[1]])
+        getTransactionsStub.resolves({ transactions: [transactions[1]] })
         const res = await getChainTransactions.call(engine)
         expect(res[0].type).to.be.eql(TYPES.CHANNEL_OPEN)
         expect(res[0].pending).to.be.false()
@@ -211,7 +211,7 @@ describe('getChainTransactions', () => {
       })
 
       it('returns a pending channel open transaction', async () => {
-        getTransactionsStub.resolves([transactions[2]])
+        getTransactionsStub.resolves({ transactions: [transactions[2]] })
         const res = await getChainTransactions.call(engine)
         expect(res[0].type).to.be.eql(TYPES.CHANNEL_OPEN)
         expect(res[0].pending).to.be.true()
@@ -219,7 +219,7 @@ describe('getChainTransactions', () => {
       })
 
       it('returns a channel close transaction', async () => {
-        getTransactionsStub.resolves([transactions[3]])
+        getTransactionsStub.resolves({ transactions: [transactions[3]] })
         const res = await getChainTransactions.call(engine)
         const expectedFee = Big(closedChannels.channels[0].capacity).minus(closedChannels.channels[0].settledBalance).toString()
 
@@ -229,7 +229,7 @@ describe('getChainTransactions', () => {
       })
 
       it('returns a pending channel close transaction', async () => {
-        getTransactionsStub.resolves([transactions[4]])
+        getTransactionsStub.resolves({ transactions: [transactions[4]] })
         const res = await getChainTransactions.call(engine)
         expect(res[0].type).to.be.eql(TYPES.CHANNEL_CLOSE)
         expect(res[0].pending).to.be.true()
@@ -237,7 +237,7 @@ describe('getChainTransactions', () => {
       })
 
       it('returns a pending force close transactions', async () => {
-        getTransactionsStub.resolves([transactions[5]])
+        getTransactionsStub.resolves({ transactions: [transactions[5]] })
         const res = await getChainTransactions.call(engine)
         expect(res[0].type).to.be.eql(TYPES.CHANNEL_CLOSE)
         expect(res[0].pending).to.be.true()
@@ -245,7 +245,7 @@ describe('getChainTransactions', () => {
       })
 
       it('returns a withdraw transaction', async () => {
-        getTransactionsStub.resolves([transactions[6]])
+        getTransactionsStub.resolves({ transactions: [transactions[6]] })
         const res = await getChainTransactions.call(engine)
         expect(res[0].type).to.be.eql(TYPES.WITHDRAW)
         expect(res[0].pending).to.be.false()
@@ -253,7 +253,7 @@ describe('getChainTransactions', () => {
       })
 
       it('returns a pending waiting close transaction', async () => {
-        getTransactionsStub.resolves([transactions[7]])
+        getTransactionsStub.resolves({ transactions: [transactions[7]] })
         const res = await getChainTransactions.call(engine)
         expect(res[0].type).to.be.eql(TYPES.CHANNEL_CLOSE)
         expect(res[0].pending).to.be.true()
@@ -261,7 +261,7 @@ describe('getChainTransactions', () => {
       })
 
       it('returns an unknown transaction', async () => {
-        getTransactionsStub.resolves([transactions[8]])
+        getTransactionsStub.resolves({ transactions: [transactions[8]] })
         const res = await getChainTransactions.call(engine)
         expect(res[0].type).to.be.eql(TYPES.UNKNOWN)
         expect(res[0].pending).to.be.false()

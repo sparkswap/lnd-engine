@@ -12,8 +12,7 @@ function getTransactions ({ client }) {
   return new Promise((resolve, reject) => {
     client.getTransactions({}, { deadline: deadline() }, (err, res) => {
       if (err) return reject(err)
-      const { transactions = [] } = res
-      return resolve(transactions)
+      return resolve(res)
     })
   })
 }

@@ -98,7 +98,7 @@ function determineTransactionType (amount, isChannel, isClosedChannel) {
  * @returns {Array<Object>} res
  */
 async function getChainTransactions () {
-  const transactions = await getTransactions({ client: this.client })
+  const { transactions } = await getTransactions({ client: this.client })
 
   if (!Array.isArray(transactions) || !transactions.length) {
     this.logger.debug('No transactions exist on the engine')
