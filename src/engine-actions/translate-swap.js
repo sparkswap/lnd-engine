@@ -7,6 +7,8 @@ const {
   BLOCK_BUFFER
 } = CLTV_DELTA
 
+const sleep = (waitTimeInMs) => new Promise(resolve => setTimeout(resolve, waitTimeInMs));
+
 /**
  * Number of route options to be returned when calculating routes for translating
  * a swap.
@@ -168,14 +170,37 @@ async function translateSwap (takerAddress, swapHash, amount, extendedTimeLockDe
   this.logger.debug('Calling queryRoutes on lnd w/ params', { params: queryRoutesReq })
 
   try {
-    var [ { routes = [] }, { blockHeight = '' } ] = await Promise.all([
-      queryRoutes(queryRoutesReq, { client: this.client }),
-      getInfo({ client: this.client })
-    ])
+    var { blockHeight = '' } = await getInfo({ client: this.client })
+    var queryRouteResponse = await queryRoutes(queryRoutesReq, { client: this.client })
   } catch (e) {
-    this.logger.error(e)
-    return { permanentError: e.message }
+    // we run into a situation where we cannot find a route because a channel has not been broadcasted
+    // to the network. What we will do is wait for the next block and return
+    if (e.message.includes('target not found')) {
+      const lastHeight = blockHeight
+      const tries = 10
+
+      for (let i = 0; i < tries; i++) {
+        await sleep(10000)
+        var { blockHeight: newBlockHeight } = await getInfo({ client: this.client }) //
+
+        if (lastHeight <= newBlockHeight) {
+          try {
+            queryRouteResponse = await queryRoutes(queryRoutesReq, { client: this.client })
+          } catch (e) {
+            this.logger.error('retrying query routes', { tries })
+          }
+        }
+      }
+
+      this.logger.error('Received error on queryRoutes', { error: e.message, stack: e.stack })
+      return { permanentError: e.message }
+    } else {
+      this.logger.error('Received error on queryRoutes', { error: e.message, stack: e.stack })
+      return { permanentError: e.message }
+    }
   }
+
+  const { routes = [] } = queryRouteResponse
 
   if (routes.length === 0) {
     const err = `No route to ${takerAddress}`
