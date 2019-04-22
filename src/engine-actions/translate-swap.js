@@ -186,8 +186,9 @@ async function translateSwap (takerAddress, swapHash, amount, extendedTimeLockDe
         if (lastHeight <= newBlockHeight) {
           try {
             queryRouteResponse = await queryRoutes(queryRoutesReq, { client: this.client })
+            blockHeight = newBlockHeight
           } catch (e) {
-            this.logger.error('retrying query routes', { tries })
+            this.logger.error('retrying query routes', { attempt: i })
           }
         }
       }
