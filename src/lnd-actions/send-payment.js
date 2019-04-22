@@ -6,7 +6,7 @@ const { deadline } = require('../grpc-utils')
  * @type {number}
  * @default
  */
-const SEND_PAYMENT_DEADLINE = 30
+const SEND_PAYMENT_DEADLINE = 120
 
 /**
  * Sends a payment to a specified invoice

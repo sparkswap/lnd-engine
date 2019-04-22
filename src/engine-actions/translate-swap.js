@@ -178,23 +178,27 @@ async function translateSwap (takerAddress, swapHash, amount, extendedTimeLockDe
     if (e.message.includes('target not found')) {
       const lastHeight = blockHeight
       const tries = 10
+      let attempt = 0
 
-      for (let i = 0; i < tries; i++) {
+      for (attempt; attempt < tries; attempt++) {
         await sleep(10000)
-        var { blockHeight: newBlockHeight } = await getInfo({ client: this.client }) //
+        const { blockHeight: newBlockHeight } = await getInfo({ client: this.client }) //
 
         if (lastHeight <= newBlockHeight) {
           try {
             queryRouteResponse = await queryRoutes(queryRoutesReq, { client: this.client })
             blockHeight = newBlockHeight
           } catch (e) {
-            this.logger.error('retrying query routes', { attempt: i })
+            this.logger.error('retrying query routes', { attempt })
           }
         }
       }
 
-      this.logger.error('Received error on queryRoutes', { error: e.message, stack: e.stack })
-      return { permanentError: e.message }
+      // If we are at max attempts them we can just fail
+      if (attempt >= 10) {
+        this.logger.error('Received error on queryRoutes', { error: e.message, stack: e.stack })
+        return { permanentError: e.message }
+      }
     } else {
       this.logger.error('Received error on queryRoutes', { error: e.message, stack: e.stack })
       return { permanentError: e.message }
