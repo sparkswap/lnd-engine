@@ -9,7 +9,7 @@ const {
  * @param {string} newPass - new wallet password
  * @returns {Promise}
  */
-async function changeWalletPassword (currentPass, newPass) {
+function changeWalletPassword (currentPass, newPass) {
   const currentPassword = Buffer.from(currentPass, 'utf8')
   const newPassword = Buffer.from(newPass, 'utf8')
 
