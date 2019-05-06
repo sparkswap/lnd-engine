@@ -3,7 +3,7 @@ const {
 } = require('../lnd-actions')
 
 /**
- * Unlocks an engine's wallet
+ * Changes an engine's wallet password
  *
  * @param {string} currentPass - current wallet password
  * @param {string} newPass - new wallet password
