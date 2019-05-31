@@ -47,7 +47,6 @@ jobs:
           command: |
             echo "$DOCKERHUB_PASS" | docker login registry.gitlab.com -u "$DOCKERHUB_USERNAME" --password-stdin
             IMAGE_TAG=${CIRCLE_TAG/v/''}
-            IMAGE_TAG="test"
             docker tag $BTC_IMAGE_NAME:latest $BTC_IMAGE_NAME:$IMAGE_TAG
             docker push $BTC_IMAGE_NAME:test
             docker push $BTC_IMAGE_NAME:$IMAGE_TAG
@@ -65,7 +64,6 @@ jobs:
           command: |
             echo "$DOCKERHUB_PASS" | docker login registry.gitlab.com -u "$DOCKERHUB_USERNAME" --password-stdin
             IMAGE_TAG=${CIRCLE_TAG/v/''}
-            IMAGE_TAG="test"
             docker tag $LTC_IMAGE_NAME:latest $LTC_IMAGE_NAME:$IMAGE_TAG
             docker push $LTC_IMAGE_NAME:latest
             docker push $LTC_IMAGE_NAME:$IMAGE_TAG
@@ -83,7 +81,6 @@ jobs:
           command: |
             echo "$DOCKERHUB_PASS" | docker login registry.gitlab.com -u "$DOCKERHUB_USERNAME" --password-stdin
             IMAGE_TAG=${CIRCLE_TAG/v/''}
-            IMAGE_TAG="test"
             docker tag $BTC_ENGINE_IMAGE_NAME:latest $BTC_ENGINE_IMAGE_NAME:$IMAGE_TAG
             docker push $BTC_ENGINE_IMAGE_NAME:latest
             docker push $BTC_ENGINE_IMAGE_NAME:$IMAGE_TAG
@@ -101,7 +98,6 @@ jobs:
           command: |
             echo "$DOCKERHUB_PASS" | docker login registry.gitlab.com -u "$DOCKERHUB_USERNAME" --password-stdin
             IMAGE_TAG=${CIRCLE_TAG/v/''}
-            IMAGE_TAG="test"
             docker tag $LTC_ENGINE_IMAGE_NAME:latest $LTC_ENGINE_IMAGE_NAME:$IMAGE_TAG
             docker push $LTC_ENGINE_IMAGE_NAME:latest
             docker push $LTC_ENGINE_IMAGE_NAME:$IMAGE_TAG
@@ -115,36 +111,36 @@ workflows:
       - publish-bitcoind:
           requires:
             - build
-          # filters:
-          #   tags:
-          #     # TODO: only use tags without RCs
-          #     only: /^v.*/
-          #   branches:
-          #     ignore: /.*/
+          filters:
+            tags:
+              # TODO: only use tags without RCs
+              only: /^v.*/
+            branches:
+              ignore: /.*/
       - publish-litecoind:
           requires:
             - build
-          # filters:
-          #   tags:
-          #     # TODO: only use tags without RCs
-          #     only: /^v.*/
-          #   branches:
-          #     ignore: /.*/
+          filters:
+            tags:
+              # TODO: only use tags without RCs
+              only: /^v.*/
+            branches:
+              ignore: /.*/
       - publish-lnd-btc:
           requires:
             - build
-          # filters:
-          #   tags:
-          #     # TODO: only use tags without RCs
-          #     only: /^v.*/
-          #   branches:
-          #     ignore: /.*/
+          filters:
+            tags:
+              # TODO: only use tags without RCs
+              only: /^v.*/
+            branches:
+              ignore: /.*/
       - publish-lnd-ltc:
           requires:
             - build
-          # filters:
-          #   tags:
-          #     # TODO: only use tags without RCs
-          #     only: /^v.*/
-          #   branches:
-          #     ignore: /.*/
+          filters:
+            tags:
+              # TODO: only use tags without RCs
+              only: /^v.*/
+            branches:
+              ignore: /.*/
