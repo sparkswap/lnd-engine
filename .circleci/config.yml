@@ -4,10 +4,10 @@ version: 2.1
 executors:
   docker-publisher:
     environment:
-      - BTC_IMAGE_NAME: sparkswap/bitcoind
-      - LTC_IMAGE_NAME: sparkswap/litecoind
-      - BTC_ENGINE_IMAGE_NAME: sparkswap/lnd_btc
-      - LTC_ENGINE_IMAGE_NAME: sparkswap/lnd_ltc
+      - BTC_IMAGE_NAME: registry.gitlab.com/sparkswap/bitcoind
+      - LTC_IMAGE_NAME: registry.gitlab.com/sparkswap/litecoind
+      - BTC_ENGINE_IMAGE_NAME: registry.gitlab.com/sparkswap/lnd_btc
+      - LTC_ENGINE_IMAGE_NAME: registry.gitlab.com/sparkswap/lnd_ltc
     # This is the docker image that we use to help us build all of the docker images
     # on circle ci
     docker:
@@ -115,36 +115,36 @@ workflows:
       - publish-bitcoind:
           requires:
             - build
-          filters:
-            tags:
-              # TODO: only use tags without RCs
-              only: /^v.*/
-            branches:
-              ignore: /.*/
+          # filters:
+          #   tags:
+          #     # TODO: only use tags without RCs
+          #     only: /^v.*/
+          #   branches:
+          #     ignore: /.*/
       - publish-litecoind:
           requires:
             - build
-          filters:
-            tags:
-              # TODO: only use tags without RCs
-              only: /^v.*/
-            branches:
-              ignore: /.*/
+          # filters:
+          #   tags:
+          #     # TODO: only use tags without RCs
+          #     only: /^v.*/
+          #   branches:
+          #     ignore: /.*/
       - publish-lnd-btc:
           requires:
             - build
-          filters:
-            tags:
-              # TODO: only use tags without RCs
-              only: /^v.*/
-            branches:
-              ignore: /.*/
+          # filters:
+          #   tags:
+          #     # TODO: only use tags without RCs
+          #     only: /^v.*/
+          #   branches:
+          #     ignore: /.*/
       - publish-lnd-ltc:
           requires:
             - build
-          filters:
-            tags:
-              # TODO: only use tags without RCs
-              only: /^v.*/
-            branches:
-              ignore: /.*/
+          # filters:
+          #   tags:
+          #     # TODO: only use tags without RCs
+          #     only: /^v.*/
+          #   branches:
+          #     ignore: /.*/
