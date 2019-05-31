@@ -46,8 +46,7 @@ jobs:
           name: Publish Docker Image to Docker Hub
           command: |
             echo "$DOCKERHUB_PASS" | docker login registry.gitlab.com -u "$DOCKERHUB_USERNAME" --password-stdin
-            IMAGE_TAG=${CIRCLE_TAG/v/''}
-            echo $IMAGE_TAG
+            IMAGE_TAG=${CIRCLE_TAG/v/'':-test}
             docker tag $BTC_IMAGE_NAME:latest $BTC_IMAGE_NAME:$IMAGE_TAG
             docker push $BTC_IMAGE_NAME:test
             docker push $BTC_IMAGE_NAME:$IMAGE_TAG
@@ -64,8 +63,7 @@ jobs:
           name: Publish Docker Image to Docker Hub
           command: |
             echo "$DOCKERHUB_PASS" | docker login registry.gitlab.com -u "$DOCKERHUB_USERNAME" --password-stdin
-            IMAGE_TAG=${CIRCLE_TAG/v/''}
-            echo $IMAGE_TAG
+            IMAGE_TAG=${CIRCLE_TAG/v/'':-test}
             docker tag $LTC_IMAGE_NAME:latest $LTC_IMAGE_NAME:$IMAGE_TAG
             docker push $LTC_IMAGE_NAME:latest
             docker push $LTC_IMAGE_NAME:$IMAGE_TAG
@@ -82,8 +80,7 @@ jobs:
           name: Publish Docker Image to Docker Hub
           command: |
             echo "$DOCKERHUB_PASS" | docker login registry.gitlab.com -u "$DOCKERHUB_USERNAME" --password-stdin
-            IMAGE_TAG=${CIRCLE_TAG/v/''}
-            echo $IMAGE_TAG
+            IMAGE_TAG=${CIRCLE_TAG/v/'':-test}
             docker tag $BTC_ENGINE_IMAGE_NAME:latest $BTC_ENGINE_IMAGE_NAME:$IMAGE_TAG
             docker push $BTC_ENGINE_IMAGE_NAME:latest
             docker push $BTC_ENGINE_IMAGE_NAME:$IMAGE_TAG
@@ -100,8 +97,7 @@ jobs:
           name: Publish Docker Image to Docker Hub
           command: |
             echo "$DOCKERHUB_PASS" | docker login registry.gitlab.com -u "$DOCKERHUB_USERNAME" --password-stdin
-            IMAGE_TAG=${CIRCLE_TAG/v/''}
-            echo $IMAGE_TAG
+            IMAGE_TAG=${CIRCLE_TAG/v/'':-test}
             docker tag $LTC_ENGINE_IMAGE_NAME:latest $LTC_ENGINE_IMAGE_NAME:$IMAGE_TAG
             docker push $LTC_ENGINE_IMAGE_NAME:latest
             docker push $LTC_ENGINE_IMAGE_NAME:$IMAGE_TAG
