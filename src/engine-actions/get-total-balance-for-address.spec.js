@@ -36,8 +36,10 @@ describe('getTotalBalanceForAddress', () => {
   })
 
   it('gets all channels for the given address', async () => {
-    await getTotalBalanceForAddress(address)
+    const ctx = { fake: 'context' }
+    await getTotalBalanceForAddress.call(ctx, address)
     expect(getChannelsForRemoteAddressStub).to.have.been.called()
+    expect(getChannelsForRemoteAddressStub).to.have.been.calledOn(ctx)
     expect(getChannelsForRemoteAddressStub).to.have.been.calledWith(address)
   })
 
