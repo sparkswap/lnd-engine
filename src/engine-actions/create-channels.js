@@ -170,11 +170,11 @@ async function createChannels (paymentChannelNetworkAddress, fundingAmount, roun
   const { publicKey, host } = networkAddressFormatter.parse(paymentChannelNetworkAddress)
   const loggablePublicKey = loggablePubKey(publicKey)
 
-  this.logger.debug(`Attempting to create ${channelsToOpen} channels with ${loggablePublicKey}`)
+  logger.debug(`Attempting to create ${channelsToOpen} channels with ${loggablePublicKey}`)
 
-  await connectPeer(publicKey, host, { client: this.client, logger: this.logger })
+  await connectPeer(publicKey, host, { client, logger })
 
-  this.logger.debug(`Successfully connected to peer: ${loggablePublicKey}`)
+  logger.debug(`Successfully connected to peer: ${loggablePublicKey}`)
 
   for (var i = 0; i < channelsToOpen; i++) {
     // Open max size channels until the last channel
@@ -191,7 +191,7 @@ async function createChannels (paymentChannelNetworkAddress, fundingAmount, roun
     await openChannel(publicKey, channelAmount, { client })
   }
 
-  this.logger.debug(`Successfully opened ${channelsToOpen} channels with: ${loggablePublicKey}`)
+  logger.debug(`Successfully opened ${channelsToOpen} channels with: ${loggablePublicKey}`)
 }
 
 module.exports = createChannels
