@@ -30,6 +30,7 @@ const PUBLIC_CONFIG = [
   'secondsPerBlock',
   'feeEstimate',
   'maxChannelBalance',
+  'minChannelBalance',
   'maxPaymentSize'
 ]
 

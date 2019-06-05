@@ -21,6 +21,7 @@ describe('lnd-engine index', () => {
         secondsPerBlock: 600,
         feeEstimate: '20000',
         maxChannelBalance: '16777215',
+        minChannelBalance: '250000',
         maxPaymentSize: '4294967'
       }
     ]
@@ -59,6 +60,7 @@ describe('lnd-engine index', () => {
     it('assigns the secondsPerBlock', () => expect(engine.secondsPerBlock).to.be.eql(currencies[0].secondsPerBlock))
     it('assigns the feeEstimate', () => expect(engine.feeEstimate).to.be.eql(currencies[0].feeEstimate))
     it('assigns the maxChannelBalance', () => expect(engine.maxChannelBalance).to.be.eql(currencies[0].maxChannelBalance))
+    it('assigns the minChannelBalance', () => expect(engine.minChannelBalance).to.be.eql(currencies[0].minChannelBalance))
     it('assigns the maxPaymentSize', () => expect(engine.maxPaymentSize).to.be.eql(currencies[0].maxPaymentSize))
     it('sets a host', () => expect(engine.host).to.eql(host))
     it('sets a logger', () => expect(engine.logger).to.eql(logger))
@@ -107,6 +109,12 @@ describe('lnd-engine index', () => {
       delete currencies[0].maxChannelBalance
       // eslint-disable-next-line
       expect(() => { new LndEngine(host, symbol) }).to.throw(`Currency config for ${symbol} is missing for 'maxChannelBalance'`)
+    })
+
+    it('throws if minChannelBalance is missing from the configuration', () => {
+      delete currencies[0].minChannelBalance
+      // eslint-disable-next-line
+      expect(() => { new LndEngine(host, symbol) }).to.throw(`Currency config for ${symbol} is missing for 'minChannelBalance'`)
     })
 
     it('throws if maxPaymentSize is missing from the configuration', () => {
