@@ -41,6 +41,7 @@ describe('createChannel', () => {
       client: clientStub,
       feeEstimate: '1000',
       maxChannelBalance: '20000000',
+      minChannelBalance: '10000',
       quantumsPerCommon: '100000000',
       logger: loggerStub,
       symbol: 'LTC'
@@ -83,6 +84,11 @@ describe('createChannel', () => {
       return expect(createChannel.call(engine, paymentChannelNetworkAddress, fundingAmount)).to.eventually.be.rejectedWith('exceeds max channel balance')
     })
 
+    it('errors if the funding amount does not meet the min channel balance', () => {
+      fundingAmount = '9000'
+      return expect(createChannel.call(engine, paymentChannelNetworkAddress, fundingAmount)).to.eventually.be.rejectedWith('does not meet min channel balance')
+    })
+
     it('errors if the feeEstimate is not defined', () => {
       engine.feeEstimate = undefined
       return expect(
@@ -95,6 +101,13 @@ describe('createChannel', () => {
       return expect(
         createChannel.call(engine, paymentChannelNetworkAddress, fundingAmount)
       ).to.eventually.be.rejectedWith(`Currency configuration for LTC has not been setup with a max channel balance`)
+    })
+
+    it('errors if the minChannelBalance is not defined', () => {
+      engine.minChannelBalance = undefined
+      return expect(
+        createChannel.call(engine, paymentChannelNetworkAddress, fundingAmount)
+      ).to.eventually.be.rejectedWith(`Currency configuration for LTC has not been setup with a min channel balance`)
     })
   })
 
