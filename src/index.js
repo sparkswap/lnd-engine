@@ -1,5 +1,8 @@
 const { currencies } = require('./config')
-const { ENGINE_STATUSES } = require('./constants')
+const {
+  ENGINE_STATUSES,
+  CHANNEL_ROUNDING
+} = require('./constants')
 const {
   validationDependentActions,
   validationIndependentActions
@@ -140,5 +143,6 @@ class LndEngine {
 }
 
 LndEngine.STATUSES = ENGINE_STATUSES
+LndEngine.CHANNEL_ROUNDING = CHANNEL_ROUNDING
 
 module.exports = LndEngine

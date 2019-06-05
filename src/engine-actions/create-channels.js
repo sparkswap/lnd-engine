@@ -8,18 +8,7 @@ const {
   loggablePubKey
 } = require('../utils')
 const getUncommittedBalance = require('./get-uncommitted-balance')
-
-/**
- * Rounding behavior when encountering a channel creation that would
- * be uneconomic.
- * @constant
- * @type {Object}
- */
-const ROUND_BEHAVIORS = Object.freeze({
-  ERROR: 0,
-  ROUND_DOWN: 1,
-  ROUND_UP: 2
-})
+const { CHANNEL_ROUNDING } = require('../constants')
 
 /**
  * Determine the amount to fund channels with by taking into account
@@ -49,23 +38,23 @@ function getAmountForChannels (engine, fundingAmount, roundBehavior) {
     const lowFundingAmount = amount.minus(lastChannelBalance)
     const highFundingAmount = lowFundingAmount.plus(minChannelBalance)
 
-    if (roundBehavior === ROUND_BEHAVIORS.ERROR) {
+    if (roundBehavior === CHANNEL_ROUNDING.ERROR) {
       throw new Error(`Funding amount would result in an uneconomic channel balance. ` +
         `Try either ${lowFundingAmount.div(quantumsPerCommon).toString()} ${symbol} ` +
         `or ${highFundingAmount.div(quantumsPerCommon).toString()} ${symbol}.`)
     }
 
-    if (roundBehavior === ROUND_BEHAVIORS.ROUND_DOWN) {
+    if (roundBehavior === CHANNEL_ROUNDING.DOWN) {
       logger.debug('Rounding down to avoid uneconomic channel balance.', { fundingAmount, lowFundingAmount: lowFundingAmount.toString() })
       return lowFundingAmount
     }
 
-    if (roundBehavior === ROUND_BEHAVIORS.ROUND_UP) {
+    if (roundBehavior === CHANNEL_ROUNDING.UP) {
       logger.debug('Rounding up to avoid uneconomic channel balance.', { fundingAmount, highFundingAmount: highFundingAmount.toString() })
       return highFundingAmount
     }
 
-    throw new Error(`Invalid round behavior: ${roundBehavior}. Must be 0, 1, or 2.`)
+    throw new Error(`Invalid round behavior: ${roundBehavior}. Must be one of ${Object.values(CHANNEL_ROUNDING)}.`)
   }
 
   return amount
@@ -94,7 +83,7 @@ async function assertBalance (engine, fundingAmount) {
 
   // We add fees onto the funding amount and make sure the user has enough funds for
   // the transaction, if they do not, error out so we avoid opening some, but not all channels.
-  const balance = await getUncommittedBalance.call(this)
+  const balance = await getUncommittedBalance.call(engine)
   const balanceCommon = Big(balance).div(quantumsPerCommon).toString()
   const totalFeesEstimate = Big(feeEstimate).times(channelsToOpen)
   const fundingAmountWithFees = amount.plus(totalFeesEstimate)
@@ -128,7 +117,7 @@ async function assertBalance (engine, fundingAmount) {
  * @param {number} roundBehavior - Behavior when encountering a channel that is too small
  * @returns {Promise<void>} resolves void on success
  */
-async function createChannels (paymentChannelNetworkAddress, fundingAmount, roundBehavior = ROUND_BEHAVIORS.ERROR) {
+async function createChannels (paymentChannelNetworkAddress, fundingAmount, roundBehavior = CHANNEL_ROUNDING.DOWN) {
   const {
     feeEstimate,
     minChannelBalance,
@@ -138,8 +127,8 @@ async function createChannels (paymentChannelNetworkAddress, fundingAmount, roun
     client
   } = this
 
-  if (!Object.values(ROUND_BEHAVIORS).includes(roundBehavior)) {
-    throw new Error(`Invalid round behavior: ${roundBehavior}. Must be 0, 1, or 2.`)
+  if (!Object.values(CHANNEL_ROUNDING).includes(roundBehavior)) {
+    throw new Error(`Invalid round behavior: ${roundBehavior}. Must be one of ${Object.values(CHANNEL_ROUNDING)}.`)
   }
 
   if (!feeEstimate) {
