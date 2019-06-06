@@ -1,5 +1,3 @@
-const path = require('path')
-
 const { currencies } = require('./config')
 const { ENGINE_STATUSES } = require('./constants')
 const {
@@ -16,23 +14,15 @@ const {
 
 /**
  * @constant
- * @type {string}
+ * @type {String}
  * @default
  */
-const LND_PROTO_FILE_PATH = path.resolve('../proto/lnd-rpc.latest.proto')
-
-/**
- * Only used in experimental mode (newest LND changes)
- * @constant
- * @type {string}
- * @default
- */
-const SPARKSWAP_LND_PROTO_FILE_PATH = path.resolve('../proto/lnd-rpc.proto')
+const LND_PROTO_FILE_PATH = require.resolve('../proto/lnd-rpc.proto')
 
 /**
  * Config properties that should be exposed directly on the engine
  * @constant
- * @type {Array<string>}
+ * @type {Array<String>}
  */
 const PUBLIC_CONFIG = [
   'chainName',
@@ -57,9 +47,8 @@ class LndEngine {
    * @param {Logger} [options.logger=console] - logger used by the engine
    * @param {string} options.tlsCertPath - file path to the TLS certificate for LND
    * @param {string} options.macaroonPath - file path to the macaroon file for LND
-   * @param {string} options.experimental - experimental features flag
    */
-  constructor (host, symbol, { logger = console, tlsCertPath, macaroonPath, experimental = false } = {}) {
+  constructor (host, symbol, { logger = console, tlsCertPath, macaroonPath } = {}) {
     if (!host) {
       throw new Error('Host is required for lnd-engine initialization')
     }
@@ -88,14 +77,9 @@ class LndEngine {
     this.logger = logger
     this.tlsCertPath = tlsCertPath
     this.macaroonPath = macaroonPath
+    this.protoPath = LND_PROTO_FILE_PATH
     this.client = generateLightningClient(this)
     this.walletUnlocker = generateWalletUnlockerClient(this)
-
-    // If lnd-engine is configured in experimental mode, then we assume that we
-    // are using the most up-to-date configuration
-    //
-    // TODO: Remove experimental once sparkswap fork is removed
-    this.protoPath = experimental ? SPARKSWAP_LND_PROTO_FILE_PATH : LND_PROTO_FILE_PATH
 
     // We wrap all validation dependent actions in a callback so we can prevent
     // their use if the current engine is in a state that prevents a call from
