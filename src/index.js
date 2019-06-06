@@ -57,6 +57,7 @@ class LndEngine {
       throw new Error('Host is required for lnd-engine initialization')
     }
 
+    this.CHANNEL_ROUNDING = CHANNEL_ROUNDING
     this.host = host
     this.symbol = symbol
     this.currencyConfig = currencies.find(({ symbol }) => symbol === this.symbol)
