@@ -1,5 +1,8 @@
 const { currencies } = require('./config')
-const { ENGINE_STATUSES } = require('./constants')
+const {
+  ENGINE_STATUSES,
+  CHANNEL_ROUNDING
+} = require('./constants')
 const {
   validationDependentActions,
   validationIndependentActions
@@ -54,6 +57,7 @@ class LndEngine {
       throw new Error('Host is required for lnd-engine initialization')
     }
 
+    this.CHANNEL_ROUNDING = CHANNEL_ROUNDING
     this.host = host
     this.symbol = symbol
     this.currencyConfig = currencies.find(({ symbol }) => symbol === this.symbol)
@@ -140,5 +144,6 @@ class LndEngine {
 }
 
 LndEngine.STATUSES = ENGINE_STATUSES
+LndEngine.CHANNEL_ROUNDING = CHANNEL_ROUNDING
 
 module.exports = LndEngine

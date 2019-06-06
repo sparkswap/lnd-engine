@@ -2,6 +2,7 @@ const path = require('path')
 const { expect, rewire, sinon } = require('test/test-helper')
 
 const LndEngine = rewire(path.resolve('src', 'index'))
+const { CHANNEL_ROUNDING } = require('./constants')
 
 describe('lnd-engine index', () => {
   let clientStub
@@ -67,6 +68,10 @@ describe('lnd-engine index', () => {
     it('sets a tlsCertPath', () => expect(engine.tlsCertPath).to.eql(customTlsCertPath))
     it('sets a macaroonPath', () => expect(engine.macaroonPath).to.eql(customMacaroonPath))
     it('sets validated to false by default', () => expect(engine.validated).to.be.eql(false))
+    it('assigns the channel rounding', () => {
+      expect(engine.CHANNEL_ROUNDING).to.be.eql(LndEngine.CHANNEL_ROUNDING)
+      expect(engine.CHANNEL_ROUNDING).to.be.eql(CHANNEL_ROUNDING)
+    })
 
     it('generates an lnd lightning client', () => {
       expect(clientStub).to.have.been.calledWith(engine)
