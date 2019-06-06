@@ -160,6 +160,12 @@ describe('createChannels', () => {
       getAmountForChannels = createChannels.__get__('getAmountForChannels')
     })
 
+    it('throws if the amount is zero', () => {
+      return expect(() => {
+        getAmountForChannels(engine, 0)
+      }).to.throw('Funding amount of 0 LTC is invalid.')
+    })
+
     it('returns a Big', () => {
       expect(getAmountForChannels(engine, fundingAmount).constructor.name).to.be.eql('Big')
     })

@@ -31,38 +31,54 @@ function getAmountForChannels (engine, fundingAmount, roundBehavior) {
 
   let amount = Big(fundingAmount)
 
+  if (amount.eq(0)) {
+    throw new Error(`Funding amount of 0 ${symbol} is invalid.`)
+  }
+
   // our last channel will be our only channel not at maxChannelBalance, so we need to handle it separately
   const lastChannelBalance = amount.mod(maxChannelBalance)
 
-  if (lastChannelBalance.gt(0) && lastChannelBalance.lt(minChannelBalance)) {
-    logger.debug('Last channel would result in an uneconomic channel balance.', { fundingAmount, lastChannelBalance })
-    const lowFundingAmount = amount.minus(lastChannelBalance)
-    const highFundingAmount = lowFundingAmount.plus(minChannelBalance)
-
-    if (roundBehavior === CHANNEL_ROUNDING.ERROR) {
-      throw new Error(`Funding amount would result in an uneconomic channel balance. ` +
-        `Try either ${lowFundingAmount.div(quantumsPerCommon).toString()} ${symbol} ` +
-        `or ${highFundingAmount.div(quantumsPerCommon).toString()} ${symbol}.`)
-    }
-
-    if (roundBehavior === CHANNEL_ROUNDING.DOWN) {
-      logger.debug('Rounding down to avoid uneconomic channel balance.', { fundingAmount, lowFundingAmount: lowFundingAmount.toString() })
-      if (lowFundingAmount.lte(0)) {
-        throw new Error(`Funding amount ${amount.div(quantumsPerCommon).toString()} ${symbol} ` +
-          `too small for minimum channel balance of ${Big(minChannelBalance).div(quantumsPerCommon)} ${symbol}.`)
-      }
-      return lowFundingAmount
-    }
-
-    if (roundBehavior === CHANNEL_ROUNDING.UP) {
-      logger.debug('Rounding up to avoid uneconomic channel balance.', { fundingAmount, highFundingAmount: highFundingAmount.toString() })
-      return highFundingAmount
-    }
-
-    throw new Error(`Invalid round behavior: ${roundBehavior}. Must be one of ${Object.values(CHANNEL_ROUNDING)}.`)
+  // short-circuit if our last channel does not exist or is of sufficient size
+  if (lastChannelBalance.gte(minChannelBalance) || lastChannelBalance.eq(0)) {
+    return amount
   }
 
-  return amount
+  logger.debug('Last channel would result in an uneconomic channel balance.', {
+    fundingAmount,
+    lastChannelBalance
+  })
+
+  // find the nearest funding amounts that would not trigger the uneconomic channel
+  const lowFundingAmount = amount.minus(lastChannelBalance)
+  const highFundingAmount = lowFundingAmount.plus(minChannelBalance)
+
+  if (roundBehavior === CHANNEL_ROUNDING.ERROR) {
+    throw new Error(`Funding amount would result in an uneconomic channel balance. ` +
+      `Try either ${lowFundingAmount.div(quantumsPerCommon).toString()} ${symbol} ` +
+      `or ${highFundingAmount.div(quantumsPerCommon).toString()} ${symbol}.`)
+  }
+
+  if (roundBehavior === CHANNEL_ROUNDING.DOWN) {
+    logger.debug('Rounding down to avoid uneconomic channel balance.', {
+      fundingAmount,
+      lowFundingAmount: lowFundingAmount.toString()
+    })
+    if (lowFundingAmount.lte(0)) {
+      throw new Error(`Funding amount ${amount.div(quantumsPerCommon).toString()} ${symbol} ` +
+        `too small for minimum channel balance of ${Big(minChannelBalance).div(quantumsPerCommon)} ${symbol}.`)
+    }
+    return lowFundingAmount
+  }
+
+  if (roundBehavior === CHANNEL_ROUNDING.UP) {
+    logger.debug('Rounding up to avoid uneconomic channel balance.', {
+      fundingAmount,
+      highFundingAmount: highFundingAmount.toString()
+    })
+    return highFundingAmount
+  }
+
+  throw new Error(`Invalid round behavior: ${roundBehavior}. Must be one of ${Object.values(CHANNEL_ROUNDING)}.`)
 }
 
 /**
