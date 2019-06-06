@@ -187,7 +187,7 @@ async function createChannels (paymentChannelNetworkAddress, fundingAmount, roun
 
   // We loop over channels and create them synchronously (rather than all at once)
   // to try to avoid any issues with trying to open multiple channels simultaneously.
-  for (var i = 0; i < channelsToOpen; i++) {
+  for (let i = 0; i < channelsToOpen; i++) {
     // Open max size channels until the last channel
     let channelAmount = amount.gt(maxChannelBalance) ? maxChannelBalance : amount.toString()
     amount = amount.minus(channelAmount)
