@@ -90,7 +90,7 @@ function getAmountForChannels (engine, fundingAmount, roundBehavior) {
  * @returns {void}
  * @throws  {Error} If Balance is insufficient to cover amount and fees
  */
-async function assertBalance (engine, fundingAmount) {
+async function assertBalanceIsSufficient (engine, fundingAmount) {
   const {
     maxChannelBalance,
     quantumsPerCommon,
@@ -171,7 +171,7 @@ async function createChannels (paymentChannelNetworkAddress, fundingAmount, roun
   let amount = getAmountForChannels(this, fundingAmount, roundBehavior)
 
   // Check that we have sufficient balance to cover all of our channels
-  await assertBalance(this, amount)
+  await assertBalanceIsSufficient(this, amount)
 
   // round up to find the number of channels to open
   const channelsToOpen = amount.div(maxChannelBalance).round(0, 3)

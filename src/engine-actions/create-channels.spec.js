@@ -62,15 +62,15 @@ describe('createChannels', () => {
   })
 
   describe('creating a channel', () => {
-    let assertBalanceStub
+    let assertBalanceIsSufficientStub
     let getAmountForChannelsStub
 
     beforeEach(() => {
       getAmountForChannelsStub = sinon.stub().returns(Big(fundingAmount))
-      assertBalanceStub = sinon.stub().resolves()
+      assertBalanceIsSufficientStub = sinon.stub().resolves()
 
       resets.push(createChannels.__set__('getAmountForChannels', getAmountForChannelsStub))
-      resets.push(createChannels.__set__('assertBalance', assertBalanceStub))
+      resets.push(createChannels.__set__('assertBalanceIsSufficient', assertBalanceIsSufficientStub))
     })
 
     it('errors if the rounding behavior is invalid', () => {
@@ -115,9 +115,9 @@ describe('createChannels', () => {
     it('ensures sufficient balance', async () => {
       await createChannels.call(engine, paymentChannelNetworkAddress, fundingAmount)
 
-      expect(assertBalanceStub).to.have.been.calledOnce()
-      expect(assertBalanceStub).to.have.been.calledWith(engine)
-      expect(assertBalanceStub.args[0][1].toString()).to.be.eql(fundingAmount)
+      expect(assertBalanceIsSufficientStub).to.have.been.calledOnce()
+      expect(assertBalanceIsSufficientStub).to.have.been.calledWith(engine)
+      expect(assertBalanceIsSufficientStub.args[0][1].toString()).to.be.eql(fundingAmount)
     })
 
     it('parses the paymentChannelNetworkAddress', async () => {
@@ -220,15 +220,15 @@ describe('createChannels', () => {
     })
   })
 
-  describe('assertBalance', () => {
-    let assertBalance
+  describe('assertBalanceIsSufficient', () => {
+    let assertBalanceIsSufficient
 
     beforeEach(() => {
-      assertBalance = createChannels.__get__('assertBalance')
+      assertBalanceIsSufficient = createChannels.__get__('assertBalanceIsSufficient')
     })
 
     it('gets a engines current balance', async () => {
-      await assertBalance(engine, fundingAmount)
+      await assertBalanceIsSufficient(engine, fundingAmount)
       expect(balanceStub).to.have.been.calledOnce()
       expect(balanceStub).to.have.been.calledOn(engine)
     })
@@ -236,7 +236,7 @@ describe('createChannels', () => {
     it('throws if the balance is insufficient', () => {
       balanceStub.resolves('10000000')
 
-      return expect(assertBalance(engine, fundingAmount)).to.eventually.be.rejectedWith(
+      return expect(assertBalanceIsSufficient(engine, fundingAmount)).to.eventually.be.rejectedWith(
         'Requested funding amount exceeds available balance (0.1 LTC). Maximum estimated funding amount: 0.09999 LTC.'
       )
     })
