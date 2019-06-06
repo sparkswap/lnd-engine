@@ -27,8 +27,10 @@ RUN : "${COMMIT_SHA:?COMMIT_SHA Build argument needs to be set.}"
 
 RUN git clone https://github.com/${LND_ORG_NAME}/lnd . \
 &&  git checkout ${COMMIT_SHA} \
-&&  make \
-&&  make install tags="signrpc walletrpc chainrpc invoicesrpc"
+&&  make
+
+RUN if [ ${LND_ORG_NAME} == 'lightningnetwork' ]; then make install tags="signrpc walletrpc chainrpc invoicesrpc"; fi
+RUN if [ ${LND_ORG_NAME} != 'lightningnetwork' ]; then make install; fi
 
 # Start a new, final image to reduce size.
 FROM alpine as final
