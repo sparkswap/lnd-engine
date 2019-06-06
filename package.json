@@ -11,7 +11,6 @@
   },
   "scripts": {
     "build": "bash ./scripts/build.sh",
-    "build-latest": "LATEST=true bash ./scripts/build.sh",
     "pretest": "npm run format",
     "test": "npm run check-for-cycles && npm run check-unused && npm run test-engine",
     "test-engine": "NODE_PATH=. mocha 'src/**/*.spec.js'",
