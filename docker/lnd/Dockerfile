@@ -14,10 +14,7 @@ RUN apk add --no-cache --update alpine-sdk \
     git \
     make
 
-ARG LND_ORG_NAME
-RUN : "${LND_ORG_NAME:?LND_ORG_NAME Build argument needs to be set.}"
-
-WORKDIR $GOPATH/src/github.com/${LND_ORG_NAME}/lnd
+WORKDIR $GOPATH/src/github.com/lightningnetwork/lnd
 
 # We use this cache date to always build LND instead of caching the files. This allows us
 # to continually grab changes from the LND_VERSION without tagging the release.
@@ -25,12 +22,10 @@ WORKDIR $GOPATH/src/github.com/${LND_ORG_NAME}/lnd
 ARG COMMIT_SHA
 RUN : "${COMMIT_SHA:?COMMIT_SHA Build argument needs to be set.}"
 
-RUN git clone https://github.com/${LND_ORG_NAME}/lnd . \
+RUN git clone https://github.com/lightningnetwork/lnd . \
 &&  git checkout ${COMMIT_SHA} \
-&&  make
-
-RUN if [ ${LND_ORG_NAME} == 'lightningnetwork' ]; then make install tags="signrpc walletrpc chainrpc invoicesrpc"; fi
-RUN if [ ${LND_ORG_NAME} != 'lightningnetwork' ]; then make install; fi
+&&  make \
+&&  make install tags="signrpc walletrpc chainrpc invoicesrpc"
 
 # Start a new, final image to reduce size.
 FROM alpine as final

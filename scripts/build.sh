@@ -28,18 +28,12 @@ echo "LND Engine Build starting..."
 echo ""
 echo ""
 
-if [ "$LATEST" == "true" ]; then
-  # Set as the current master commit from June 9th. We peg this to a commit
-  # to have a semi-stable version of lnd (one that we have tested)
-  LND_VERSION='880279b266e982e419044e04e7a7157e0c2b7074'
-  LND_ORG_NAME='lightningnetwork'
-else
-  LND_VERSION='v0.5.4-sparkswap-beta'
-  LND_ORG_NAME='sparkswap'
-fi
+# Set as the current master commit from June 9th. We peg this to a commit
+# to have a semi-stable version of lnd (one that we have tested)
+LND_VERSION='880279b266e982e419044e04e7a7157e0c2b7074'
 
 # Downloads an LND proto file from the sparkswap/lnd fork
-LND_PROTO_URL="https://raw.githubusercontent.com/${LND_ORG_NAME}/lnd/${LND_VERSION}/lnrpc/rpc.proto"
+LND_PROTO_URL="https://raw.githubusercontent.com/lightningnetwork/lnd/${LND_VERSION}/lnrpc/rpc.proto"
 
 rm -rf ./proto
 mkdir -p ./proto
@@ -68,8 +62,15 @@ ENGINE_VERSION=$(node -pe "require('./package.json').version")
 
 # NOTE: The names specified with `-t` directly map to the our service names in
 # on sparkswap dockerhub
-docker build -t sparkswap/lnd_btc:$ENGINE_VERSION ./docker/lnd --build-arg NODE=$LND_BTC_NODE --build-arg NETWORK=btc --build-arg COMMIT_SHA=$COMMIT_SHA --build-arg LND_ORG_NAME=$LND_ORG_NAME
-docker build -t sparkswap/lnd_ltc:$ENGINE_VERSION ./docker/lnd --build-arg NODE=$LND_LTC_NODE --build-arg NETWORK=ltc --build-arg COMMIT_SHA=$COMMIT_SHA --build-arg LND_ORG_NAME=$LND_ORG_NAME
+docker build -t sparkswap/lnd_btc:$ENGINE_VERSION ./docker/lnd \
+  --build-arg NODE=$LND_BTC_NODE \
+  --build-arg NETWORK=btc \
+  --build-arg COMMIT_SHA=$COMMIT_SHA
+
+docker build -t sparkswap/lnd_ltc:$ENGINE_VERSION ./docker/lnd \
+  --build-arg NODE=$LND_LTC_NODE \
+  --build-arg NETWORK=ltc \
+  --build-arg COMMIT_SHA=$COMMIT_SHA
 
 # Create bitcoind and litecoind images
 BITCOIND_VERSION='0.17.1'
