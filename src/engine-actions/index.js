@@ -79,12 +79,8 @@ module.exports = {
     getChannelsForRemoteAddress,
     connectUser,
     getPeers,
-<<<<<<< HEAD
     getChainTransactions,
     getTotalBalanceForAddress
-=======
-    getChainTransactions
->>>>>>> update circle ci config to update npm
   },
   validationIndependentActions: {
     createWallet,
