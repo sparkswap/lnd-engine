@@ -13,11 +13,12 @@ const { CHANNEL_ROUNDING } = require('../constants')
 /**
  * Determine the amount to fund channels with by taking into account
  * uneconomic channels (that are too small to be worth it.)
+ *
+ * @private
  * @param   {Engine} engine
  * @param   {string} fundingAmount - int64 string of amount desired to open
- * @param   {number} roundBehavior - Behavior to use when encoutnering a channel that is too small.
+ * @param   {string} roundBehavior - Behavior to use when encoutnering a channel that is too small.
  * @returns {Big}                    Modified amount to open in channels
- * @private
  */
 function getAmountForChannels (engine, fundingAmount, roundBehavior) {
   const {
@@ -66,10 +67,12 @@ function getAmountForChannels (engine, fundingAmount, roundBehavior) {
 
 /**
  * Check that the balance in the engine can cover the desired funding amount
+ *
+ * @private
  * @param   {Engine} engine
  * @param   {string} fundingAmount - Int64 string of desired funding amount
  * @returns {void}
- * @throws {Erro} If Balance is insufficient to cover amount and fees
+ * @throws  {Error} If Balance is insufficient to cover amount and fees
  */
 async function assertBalance (engine, fundingAmount) {
   const {
@@ -83,6 +86,7 @@ async function assertBalance (engine, fundingAmount) {
   const amount = Big(fundingAmount)
 
   // round up to find the number of channels to open
+  // See: https://mikemcl.github.io/big.js/#round
   const channelsToOpen = amount.div(maxChannelBalance).round(0, 3)
 
   // We add fees onto the funding amount and make sure the user has enough funds for
@@ -118,7 +122,7 @@ async function assertBalance (engine, fundingAmount) {
  *
  * @param {string} paymentChannelNetworkAddress
  * @param {string} fundingAmount - int64 string
- * @param {number} roundBehavior - Behavior when encountering a channel that is too small
+ * @param {string} roundBehavior - Behavior when encountering a channel that is too small
  * @returns {Promise<void>} resolves void on success
  */
 async function createChannels (paymentChannelNetworkAddress, fundingAmount, roundBehavior = CHANNEL_ROUNDING.DOWN) {
@@ -165,6 +169,8 @@ async function createChannels (paymentChannelNetworkAddress, fundingAmount, roun
 
   logger.debug(`Successfully connected to peer: ${loggablePublicKey}`)
 
+  // We loop over channels and create them synchronously (rather than all at once)
+  // to try to avoid any issues with trying to open multiple channels simultaneously.
   for (var i = 0; i < channelsToOpen; i++) {
     // Open max size channels until the last channel
     let channelAmount = amount.gt(maxChannelBalance) ? maxChannelBalance : amount.toString()
