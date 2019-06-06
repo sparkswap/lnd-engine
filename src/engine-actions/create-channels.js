@@ -46,6 +46,10 @@ function getAmountForChannels (engine, fundingAmount, roundBehavior) {
 
     if (roundBehavior === CHANNEL_ROUNDING.DOWN) {
       logger.debug('Rounding down to avoid uneconomic channel balance.', { fundingAmount, lowFundingAmount: lowFundingAmount.toString() })
+      if (lowFundingAmount.lte(0)) {
+        throw new Error(`Funding amount ${amount.div(quantumsPerCommon).toString()} ${symbol} ` +
+          `too small for minimum channel balance of ${Big(minChannelBalance).div(quantumsPerCommon)} ${symbol}.`)
+      }
       return lowFundingAmount
     }
 
@@ -141,10 +145,6 @@ async function createChannels (paymentChannelNetworkAddress, fundingAmount, roun
 
   if (!minChannelBalance) {
     throw new Error(`Currency configuration for ${symbol} has not been setup with a min channel balance`)
-  }
-
-  if (Big(fundingAmount).lt(minChannelBalance)) {
-    throw new Error(`Funding amount of ${fundingAmount} does not meet min channel balance of ${minChannelBalance}`)
   }
 
   // modify our funding amount based on the number of channels we're opening and the desired rounding behavior

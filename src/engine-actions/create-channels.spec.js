@@ -77,11 +77,6 @@ describe('createChannels', () => {
       return expect(createChannels.call(engine, paymentChannelNetworkAddress, fundingAmount, 'INVALID')).to.eventually.be.rejectedWith('Invalid round behavior')
     })
 
-    it('errors if the funding amount does not meet the min channel balance', () => {
-      fundingAmount = '9000'
-      return expect(createChannels.call(engine, paymentChannelNetworkAddress, fundingAmount)).to.eventually.be.rejectedWith('does not meet min channel balance')
-    })
-
     it('errors if the feeEstimate is not defined', () => {
       engine.feeEstimate = undefined
       return expect(
@@ -200,6 +195,12 @@ describe('createChannels', () => {
       context('round behavior is DOWN', () => {
         it('decreases the amount if a small channel would be created', () => {
           expect(getAmountForChannels(engine, fundingAmount, CHANNEL_ROUNDING.DOWN).toString()).to.be.eql('20000000')
+        })
+
+        it('errors if no channels would be created', () => {
+          expect(() => {
+            getAmountForChannels(engine, '10', CHANNEL_ROUNDING.DOWN)
+          }).to.throw('too small')
         })
       })
 
