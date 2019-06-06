@@ -14,16 +14,16 @@ RUN apk add --no-cache --update alpine-sdk \
     git \
     make
 
-WORKDIR $GOPATH/src/github.com/dannypaz/lnd
+ARG LND_ORG_NAME
+RUN : "${LND_ORG_NAME:?LND_ORG_NAME Build argument needs to be set.}"
+
+WORKDIR $GOPATH/src/github.com/${LND_ORG_NAME}/lnd
 
 # We use this cache date to always build LND instead of caching the files. This allows us
 # to continually grab changes from the LND_VERSION without tagging the release.
 # TODO: set this to a certain release commit
 ARG COMMIT_SHA
 RUN : "${COMMIT_SHA:?COMMIT_SHA Build argument needs to be set.}"
-
-ARG LND_ORG_NAME
-RUN : "${LND_ORG_NAME:?LND_ORG_NAME Build argument needs to be set.}"
 
 RUN git clone https://github.com/${LND_ORG_NAME}/lnd . \
 &&  git checkout ${COMMIT_SHA} \
