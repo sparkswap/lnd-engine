@@ -33,4 +33,9 @@ if [[ -n "$LND_FEE_RATE" ]]; then
     PARAMS="$PARAMS --bitcoin.feerate=$LND_FEE_RATE"
 fi
 
+if [[ -n "$BACKUP_DIR" ]]; then
+    echo "Setting custom backup directory at $BACKUP_DIR"
+    PARAMS="$PARAMS --backupfilepath=$BACKUP_DIR"
+fi
+
 exec lnd $PARAMS "$@"
