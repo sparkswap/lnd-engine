@@ -57,4 +57,10 @@ describe('getTotalBalanceForAddress', () => {
     const expectedRes = '90'
     return expect(res).to.eql(expectedRes)
   })
+
+  it('returns total remote balance of all pending and open channels', async () => {
+    const res = await getTotalBalanceForAddress(address, { outbound: false })
+    const expectedRes = '1545'
+    return expect(res).to.eql(expectedRes)
+  })
 })
