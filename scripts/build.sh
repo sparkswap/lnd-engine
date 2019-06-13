@@ -28,9 +28,7 @@ echo "LND Engine Build starting..."
 echo ""
 echo ""
 
-# Set as the current master commit from June 9th. We peg this to a commit
-# to have a semi-stable version of lnd (one that we have tested)
-LND_VERSION='880279b266e982e419044e04e7a7157e0c2b7074'
+LND_VERSION='v0.7.0-beta-rc1'
 
 # Downloads an LND proto file from the sparkswap/lnd fork
 LND_PROTO_URL="https://raw.githubusercontent.com/lightningnetwork/lnd/${LND_VERSION}/lnrpc/rpc.proto"
