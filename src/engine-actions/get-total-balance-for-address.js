@@ -4,9 +4,11 @@ const getChannelsForRemoteAddress = require('./get-channels-for-remote-address')
 /**
  * Get local balance of all channels for a specific address
  * @param {string} address
+ * @param {Object} [options={}]
+ * @param {boolean} [options.outbound=true] - outbound is true if checking outbound channels, false if inbound
  * @returns {string} totalBalance (int64)
  */
-async function getTotalBalanceForAddress (address) {
+async function getTotalBalanceForAddress (address, { outbound = true } = {}) {
   const channelsForAddress = await getChannelsForRemoteAddress.call(this, address)
 
   if (channelsForAddress.length === 0) {
@@ -14,11 +16,12 @@ async function getTotalBalanceForAddress (address) {
     return Big(0).toString()
   }
 
-  const totalLocalBalance = channelsForAddress.reduce((acc, c) => {
-    return acc.plus(c.localBalance)
+  const balanceType = outbound ? 'localBalance' : 'remoteBalance'
+  const totalBalance = channelsForAddress.reduce((acc, c) => {
+    return acc.plus(c[balanceType])
   }, Big(0))
 
-  return totalLocalBalance.toString()
+  return totalBalance.toString()
 }
 
 module.exports = getTotalBalanceForAddress
