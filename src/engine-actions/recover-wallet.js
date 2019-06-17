@@ -27,7 +27,7 @@ async function isValidSeed (seed) {
  * @param {number} recoveryWindow - number in blocks for look back
  * @returns {Array<string>} 24 word cipher seed mnemonic
  */
-async function restoreWallet (password, seed, backup, recoveryWindow = undefined) {
+async function recoverWallet (password, seed, backup, recoveryWindow = undefined) {
   // The seed is required if the user is using a backup file
   if (!seed && backup) {
     throw new Error('Must provide seed when trying to restore wallet with backup file')
@@ -49,7 +49,8 @@ async function restoreWallet (password, seed, backup, recoveryWindow = undefined
   recoveryWindow = recoveryWindow || RECOVERY_WINDOW_DEFAULT
 
   await initWallet(walletPassword, seed, { backup, recoveryWindow, client: this.walletUnlocker })
+
   return seed
 }
 
-module.exports = restoreWallet
+module.exports = recoverWallet
