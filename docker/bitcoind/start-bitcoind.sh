@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-set -e
-
 MINER=${MINER:-false}
 MINER_ENV=${MINER_ENV:-"production"}
 
@@ -85,6 +83,11 @@ fi
 # an IP and then connect to that machine
 if [[ "$NETWORK" == "regtest" ]] && [[ -n "$CONNECT_HOST" ]]; then
     if [[ "$CONNECT_HOST" == "host.docker.internal" ]]; then
+        ping -c1 $CONNECT_HOST > /dev/null 2>&1
+        if [ $? -ne 0 ]; then
+          HOST_IP=$(ip route | awk 'NR==1 {print $3}')
+          echo -e "$HOST_IP\t$CONNECT_HOST" >> /etc/hosts
+        fi
         CONNECT_HOST=$(getent hosts host.docker.internal | awk '{ print $1 ; exit }')
     fi
 

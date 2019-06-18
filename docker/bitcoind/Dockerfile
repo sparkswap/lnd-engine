@@ -18,7 +18,8 @@ RUN apt-get update && \
   gnupg2 \
   gpg-agent \
   dirmngr \
-  at
+  at \
+  iproute2
 
 ENV FILENAME bitcoin-${VERSION}-x86_64-linux-gnu.tar.gz
 ENV CHECKSUM_FILENAME SHA256SUMS.asc
