@@ -1,4 +1,4 @@
-FROM golang:1.10-alpine as builder
+FROM golang:1.12-alpine as builder
 
 LABEL maintainer="sparkswap <dev@sparkswap.com>"
 
@@ -10,7 +10,7 @@ RUN : "${NETWORK:?NETWORK Build argument needs to be set.}"
 ENV GODEBUG netdns=cgo
 
 # Install dependencies and install/build lnd.
-RUN apk add --no-cache \
+RUN apk add --no-cache --update alpine-sdk \
     git \
     make
 
@@ -22,10 +22,10 @@ WORKDIR $GOPATH/src/github.com/lightningnetwork/lnd
 ARG COMMIT_SHA
 RUN : "${COMMIT_SHA:?COMMIT_SHA Build argument needs to be set.}"
 
-RUN git clone https://github.com/sparkswap/lnd . \
+RUN git clone https://github.com/lightningnetwork/lnd . \
 &&  git checkout ${COMMIT_SHA} \
 &&  make \
-&&  make install
+&&  make install tags="signrpc walletrpc chainrpc invoicesrpc"
 
 # Start a new, final image to reduce size.
 FROM alpine as final
@@ -56,5 +56,8 @@ RUN : "${NODE:?NODE Build argument needs to be set.}"
 ENV NODE ${NODE}
 
 COPY "./conf/lnd-${NODE}.conf" "./lnd.conf"
+
+# Create backup directory for static channel backup file
+RUN mkdir -p /backup
 
 CMD ["bash", "-c", "NODE=${NODE} ./start-lnd.sh"]

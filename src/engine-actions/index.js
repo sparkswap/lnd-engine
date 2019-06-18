@@ -40,6 +40,7 @@ const getPeers = require('./get-peers')
 const getChainTransactions = require('./get-chain-transactions')
 const changeWalletPassword = require('./change-wallet-password')
 const getTotalBalanceForAddress = require('./get-total-balance-for-address')
+const recoverWallet = require('./recover-wallet')
 
 module.exports = {
   validationDependentActions: {
@@ -84,6 +85,7 @@ module.exports = {
   },
   validationIndependentActions: {
     createWallet,
+    recoverWallet,
     getStatus,
     unlockWallet,
     changeWalletPassword

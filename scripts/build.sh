@@ -28,10 +28,10 @@ echo "LND Engine Build starting..."
 echo ""
 echo ""
 
-LND_VERSION='v0.5.4-sparkswap-beta'
+LND_VERSION='v0.7.0-beta-rc1'
 
 # Downloads an LND proto file from the sparkswap/lnd fork
-LND_PROTO_URL="https://raw.githubusercontent.com/sparkswap/lnd/${LND_VERSION}/lnrpc/rpc.proto"
+LND_PROTO_URL="https://raw.githubusercontent.com/lightningnetwork/lnd/${LND_VERSION}/lnrpc/rpc.proto"
 
 rm -rf ./proto
 mkdir -p ./proto
@@ -60,8 +60,15 @@ ENGINE_VERSION=$(node -pe "require('./package.json').version")
 
 # NOTE: The names specified with `-t` directly map to the our service names in
 # on sparkswap dockerhub
-docker build -t sparkswap/lnd_btc:$ENGINE_VERSION ./docker/lnd --build-arg NODE=$LND_BTC_NODE --build-arg NETWORK=btc --build-arg COMMIT_SHA=$COMMIT_SHA
-docker build -t sparkswap/lnd_ltc:$ENGINE_VERSION ./docker/lnd --build-arg NODE=$LND_LTC_NODE --build-arg NETWORK=ltc --build-arg COMMIT_SHA=$COMMIT_SHA
+docker build -t sparkswap/lnd_btc:$ENGINE_VERSION ./docker/lnd \
+  --build-arg NODE=$LND_BTC_NODE \
+  --build-arg NETWORK=btc \
+  --build-arg COMMIT_SHA=$COMMIT_SHA
+
+docker build -t sparkswap/lnd_ltc:$ENGINE_VERSION ./docker/lnd \
+  --build-arg NODE=$LND_LTC_NODE \
+  --build-arg NETWORK=ltc \
+  --build-arg COMMIT_SHA=$COMMIT_SHA
 
 # Create bitcoind and litecoind images
 BITCOIND_VERSION='0.17.1'
