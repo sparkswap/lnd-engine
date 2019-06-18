@@ -21,7 +21,11 @@ describe('recover-wallet', () => {
       reverts = []
       validSeedStub = sinon.stub()
       engine = {
-        walletUnlocker: sinon.stub()
+        walletUnlocker: sinon.stub(),
+        logger: {
+          debug: sinon.stub(),
+          warn: sinon.stub()
+        }
       }
       seed = [
         'absorb',
@@ -86,6 +90,11 @@ describe('recover-wallet', () => {
     it('returns the provided seed', async () => {
       const res = await recoverWallet.call(engine, password, seed)
       expect(res).to.be.eql(seed)
+    })
+
+    it('warns a user if they only recover on-chain funds using a seed but no backup file', async () => {
+      await recoverWallet.call(engine, password, seed)
+      expect(engine.logger.warn).to.be.be.calledWith(sinon.match('ONLY on-chain funds will be recovered'))
     })
   })
 

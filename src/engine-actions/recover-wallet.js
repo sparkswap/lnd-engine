@@ -28,6 +28,10 @@ async function isValidSeed (seed) {
  * @returns {Array<string>} 24 word cipher seed mnemonic
  */
 async function recoverWallet (password, seed, backup, recoveryWindow = undefined) {
+  if (seed && !backup) {
+    this.logger.warn('Recovering wallet without a backup file. ONLY on-chain funds will be recovered')
+  }
+
   // The seed is required if the user is using a backup file
   if (!seed && backup) {
     throw new Error('Must provide seed when trying to restore wallet with backup file')
@@ -47,6 +51,8 @@ async function recoverWallet (password, seed, backup, recoveryWindow = undefined
 
   // If a recovery window was not provided, then we will use a default value
   recoveryWindow = recoveryWindow || RECOVERY_WINDOW_DEFAULT
+
+  this.logger.debug(`Recovering wallet with recovery window: ${recoveryWindow}`)
 
   await initWallet(walletPassword, seed, { backup, recoveryWindow, client: this.walletUnlocker })
 
