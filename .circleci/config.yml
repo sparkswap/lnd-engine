@@ -41,7 +41,7 @@ jobs:
       - setup_remote_docker
       - run:
           name: Build Docker images
-          command: docker build -t $BTC_IMAGE_NAME ./docker/bitcoind --build-arg VERSION=0.17.1
+          command: docker build -t $BTC_IMAGE_NAME ./docker/bitcoind
       - run:
           name: Publish Docker Image to Docker Hub
           command: |
@@ -58,7 +58,7 @@ jobs:
       - setup_remote_docker
       - run:
           name: Build Docker images
-          command: docker build -t $LTC_IMAGE_NAME ./docker/litecoind --build-arg VERSION=0.16.3
+          command: docker build -t $LTC_IMAGE_NAME ./docker/litecoind
       - run:
           name: Publish Docker Image to Docker Hub
           command: |
