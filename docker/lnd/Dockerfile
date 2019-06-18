@@ -57,4 +57,7 @@ ENV NODE ${NODE}
 
 COPY "./conf/lnd-${NODE}.conf" "./lnd.conf"
 
+# Create backup directory for static channel backup file
+RUN mkdir -p /backup
+
 CMD ["bash", "-c", "NODE=${NODE} ./start-lnd.sh"]
