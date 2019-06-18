@@ -814,6 +814,9 @@ message Transaction {
 
     /// Addresses that received funds for this transaction
     repeated string dest_addresses = 8 [ json_name = "dest_addresses" ];
+
+    /// The raw transaction hex.
+    string raw_tx_hex = 9 [ json_name = "raw_tx_hex" ];
 }
 message GetTransactionsRequest {
 }
@@ -2155,9 +2158,25 @@ message Payment {
 
     /// The optional payment request being fulfilled.
     string payment_request = 9 [json_name = "payment_request"];
+
+    enum PaymentStatus {
+        UNKNOWN = 0;
+        IN_FLIGHT = 1;
+        SUCCEEDED = 2;
+        FAILED = 3;
+    }
+
+    // The status of the payment.
+    PaymentStatus status = 10 [json_name = "status"];
 }
 
 message ListPaymentsRequest {
+    /**
+    If true, then return payments that have not yet fully completed. This means
+    that pending payments, as well as failed payments will show up if this
+    field is set to True.
+    */
+    bool include_incomplete = 1;
 }
 
 message ListPaymentsResponse {
