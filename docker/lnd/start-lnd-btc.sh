@@ -19,6 +19,9 @@ PARAMS=$(echo \
 
 if [[ -n "$EXTERNAL_ADDRESS" ]] && [[ -n "$EXTERNAL_PORT" ]]; then
     if [[ "$EXTERNAL_ADDRESS" == "host.docker.internal" ]]; then
+        # Using host.docker.internal to access the host IP does not work for Linux
+        # This is a known issue with Docker: https://github.com/docker/for-linux/issues/264
+        # Here, we manually map host.docker.internal to the host IP in /etc/hosts
         ping -q -c1 $EXTERNAL_ADDRESS > /dev/null 2>&1
         if [ $? -ne 0 ]; then
             HOST_IP=$(ip route | awk 'NR==1 {print $3}')
