@@ -7,6 +7,8 @@ const grpc = require('grpc')
 const loadProto = require('../utils/load-proto')
 const fs = require('fs')
 
+const PROTO_FILES = ['rpc.proto']
+
 /**
  * Generates a lnrpc.WalletUnlocker client which is only used on initialization of the LND
  * node.
@@ -18,7 +20,7 @@ const fs = require('fs')
  * @returns {Object} lnrpc WalletUnlocker client definition
  */
 function generateWalletUnlockerClient ({ host, protoPath, tlsCertPath }) {
-  const { lnrpc } = loadProto(protoPath)
+  const { lnrpc } = loadProto(protoPath, PROTO_FILES)
 
   if (!fs.existsSync(tlsCertPath)) {
     throw new Error(`LND-ENGINE error - tls cert file not found at path: ${tlsCertPath}`)

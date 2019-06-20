@@ -9,6 +9,11 @@ const loadProto = require('../utils/load-proto')
 const fs = require('fs')
 const { ENGINE_STATUSES } = require('../constants')
 
+const PROTO_FILES = [
+  'rpc.proto',
+  'invoicesrpc/invoices.proto'
+]
+
 /**
  * Generates a lnrpc.Lightning client which allows full functionality of the LND node
  *
@@ -23,7 +28,7 @@ const { ENGINE_STATUSES } = require('../constants')
  * @returns {grpc.Client} lnrpc Lightning client definition
  */
 function generateLightningClient ({ host, protoPath, tlsCertPath, macaroonPath, status, logger }) {
-  const { lnrpc } = loadProto(protoPath)
+  const { lnrpc, invoicesrpc } = loadProto(protoPath, PROTO_FILES)
 
   const macaroonExists = fs.existsSync(macaroonPath)
 
@@ -60,7 +65,9 @@ function generateLightningClient ({ host, protoPath, tlsCertPath, macaroonPath, 
     rpcCredentials = grpc.credentials.combineChannelCredentials(sslCredentials, macaroonCredentials)
   }
 
-  return new lnrpc.Lightning(host, rpcCredentials, {})
+  const client = new lnrpc.Lightning(host, rpcCredentials, {})
+  client.invoices = new invoicesrpc.Invoices(host, rpcCredentials, {})
+  return client
 }
 
 module.exports = generateLightningClient

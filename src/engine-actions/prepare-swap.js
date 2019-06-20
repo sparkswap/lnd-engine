@@ -1,4 +1,4 @@
-const { addInvoice } = require('../lnd-actions')
+const { addHoldInvoice } = require('../lnd-actions')
 
 /**
  * default expiry for swaps is 3600 seconds - 1 hour.
@@ -34,19 +34,12 @@ async function prepareSwap (orderId, swapHash, value) {
     memo: `${MEMO_PREFIX}${orderId}`,
     value,
     expiry: SWAP_EXPIRY,
-    externalPreimage: true,
-    rHash: swapHash
+    hash: swapHash
   }
 
-  const { rHash } = await addInvoice(params, { client: this.client })
+  const { paymentRequest } = await addHoldInvoice(params, { client: this.client })
 
-  if (rHash !== swapHash) {
-    throw new Error(
-      `Error while preparing for swap: returned rHash did not match passed swapHash: rHash=${rHash}, swapHash=${swapHash}`
-    )
-  }
-
-  return swapHash
+  return paymentRequest
 }
 
 module.exports = prepareSwap
