@@ -5,13 +5,11 @@ const loadProto = rewire(path.resolve('src', 'utils', 'load-proto'))
 
 describe('loadProto', () => {
   let existsSyncStub
-  let badFilePath
   let loadSyncStub
   let packageDefinition
   let loadPackageStub
 
   beforeEach(() => {
-    badFilePath = 'badfile.path'
     existsSyncStub = sinon.stub()
     packageDefinition = sinon.stub()
     loadSyncStub = sinon.stub()
@@ -28,23 +26,20 @@ describe('loadProto', () => {
     })
   })
 
-  it('throws an error if proto file is not found', () => {
-    existsSyncStub.withArgs(badFilePath).returns(false)
-    expect(() => loadProto(badFilePath)).to.throw('LND-ENGINE error')
-  })
-
   it('creates a grpc package definition', () => {
     existsSyncStub.returns(true)
-    const options = loadProto.__get__('GRPC_OPTIONS')
+    const getGrpcOptions = loadProto.__get__('getGrpcOptions')
+    const basePath = '/tmp/'
     const goodFile = 'myfile.good'
-    loadProto(goodFile)
+    const options = getGrpcOptions(basePath)
+    loadProto(basePath, goodFile)
     expect(loadSyncStub).to.be.calledWith(goodFile, options)
   })
 
   it('loads a grpc package definition', () => {
     existsSyncStub.returns(true)
     const goodFile = 'myfile.good'
-    loadProto(goodFile)
+    loadProto('/tmp', goodFile)
     expect(loadPackageStub).to.be.calledWith(packageDefinition)
   })
 })

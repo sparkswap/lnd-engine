@@ -1,3 +1,4 @@
+const path = require('path')
 const { currencies } = require('./config')
 const {
   ENGINE_STATUSES,
@@ -20,7 +21,7 @@ const {
  * @type {String}
  * @default
  */
-const LND_PROTO_FILE_PATH = require.resolve('../proto/lnd-rpc.proto')
+const LND_PROTO_PATH = path.resolve(__dirname, '../proto/')
 
 /**
  * Config properties that should be exposed directly on the engine
@@ -82,7 +83,7 @@ class LndEngine {
     this.logger = logger
     this.tlsCertPath = tlsCertPath
     this.macaroonPath = macaroonPath
-    this.protoPath = LND_PROTO_FILE_PATH
+    this.protoPath = LND_PROTO_PATH
     this.client = generateLightningClient(this)
     this.walletUnlocker = generateWalletUnlockerClient(this)
 

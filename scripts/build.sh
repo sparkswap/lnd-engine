@@ -32,16 +32,14 @@ LND_VERSION='v0.7.0-beta-rc1'
 
 # Downloads an LND proto file from the sparkswap/lnd fork
 LND_PROTO_URL="https://raw.githubusercontent.com/lightningnetwork/lnd/${LND_VERSION}/lnrpc/rpc.proto"
+INVOICES_PROTO_URL="https://raw.githubusercontent.com/lightningnetwork/lnd/${LND_VERSION}/lnrpc/invoicesrpc/invoices.proto"
 
 rm -rf ./proto
-mkdir -p ./proto
+mkdir -p ./proto/invoicesrpc
 
-echo "Downloading lnd proto file for version: ${LND_VERSION}"
-curl -o ./proto/lnd-rpc.proto $LND_PROTO_URL
-
-# Prepares the downloaded lnd-rpc proto file (installation steps tell you to remove this line)
-# (this is POSIX compliant as the versions of sed differ between OSes)
-sed 's|^import \"google/api/annotations.proto\";||' ./proto/lnd-rpc.proto > /tmp/file.$$ && mv /tmp/file.$$ ./proto/lnd-rpc.proto
+echo "Downloading lnd proto files for version: ${LND_VERSION}"
+curl -o ./proto/rpc.proto $LND_PROTO_URL
+curl -o ./proto/invoicesrpc/invoices.proto $INVOICES_PROTO_URL
 
 echo "Building images for lnd-engine"
 

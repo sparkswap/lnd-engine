@@ -5,22 +5,26 @@
 
 const grpc = require('grpc')
 const grpcProtoLoader = require('@grpc/proto-loader')
-const fs = require('fs')
 
 /**
  * Default values for grpc/proto-loader that mimic the default behaivor
  * of grpc.
  *
- * @constant
- * @type {Object}
- * @default
+ * @function
+ * @param {string} basePath - path to lnrpc directory
+ * @returns {Object}
  */
-const GRPC_OPTIONS = {
-  longs: String,
-  bytes: String,
-  enums: String,
-  defaults: true,
-  oneofs: true
+function getGrpcOptions (basePath) {
+  return {
+    longs: String,
+    bytes: String,
+    enums: String,
+    defaults: true,
+    oneofs: true,
+    includeDirs: [
+      basePath
+    ]
+  }
 }
 
 /**
@@ -28,16 +32,14 @@ const GRPC_OPTIONS = {
  *
  * @function
  * @private
- * @param {string} path - lnd protofile path
+ * @param {string} basePath - lnrpc directory path
+ * @param {string[]} relativePaths - path to proto file within basePath
  * @returns {Object}
  * @throws {Error} proto file not found
  */
-function loadProto (path) {
-  if (!fs.existsSync(path)) {
-    throw new Error(`LND-ENGINE error - Proto file not found at path: ${path}`)
-  }
-
-  const packageDefinition = grpcProtoLoader.loadSync(path, GRPC_OPTIONS)
+function loadProto (basePath, relativePaths) {
+  const options = getGrpcOptions(basePath)
+  const packageDefinition = grpcProtoLoader.loadSync(relativePaths, options)
   return grpc.loadPackageDefinition(packageDefinition)
 }
 

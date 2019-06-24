@@ -1,4 +1,5 @@
 const addInvoice = require('./add-invoice')
+const addHoldInvoice = require('./add-hold-invoice')
 const connectPeer = require('./connect-peer')
 const getInfo = require('./get-info')
 const listInvoices = require('./list-invoices')
@@ -29,6 +30,7 @@ const changePassword = require('./change-password')
 
 module.exports = {
   addInvoice,
+  addHoldInvoice,
   connectPeer,
   getInfo,
   listInvoices,
