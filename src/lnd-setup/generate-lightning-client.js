@@ -9,10 +9,14 @@ const loadProto = require('../utils/load-proto')
 const fs = require('fs')
 const { ENGINE_STATUSES } = require('../constants')
 
-const PROTO_FILES = [
+/**
+ * Array of lnd proto files to load to generate lightning client
+ * @type {string[]}
+ */
+const PROTO_FILES = Object.freeze([
   'rpc.proto',
   'invoicesrpc/invoices.proto'
-]
+])
 
 /**
  * Generates a lnrpc.Lightning client which allows full functionality of the LND node

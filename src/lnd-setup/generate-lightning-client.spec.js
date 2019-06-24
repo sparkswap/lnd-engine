@@ -89,8 +89,11 @@ describe('generateLightningClient', () => {
   })
 
   it('loads a proto file', () => {
-    generateLightningClient(engineStub)
-    expect(loadProtoStub).to.have.been.calledWith(sinon.match(protoPath))
+    const Invoices = invoicesStub
+    const client = generateLightningClient(engineStub)
+    expect(client.invoices).to.be.eql(new Invoices())
+    expect(loadProtoStub).to.have.been.calledWith(
+      sinon.match(protoPath), sinon.match.array.startsWith(['rpc.proto']))
   })
 
   it('errors if a tls cert is not on disk', () => {

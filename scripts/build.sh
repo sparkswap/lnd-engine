@@ -41,10 +41,6 @@ echo "Downloading lnd proto files for version: ${LND_VERSION}"
 curl -o ./proto/rpc.proto $LND_PROTO_URL
 curl -o ./proto/invoicesrpc/invoices.proto $INVOICES_PROTO_URL
 
-# Prepares the downloaded lnd-rpc proto file (installation steps tell you to remove this line)
-# (this is POSIX compliant as the versions of sed differ between OSes)
-sed 's|^import \"google/api/annotations.proto\";||' ./proto/lnd-rpc.proto > /tmp/file.$$ && mv /tmp/file.$$ ./proto/lnd-rpc.proto
-
 echo "Building images for lnd-engine"
 
 # We add a COMMIT_SHA argument to the lnd dockerfile to trigger cache-invalidation

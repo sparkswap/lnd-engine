@@ -7,7 +7,11 @@ const grpc = require('grpc')
 const loadProto = require('../utils/load-proto')
 const fs = require('fs')
 
-const PROTO_FILES = ['rpc.proto']
+/**
+ * Array of lnd proto files to load to generate wallet unlocker
+ * @type {string[]}
+ */
+const PROTO_FILES = Object.freeze(['rpc.proto'])
 
 /**
  * Generates a lnrpc.WalletUnlocker client which is only used on initialization of the LND
