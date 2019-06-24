@@ -1,4 +1,4 @@
-const { addHoldInvoice } = require('../lnd-actions')
+const { addHoldInvoice, lookupInvoice } = require('../lnd-actions')
 
 /**
  * The memo prefix allows us to easily find SparkSwap-related invoices
@@ -24,17 +24,22 @@ const MEMO_PREFIX = 'sparkswap-swap-pivot:'
 async function prepareSwap (orderId, swapHash, value, expiry, cltvExpiry) {
   this.logger.info(`Preparing swap for ${swapHash}`, { value })
 
-  const params = {
-    memo: `${MEMO_PREFIX}${orderId}`,
-    hash: swapHash,
-    value,
-    expiry,
-    cltvExpiry
+  // make prepareSwap idempotent by returning the existing invoice if one exists
+  try {
+    const { paymentRequest } = await lookupInvoice(swapHash, { client: this.client })
+    return paymentRequest
+  } catch (e) {
+    const params = {
+      memo: `${MEMO_PREFIX}${orderId}`,
+      hash: swapHash,
+      value,
+      expiry,
+      cltvExpiry
+    }
+
+    const { paymentRequest } = await addHoldInvoice(params, { client: this.client })
+    return paymentRequest
   }
-
-  const { paymentRequest } = await addHoldInvoice(params, { client: this.client })
-
-  return paymentRequest
 }
 
 module.exports = prepareSwap
