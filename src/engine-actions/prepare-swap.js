@@ -1,15 +1,6 @@
 const { addHoldInvoice } = require('../lnd-actions')
 
 /**
- * default expiry for swaps is 3600 seconds - 1 hour.
- * @todo Should this be changed to something shorter or be configurable
- * @todo Does this need to be dynamic based on the swap hash invoice
- * @constant
- * @type {String}
- */
-const SWAP_EXPIRY = '3600'
-
-/**
  * The memo prefix allows us to easily find SparkSwap-related invoices
  * in LND. In this case, the invoice is the pivot point of the swap
  * where it changes chains.
@@ -23,18 +14,22 @@ const MEMO_PREFIX = 'sparkswap-swap-pivot:'
  * Prepares for a swap in which this node is the counterparty to the intiating node
  *
  * @param {string} orderId - Order for which the swap is being executed
- * @param {string} swapHash        - swap hash that will be associated with the swap
- * @param {string} value   - Int64 string of the value of inbound currency
- * @returns {string} swapHash      Hash that will be translated
+ * @param {string} swapHash - swap hash that will be associated with the swap
+ * @param {string} value - Int64 string of the value of inbound currency
+ * @param {number} expiry - payment request expiry time in seconds
+ * @param {number} cltvExpiry - delta to use for the time-lock of the CLTV
+ *                              extended to the final hop (in blocks)
+ * @returns {string} paymentRequest - lightning invoice for a payment
  */
-async function prepareSwap (orderId, swapHash, value) {
+async function prepareSwap (orderId, swapHash, value, expiry, cltvExpiry) {
   this.logger.info(`Preparing swap for ${swapHash}`, { value })
 
   const params = {
     memo: `${MEMO_PREFIX}${orderId}`,
+    hash: swapHash,
     value,
-    expiry: SWAP_EXPIRY,
-    hash: swapHash
+    expiry,
+    cltvExpiry
   }
 
   const { paymentRequest } = await addHoldInvoice(params, { client: this.client })

@@ -11,6 +11,8 @@ describe('prepareSwap', () => {
   let invoiceResponse
   let paymentRequest
   let swapHash
+  let expiry
+  let cltvExpiry
   let res
 
   beforeEach(() => {
@@ -18,6 +20,8 @@ describe('prepareSwap', () => {
     value = '100'
     paymentRequest = '1234'
     swapHash = '1234'
+    expiry = 3600
+    cltvExpiry = 144
     invoiceResponse = { paymentRequest }
     addHoldInvoiceStub = sinon.stub().resolves(invoiceResponse)
     clientStub = sinon.stub()
@@ -27,11 +31,17 @@ describe('prepareSwap', () => {
   })
 
   beforeEach(async () => {
-    res = await prepareSwap(orderId, swapHash, value)
+    res = await prepareSwap(orderId, swapHash, value, expiry, cltvExpiry)
   })
 
   it('adds an invoice through lnd', () => {
-    expect(addHoldInvoiceStub).to.have.been.calledWith({ memo: `sparkswap-swap-pivot:${orderId}`, expiry: '3600', value, hash: swapHash }, sinon.match({ client: clientStub }))
+    expect(addHoldInvoiceStub).to.have.been.calledWith({
+      memo: `sparkswap-swap-pivot:${orderId}`,
+      hash: swapHash,
+      value,
+      expiry,
+      cltvExpiry
+    }, sinon.match({ client: clientStub }))
   })
 
   it('returns an invoice hash hash', () => {
