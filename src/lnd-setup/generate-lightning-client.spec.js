@@ -93,20 +93,15 @@ describe('generateLightningClient', () => {
     })
   })
 
-  it('loads a proto file for Invoices', () => {
+  it('loads a proto file', () => {
     const Invoices = invoicesStub
+    const Router = routerStub
+
     const client = generateLightningClient(engineStub)
     expect(client.invoices).to.be.eql(new Invoices())
-    expect(loadProtoStub).to.have.been.calledWith(
-      sinon.match(protoPath), sinon.match.array.contains(['rpc.proto', 'invoicesrpc/invoices.proto']))
-  })
-
-  it('loads a proto file for Router', () => {
-    const Router = routerStub
-    const client = generateLightningClient(engineStub)
     expect(client.router).to.be.eql(new Router())
     expect(loadProtoStub).to.have.been.calledWith(
-      sinon.match(protoPath), sinon.match.array.contains(['rpc.proto', 'routerrpc/router.proto']))
+      sinon.match(protoPath), sinon.match.array.contains(['rpc.proto', 'invoicesrpc/invoices.proto', 'routerrpc/router.proto']))
   })
 
   it('errors if a tls cert is not on disk', () => {
