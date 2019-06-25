@@ -33,13 +33,16 @@ LND_VERSION='v0.7.0-beta-rc1'
 # Downloads an LND proto file from the sparkswap/lnd fork
 LND_PROTO_URL="https://raw.githubusercontent.com/lightningnetwork/lnd/${LND_VERSION}/lnrpc/rpc.proto"
 INVOICES_PROTO_URL="https://raw.githubusercontent.com/lightningnetwork/lnd/${LND_VERSION}/lnrpc/invoicesrpc/invoices.proto"
+ROUTER_PROTO_URL="https://raw.githubusercontent.com/lightningnetwork/lnd/${LND_VERSION}/lnrpc/routerrpc/router.proto"
 
 rm -rf ./proto
 mkdir -p ./proto/invoicesrpc
+mkdir -p ./proto/routerrpc
 
 echo "Downloading lnd proto files for version: ${LND_VERSION}"
 curl -o ./proto/rpc.proto $LND_PROTO_URL
 curl -o ./proto/invoicesrpc/invoices.proto $INVOICES_PROTO_URL
+curl -o ./proto/routerrpc/router.proto $ROUTER_PROTO_URL
 
 echo "Building images for lnd-engine"
 
