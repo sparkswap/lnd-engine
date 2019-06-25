@@ -15,7 +15,8 @@ const { ENGINE_STATUSES } = require('../constants')
  */
 const PROTO_FILES = Object.freeze([
   'rpc.proto',
-  'invoicesrpc/invoices.proto'
+  'invoicesrpc/invoices.proto',
+  'routerrpc/router.proto'
 ])
 
 /**
@@ -32,7 +33,7 @@ const PROTO_FILES = Object.freeze([
  * @returns {grpc.Client} lnrpc Lightning client definition
  */
 function generateLightningClient ({ host, protoPath, tlsCertPath, macaroonPath, status, logger }) {
-  const { lnrpc, invoicesrpc } = loadProto(protoPath, PROTO_FILES)
+  const { lnrpc, invoicesrpc, routerrpc } = loadProto(protoPath, PROTO_FILES)
 
   const macaroonExists = fs.existsSync(macaroonPath)
 
@@ -71,6 +72,7 @@ function generateLightningClient ({ host, protoPath, tlsCertPath, macaroonPath, 
 
   const client = new lnrpc.Lightning(host, rpcCredentials, {})
   client.invoices = new invoicesrpc.Invoices(host, rpcCredentials, {})
+  client.router = new routerrpc.Router(host, rpcCredentials, {})
   return client
 }
 
