@@ -181,7 +181,7 @@ async function getChainTransactions () {
     let timestamp = timeStamp
 
     // Check to make sure the timestamp exists and then parse the date, to make
-    // sure we are not throwing a ton of errors from this function
+    // sure we are not throwing an error if this transaction is in a pending status
     if (timeStamp) {
       const unixTimestamp = new Date(0).setUTCSeconds(timeStamp)
       timestamp = new Date(unixTimestamp).toISOString()
