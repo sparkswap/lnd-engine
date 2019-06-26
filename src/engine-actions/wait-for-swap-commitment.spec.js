@@ -24,21 +24,22 @@ describe('wait-for-swap-commitment', () => {
       expect(await waitForSwapCommitment(hash)).to.be.eql(acceptedInvoice)
     })
 
-    it('rejects on stream end', async () => {
+    it('rejects on stream end', () => {
       setTimeout(() => stream.emit('end'), 1)
-      await expect(waitForSwapCommitment(hash)).to.be.rejected()
+      return expect(waitForSwapCommitment(hash))
+        .to.eventually.be.rejectedWith(Error)
     })
 
-    it('rejects on canceled invoice', async () => {
+    it('rejects on canceled invoice', () => {
       setTimeout(() => stream.emit('data', canceledInvoice), 1)
-      await expect(waitForSwapCommitment(hash))
-        .to.be.rejectedWith(CanceledSwapError)
+      return expect(waitForSwapCommitment(hash))
+        .to.eventually.be.rejectedWith(CanceledSwapError)
     })
 
-    it('rejects on settled invoice', async () => {
+    it('rejects on settled invoice', () => {
       setTimeout(() => stream.emit('data', settledInvoice), 1)
-      await expect(waitForSwapCommitment(hash))
-        .to.be.rejectedWith(SettledSwapError)
+      return expect(waitForSwapCommitment(hash))
+        .to.eventually.be.rejectedWith(SettledSwapError)
     })
   })
 })
