@@ -176,12 +176,23 @@ async function getChainTransactions () {
       fees = Big(closedChannelFees.get(txHash))
     }
 
+    // Convert the timestamp, seconds after epoch, into an ISO8601 string so that
+    // it is more readable
+    let timestamp = timeStamp
+
+    // Check to make sure the timestamp exists and then parse the date, to make
+    // sure we are not throwing a ton of errors from this function
+    if (timeStamp) {
+      const unixTimestamp = new Date(0).setUTCSeconds(timeStamp)
+      timestamp = new Date(unixTimestamp).toISOString()
+    }
+
     return {
       type,
       amount: Big(amount).div(this.quantumsPerCommon).toFixed(8),
       transactionHash: txHash,
       blockHeight,
-      timestamp: timeStamp,
+      timestamp,
       fees: fees.div(this.quantumsPerCommon).toFixed(8),
       pending: isPending
     }
