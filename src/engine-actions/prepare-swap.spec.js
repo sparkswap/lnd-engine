@@ -4,45 +4,52 @@ const { expect, rewire, sinon } = require('test/test-helper')
 const prepareSwap = rewire(path.resolve(__dirname, 'prepare-swap'))
 
 describe('prepareSwap', () => {
-  let orderId
   let value
   let addHoldInvoiceStub
   let lookupInvoiceStub
-  let clientStub
   let invoiceResponse
   let paymentRequest
   let existingPaymentRequest
   let swapHash
-  let expiry
+  let expiryTime
   let cltvExpiry
 
+  const client = sinon.stub()
+  const engine = {
+    client,
+    secondsPerBlock: 600,
+    logger: {
+      info: sinon.stub(),
+      error: sinon.stub(),
+      debug: sinon.stub()
+    }
+  }
+
   beforeEach(() => {
-    orderId = '928uq9afds8as9df_fasdfj'
     value = '100'
     paymentRequest = '1234'
     existingPaymentRequest = '12345'
     swapHash = '1234'
-    expiry = 3600
-    cltvExpiry = 144
+    expiryTime = new Date((new Date()).getTime() + 60000)
+    cltvExpiry = 3600
     invoiceResponse = { paymentRequest }
     addHoldInvoiceStub = sinon.stub().resolves(invoiceResponse)
-    clientStub = sinon.stub()
 
     lookupInvoiceStub = sinon.stub().throws({})
     prepareSwap.__set__('lookupInvoice', lookupInvoiceStub)
     prepareSwap.__set__('addHoldInvoice', addHoldInvoiceStub)
-    prepareSwap.__set__('client', clientStub)
+    prepareSwap.__set__('client', client)
   })
 
   it('adds an invoice through lnd', async () => {
-    await prepareSwap(orderId, swapHash, value, expiry, cltvExpiry)
+    await prepareSwap.call(engine, swapHash, value, expiryTime, cltvExpiry)
     expect(addHoldInvoiceStub).to.have.been.calledWith({
-      memo: `sparkswap-swap-pivot:${orderId}`,
+      memo: 'sparkswap-swap-pivot',
       hash: swapHash,
       value,
-      expiry,
-      cltvExpiry
-    }, sinon.match({ client: clientStub }))
+      expiry: 60,
+      cltvExpiry: 6
+    }, sinon.match({ client }))
   })
 
   it('is idempotent', async () => {
@@ -50,12 +57,12 @@ describe('prepareSwap', () => {
       paymentRequest: existingPaymentRequest
     })
     prepareSwap.__set__('lookupInvoice', lookupInvoiceStub2)
-    const res = await prepareSwap(orderId, swapHash, value, expiry, cltvExpiry)
+    const res = await prepareSwap.call(engine, swapHash, value, expiryTime, cltvExpiry)
     expect(res).to.be.eql(existingPaymentRequest)
   })
 
   it('returns an invoice hash', async () => {
-    const res = await prepareSwap(orderId, swapHash, value, expiry, cltvExpiry)
+    const res = await prepareSwap.call(engine, swapHash, value, expiryTime, cltvExpiry)
     expect(res).to.be.eql(paymentRequest)
   })
 })
