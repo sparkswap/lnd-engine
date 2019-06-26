@@ -72,7 +72,5 @@ docker build -t sparkswap/lnd_ltc:$ENGINE_VERSION ./docker/lnd \
   --build-arg COMMIT_SHA=$COMMIT_SHA
 
 # Create bitcoind and litecoind images
-BITCOIND_VERSION='0.17.1'
-docker build -t sparkswap/bitcoind:$ENGINE_VERSION ./docker/bitcoind --build-arg VERSION=$BITCOIND_VERSION
-LITECOIND_VERSION='0.16.3'
-docker build -t sparkswap/litecoind:$ENGINE_VERSION ./docker/litecoind --build-arg VERSION=$LITECOIND_VERSION
+docker build -t sparkswap/bitcoind:$ENGINE_VERSION ./docker/bitcoind
+docker build -t sparkswap/litecoind:$ENGINE_VERSION ./docker/litecoind
