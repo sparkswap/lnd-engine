@@ -30,21 +30,28 @@ const DEFAULT_FEE_LIMIT = 0
  *                                         with the swap
  * @param {string} amount                - Int64 string of the amount of
  *                                         outbound currency in integer units
- * @param {string} maxTimeLockDeltaSecs  - Int64 string of the maximum timelock
- *                                         of the outgoing payment in seconds
+ * @param {Date} maxTime                 - Absolute time representing the max
+ *                                         time for a payment to resolve
+ *                                         considering the time locks on the
+ *                                         route.
  * @param {string} finalCltvDeltaSecs    - Int64 string of final hop time lock
  *                                         in seconds
  * @returns {TranslateSwapOutcome}
  */
-async function translateSwap (takerAddress, swapHash, amount, maxTimeLockDeltaSecs, finalCltvDeltaSecs = DEFAULT_MIN_FINAL_DELTA) {
+async function translateSwap (takerAddress, swapHash, amount, maxTime, finalCltvDeltaSecs = DEFAULT_MIN_FINAL_DELTA) {
   this.logger.info(`Translating swap for ${swapHash} by sending to ${takerAddress}`,
-    { amount, maxTimeLockDeltaSecs })
+    { amount, maxTime })
 
   const { publicKey } = networkAddressFormatter.parse(takerAddress)
 
+  // Convert the maximum time into a time from now so we can convert it into
+  // blocks of relative time. We round down to a whole number of seconds to
+  // be conservative.
+  const timeFromNow = Math.floor((maxTime - new Date()) / 1000)
+
   // Translate seconds into blocks, rounding down to ensure we can stay atomic.
   // The LND api expects this to be an int32, which in javascript is a number.
-  const cltvLimit = parseInt(Big(maxTimeLockDeltaSecs).div(this.secondsPerBlock).round(3), 10)
+  const cltvLimit = parseInt(Big(timeFromNow).div(this.secondsPerBlock).round(3), 10)
 
   // Translate seconds into blocks, rounding up so that we're sure the end
   // node will accept the payment. The LND api expects this to be an int32,

@@ -1,5 +1,10 @@
 const path = require('path')
-const { expect, rewire, sinon } = require('test/test-helper')
+const {
+  expect,
+  rewire,
+  sinon,
+  timekeeper
+} = require('test/test-helper')
 
 const translateSwap = rewire(path.resolve(__dirname, 'translate-swap'))
 
@@ -13,7 +18,7 @@ describe('translate-swap', () => {
     let address
     let swapHash
     let preimage
-    let maxTimeLockDeltaSecs
+    let maxTime
     let amount
 
     beforeEach(() => {
@@ -22,7 +27,8 @@ describe('translate-swap', () => {
       swapHash = '9283479q8asfjsdfjoji=='
       preimage = 'as9fd8uas9df8ya98sfy=='
       amount = '100000'
-      maxTimeLockDeltaSecs = '146399'
+      timekeeper.freeze(new Date('2019-06-25T00:58:25.638Z'))
+      maxTime = new Date('2019-06-27T00:58:26.638Z')
 
       networkAddressFormatter = {
         parse: sinon.stub().withArgs(address).returns({ publicKey: pubKey })
@@ -45,8 +51,12 @@ describe('translate-swap', () => {
       }
     })
 
+    afterEach(() => {
+      timekeeper.reset()
+    })
+
     it('sends a payment using the maximum time lock', async () => {
-      await translateSwap.call(engine, address, swapHash, amount, maxTimeLockDeltaSecs)
+      await translateSwap.call(engine, address, swapHash, amount, maxTime)
 
       expect(sendPayment).to.have.been.calledOnce()
       expect(sendPayment).to.have.been.calledWith(
@@ -55,14 +65,14 @@ describe('translate-swap', () => {
           destString: pubKey,
           amt: amount,
           finalCltvDelta: 144,
-          cltvLimit: 243,
+          cltvLimit: 288,
           feeLimit: 0
         },
         { client })
     })
 
     it('sends a payment using a custom final delta', async () => {
-      await translateSwap.call(engine, address, swapHash, amount, maxTimeLockDeltaSecs, '85000')
+      await translateSwap.call(engine, address, swapHash, amount, maxTime, '85000')
 
       expect(sendPayment).to.have.been.calledOnce()
       expect(sendPayment).to.have.been.calledWith(
@@ -71,7 +81,7 @@ describe('translate-swap', () => {
           destString: pubKey,
           amt: amount,
           finalCltvDelta: 142,
-          cltvLimit: 243,
+          cltvLimit: 288,
           feeLimit: 0
         },
         { client })
@@ -79,11 +89,11 @@ describe('translate-swap', () => {
 
     it('returns permanent error if there is a payment error', async () => {
       sendPayment.resolves({ paymentError: 'fake error' })
-      expect(await translateSwap.call(engine, address, swapHash, amount, maxTimeLockDeltaSecs)).to.be.eql({ permanentError: 'fake error' })
+      expect(await translateSwap.call(engine, address, swapHash, amount, maxTime)).to.be.eql({ permanentError: 'fake error' })
     })
 
     it('returns the payment preiamge', async () => {
-      expect(await translateSwap.call(engine, address, swapHash, amount, maxTimeLockDeltaSecs)).to.be.eql({ paymentPreimage: preimage })
+      expect(await translateSwap.call(engine, address, swapHash, amount, maxTime)).to.be.eql({ paymentPreimage: preimage })
     })
   })
 })
