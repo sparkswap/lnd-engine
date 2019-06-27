@@ -11,7 +11,6 @@ const INVOICE_STATES = Object.freeze({
  *
  * @see {lnd-actions#lookupinvoice}
  * @see http://api.lightning.community/#addinvoice
- * @see {lnd-actions#subscribeInvoices}
  * @param {string} swapHash - Base64 encoded hash for the invoice
  * @returns {string} Base64 encoded preimage for the hash
  * @throws {Error} If the invoice is not in a SETTLED state
