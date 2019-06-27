@@ -1,10 +1,5 @@
-const {
-  lookupInvoice
-} = require('../lnd-actions')
-
-const INVOICE_STATES = Object.freeze({
-  SETTLED: 'SETTLED'
-})
+const { lookupInvoice } = require('../lnd-actions')
+const { INVOICE_STATES } = require('../constants')
 
 /**
  * Gets the preimage for a settled swap hash.
