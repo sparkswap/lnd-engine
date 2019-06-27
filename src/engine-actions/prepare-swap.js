@@ -22,9 +22,24 @@ const MEMO_PREFIX = 'sparkswap-swap-pivot'
  */
 async function prepareSwap (swapHash, value, expiryTime, cltvExpiry) {
   this.logger.info(`Preparing swap for ${swapHash}`, { value })
+  // round up on number of blocks since a transaction that occurs right before
+  // the expiration time will get processed in the following block
+  const cltvExpiryBlocks = Math.ceil(cltvExpiry / this.secondsPerBlock)
   // make prepareSwap idempotent by returning the existing invoice if one exists
   try {
-    const { paymentRequest } = await lookupInvoice(swapHash, { client: this.client })
+    const {
+      paymentRequest,
+      value: invoiceValue,
+      cltvExpiry: invoiceCLTVExpiry
+    } = await lookupInvoice(swapHash, { client: this.client })
+
+    if (invoiceValue !== value || invoiceCLTVExpiry !== cltvExpiryBlocks) {
+      // if the invoice doesn't match, we log an error and  prepare a new invoice
+      const hash = swapHash.toHex()
+      const message = `Invoice found for hash ${hash} but parameters are wrong`
+      this.logger.error(message)
+      throw new Error(message)
+    }
     return paymentRequest
   } catch (e) {
     const expiry = Math.floor((expiryTime - new Date()) / 1000)

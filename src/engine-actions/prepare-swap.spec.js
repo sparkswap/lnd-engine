@@ -30,7 +30,8 @@ describe('prepareSwap', () => {
     paymentRequest = '1234'
     existingPaymentRequest = '12345'
     swapHash = '1234'
-    expiryTime = new Date((new Date()).getTime() + 60000)
+    // add 10ms to 60s so flooring to the nearest second in prepareSwap gives 60
+    expiryTime = new Date((new Date()).getTime() + 60010)
     cltvExpiry = 3600
     invoiceResponse = { paymentRequest }
     addHoldInvoiceStub = sinon.stub().resolves(invoiceResponse)
@@ -54,7 +55,9 @@ describe('prepareSwap', () => {
 
   it('is idempotent', async () => {
     const lookupInvoiceStub2 = sinon.stub().resolves({
-      paymentRequest: existingPaymentRequest
+      paymentRequest: existingPaymentRequest,
+      cltvExpiry: 6,
+      value
     })
     prepareSwap.__set__('lookupInvoice', lookupInvoiceStub2)
     const res = await prepareSwap.call(engine, swapHash, value, expiryTime, cltvExpiry)
