@@ -15,13 +15,9 @@ async function getSettledSwapPreimage (swapHash) {
     throw new Error('Swap hash must be defined')
   }
 
-  // We convert the swapHash from base64 string to hex because lookupInvoice takes in a hex
-  // encoded rhash as an argument.
-  const paymentHash = Buffer.from(swapHash, 'base64').toString('hex')
+  this.logger.debug('Looking up invoice by paymentHash:', { rHash: swapHash })
 
-  this.logger.debug('Looking up invoice by paymentHash:', { paymentHash })
-
-  const { state, rPreimage } = await lookupInvoice(paymentHash, { client: this.client })
+  const { state, rPreimage } = await lookupInvoice({ rHash: swapHash }, { client: this.client })
 
   this.logger.debug('Invoice has been retrieved: ', { state })
 

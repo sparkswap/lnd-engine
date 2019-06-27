@@ -52,7 +52,7 @@ describe('getSettledSwapPreimage', () => {
 
     expect(lookupInvoiceStub).to.have.been.calledOnce()
     expect(lookupInvoiceStub).to.have.been.calledWith(
-      Buffer.from(swapHash, 'base64').toString('hex'), { client: clientStub }
+      { rHash: swapHash }, { client: clientStub }
     )
   })
 

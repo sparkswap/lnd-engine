@@ -13,7 +13,7 @@ const {
  */
 async function isInvoicePaid (paymentRequestHash) {
   const { paymentHash } = await decodePaymentRequest(paymentRequestHash, { client: this.client })
-  const { settled } = await lookupInvoice(paymentHash, { client: this.client })
+  const { settled } = await lookupInvoice({ rHashStr: paymentHash }, { client: this.client })
 
   return settled
 }

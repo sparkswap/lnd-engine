@@ -39,7 +39,7 @@ describe('isInvoicePaid', () => {
   })
 
   it('looks up the invoice by invoice hash', () => {
-    expect(lookupInvoiceStub).to.have.been.calledWith(paymentHash, sinon.match({ client: clientStub }))
+    expect(lookupInvoiceStub).to.have.been.calledWith({ rHashStr: paymentHash }, sinon.match({ client: clientStub }))
   })
 
   it('returns true if the invoice is settled', () => {
