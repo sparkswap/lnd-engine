@@ -27,7 +27,7 @@ async function prepareSwap (swapHash, value, expiryTime, cltvExpiry) {
     const { paymentRequest } = await lookupInvoice(swapHash, { client: this.client })
     return paymentRequest
   } catch (e) {
-    const expiry = Math.ceil((expiryTime - new Date()) / 1000)
+    const expiry = Math.floor((expiryTime - new Date()) / 1000)
     const cltvExpiryBlocks = Math.ceil(cltvExpiry / this.secondsPerBlock)
     const params = {
       memo: `${MEMO_PREFIX}`,
