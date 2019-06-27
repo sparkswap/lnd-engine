@@ -8,7 +8,7 @@ class CanceledSwapError extends Error {}
  * Waits for a swap to enter the ACCEPTED state and errors if it won't happen
  *
  * @param {Bytes} swapHash - hash for a swap
- * @returns {Invoice} - invoice for swap
+ * @returns {Date} - creation date of the HTLC
  */
 async function waitForSwapCommitment (swapHash) {
   return new Promise((resolve, reject) => {
@@ -30,7 +30,7 @@ async function waitForSwapCommitment (swapHash) {
           break
         case INVOICE_STATES.ACCEPTED:
           stream.removeAllListeners()
-          resolve(invoice)
+          resolve(new Date(invoice.creationDate * 1000))
           break
       }
     })
