@@ -55,7 +55,8 @@ describe('translate-swap', () => {
           destString: pubKey,
           amt: amount,
           finalCltvDelta: 144,
-          cltvLimit: 243
+          cltvLimit: 243,
+          feeLimit: 0
         },
         { client })
     })
@@ -70,7 +71,8 @@ describe('translate-swap', () => {
           destString: pubKey,
           amt: amount,
           finalCltvDelta: 142,
-          cltvLimit: 243
+          cltvLimit: 243,
+          feeLimit: 0
         },
         { client })
     })

@@ -6,6 +6,13 @@ const {
 } = CLTV_DELTA
 
 /**
+ * Default fee limit for swap routes.
+ * We expect to route swaps through a fee-less hub.
+ * @todo Make this value dynamic.
+ */
+const DEFAULT_FEE_LIMIT = 0
+
+/**
  * @typedef {Object} TranslateSwapOutcome
  * @property {String} paymentPreimage Base64 string of the preimage for the
  *                                    swapHash
@@ -52,7 +59,8 @@ async function translateSwap (takerAddress, swapHash, amount, maxTimeLockDeltaSe
     destString: publicKey,
     amt: amount,
     finalCltvDelta,
-    cltvLimit
+    cltvLimit,
+    feeLimit: DEFAULT_FEE_LIMIT
   }, { client: this.client })
 
   if (paymentError) {
