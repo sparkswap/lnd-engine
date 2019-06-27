@@ -6,7 +6,8 @@ const {
 } = require('./constants')
 const {
   validationDependentActions,
-  validationIndependentActions
+  validationIndependentActions,
+  errors
 } = require('./engine-actions')
 const {
   generateLightningClient,
@@ -146,5 +147,6 @@ class LndEngine {
 
 LndEngine.STATUSES = ENGINE_STATUSES
 LndEngine.CHANNEL_ROUNDING = CHANNEL_ROUNDING
+LndEngine.ERRORS = errors
 
 module.exports = LndEngine

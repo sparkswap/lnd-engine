@@ -9,10 +9,15 @@ const { waitForSwapCommitment, SettledSwapError, CanceledSwapError } =
 describe('wait-for-swap-commitment', () => {
   describe('waitForSwapCommitment', () => {
     const hash = '1234'
+    const creationTimestamp = 1234567890
+    const creationDate = new Date('2009-02-13T23:31:30.000Z')
     const openInvoice = { state: INVOICE_STATES.OPEN }
     const settledInvoice = { state: INVOICE_STATES.SETTLED }
     const canceledInvoice = { state: INVOICE_STATES.CANCELED }
-    const acceptedInvoice = { state: INVOICE_STATES.ACCEPTED }
+    const acceptedInvoice = {
+      state: INVOICE_STATES.ACCEPTED,
+      creationDate: creationTimestamp
+    }
     const stream = new EventEmitter()
     const subscribeStub = sinon.stub().returns(stream)
     waitForSwapCommitmentModule.__set__('subscribeSingleInvoice', subscribeStub)
@@ -21,7 +26,7 @@ describe('wait-for-swap-commitment', () => {
       setTimeout(() => stream.emit('data', openInvoice), 1)
       setTimeout(() => stream.emit('data', openInvoice), 2)
       setTimeout(() => stream.emit('data', acceptedInvoice), 3)
-      expect(await waitForSwapCommitment(hash)).to.be.eql(acceptedInvoice)
+      expect(await waitForSwapCommitment(hash)).to.be.eql(creationDate)
     })
 
     it('rejects on stream end', () => {
