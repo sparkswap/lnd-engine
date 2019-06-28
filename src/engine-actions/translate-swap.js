@@ -1,7 +1,7 @@
 const { Big, networkAddressFormatter, CLTV_DELTA } = require('../utils')
 const { sendPayment } = require('../lnd-actions')
 
-class PermanentError extends Error {}
+class PermanentSwapError extends Error {}
 
 const {
   DEFAULT_MIN_FINAL_DELTA
@@ -31,8 +31,8 @@ const DEFAULT_FEE_LIMIT = 0
  * @param {string} finalCltvDeltaSecs    - Int64 string of final hop time lock
  *                                         in seconds
  * @returns {string} Base64 string of the preimage for the swapHash
- * @throws {PermanentError} If an error is encountered while paying that we are
- * sure did not result in a still-active outbound HTLC for the swap hash.
+ * @throws {PermanentSwapError} If an error is encountered while paying that we
+ * are sure did not result in a still-active outbound HTLC for the swap hash.
  */
 async function translateSwap (takerAddress, swapHash, amount, maxTime, finalCltvDeltaSecs = DEFAULT_MIN_FINAL_DELTA) {
   this.logger.info(`Translating swap for ${swapHash} by sending to ${takerAddress}`,
@@ -68,7 +68,7 @@ async function translateSwap (takerAddress, swapHash, amount, maxTime, finalCltv
 
   if (paymentError) {
     this.logger.error(`Payment error while sending to route`, { paymentError, swapHash })
-    throw new PermanentError(paymentError)
+    throw new PermanentSwapError(paymentError)
   }
 
   return paymentPreimage
@@ -76,5 +76,5 @@ async function translateSwap (takerAddress, swapHash, amount, maxTime, finalCltv
 
 module.exports = {
   translateSwap,
-  PermanentError
+  PermanentSwapError
 }

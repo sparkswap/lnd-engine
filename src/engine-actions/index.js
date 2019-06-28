@@ -16,7 +16,7 @@ const prepareSwap = require('./prepare-swap')
 const executeSwap = require('./execute-swap')
 const createRefundInvoice = require('./create-refund-invoice')
 const getPaymentChannelNetworkAddress = require('./get-payment-channel-network-address')
-const translateSwap = require('./translate-swap')
+const { translateSwap, PermanentSwapError } = require('./translate-swap')
 const getSettledSwapPreimage = require('./get-settled-swap-preimage')
 const numChannelsForAddress = require('./num-channels-for-address')
 const getTotalPendingChannelBalance = require('./get-total-pending-channel-balance')
@@ -95,6 +95,7 @@ module.exports = {
   },
   errors: {
     SettledSwapError,
-    CanceledSwapError
+    CanceledSwapError,
+    PermanentSwapError
   }
 }
