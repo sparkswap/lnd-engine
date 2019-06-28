@@ -7,7 +7,7 @@
  * @returns {ReadableStream} Readable stream from grpc
  */
 function subscribeSingleInvoice (rHash, { client }) {
-  return client.subscribeSingleInvoice({ rHash })
+  return client.invoices.subscribeSingleInvoice({ rHash })
 }
 
 module.exports = subscribeSingleInvoice
