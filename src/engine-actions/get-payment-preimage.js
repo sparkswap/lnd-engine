@@ -1,19 +1,12 @@
-const { delay } = require('../utils')
-const {
-  lookupPaymentStatus,
-  listPayments
-} = require('../lnd-actions')
-
-const PAYMENT_STATUSES = lookupPaymentStatus.STATUSES
+const { trackPayment } = require('../lnd-actions')
 
 /**
- * Milliseconds to wait between polling attempts on payment's
- * status.
+ * The different known status updates streamed from trackPayment
  * @constant
- * @type {number}
+ * @type {Object}
  * @default
  */
-const POLLING_INTERVAL = 10000
+const PAYMENT_STATUSES = trackPayment.STATUSES
 
 /**
  * @typedef {Object} GetPaymentPreimageOutcome
@@ -27,62 +20,82 @@ const POLLING_INTERVAL = 10000
  * then return the hash.
  *
  * @param  {string} paymentHash - Base64 encoded payment hash
- * @returns {GetPaymentPreimageOutcome}
+ * @returns {Promise<GetPaymentPreimageOutcome>}
  * @throws {Error} If payment is in an unknown status
  */
 async function getPaymentPreimage (paymentHash) {
-  const { client, logger } = this
-  const { status } = await lookupPaymentStatus(paymentHash, { client })
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!paymentHash) {
+        throw new Error('paymentHash must be defined')
+      }
 
-  if (status === PAYMENT_STATUSES.GROUNDED) {
-    return { permanentError: `No payment with hash '${paymentHash}' is in-flight or complete` }
-  }
+      // TODO: look into how gRPC wants `bytes` in JS
+      const paymentHashBuf = Buffer.from(paymentHash, 'base64')
 
-  if (status === PAYMENT_STATUSES.COMPLETED) {
-    return { paymentPreimage: await getCompletedPreimage(paymentHash, { logger, client }) }
-  }
+      this.logger.debug('Attempting to track payment for paymentHash:', { paymentHash })
 
-  if (status === PAYMENT_STATUSES.IN_FLIGHT) {
-    // if the payment is still in-flight, we'll wait and try again later
-    await delay(POLLING_INTERVAL)
-    return getPaymentPreimage.call(this, paymentHash)
-  }
+      const stream = await trackPayment(paymentHashBuf, { client: this.client })
 
-  throw new Error(`Unknown payment status ${status} for payment with hash '${paymentHash}'`)
-}
+      const errorListener = (err) => {
+        // TODO: handle gRPC NOT FOUND errors
+        //  It may be best to handle it as a `permanentError`, so we don't have to
+        //  rely on checking NOT FOUND in downstream logic
+        this.logger.error(`Error from trackPayment stream`)
+        return finish(err)
+      }
 
-/**
- * Retrieve the preimage for a completed payment specified by the payment
- * hash.
- * @todo LND has a known issue preventing payments that are settled after a restart
- *       showing up in this list, which will mistakenly throw an error.
- *       {@link https://github.com/lightningnetwork/lnd/issues/2032}
- * @param  {string} paymentHash - Base64 encoded payment hash
- * @param  {Object} options
- * @param  {LndClient} options.client
- * @returns {string} Base64 encoded payment preimage associated with the hash
- * @throws {Error} If payment is not completed
- */
-async function getCompletedPreimage (paymentHash, { logger, client }) {
-  const { payments = [] } = await listPayments({ client })
+      const endListener = () => {
+        this.logger.error('LND closed trackPayment stream before returning our value')
+        return finish(new Error('LND closed stream to track payment'))
+      }
 
-  logger.debug(`Found ${payments.length} completed payments`)
+      const dataListener = (response) => {
+        const { state, preimage } = response
 
-  const paymentHashBuf = Buffer.from(paymentHash, 'base64')
-  const payment = payments.find(({ paymentHash }) => {
-    // `paymentHash` returned from ListPayments {@link https://api.lightning.community/#payment}
-    // is a hex string. We need to compare to our payment hash which is a base64 string,
-    // so we convert both to buffers to do the comparison.
-    return paymentHashBuf.equals(Buffer.from(paymentHash, 'hex'))
+        if (state === PAYMENT_STATUSES.IN_FLIGHT) {
+          // trackPayment will continue to stream updates of the payment state, so
+          // no action is required on our end
+          this.logger.debug('Payment is In-Flight for paymentHash:', { paymentHash })
+        }
+
+        if (state === PAYMENT_STATUSES.SUCCEEDED) {
+          if (!preimage) {
+            return finish(new Error('No preimage associated with successful payment'))
+          }
+
+          this.logger.debug('Payment has Succeeded for paymentHash', { paymentHash })
+          return finish(null, { paymentPreimage: preimage })
+        }
+
+        if (state === PAYMENT_STATUSES.FAILED_TIMEOUT || state === PAYMENT_STATUSES.FAILED_NO_ROUTE) {
+          this.logger.error('Payment has failed', { paymentHash })
+          const permanentError = new Error(`Payment failed for paymentHash: ${paymentHash}`)
+          return finish(null, { permanentError })
+        }
+
+        throw new Error(`Unknown payment status ${state} for payment with hash '${paymentHash}'`)
+      }
+
+      const finish = (err, response) => {
+        stream.removeListener('error', errorListener)
+        stream.removeListener('end', endListener)
+        stream.removeListener('data', dataListener)
+
+        if (err) {
+          return reject(err)
+        }
+
+        resolve(response)
+      }
+
+      stream.on('error', errorListener)
+      stream.on('end', endListener)
+      stream.on('data', dataListener)
+    } catch (e) {
+      return reject(e)
+    }
   })
-
-  if (!payment) {
-    throw new Error(`No completed payment with hash '${paymentHash}' exists.`)
-  }
-
-  // like the `paymentHash`, the `paymentPreimage` is returned as a hex string from LND,
-  // so we convert to Base64 before returning
-  return Buffer.from(payment.paymentPreimage, 'hex').toString('base64')
 }
 
 module.exports = getPaymentPreimage

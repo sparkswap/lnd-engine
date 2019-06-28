@@ -1,5 +1,6 @@
 const { Big, networkAddressFormatter, CLTV_DELTA } = require('../utils')
 const { sendPayment } = require('../lnd-actions')
+const getPaymentPreimage = require('./get-payment-preimage')
 
 class PermanentSwapError extends Error {}
 
@@ -38,40 +39,56 @@ async function translateSwap (takerAddress, swapHash, amount, maxTime, finalCltv
   this.logger.info(`Translating swap for ${swapHash} by sending to ${takerAddress}`,
     { amount, maxTime })
 
-  const { publicKey } = networkAddressFormatter.parse(takerAddress)
+  // To ensure translateSwap is idempotent, we first make a call to getPaymentPreimage to make sure we don't have an
+  // existing payment that is either In-Flight, Completed, or Failed. If there is not an existing preimage for the
+  // provided swapHash, we can be confident that a call to sendPayment will result in creating only one downstream
+  // payment for this swap
+  try {
+    const { paymentPreimage, permanentError } = await getPaymentPreimage(swapHash)
 
-  // Convert the maximum time into a time from now so we can convert it into
-  // blocks of relative time. We round down to a whole number of seconds to
-  // be conservative.
-  const timeFromNow = Math.floor((maxTime - new Date()) / 1000)
+    // TODO: should we handle checking if permanentError == gRPC NOT FOUND here?
+    if (permanentError) {
+      this.logger.error(`Payment error while getting existing swap preimage`, { permanentError, swapHash })
+      throw new PermanentSwapError(permanentError)
+    }
 
-  // Translate seconds into blocks, rounding down to ensure we can stay atomic.
-  // The LND api expects this to be an int32, which in javascript is a number.
-  const cltvLimit = parseInt(Big(timeFromNow).div(this.secondsPerBlock).round(3).toFixed(0), 10)
+    return paymentPreimage
+  } catch (e) {
+    const { publicKey } = networkAddressFormatter.parse(takerAddress)
 
-  // Translate seconds into blocks, rounding up so that we're sure the end
-  // node will accept the payment. The LND api expects this to be an int32,
-  // so we convert to a javascript number.
-  const finalCltvDelta = parseInt(Big(finalCltvDeltaSecs).div(this.secondsPerBlock).round(0).toFixed(0), 10)
+    // Convert the maximum time into a time from now so we can convert it into
+    // blocks of relative time. We round down to a whole number of seconds to
+    // be conservative.
+    const timeFromNow = Math.floor((maxTime - new Date()) / 1000)
 
-  const {
-    paymentPreimage,
-    paymentError
-  } = await sendPayment({
-    paymentHash: swapHash,
-    destString: publicKey,
-    amt: amount,
-    finalCltvDelta,
-    cltvLimit,
-    feeLimit: DEFAULT_FEE_LIMIT
-  }, { client: this.client })
+    // Translate seconds into blocks, rounding down to ensure we can stay atomic.
+    // The LND api expects this to be an int32, which in javascript is a number.
+    const cltvLimit = parseInt(Big(timeFromNow).div(this.secondsPerBlock).round(3).toFixed(0), 10)
 
-  if (paymentError) {
-    this.logger.error(`Payment error while sending to route`, { paymentError, swapHash })
-    throw new PermanentSwapError(paymentError)
+    // Translate seconds into blocks, rounding up so that we're sure the end
+    // node will accept the payment. The LND api expects this to be an int32,
+    // so we convert to a javascript number.
+    const finalCltvDelta = parseInt(Big(finalCltvDeltaSecs).div(this.secondsPerBlock).round(0).toFixed(0), 10)
+
+    const {
+      paymentPreimage,
+      paymentError
+    } = await sendPayment({
+      paymentHash: swapHash,
+      destString: publicKey,
+      amt: amount,
+      finalCltvDelta,
+      cltvLimit,
+      feeLimit: DEFAULT_FEE_LIMIT
+    }, { client: this.client })
+
+    if (paymentError) {
+      this.logger.error(`Payment error while sending to route`, { paymentError, swapHash })
+      throw new PermanentSwapError(paymentError)
+    }
+
+    return paymentPreimage
   }
-
-  return paymentPreimage
 }
 
 module.exports = {
