@@ -6,7 +6,11 @@ const {
   timekeeper
 } = require('test/test-helper')
 
-const translateSwap = rewire(path.resolve(__dirname, 'translate-swap'))
+const translateSwapModule = rewire(path.resolve(__dirname, 'translate-swap'))
+const {
+  translateSwap,
+  PermanentSwapError
+} = translateSwapModule
 
 describe('translate-swap', () => {
   describe('translateSwap', () => {
@@ -36,8 +40,8 @@ describe('translate-swap', () => {
 
       sendPayment = sinon.stub().resolves({ paymentPreimage: preimage })
 
-      translateSwap.__set__('networkAddressFormatter', networkAddressFormatter)
-      translateSwap.__set__('sendPayment', sendPayment)
+      translateSwapModule.__set__('networkAddressFormatter', networkAddressFormatter)
+      translateSwapModule.__set__('sendPayment', sendPayment)
 
       client = 'fakeclient'
       engine = {
@@ -87,13 +91,13 @@ describe('translate-swap', () => {
         { client })
     })
 
-    it('returns permanent error if there is a payment error', async () => {
+    it('throws a permanent error if there is a payment error', () => {
       sendPayment.resolves({ paymentError: 'fake error' })
-      expect(await translateSwap.call(engine, address, swapHash, amount, maxTime)).to.be.eql({ permanentError: 'fake error' })
+      expect(translateSwap.call(engine, address, swapHash, amount, maxTime)).to.eventually.be.rejectedWith(PermanentSwapError)
     })
 
     it('returns the payment preiamge', async () => {
-      expect(await translateSwap.call(engine, address, swapHash, amount, maxTime)).to.be.eql({ paymentPreimage: preimage })
+      expect(await translateSwap.call(engine, address, swapHash, amount, maxTime)).to.be.eql(preimage)
     })
   })
 })
