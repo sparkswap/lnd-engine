@@ -1,6 +1,8 @@
 const { Big, networkAddressFormatter, CLTV_DELTA } = require('../utils')
 const { sendPayment } = require('../lnd-actions')
 
+class PermanentError extends Error {}
+
 const {
   DEFAULT_MIN_FINAL_DELTA
 } = CLTV_DELTA
@@ -11,14 +13,6 @@ const {
  * @todo Make this value dynamic.
  */
 const DEFAULT_FEE_LIMIT = 0
-
-/**
- * @typedef {Object} TranslateSwapOutcome
- * @property {String} paymentPreimage Base64 string of the preimage for the
- *                                    swapHash
- * @property {String} permanentError Error encountered that is permanent, and
- *                                   safe to cancel the upstream HTLC
- */
 
 /**
  * Translates a swap to a new payment channel network by making a payment
@@ -36,7 +30,9 @@ const DEFAULT_FEE_LIMIT = 0
  *                                         route.
  * @param {string} finalCltvDeltaSecs    - Int64 string of final hop time lock
  *                                         in seconds
- * @returns {TranslateSwapOutcome}
+ * @returns {string} Base64 string of the preimage for the swapHash
+ * @throws {PermanentError} If an error is encountered while paying that we are
+ * sure did not result in a still-active outbound HTLC for the swap hash.
  */
 async function translateSwap (takerAddress, swapHash, amount, maxTime, finalCltvDeltaSecs = DEFAULT_MIN_FINAL_DELTA) {
   this.logger.info(`Translating swap for ${swapHash} by sending to ${takerAddress}`,
@@ -72,10 +68,13 @@ async function translateSwap (takerAddress, swapHash, amount, maxTime, finalCltv
 
   if (paymentError) {
     this.logger.error(`Payment error while sending to route`, { paymentError, swapHash })
-    return { permanentError: paymentError }
+    throw new PermanentError(paymentError)
   }
 
-  return { paymentPreimage }
+  return paymentPreimage
 }
 
-module.exports = translateSwap
+module.exports = {
+  translateSwap,
+  PermanentError
+}
