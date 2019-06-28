@@ -2,10 +2,7 @@ FROM ubuntu:18.04 as builder
 
 LABEL maintainer="Sparkswap <dev@sparkswap.com>"
 
-# We set the version externally so we are not required to edit the Dockerfile in the
-# case of updating for security patches
-ARG VERSION
-RUN : "${VERSION:?VERSION Build argument needs to be set.}"
+ARG BITCOIND_VERSION='0.17.1'
 
 # Install all deps needed for bitcoind verification
 RUN apt-get update && \
@@ -21,12 +18,12 @@ RUN apt-get update && \
   at \
   iproute2
 
-ENV FILENAME bitcoin-${VERSION}-x86_64-linux-gnu.tar.gz
+ENV FILENAME bitcoin-${BITCOIND_VERSION}-x86_64-linux-gnu.tar.gz
 ENV CHECKSUM_FILENAME SHA256SUMS.asc
 
 # Verify bitcoin installation files and install bitcoind
-RUN wget -q https://bitcoin.org/bin/bitcoin-core-${VERSION}/${FILENAME}
-RUN wget -q https://bitcoin.org/bin/bitcoin-core-${VERSION}/${CHECKSUM_FILENAME}
+RUN wget -q https://bitcoin.org/bin/bitcoin-core-${BITCOIND_VERSION}/${FILENAME}
+RUN wget -q https://bitcoin.org/bin/bitcoin-core-${BITCOIND_VERSION}/${CHECKSUM_FILENAME}
 
 # We iterate through multiple keyservers to prevent docker failures in the case a
 # single gpg server fails
@@ -42,7 +39,7 @@ RUN for KEYSERVER_NAME in ha.pool.sks-keyservers.net \
 
 RUN gpg2 --verify ./${CHECKSUM_FILENAME}
 RUN tar xfz /${FILENAME}
-RUN mv bitcoin-${VERSION}/bin/* /usr/local/bin/
+RUN mv bitcoin-${BITCOIND_VERSION}/bin/* /usr/local/bin/
 RUN rm -rf bitcoin-* /root/.gnupg/
 
 # Mainnet ports (rpc, http)

@@ -15,6 +15,7 @@ describe('generateLightningClient', () => {
   let loadProtoStub
   let lightningStub
   let invoicesStub
+  let routerStub
   let metaDataStub
   let existsSyncStub
   let metaDataGeneratorStub
@@ -54,12 +55,16 @@ describe('generateLightningClient', () => {
     }
     lightningStub = sinon.stub()
     invoicesStub = sinon.stub()
+    routerStub = sinon.stub()
     loadProtoStub = sinon.stub().returns({
       lnrpc: {
         Lightning: lightningStub
       },
       invoicesrpc: {
         Invoices: invoicesStub
+      },
+      routerrpc: {
+        Router: routerStub
       }
     })
     metaDataStub = sinon.stub()
@@ -90,10 +95,13 @@ describe('generateLightningClient', () => {
 
   it('loads a proto file', () => {
     const Invoices = invoicesStub
+    const Router = routerStub
+
     const client = generateLightningClient(engineStub)
     expect(client.invoices).to.be.eql(new Invoices())
+    expect(client.router).to.be.eql(new Router())
     expect(loadProtoStub).to.have.been.calledWith(
-      sinon.match(protoPath), sinon.match.array.startsWith(['rpc.proto']))
+      sinon.match(protoPath), sinon.match.array.contains(['rpc.proto', 'invoicesrpc/invoices.proto', 'routerrpc/router.proto']))
   })
 
   it('errors if a tls cert is not on disk', () => {

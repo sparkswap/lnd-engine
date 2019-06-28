@@ -116,20 +116,20 @@ describe('getChainTransactions', () => {
     beforeEach(() => {
       transactions = [
         // Deposit transaction
-        { txHash: 'deposit', amount: '201000', blockHeight: '123', timeStamp: '1234', totalFees: '0' },
+        { txHash: 'deposit', amount: '201000', blockHeight: '123', timeStamp: '1557340021', totalFees: '0' },
         // Channel open transaction
-        { txHash: 'channelopen', amount: '-11000', blockHeight: '1234', timeStamp: '1234', totalFees: '1000' },
-        { txHash: 'pendingchannelopen', amount: '-11000', blockHeight: '0', timeStamp: '1234', totalFees: '0' },
+        { txHash: 'channelopen', amount: '-11000', blockHeight: '1234', timeStamp: '1559951461', totalFees: '1000' },
+        { txHash: 'pendingchannelopen', amount: '-11000', blockHeight: '0', timeStamp: '1560204001', totalFees: '0' },
         // Channel close transactions
-        { txHash: 'channelclose', amount: '9000', blockHeight: '12345', timeStamp: '1234', totalFees: '0' },
-        { txHash: 'pendingchannelclose', amount: '9000', blockHeight: '12345', timeStamp: '1234', totalFees: '0' },
-        { txHash: 'pendingforceclose', amount: '9000', blockHeight: '12345', timeStamp: '1234', totalFees: '0' },
+        { txHash: 'channelclose', amount: '9000', blockHeight: '12345', timeStamp: '1560204001', totalFees: '0' },
+        { txHash: 'pendingchannelclose', amount: '9000', blockHeight: '12345', timeStamp: '1559951461', totalFees: '0' },
+        { txHash: 'pendingforceclose', amount: '9000', blockHeight: '12345', timeStamp: '1560204001', totalFees: '0' },
         // Withdraw transaction
-        { txHash: 'withdraw', amount: '-20000', blockHeight: '1234', timeStamp: '1234', totalFees: '1000' },
+        { txHash: 'withdraw', amount: '-20000', blockHeight: '1234', timeStamp: '1559951461', totalFees: '1000' },
         // Pending tx
-        { txHash: 'pendingwaitingclose', amount: '9000', blockHeight: '0', timeStamp: '1234', totalFees: '0' },
+        { txHash: 'pendingwaitingclose', amount: '9000', blockHeight: '0', timeStamp: '1559951461', totalFees: '0' },
         // Unknown tx
-        { txHash: 'unknown', amount: '0', blockHeight: '123455', timeStamp: '1234', totalFees: '1000' }
+        { txHash: 'unknown', amount: '0', blockHeight: '123455', timeStamp: '1559951461', totalFees: '1000' }
       ]
 
       engine = {
@@ -189,6 +189,21 @@ describe('getChainTransactions', () => {
     it('returns a list of chain transactions', async () => {
       const res = await getChainTransactions.call(engine)
       expect(Array.isArray(res)).to.be.true()
+    })
+
+    it('formats the timestamp of a transaction', async () => {
+      const res = await getChainTransactions.call(engine)
+      const transaction = res[0]
+      expect(transaction.timestamp).to.be.eql('2019-05-08T18:27:01.000Z')
+    })
+
+    it('returns null for a null transaction date', async () => {
+      getTransactionsStub.resolves({ transactions: [
+        { txHash: 'deposit', amount: '201000', blockHeight: '123', timeStamp: null, totalFees: '0' }]
+      })
+      const res = await getChainTransactions.call(engine)
+      const transaction = res[0]
+      expect(transaction.timestamp).to.be.eql(null)
     })
 
     describe('returned transactions', () => {

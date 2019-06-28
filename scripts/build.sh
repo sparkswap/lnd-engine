@@ -33,13 +33,16 @@ LND_VERSION='v0.7.0-beta-rc1'
 # Downloads an LND proto file from the sparkswap/lnd fork
 LND_PROTO_URL="https://raw.githubusercontent.com/lightningnetwork/lnd/${LND_VERSION}/lnrpc/rpc.proto"
 INVOICES_PROTO_URL="https://raw.githubusercontent.com/lightningnetwork/lnd/${LND_VERSION}/lnrpc/invoicesrpc/invoices.proto"
+ROUTER_PROTO_URL="https://raw.githubusercontent.com/lightningnetwork/lnd/${LND_VERSION}/lnrpc/routerrpc/router.proto"
 
 rm -rf ./proto
 mkdir -p ./proto/invoicesrpc
+mkdir -p ./proto/routerrpc
 
 echo "Downloading lnd proto files for version: ${LND_VERSION}"
 curl -o ./proto/rpc.proto $LND_PROTO_URL
 curl -o ./proto/invoicesrpc/invoices.proto $INVOICES_PROTO_URL
+curl -o ./proto/routerrpc/router.proto $ROUTER_PROTO_URL
 
 echo "Building images for lnd-engine"
 
@@ -69,7 +72,5 @@ docker build -t sparkswap/lnd_ltc:$ENGINE_VERSION ./docker/lnd \
   --build-arg COMMIT_SHA=$COMMIT_SHA
 
 # Create bitcoind and litecoind images
-BITCOIND_VERSION='0.17.1'
-docker build -t sparkswap/bitcoind:$ENGINE_VERSION ./docker/bitcoind --build-arg VERSION=$BITCOIND_VERSION
-LITECOIND_VERSION='0.16.3'
-docker build -t sparkswap/litecoind:$ENGINE_VERSION ./docker/litecoind --build-arg VERSION=$LITECOIND_VERSION
+docker build -t sparkswap/bitcoind:$ENGINE_VERSION ./docker/bitcoind
+docker build -t sparkswap/litecoind:$ENGINE_VERSION ./docker/litecoind
