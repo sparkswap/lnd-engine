@@ -32,28 +32,8 @@ const SEND_PAYMENT_DEADLINE = 30
  * @returns {Promise<Object>} Resolves with the response from LND
  */
 function sendPayment (paymentOptions, { client }) {
-  const {
-    paymentRequest,
-    paymentHash,
-    destString,
-    amt,
-    finalCltvDelta,
-    feeLimit,
-    cltvLimit
-  } = paymentOptions
-
-  const request = {
-    paymentRequest,
-    paymentHash,
-    destString,
-    amt,
-    finalCltvDelta,
-    feeLimit,
-    cltvLimit
-  }
-
   return new Promise((resolve, reject) => {
-    client.sendPaymentSync(request, { deadline: deadline(SEND_PAYMENT_DEADLINE) }, (err, res) => {
+    client.sendPaymentSync(paymentOptions, { deadline: deadline(SEND_PAYMENT_DEADLINE) }, (err, res) => {
       if (err) return reject(err)
       return resolve(res)
     })
