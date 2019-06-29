@@ -15,7 +15,6 @@ const describeGraph = require('./describe-graph')
 const sendToRoute = require('./send-to-route')
 const updateChannelPolicy = require('./update-channel-policy')
 const queryRoutes = require('./query-routes')
-const subscribeInvoices = require('./subscribe-invoices')
 const subscribeSingleInvoice = require('./subscribe-single-invoice')
 const listPendingChannels = require('./list-pending-channels')
 const closeChannel = require('./close-channel')
@@ -28,6 +27,7 @@ const lookupPaymentStatus = require('./lookup-payment-status')
 const listClosedChannels = require('./list-closed-channels')
 const getTransactions = require('./get-transactions')
 const changePassword = require('./change-password')
+const cancelInvoice = require('./cancel-invoice')
 const trackPayment = require('./track-payment')
 
 module.exports = {
@@ -48,7 +48,6 @@ module.exports = {
   sendToRoute,
   updateChannelPolicy,
   queryRoutes,
-  subscribeInvoices,
   subscribeSingleInvoice,
   listPendingChannels,
   closeChannel,
@@ -61,5 +60,6 @@ module.exports = {
   listClosedChannels,
   getTransactions,
   changePassword,
+  cancelInvoice,
   trackPayment
 }

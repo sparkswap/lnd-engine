@@ -41,6 +41,7 @@ const getChainTransactions = require('./get-chain-transactions')
 const changeWalletPassword = require('./change-wallet-password')
 const getTotalBalanceForAddress = require('./get-total-balance-for-address')
 const recoverWallet = require('./recover-wallet')
+const cancelSwap = require('./cancel-swap')
 const { waitForSwapCommitment, SettledSwapError, CanceledSwapError } =
   require('./wait-for-swap-commitment.js')
 
@@ -83,7 +84,8 @@ module.exports = {
     connectUser,
     getPeers,
     getChainTransactions,
-    getTotalBalanceForAddress
+    getTotalBalanceForAddress,
+    cancelSwap
   },
   validationIndependentActions: {
     createWallet,

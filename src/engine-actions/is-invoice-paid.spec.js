@@ -4,21 +4,19 @@ const { expect, rewire, sinon } = require('test/test-helper')
 const isInvoicePaid = rewire(path.resolve(__dirname, 'is-invoice-paid'))
 
 describe('isInvoicePaid', () => {
-  let paymentRequestHash
+  let paymentRequest
   let clientStub
   let res
   let lookupInvoiceStub
-  let settled
   let logger
   let decodePayReqStub
   let paymentHash
 
   beforeEach(() => {
-    settled = true
-    paymentHash = '1234 '
-    paymentRequestHash = '2345'
-    lookupInvoiceStub = sinon.stub().returns({ settled })
-    decodePayReqStub = sinon.stub().returns({ paymentHash })
+    paymentHash = 'deadbeef'
+    paymentRequest = '2345'
+    lookupInvoiceStub = sinon.stub().resolves({ state: 'SETTLED' })
+    decodePayReqStub = sinon.stub().resolves({ paymentHash })
     clientStub = sinon.stub()
     logger = {
       debug: sinon.stub()
@@ -31,18 +29,23 @@ describe('isInvoicePaid', () => {
   })
 
   beforeEach(async () => {
-    res = await isInvoicePaid(paymentRequestHash)
+    res = await isInvoicePaid(paymentRequest)
   })
 
   it('decodes an invoice from the provided payment request', () => {
-    expect(decodePayReqStub).to.have.been.calledWith(paymentRequestHash, sinon.match({ client: clientStub }))
+    expect(decodePayReqStub).to.have.been.calledWith(paymentRequest, sinon.match({ client: clientStub }))
   })
 
   it('looks up the invoice by invoice hash', () => {
-    expect(lookupInvoiceStub).to.have.been.calledWith(paymentHash, sinon.match({ client: clientStub }))
+    expect(lookupInvoiceStub).to.have.been.calledWith({ rHash: '3q2+7w==' }, sinon.match({ client: clientStub }))
   })
 
   it('returns true if the invoice is settled', () => {
-    expect(res).to.be.eql(true)
+    expect(res).to.be.true()
+  })
+
+  it('returns false if the invoice is not settled', async () => {
+    lookupInvoiceStub.resolves({ state: 'ACCEPTED' })
+    expect(await isInvoicePaid(paymentRequest)).to.be.false()
   })
 })
