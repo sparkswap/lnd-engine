@@ -13,7 +13,7 @@ const MEMO_PREFIX = 'sparkswap-swap-pivot'
 /**
  * Prepares for a swap in which this node is the counterparty to the intiating node
  *
- * @param {string} swapHash - swap hash that will be associated with the swap
+ * @param {string} swapHash - base64 hash that will be associated with the swap
  * @param {string} value - Int64 string of the value of inbound currency
  * @param {Date} expiryTime - absolute payment request expiry time
  * @param {number} cltvExpiry - delta to use for the time-lock of the CLTV
@@ -35,15 +35,13 @@ async function prepareSwap (swapHash, value, expiryTime, cltvExpiry) {
 
     if (invoiceValue !== value || invoiceCLTVExpiry !== cltvExpiryBlocks) {
       // if the invoice doesn't match, we log an error and  prepare a new invoice
-      const hash = swapHash.toHex()
-      const message = `Invoice found for hash ${hash} but parameters are wrong`
+      const message = `Invoice found for hash ${swapHash} but parameters are wrong`
       this.logger.error(message)
       throw new Error(message)
     }
     return paymentRequest
   } catch (e) {
     const expiry = Math.floor((expiryTime - new Date()) / 1000)
-    const cltvExpiryBlocks = Math.ceil(cltvExpiry / this.secondsPerBlock)
     const params = {
       memo: `${MEMO_PREFIX}`,
       hash: swapHash,
