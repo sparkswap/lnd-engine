@@ -39,12 +39,14 @@ async function getPaymentPreimage (paymentHash) {
         //  It may be best to handle it as a `permanentError`, so we don't have to
         //  rely on checking NOT FOUND in downstream logic
         this.logger.error('Error from trackPayment stream', { paymentHash })
-        return finish(err)
+        stream.removeAllListeners()
+        return reject(err)
       }
 
       const endListener = () => {
         this.logger.error('LND closed trackPayment stream before returning our value')
-        return finish(new Error('LND closed stream to track payment'))
+        stream.removeAllListeners()
+        return reject(new Error('LND closed stream to track payment'))
       }
 
       const dataListener = (response) => {
@@ -58,32 +60,25 @@ async function getPaymentPreimage (paymentHash) {
 
         if (state === PAYMENT_STATUSES.SUCCEEDED) {
           if (!preimage) {
-            return finish(new Error('No preimage associated with successful payment'))
+            stream.removeAllListeners()
+            return reject(new Error('No preimage associated with successful payment'))
           }
 
           this.logger.debug('Payment has Succeeded for paymentHash', { paymentHash })
-          return finish(null, { paymentPreimage: preimage })
+          stream.removeAllListeners()
+          return resolve(preimage)
         }
 
         if (state === PAYMENT_STATUSES.FAILED_TIMEOUT || state === PAYMENT_STATUSES.FAILED_NO_ROUTE) {
-          this.logger.error('Payment has failed', { paymentHash })
-          const permanentError = new Error(`Payment failed for paymentHash: ${paymentHash}`)
-          return finish(null, { permanentError })
+          this.logger.error('Payment failed', { paymentHash })
+
+          stream.removeAllListeners()
+          return reject(new Error(`Payment failed for paymentHash: ${paymentHash}`))
         }
 
-        return finish(new Error(`Unknown payment status ${state} for payment with hash '${paymentHash}'`))
-      }
-
-      const finish = (err, response) => {
-        stream.removeListener('error', errorListener)
-        stream.removeListener('end', endListener)
-        stream.removeListener('data', dataListener)
-
-        if (err) {
-          return reject(err)
-        }
-
-        resolve(response)
+        stream.removeAllListeners()
+        const errMsg = `Unknown payment status ${state} for payment withhash '${paymentHash}'`
+        return reject(new Error(errMsg))
       }
 
       stream.on('error', errorListener)
