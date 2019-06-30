@@ -24,6 +24,8 @@ describe('translate-swap', () => {
     let preimage
     let maxTime
     let amount
+    let getPreimageIfPaymentExists
+    it('rejects if the payment is in an unkown state')
 
     beforeEach(() => {
       address = 'fake address'
@@ -40,8 +42,11 @@ describe('translate-swap', () => {
 
       sendPayment = sinon.stub().resolves({ paymentPreimage: preimage })
 
+      getPreimageIfPaymentExists = sinon.stub().resolves(preimage)
+
       translateSwapModule.__set__('networkAddressFormatter', networkAddressFormatter)
       translateSwapModule.__set__('sendPayment', sendPayment)
+      translateSwapModule.__set__('getPreimageIfPaymentExists', getPreimageIfPaymentExists)
 
       client = 'fakeclient'
       engine = {
@@ -59,45 +64,68 @@ describe('translate-swap', () => {
       timekeeper.reset()
     })
 
-    it('sends a payment using the maximum time lock', async () => {
-      await translateSwap.call(engine, address, swapHash, amount, maxTime)
+    context('existing payment', () => {
+      it('gets the preimage if it exists', async () => {
+        const result = await translateSwap.call(engine, address, swapHash, amount, maxTime)
 
-      expect(sendPayment).to.have.been.calledOnce()
-      expect(sendPayment).to.have.been.calledWith(
-        {
-          paymentHash: swapHash,
-          destString: pubKey,
-          amt: amount,
-          finalCltvDelta: 144,
-          cltvLimit: 288,
-          feeLimit: 0
-        },
-        { client })
+        expect(getPreimageIfPaymentExists).to.have.been.calledOnce()
+        expect(getPreimageIfPaymentExists).to.have.been.calledWith(swapHash)
+        expect(result).to.be.eql(preimage)
+      })
     })
 
-    it('sends a payment using a custom final delta', async () => {
-      await translateSwap.call(engine, address, swapHash, amount, maxTime, '85000')
+    context('no existing payment', () => {
+      beforeEach(() => {
+        const error = new Error()
+        error.code = 5 // gRPC NOT FOUND status code
+        getPreimageIfPaymentExists.rejects(error)
+      })
 
-      expect(sendPayment).to.have.been.calledOnce()
-      expect(sendPayment).to.have.been.calledWith(
-        {
-          paymentHash: swapHash,
-          destString: pubKey,
-          amt: amount,
-          finalCltvDelta: 142,
-          cltvLimit: 288,
-          feeLimit: 0
-        },
-        { client })
-    })
+      it('throws a permanent error for any error other than NOT FOUND', () => {
+        getPreimageIfPaymentExists.rejects()
 
-    it('throws a permanent error if there is a payment error', () => {
-      sendPayment.resolves({ paymentError: 'fake error' })
-      expect(translateSwap.call(engine, address, swapHash, amount, maxTime)).to.eventually.be.rejectedWith(PermanentSwapError)
-    })
+        expect(translateSwap.call(engine, address, swapHash, amount, maxTime)).to.eventually.be.rejectedWith(PermanentSwapError)
+      })
 
-    it('returns the payment preiamge', async () => {
-      expect(await translateSwap.call(engine, address, swapHash, amount, maxTime)).to.be.eql(preimage)
+      it('sends a payment using the maximum time lock', async () => {
+        await translateSwap.call(engine, address, swapHash, amount, maxTime)
+
+        expect(sendPayment).to.have.been.calledOnce()
+        expect(sendPayment).to.have.been.calledWith(
+          {
+            paymentHash: swapHash,
+            destString: pubKey,
+            amt: amount,
+            finalCltvDelta: 144,
+            cltvLimit: 288,
+            feeLimit: 0
+          },
+          { client })
+      })
+
+      it('sends a payment using a custom final delta', async () => {
+        await translateSwap.call(engine, address, swapHash, amount, maxTime, '85000')
+
+        expect(sendPayment).to.have.been.calledOnce()
+        expect(sendPayment).to.have.been.calledWith(
+          {
+            paymentHash: swapHash,
+            destString: pubKey,
+            amt: amount,
+            finalCltvDelta: 142,
+            cltvLimit: 288,
+            feeLimit: 0
+          },
+          { client })
+      })
+
+      it('throws a permanent error if there is a payment error', () => {
+        sendPayment.resolves({ paymentError: 'fake error' })
+        expect(translateSwap.call(engine, address, swapHash, amount, maxTime)).to.eventually.be.rejectedWith(PermanentSwapError)
+      })
+
+      it('returns the payment preiamge', async () => {
+        expect(await translateSwap.call(engine, address, swapHash, amount, maxTime)).to.be.eql(preimage)
+      })
     })
   })
-})
