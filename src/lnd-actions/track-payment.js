@@ -20,7 +20,7 @@ const PAYMENT_STATUSES = Object.freeze({
 
 /**
  * Tracks an existing payment
- * @param {string} paymentHash - Base64 encoded string of payment to track
+ * @param {string} paymentHash - Base64 encoded payment to track
  * @param {Object} opts
  * @param {LndClient} opts.client
  * @returns {ReadableStream} Readable stream from grpc
