@@ -30,12 +30,9 @@ async function getPaymentPreimage (paymentHash) {
         throw new Error('paymentHash must be defined')
       }
 
-      // TODO: look into how gRPC wants `bytes` in JS
-      const paymentHashBuf = Buffer.from(paymentHash, 'base64')
-
       this.logger.debug('Attempting to track payment for paymentHash:', { paymentHash })
 
-      const stream = await trackPayment(paymentHashBuf, { client: this.client })
+      const stream = await trackPayment(paymentHash, { client: this.client })
 
       const errorListener = (err) => {
         // TODO: handle gRPC NOT FOUND errors
