@@ -48,7 +48,7 @@ async function translateSwap (takerAddress, swapHash, amount, maxTime, finalCltv
 
     // TODO: should we handle checking if permanentError == gRPC NOT FOUND here?
     if (permanentError) {
-      this.logger.error(`Payment error while getting existing swap preimage`, { permanentError, swapHash })
+      this.logger.error('Payment error while getting existing swap preimage', { permanentError, swapHash })
       throw new PermanentSwapError(permanentError)
     }
 

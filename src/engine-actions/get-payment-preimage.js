@@ -38,7 +38,7 @@ async function getPaymentPreimage (paymentHash) {
         // TODO: handle gRPC NOT FOUND errors
         //  It may be best to handle it as a `permanentError`, so we don't have to
         //  rely on checking NOT FOUND in downstream logic
-        this.logger.error(`Error from trackPayment stream`)
+        this.logger.error('Error from trackPayment stream', { paymentHash })
         return finish(err)
       }
 
@@ -53,7 +53,7 @@ async function getPaymentPreimage (paymentHash) {
         if (state === PAYMENT_STATUSES.IN_FLIGHT) {
           // trackPayment will continue to stream updates of the payment state, so
           // no action is required on our end
-          this.logger.debug('Payment is In-Flight for paymentHash:', { paymentHash })
+          return this.logger.debug('Payment is In-Flight for paymentHash:', { paymentHash })
         }
 
         if (state === PAYMENT_STATUSES.SUCCEEDED) {
@@ -71,7 +71,7 @@ async function getPaymentPreimage (paymentHash) {
           return finish(null, { permanentError })
         }
 
-        throw new Error(`Unknown payment status ${state} for payment with hash '${paymentHash}'`)
+        return finish(new Error(`Unknown payment status ${state} for payment with hash '${paymentHash}'`))
       }
 
       const finish = (err, response) => {
