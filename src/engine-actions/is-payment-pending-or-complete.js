@@ -9,7 +9,7 @@ const PAYMENT_STATUSES = lookupPaymentStatus.STATUSES
  * pending or complete.
  *
  * @param {string} paymentHash - Base64 encoded payment hash
- * @returns {boolean} true if a payment is in progress or completed; false otherwise
+ * @returns {Promise<boolean>} true if a payment is in progress or completed; false otherwise
  * @throws {Error} unknown payment status
  */
 async function isPaymentPendingOrComplete (paymentHash) {

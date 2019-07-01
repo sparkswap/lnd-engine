@@ -25,10 +25,10 @@ const SEND_PAYMENT_DEADLINE = 30
  * @param {string}  paymentOptions.feeLimit       - Int64 string of maximum
  *                                                  number of satoshis to pay in
  *                                                  fees
- * @param {number}  paymentOptions.cltvLimit      - Maximum number of blocks in
+ * @param {number}  [paymentOptions.cltvLimit]      - Maximum number of blocks in
  *                                                  the route timelock
  * @param {Object}  opts
- * @param {LndClient} opts.client                 - LND client to use
+ * @param {import('../lnd-setup').LndClient} opts.client
  * @returns {Promise<Object>} Resolves with the response from LND
  */
 function sendPayment (paymentOptions, { client }) {

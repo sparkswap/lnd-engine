@@ -4,8 +4,8 @@ const { deadline } = require('../grpc-utils')
  * Gets the specified lnd instance's wallet balance
  *
  * @see http://api.lightning.community/#walletBalance
- * @param {Object} args
- * @param {LndClient} args.client
+ * @param {Object} opts
+ * @param {import('../lnd-setup').LndClient} opts.client
  * @returns {Promise}
  */
 function walletBalance ({ client }) {

@@ -5,8 +5,8 @@ const { deadline } = require('../grpc-utils')
  *
  * @see http://api.lightning.community/#getTransactions
  * @param {Object} opts
- * @param {LndClient} opts.client
- * @returns {Array<Object>} response
+ * @param {import('../lnd-setup').LndClient} opts.client
+ * @returns {Promise<{transactions: Array}>} response
  */
 function getTransactions ({ client }) {
   return new Promise((resolve, reject) => {

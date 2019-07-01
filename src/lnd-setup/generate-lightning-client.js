@@ -11,7 +11,7 @@ const { ENGINE_STATUSES } = require('../constants')
 
 /**
  * Array of lnd proto files to load to generate lightning client
- * @type {string[]}
+ * @type {readonly string[]}
  */
 const PROTO_FILES = Object.freeze([
   'rpc.proto',
@@ -19,18 +19,20 @@ const PROTO_FILES = Object.freeze([
   'routerrpc/router.proto'
 ])
 
+/** @typedef {Object} Logger */
+
 /**
  * Generates a lnrpc.Lightning client which allows full functionality of the LND node
  *
  * @function
- * @param {LndEngine} engine
+ * @param {Object} engine
  * @param {string} engine.host
  * @param {string} engine.protoPath
  * @param {string} engine.tlsCertPath
  * @param {string} engine.macaroonPath
  * @param {string} engine.status
  * @param {Logger} engine.logger
- * @returns {grpc.Client} lnrpc Lightning client definition
+ * @returns {import('.').LndClient} lnrpc Lightning client definition
  */
 function generateLightningClient ({ host, protoPath, tlsCertPath, macaroonPath, status, logger }) {
   const { lnrpc, invoicesrpc, routerrpc } = loadProto(protoPath, PROTO_FILES)

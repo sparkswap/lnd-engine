@@ -41,10 +41,10 @@ describe('getMaxChannelForAddress', () => {
     expect(getChannelsForRemoteAddressStub).to.have.been.calledWith(address)
   })
 
-  it('returns empty if no channels exist', async () => {
+  it('returns zero if no channels exist', async () => {
     getChannelsForRemoteAddressStub.resolves({})
 
-    const expectedRes = {}
+    const expectedRes = { maxBalance: '0' }
     const res = await getMaxChannelForAddress(address)
     expect(logger.debug).to.have.been.calledWith('getMaxChannelForAddress: No open or pending channels exist')
     expect(res).to.eql(expectedRes)

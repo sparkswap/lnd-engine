@@ -6,7 +6,7 @@ const { deadline } = require('../grpc-utils')
  * @see http://api.lightning.community/#lookupInvoice
  * @param {Object} paymentHashObj
  * @param {Object} opts
- * @param {LndClient} opts.client
+ * @param {import('../lnd-setup').LndClient} opts.client
  * @returns {Promise<Object>}
  */
 function lookupInvoice (paymentHashObj, { client }) {

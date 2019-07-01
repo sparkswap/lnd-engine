@@ -4,9 +4,9 @@
  *
  * @param {Object} channelPoint - { fundingTxidStr, outputIndex } to identify the channel to be closed
  * @param {boolean} force - true if we want to force close the channel, false if not (defaults to false)
- * @param {Object} options
- * @param {Object} options.client - lnd client
- * @returns {ReadableStream} Readable stream from gprc
+ * @param {Object} opts
+ * @param {import('../lnd-setup').LndClient} opts.client
+ * @returns {import('grpc').ClientReadableStream}
  */
 function closeChannel (channelPoint, force, { client }) {
   return client.closeChannel({ channelPoint, force })

@@ -17,8 +17,8 @@ const PAYMENT_STATUSES = Object.freeze({
  * Checks a payment's status
  *
  * @param {string} paymentHash - Base64 encoded payment hash for the desired payment
- * @param {Object} options
- * @param {Object} options.client
+ * @param {Object} opts
+ * @param {import('../lnd-setup').LndClient} opts.client
  * @returns {Promise<Object>} response
  */
 function lookupPaymentStatus (paymentHash, { client }) {

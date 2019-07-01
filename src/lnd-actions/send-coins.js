@@ -7,7 +7,7 @@ const { deadline } = require('../grpc-utils')
  * @param {string} addr
  * @param {number} amount
  * @param {Object} opts
- * @param {LndClient} opts.client
+ * @param {import('../lnd-setup').LndClient} opts.client
  * @returns {Object} response
  */
 function sendCoins (addr, amount, { client }) {

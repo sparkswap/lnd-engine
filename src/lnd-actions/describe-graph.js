@@ -10,8 +10,8 @@ const { deadline } = require('../grpc-utils')
  * Returns a description of the graph state
  *
  * @param {Object} opts
- * @param {LndClient} opts.client
- * @returns {Promise<LND~ChannelGraph>}
+ * @param {import('../lnd-setup').LndClient} opts.client
+ * @returns {Promise<Object>}
  */
 function describeGraph ({ client }) {
   return new Promise((resolve, reject) => {

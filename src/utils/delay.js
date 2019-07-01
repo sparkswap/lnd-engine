@@ -6,6 +6,7 @@
  */
 function delay (ms) {
   return new Promise((resolve, reject) => {
+    void reject
     setTimeout(resolve, ms)
   })
 }

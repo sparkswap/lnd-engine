@@ -15,10 +15,10 @@ const { CHANNEL_ROUNDING } = require('../constants')
  * uneconomic channels (that are too small to be worth it.)
  *
  * @private
- * @param   {Engine} engine
+ * @param   {Object} engine
  * @param   {string} fundingAmount - int64 string of amount desired to open
  * @param   {string} roundBehavior - Behavior to use when encoutnering a channel that is too small.
- * @returns {Big}                    Modified amount to open in channels
+ * @returns {typeof Big}                    Modified amount to open in channels
  */
 function getAmountForChannels (engine, fundingAmount, roundBehavior) {
   const {
@@ -85,9 +85,9 @@ function getAmountForChannels (engine, fundingAmount, roundBehavior) {
  * Check that the balance in the engine can cover the desired funding amount
  *
  * @private
- * @param   {Engine} engine
+ * @param   {Object} engine
  * @param   {string} fundingAmount - Int64 string of desired funding amount
- * @returns {void}
+ * @returns {Promise<void>}
  * @throws  {Error} If Balance is insufficient to cover amount and fees
  */
 async function assertBalanceIsSufficient (engine, fundingAmount) {

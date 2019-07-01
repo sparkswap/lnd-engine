@@ -1,10 +1,10 @@
 /**
  * Subscribe to status updates for a single invoice
  *
- * @param {Bytes} rHash
+ * @param {string} rHash
  * @param {Object} opts
- * @param {LndClient} opts.client
- * @returns {ReadableStream} Readable stream from grpc
+ * @param {import('../lnd-setup').LndClient} opts.client
+ * @returns {import('grpc').ClientReadableStream}
  */
 function subscribeSingleInvoice (rHash, { client }) {
   return client.invoices.subscribeSingleInvoice({ rHash })

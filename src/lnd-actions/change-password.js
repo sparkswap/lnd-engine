@@ -7,7 +7,7 @@ const { deadline } = require('../grpc-utils')
  * @param {Buffer} currentPassword - Buffer or base64 string
  * @param {Buffer} newPassword - Buffer or base64 string
  * @param {Object} opts
- * @param {LndClient} opts.client - WalletUnlocker rpc client
+ * @param {import('../lnd-setup').LndWalletUnlockerClient} opts.client
  * @returns {Promise}
  */
 function changePassword (currentPassword, newPassword, { client }) {

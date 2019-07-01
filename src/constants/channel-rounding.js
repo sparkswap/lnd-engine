@@ -3,7 +3,7 @@
  * would be uneconomically small.
  *
  * @constant
- * @type {Object<key, string>}
+ * @type {Object<string, string>}
  * @default
  */
 const CHANNEL_ROUNDING = Object.freeze({

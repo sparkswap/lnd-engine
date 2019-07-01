@@ -5,7 +5,7 @@ const { deadline } = require('../grpc-utils')
  *
  * @see http://api.lightning.community/#genSeed
  * @param {Object} opts
- * @param {LndClient} opts.client
+ * @param {import('../lnd-setup').LndWalletUnlockerClient} opts.client
  * @returns {Promise<Object>}
  */
 function genSeed ({ client }) {

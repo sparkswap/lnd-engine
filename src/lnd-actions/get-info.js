@@ -5,7 +5,7 @@ const { deadline } = require('../grpc-utils')
  *
  * @see http://api.lightning.community/#getInfo
  * @param {Object} opts
- * @param {LndClient} opts.client
+ * @param {import('../lnd-setup').LndClient} opts.client
  * @returns {Promise<Object>}
  */
 function getInfo ({ client }) {

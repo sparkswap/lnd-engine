@@ -9,7 +9,7 @@ const fs = require('fs')
 
 /**
  * Array of lnd proto files to load to generate wallet unlocker
- * @type {string[]}
+ * @type {readonly string[]}
  */
 const PROTO_FILES = Object.freeze(['rpc.proto'])
 
@@ -21,7 +21,7 @@ const PROTO_FILES = Object.freeze(['rpc.proto'])
  * @param {string} args.host
  * @param {string} args.protoPath
  * @param {string} args.tlsCertPath
- * @returns {Object} lnrpc WalletUnlocker client definition
+ * @returns {import('.').LndWalletUnlockerClient}
  */
 function generateWalletUnlockerClient ({ host, protoPath, tlsCertPath }) {
   const { lnrpc } = loadProto(protoPath, PROTO_FILES)

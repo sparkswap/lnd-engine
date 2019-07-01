@@ -7,12 +7,12 @@ const { deadline } = require('../grpc-utils')
  * @param {Buffer} walletPassword - password in bytes
  * @param {Array} cipherSeedMnemonic - generated from lnd (24 string array)
  * @param {Object} opts
- * @param {string} opts.backup - binary lnd backup data
- * @param {number} opts.recoveryWindow - number of blocks for address lookback when restoring a wallet
- * @param {LndClient} opts.client
+ * @param {Buffer} [opts.backup] - binary lnd backup data
+ * @param {number} [opts.recoveryWindow] - number of blocks for address lookback when restoring a wallet
+ * @param {import('../lnd-setup').LndWalletUnlockerClient} opts.client
  * @returns {Promise<Object>} res - empty object for success
  */
-function initWallet (walletPassword, cipherSeedMnemonic, { backup = undefined, recoveryWindow = undefined, client }) {
+function initWallet (walletPassword, cipherSeedMnemonic, { backup, recoveryWindow, client }) {
   return new Promise((resolve, reject) => {
     let params = {
       walletPassword,

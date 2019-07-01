@@ -24,7 +24,7 @@ const {
  * @param {string} makerAddress - Payment Channel Network Address for the Maker of the swap
  * @param {string} swapHash     - base64 string of the swap hash associated with this swap
  * @param {string} amount       - Int64 string of the amount of outbound currency in its integer units
- * @returns {void} Promise that resolves when the swap is settled
+ * @returns {Promise<void>}     - Promise that resolves when the swap is settled
  */
 async function executeSwap (makerAddress, swapHash, amount) {
   this.logger.info(`Executing swap for ${swapHash} with ${makerAddress}`, { makerAddress, swapHash, amount })
@@ -47,6 +47,7 @@ async function executeSwap (makerAddress, swapHash, amount) {
     destString: counterpartyPubKey,
     paymentHash: swapHash,
     amt: amount,
+    feeLimit: '0',
     finalCltvDelta
   }
 

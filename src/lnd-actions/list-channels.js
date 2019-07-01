@@ -4,7 +4,7 @@ const { deadline } = require('../grpc-utils')
  * Returns a list of open channels
  * @see https://api.lightning.community/#listchannels
  * @param {Object} opts
- * @param {LndClient} opts.client
+ * @param {import('../lnd-setup').LndClient} opts.client
  * @returns {Promise<Object>}
  */
 function listChannels ({ client }) {

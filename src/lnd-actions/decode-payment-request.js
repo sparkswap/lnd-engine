@@ -7,7 +7,7 @@ const { deadline } = require('../grpc-utils')
  * @see https://api.lightning.community/#decodepayreq
  * @param {string} paymentRequest
  * @param {Object} opts
- * @param {LndClient} opts.client
+ * @param {import('../lnd-setup').LndClient} opts.client
  * @returns {Promise<Object>}
  */
 function decodePaymentRequest (paymentRequest, { client }) {

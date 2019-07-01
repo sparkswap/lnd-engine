@@ -7,7 +7,7 @@ const { INVOICE_STATES } = require('../constants')
  * @see {lnd-actions#lookupinvoice}
  * @see http://api.lightning.community/#addinvoice
  * @param {string} swapHash - Base64 encoded hash for the invoice
- * @returns {string} Base64 encoded preimage for the hash
+ * @returns {Promise<string>} Base64 encoded preimage for the hash
  * @throws {Error} If the invoice is not in a SETTLED state
  */
 async function getSettledSwapPreimage (swapHash) {

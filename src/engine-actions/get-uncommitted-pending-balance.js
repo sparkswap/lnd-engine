@@ -3,7 +3,7 @@ const { Big } = require('../utils')
 
 /**
  * Total balance of unspent funds
- * @returns {string} total
+ * @returns {Promise<string>} total
  */
 async function getUncommittedPendingBalance () {
   const { unconfirmedBalance } = await walletBalance({ client: this.client })

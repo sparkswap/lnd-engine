@@ -5,8 +5,7 @@ const { listChannels, listPendingChannels } = require('../lnd-actions')
  * Get maximum balance from all channels (inbound or outbound)
  * @param {Object} [options={}]
  * @param {boolean} [options.outbound=true] - outbound is true if checking outbound channels, false if inbound
- * @returns {Object} res
- * @returns {string} res.maxBalance - the max balance in all open channels.
+ * @returns {Promise<{maxBalance: string}>} - the max balance in all open channels
  */
 async function getMaxChannel ({ outbound = true } = {}) {
   const [
@@ -21,7 +20,7 @@ async function getMaxChannel ({ outbound = true } = {}) {
 
   if (!channels.length && !pendingOpenChannels.length) {
     this.logger.debug('getMaxChannel: No open or pending channels exist')
-    return {}
+    return { maxBalance: '0' }
   }
 
   // We need to normalize pendingChannels here because their format is different
