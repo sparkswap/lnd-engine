@@ -1,5 +1,7 @@
 const { deadline } = require('../grpc-utils')
 
+/** @typedef {import('../lnd-setup').LndClient} LndClient */
+
 /**
  * SendPayment deadline (in seconds)
  * @constant
@@ -28,7 +30,7 @@ const SEND_PAYMENT_DEADLINE = 30
  * @param {number}  [paymentOptions.cltvLimit]      - Maximum number of blocks in
  *                                                  the route timelock
  * @param {Object}  opts
- * @param {import('../lnd-setup').LndClient} opts.client
+ * @param {LndClient} opts.client
  * @returns {Promise<Object>} Resolves with the response from LND
  */
 function sendPayment (paymentOptions, { client }) {

@@ -1,3 +1,5 @@
+/** @typedef {import('../lnd-setup').LndClient} LndClient */
+
 /**
  * @constant
  * @type {number}
@@ -11,7 +13,7 @@ const DEFAULT_TIMELOCK_DELTA = 9
  * @param {string} feeRate - number up to 6 decimal places
  * @param {number} [timeLockDelta=DEFAULT_TIMELOCK_DELTA]
  * @param {Object} opts
- * @param {import('../lnd-setup').LndClient} opts.client
+ * @param {LndClient} opts.client
  * @returns {Promise} res
  */
 async function updateChannelPolicy (chanPoint, feeRate, timeLockDelta = DEFAULT_TIMELOCK_DELTA, { client }) {

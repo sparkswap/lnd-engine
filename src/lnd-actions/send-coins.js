@@ -1,5 +1,7 @@
 const { deadline } = require('../grpc-utils')
 
+/** @typedef {import('../lnd-setup').LndClient} LndClient */
+
 /**
  * Sends coins from lnd wallet to address
  *
@@ -7,7 +9,7 @@ const { deadline } = require('../grpc-utils')
  * @param {string} addr
  * @param {number} amount
  * @param {Object} opts
- * @param {import('../lnd-setup').LndClient} opts.client
+ * @param {LndClient} opts.client
  * @returns {Object} response
  */
 function sendCoins (addr, amount, { client }) {

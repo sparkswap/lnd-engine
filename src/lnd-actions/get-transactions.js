@@ -1,11 +1,13 @@
 const { deadline } = require('../grpc-utils')
 
+/** @typedef {import('../lnd-setup').LndClient} LndClient */
+
 /**
  * Returns a list of all on-chain transactions for the engine
  *
  * @see http://api.lightning.community/#getTransactions
  * @param {Object} opts
- * @param {import('../lnd-setup').LndClient} opts.client
+ * @param {LndClient} opts.client
  * @returns {Promise<{transactions: Array}>} response
  */
 function getTransactions ({ client }) {

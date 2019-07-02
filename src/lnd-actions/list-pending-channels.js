@@ -1,5 +1,7 @@
 const { deadline } = require('../grpc-utils')
 
+/** @typedef {import('../lnd-setup').LndClient} LndClient */
+
 /** @typedef {Object} PendingChannels
  *  @property {Array} pendingOpenChannels
  *  @property {Array} pendingClosingChannels
@@ -11,7 +13,7 @@ const { deadline } = require('../grpc-utils')
  * Returns a list of pending channels
  * @see https://api.lightning.community/#pendingchannels
  * @param {Object} opts
- * @param {import('../lnd-setup').LndClient} opts.client
+ * @param {LndClient} opts.client
  * @returns {Promise<PendingChannels>}
  */
 function listPendingChannels ({ client }) {

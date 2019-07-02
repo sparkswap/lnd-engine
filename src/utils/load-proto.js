@@ -33,7 +33,7 @@ function getGrpcOptions (basePath) {
  * @function
  * @private
  * @param {string} basePath - lnrpc directory path
- * @param {readonly string[]} relativePaths - path to proto file within basePath
+ * @param {ReadonlyArray<string>} relativePaths - path to proto file within basePath
  * @returns {Object}
  * @throws {Error} proto file not found
  */

@@ -1,12 +1,14 @@
 const { deadline } = require('../grpc-utils')
 
+/** @typedef {import('../lnd-setup').LndClient} LndClient */
+
 /**
  * Open a channel w/ LND
  *
  * @param {string} publicKey - lnd public key to open channel with
  * @param {string} fundingAmount - the amount to fund the channel w/
  * @param {Object} opts
- * @param {import('../lnd-setup').LndClient} opts.client
+ * @param {LndClient} opts.client
  * @returns {Promise}
  */
 function openChannel (publicKey, fundingAmount, { client }) {

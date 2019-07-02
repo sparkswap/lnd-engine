@@ -63,7 +63,7 @@ async function translateSwap (takerAddress, swapHash, amount, maxTime, finalCltv
     amt: amount,
     finalCltvDelta,
     cltvLimit,
-    feeLimit: DEFAULT_FEE_LIMIT.toString()
+    feeLimit: DEFAULT_FEE_LIMIT
   }, { client: this.client })
 
   if (paymentError) {

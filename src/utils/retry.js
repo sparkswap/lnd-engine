@@ -1,6 +1,6 @@
 const delay = require('./delay')
 
-/** @typedef {Object} Logger */
+/** @typedef {import('..').Logger} Logger */
 
 /**
  * Delay in each retry attempt to validating an engine

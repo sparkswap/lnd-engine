@@ -4,6 +4,9 @@ const {
   listPayments
 } = require('../lnd-actions')
 
+/** @typedef {import('..').Logger} Logger */
+/** @typedef {import('../lnd-setup').LndClient} LndClient */
+
 const PAYMENT_STATUSES = lookupPaymentStatus.STATUSES
 
 /**
@@ -51,8 +54,6 @@ async function getPaymentPreimage (paymentHash) {
   throw new Error(`Unknown payment status ${status} for payment with hash '${paymentHash}'`)
 }
 
-/** @typedef {Object} Logger */
-
 /**
  * Retrieve the preimage for a completed payment specified by the payment
  * hash.
@@ -61,7 +62,7 @@ async function getPaymentPreimage (paymentHash) {
  *       {@link https://github.com/lightningnetwork/lnd/issues/2032}
  * @param  {string} paymentHash - Base64 encoded payment hash
  * @param  {Object} options
- * @param {import('../lnd-setup').LndClient} options.client
+ * @param  {LndClient} options.client
  * @param  {Logger} options.logger
  * @returns {Promise<string>} Base64 encoded payment preimage associated with the hash
  * @throws {Error} If payment is not completed

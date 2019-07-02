@@ -1,5 +1,7 @@
 const { deadline } = require('../grpc-utils')
 
+/** @typedef { import('../lnd-setup').LndWalletUnlockerClient } WalletUnlocker */
+
 /**
  * Initializes an lnd wallet
  *
@@ -9,7 +11,7 @@ const { deadline } = require('../grpc-utils')
  * @param {Object} opts
  * @param {Buffer} [opts.backup] - binary lnd backup data
  * @param {number} [opts.recoveryWindow] - number of blocks for address lookback when restoring a wallet
- * @param {import('../lnd-setup').LndWalletUnlockerClient} opts.client
+ * @param {WalletUnlocker} opts.client
  * @returns {Promise<Object>} res - empty object for success
  */
 function initWallet (walletPassword, cipherSeedMnemonic, { backup, recoveryWindow, client }) {

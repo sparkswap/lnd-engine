@@ -22,7 +22,7 @@ const TRANSACTION_TYPES = Object.freeze({
 /**
  * Gets all opening and closing transaction ids from a list of channels.
  * @param {Object} channels
- * @returns {Promise<Set>} channelTxIds
+ * @returns {Promise<Set<string>>} channelTxIds
  */
 async function getTxIdsForChannels (channels) {
   return channels.reduce((channelTxIds, { closingTxHash, channelPoint }) => {

@@ -40,6 +40,7 @@ const PUBLIC_CONFIG = [
 ]
 
 /** @typedef {Object} Logger */
+/** @typedef {Object} Engine */
 
 /**
  * The public interface for interaction with an LND instance

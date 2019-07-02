@@ -1,5 +1,8 @@
 const { deadline } = require('../grpc-utils')
 
+/** @typedef {import('..').Logger} Logger */
+/** @typedef {import('../lnd-setup').LndClient} LndClient */
+
 /**
  * Given an error, detects if the error message says that the peer is already
  * connected
@@ -11,10 +14,8 @@ const { deadline } = require('../grpc-utils')
  * @returns {boolean}
  */
 function alreadyConnected (err) {
-  return (err && err.code === 2 && err.details !== undefined && err.details.includes('already connected to peer'))
+  return (err && err.code === 2 && err.details != null && err.details.includes('already connected to peer'))
 }
-
-/** @typedef {Object} Logger */
 
 /**
  * Creates a new connection to an lnd node
@@ -22,7 +23,7 @@ function alreadyConnected (err) {
  * @param {string} publicKey
  * @param {string} host
  * @param {Object} opts
- * @param {import('../lnd-setup').LndClient} opts.client
+ * @param {LndClient} opts.client
  * @param {Logger} opts.logger
  * @returns {Promise<Object>}
  */

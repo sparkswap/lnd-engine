@@ -1,5 +1,7 @@
 const { deadline } = require('../grpc-utils')
 
+/** @typedef {import('../lnd-setup').LndClient} LndClient */
+
 /**
  * Creates an invoice on lnd
  *
@@ -11,7 +13,7 @@ const { deadline } = require('../grpc-utils')
  * @param {boolean} [params.externalPreimage] - Whether the preimage is stored locally or on an external server
  * @param {string} [params.rHash] - Optional Base64 string of the hash for the invoice
  * @param {Object} opts
- * @param {import('../lnd-setup').LndClient} opts.client
+ * @param {LndClient} opts.client
  * @returns {Promise<{rHash: string, paymentRequest: string}>}
  */
 function addInvoice ({ memo, expiry, value, externalPreimage, rHash }, { client }) {

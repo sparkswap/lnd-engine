@@ -46,7 +46,7 @@ async function prepareSwap (swapHash, value, expiryTime, cltvExpiry) {
       memo: `${MEMO_PREFIX}`,
       hash: swapHash,
       value,
-      expiry,
+      expiry: expiry.toString(),
       cltvExpiry: cltvExpiryBlocks
     }
 

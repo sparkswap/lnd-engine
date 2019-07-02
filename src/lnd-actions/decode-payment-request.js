@@ -1,5 +1,7 @@
 const { deadline } = require('../grpc-utils')
 
+/** @typedef {import('../lnd-setup').LndClient} LndClient */
+
 /**
  * Given an lnd payment request hash, try to decode the hash w/ a specified
  * lnd node
@@ -7,7 +9,7 @@ const { deadline } = require('../grpc-utils')
  * @see https://api.lightning.community/#decodepayreq
  * @param {string} paymentRequest
  * @param {Object} opts
- * @param {import('../lnd-setup').LndClient} opts.client
+ * @param {LndClient} opts.client
  * @returns {Promise<Object>}
  */
 function decodePaymentRequest (paymentRequest, { client }) {
