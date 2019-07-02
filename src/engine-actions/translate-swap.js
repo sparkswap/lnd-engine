@@ -124,14 +124,6 @@ async function getPreimageIfPaymentExists (paymentHash) {
       const stream = trackPayment(paymentHash, { client: this.client })
 
       const errorListener = (err) => {
-        // If our call to LND returned a gRPC NOT FOUND error, we can be confident there
-        // isn't an existing payment for the provided swapHash, so we can create a new
-        // payment with a call to sendPayment
-        if (err.code === grpc.status.NOT_FOUND) {
-          stream.removeAllListeners()
-          return reject(err)
-        }
-
         this.logger.error('Error from trackPayment stream', { paymentHash })
         stream.removeAllListeners()
         return reject(err)
