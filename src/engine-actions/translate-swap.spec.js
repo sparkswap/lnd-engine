@@ -87,7 +87,7 @@ describe('translate-swap', () => {
       it('throws a permanent error for any error other than NOT FOUND', () => {
         getPreimageIfPaymentExists.rejects()
 
-        expect(translateSwap.call(engine, address, swapHash, amount, maxTime)).to.eventually.be.rejectedWith(PermanentSwapError)
+        return expect(translateSwap.call(engine, address, swapHash, amount, maxTime)).to.eventually.be.rejectedWith(PermanentSwapError)
       })
 
       it('sends a payment using the maximum time lock', async () => {
@@ -179,9 +179,9 @@ describe('translate-swap', () => {
     it('rejects if trackPayment returns gRPC NOT FOUND', () => {
       const error = new Error()
       error.code = 5 // gRPC NOT FOUND
-      trackPaymentStub.rejects(error)
+      setTimeout(() => stream.emit('error', error))
 
-      expect(getPreimageIfPaymentExists.call(engine, paymentHash))
+      return expect(getPreimageIfPaymentExists.call(engine, paymentHash))
         .to.eventually.be.rejectedWith(error)
     })
 
@@ -244,21 +244,21 @@ describe('translate-swap', () => {
       it('rejects if payment failed from a timeout', () => {
         setTimeout(() => stream.emit('data', failedTimeoutPayment), 1)
 
-        expect(getPreimageIfPaymentExists.call(engine, paymentHash))
+        return expect(getPreimageIfPaymentExists.call(engine, paymentHash))
           .to.eventually.be.rejectedWith(`Payment failed for paymentHash: ${paymentHash}`)
       })
 
       it('rejects if payment failed with no route', () => {
         setTimeout(() => stream.emit('data', failedNoRoutePayment), 1)
 
-        expect(getPreimageIfPaymentExists.call(engine, paymentHash))
+        return expect(getPreimageIfPaymentExists.call(engine, paymentHash))
           .to.eventually.be.rejectedWith(`Payment failed for paymentHash: ${paymentHash}`)
       })
 
       it('rejects if the payment is in an unknown state', () => {
         setTimeout(() => stream.emit('data', unknownPaymentState), 1)
 
-        expect(getPreimageIfPaymentExists.call(engine, paymentHash))
+        return expect(getPreimageIfPaymentExists.call(engine, paymentHash))
           .to.eventually.be.rejectedWith('Unknown payment status')
       })
 
@@ -266,14 +266,14 @@ describe('translate-swap', () => {
         const error = new Error()
         setTimeout(() => stream.emit('error', error), 1)
 
-        expect(getPreimageIfPaymentExists.call(engine, paymentHash))
+        return expect(getPreimageIfPaymentExists.call(engine, paymentHash))
           .to.eventually.be.rejectedWith(error)
       })
 
       it('rejects with an error if stream closes early', () => {
         setTimeout(() => stream.emit('end'), 1)
 
-        expect(getPreimageIfPaymentExists.call(engine, paymentHash))
+        return expect(getPreimageIfPaymentExists.call(engine, paymentHash))
           .to.eventually.be.rejectedWith('LND closed stream to track payment')
       })
 
