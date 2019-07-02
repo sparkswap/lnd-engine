@@ -75,6 +75,10 @@ async function translateSwap (takerAddress, swapHash, amount, maxTime, finalCltv
     // be conservative.
     const timeFromNow = Math.floor((maxTime - new Date()) / 1000)
 
+    if (timeFromNow < 0) {
+      throw new PermanentSwapError(`Expected maxTime to be in the future. Seconds from now is: ${timeFromNow}`)
+    }
+
     // Translate seconds into blocks, rounding down to ensure we can stay atomic.
     // The LND api expects this to be an int32, which in javascript is a number.
     const cltvLimit = parseInt(Big(timeFromNow).div(this.secondsPerBlock).round(3).toFixed(0), 10)
@@ -83,6 +87,11 @@ async function translateSwap (takerAddress, swapHash, amount, maxTime, finalCltv
     // node will accept the payment. The LND api expects this to be an int32,
     // so we convert to a javascript number.
     const finalCltvDelta = parseInt(Big(finalCltvDeltaSecs).div(this.secondsPerBlock).round(0).toFixed(0), 10)
+
+    if (cltvLimit < finalCltvDelta) {
+      throw new PermanentSwapError(`Timelock for total swap is shorter than final hop of payment. ` +
+        `cltvLimt: ${cltvLimit}, finalCltvDelta: ${finalCltvDelta}`)
+    }
 
     const {
       paymentPreimage,

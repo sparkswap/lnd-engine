@@ -90,6 +90,23 @@ describe('translate-swap', () => {
         return expect(translateSwap.call(engine, address, swapHash, amount, maxTime)).to.eventually.be.rejectedWith(PermanentSwapError)
       })
 
+      it('throws a permanent error if the maxTime is in the past', () => {
+        timekeeper.travel(new Date('2019-07-04T00:58:25.638Z'))
+        maxTime = new Date('2019-07-01T00:58:26.638Z')
+
+        return expect(translateSwap.call(engine, address, swapHash, amount, maxTime))
+          .to.eventually.be.rejectedWith(PermanentSwapError)
+      })
+
+      it('throws a permanent error if the final hop is longer than total timelock', () => {
+        timekeeper.travel(new Date('2019-07-04T00:58:25.638Z'))
+        maxTime = new Date('2019-07-04T05:58:26.638Z')
+        const finalCltvDeltaSecs = 600 * 40
+
+        return expect(translateSwap.call(engine, address, swapHash, amount, maxTime, finalCltvDeltaSecs))
+          .to.eventually.be.rejectedWith('Timelock for total swap is shorter than final hop of payment')
+      })
+
       it('sends a payment using the maximum time lock', async () => {
         await translateSwap.call(engine, address, swapHash, amount, maxTime)
 
