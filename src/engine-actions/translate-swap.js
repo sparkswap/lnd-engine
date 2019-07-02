@@ -114,14 +114,14 @@ async function translateSwap (takerAddress, swapHash, amount, maxTime, finalCltv
  * @returns {Promise<string>} - Base64 encoded string of the preimage
  */
 async function getPreimageIfPaymentExists (paymentHash) {
-  return new Promise(async (resolve, reject) => {
+  return new Promise((resolve, reject) => {
     try {
       if (!paymentHash) {
         throw new Error('paymentHash must be defined')
       }
 
       this.logger.debug('Attempting to track payment for paymentHash:', { paymentHash })
-      const stream = await trackPayment(paymentHash, { client: this.client })
+      const stream = trackPayment(paymentHash, { client: this.client })
 
       const errorListener = (err) => {
         this.logger.error('Error from trackPayment stream', { paymentHash })
