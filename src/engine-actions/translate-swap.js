@@ -168,11 +168,11 @@ async function getPreimageIfPaymentExists (paymentHash) {
           this.logger.error('Payment failed', { paymentHash })
 
           stream.removeAllListeners()
-          return reject(new Error(`Payment failed for paymentHash: ${paymentHash}`))
+          return reject(new PermanentSwapError(`Payment failed for paymentHash: ${paymentHash}`))
         }
 
         stream.removeAllListeners()
-        const errMsg = `Unknown payment status ${state} for payment withhash '${paymentHash}'`
+        const errMsg = `Unknown payment status ${state} for payment with hash '${paymentHash}'`
         return reject(new Error(errMsg))
       }
 
