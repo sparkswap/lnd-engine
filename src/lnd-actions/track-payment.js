@@ -1,3 +1,6 @@
+/** @typedef {import('../lnd-setup').LndClient} LndClient */
+/** @typedef {import('grpc').ClientReadableStream} ClientReadableStream */
+
 /**
  * Payment Status corresponding to the output of LND's TrackPayment RPC
  *
@@ -23,7 +26,7 @@ const PAYMENT_STATUSES = Object.freeze({
  * @param {string} paymentHash - Base64 encoded payment to track
  * @param {Object} opts
  * @param {LndClient} opts.client
- * @returns {ReadableStream} Readable stream from grpc
+ * @returns {ClientReadableStream} Readable stream from grpc
  */
 function trackPayment (paymentHash, { client }) {
   return client.router.trackPayment({ paymentHash })

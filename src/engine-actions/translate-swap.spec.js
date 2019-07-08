@@ -491,7 +491,7 @@ describe('translate-swap', () => {
           amt: amount,
           finalCltvDelta: 144,
           cltvLimit: 288,
-          feeLimit: 0
+          feeLimit: '0'
         },
         { client })
       expect(result).to.be.eql(preimage)

@@ -114,6 +114,10 @@ async function translateSwap (takerAddress, swapHash, amount, maxTime, finalCltv
   }
 }
 
+/** @typedef {import('../lnd-setup').LndClient} LndClient */
+/** @typedef {import('grpc').ClientReadableStream} ClientReadableStream */
+/** @typedef {Object} Logger */
+
 /**
  * Retrieve the preimage for the given payment hash. If no payment is found
  * for the hash, it will throw a gRPC NOT FOUND error. If the payment is
