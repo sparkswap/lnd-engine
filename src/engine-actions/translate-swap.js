@@ -57,7 +57,7 @@ async function translateSwap (takerAddress, swapHash, amount, maxTime, finalCltv
   // sendPayment will result in creating only one downstream payment for this swap
   try {
     // we await so rejections are handled within this function
-    const paymentPreimage = await getPreimageIfPaymentExists(swapHash)
+    const paymentPreimage = await getPreimageIfPaymentExists(swapHash, this.client, this.logger)
 
     return paymentPreimage
   } catch (e) {
@@ -120,26 +120,28 @@ async function translateSwap (takerAddress, swapHash, amount, maxTime, finalCltv
  * in-flight, it will wait until the payment succeeds or is in a permanent
  * failure state.
  * @param {string} paymentHash - Base64 encoded payment hash
+ * @param {LndClient} client
+ * @param {Logger} logger
  * @returns {Promise<string>} - Base64 encoded string of the preimage
  */
-async function getPreimageIfPaymentExists (paymentHash) {
+async function getPreimageIfPaymentExists (paymentHash, client, logger) {
   return new Promise((resolve, reject) => {
     try {
       if (!paymentHash) {
         throw new Error('paymentHash must be defined')
       }
 
-      this.logger.debug('Attempting to track payment for paymentHash:', { paymentHash })
-      const stream = trackPayment(paymentHash, { client: this.client })
+      logger.debug('Attempting to track payment for paymentHash:', { paymentHash })
+      const stream = trackPayment(paymentHash, { client })
 
       const errorListener = (err) => {
-        this.logger.error('Error from trackPayment stream', { paymentHash })
+        logger.error('Error from trackPayment stream', { paymentHash })
         stream.removeAllListeners()
         return reject(err)
       }
 
       const endListener = () => {
-        this.logger.error('LND closed trackPayment stream before returning our value')
+        logger.error('LND closed trackPayment stream before returning our value')
         stream.removeAllListeners()
         return reject(new Error('LND closed stream to track payment'))
       }
@@ -150,7 +152,7 @@ async function getPreimageIfPaymentExists (paymentHash) {
         if (state === PAYMENT_STATUSES.IN_FLIGHT) {
           // trackPayment will continue to stream updates of the payment state, so
           // no action is required on our end
-          return this.logger.debug('Payment is In-Flight for paymentHash:', { paymentHash })
+          return logger.debug('Payment is In-Flight for paymentHash:', { paymentHash })
         }
 
         if (state === PAYMENT_STATUSES.SUCCEEDED) {
@@ -159,13 +161,13 @@ async function getPreimageIfPaymentExists (paymentHash) {
             return reject(new Error('No preimage associated with successful payment'))
           }
 
-          this.logger.debug('Payment has Succeeded for paymentHash', { paymentHash })
+          logger.debug('Payment has Succeeded for paymentHash', { paymentHash })
           stream.removeAllListeners()
           return resolve(preimage)
         }
 
         if (state === PAYMENT_STATUSES.FAILED_TIMEOUT || state === PAYMENT_STATUSES.FAILED_NO_ROUTE) {
-          this.logger.error('Payment failed', { paymentHash })
+          logger.error('Payment failed', { paymentHash })
 
           stream.removeAllListeners()
           return reject(new PermanentSwapError(`Payment failed for paymentHash: ${paymentHash}`))
