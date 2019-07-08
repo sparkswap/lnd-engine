@@ -29,6 +29,8 @@ const generateLightningClient = require('./generate-lightning-client')
  *  @property {(args: Object, opts: Object, cb: Function) => undefined} walletBalance
  *  @property {Object} invoices
  *  @property {(args: Object) => ClientReadableStream} subscribeSingleInvoice
+ *  @property {Object} router
+ *  @property {(args: Object) => ClientReadableStream} trackPayment
  */
 
 /** @typedef {Object} LndWalletUnlockerClient

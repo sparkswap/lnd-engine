@@ -29,6 +29,7 @@ const getTransactions = require('./get-transactions')
 const changePassword = require('./change-password')
 const cancelInvoice = require('./cancel-invoice')
 const settleInvoice = require('./settle-invoice')
+const trackPayment = require('./track-payment')
 
 module.exports = {
   addInvoice,
@@ -61,5 +62,6 @@ module.exports = {
   getTransactions,
   changePassword,
   cancelInvoice,
-  settleInvoice
+  settleInvoice,
+  trackPayment
 }
