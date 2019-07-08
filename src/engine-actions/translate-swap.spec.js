@@ -460,14 +460,14 @@ describe('translate-swap', () => {
       process.nextTick(() => stream.emit('data', failedTimeoutPayment))
 
       return expect(translateSwap.call(engine, address, swapHash, amount, maxTime))
-        .to.eventually.be.rejectedWith(`Payment failed for paymentHash`)
+        .to.eventually.be.rejectedWith(PermanentSwapError)
     })
 
     it('throws a permanent error if the payment exists and failed from no route', () => {
       process.nextTick(() => stream.emit('data', failedNoRoutePayment))
 
       return expect(translateSwap.call(engine, address, swapHash, amount, maxTime))
-        .to.eventually.be.rejectedWith(`Payment failed for paymentHash`)
+        .to.eventually.be.rejectedWith(PermanentSwapError)
     })
 
     it('throws an error for unknown states', () => {
@@ -482,7 +482,7 @@ describe('translate-swap', () => {
       error.code = 5 // gRPC NOT FOUND
       process.nextTick(() => stream.emit('error', error))
 
-      await translateSwap.call(engine, address, swapHash, amount, maxTime)
+      const result = await translateSwap.call(engine, address, swapHash, amount, maxTime)
       expect(sendPaymentStub).to.have.been.calledOnce()
       expect(sendPaymentStub).to.have.been.calledWith(
         {
@@ -494,6 +494,7 @@ describe('translate-swap', () => {
           feeLimit: 0
         },
         { client })
+      expect(result).to.be.eql(preimage)
     })
   })
 })
