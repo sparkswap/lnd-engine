@@ -20,10 +20,10 @@ const SEND_PAYMENT_DEADLINE = 30
  *   Int64 string of number of satoshis to send
  * @property {number}  paymentOptions.finalCltvDelta -
  *   Delta from the current block height to be used for the final hop
- * @property {Object}  paymentOptions.feeLimit -
- * @property {string} [paymentOptions.feeLimit.fixed]
+ * @property {Object}  paymentOptions.feeLimit
+ * @property {string} [paymentOptions.feeLimit.fixed] -
  *   Int64 string of maximum number of satoshis to pay in fees
- * @property {string} [paymentOptions.feeLimit.percent]
+ * @property {string} [paymentOptions.feeLimit.percent] -
  *   Int64 string of fee limit exepressed as a pecentage of payment amount
  * @property {number}  [paymentOptions.cltvLimit] -
  *   Maximum number of blocks in the route timelock
