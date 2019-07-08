@@ -10,7 +10,6 @@ const {
  */
 
 async function payInvoice (paymentRequest) {
-  // @ts-ignore
   const { paymentError, paymentPreimage } = await sendPayment({ paymentRequest }, { client: this.client })
 
   if (paymentError) {
