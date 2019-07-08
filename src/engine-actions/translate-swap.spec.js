@@ -85,9 +85,9 @@ describe('translate-swap', () => {
       })
 
       it('throws an error for any error other than NOT FOUND', () => {
-        getPreimageIfPaymentExists.rejects()
+        getPreimageIfPaymentExists.rejects(new Error('An unknown error'))
 
-        return expect(translateSwap.call(engine, address, swapHash, amount, maxTime)).to.eventually.be.rejectedWith(Error)
+        return expect(translateSwap.call(engine, address, swapHash, amount, maxTime)).to.eventually.be.rejectedWith('An unknown error')
       })
 
       it('throws a permanent error if the maxTime is in the past', () => {
@@ -185,7 +185,7 @@ describe('translate-swap', () => {
         state: 'SUCCEEDED',
         preimage: 'a-preimage'
       }
-      setTimeout(() => stream.emit('data', stateThatResolves), 1)
+      process.nextTick(() => stream.emit('data', stateThatResolves))
 
       await getPreimageIfPaymentExists(paymentHash, { client, logger })
       expect(trackPaymentStub).to.have.been.calledOnce()
@@ -195,7 +195,7 @@ describe('translate-swap', () => {
     it('rejects if trackPayment returns gRPC NOT FOUND', () => {
       const error = new Error()
       error.code = 5 // gRPC NOT FOUND
-      setTimeout(() => stream.emit('error', error))
+      process.nextTick(() => stream.emit('error', error))
 
       return expect(getPreimageIfPaymentExists(paymentHash, { client, logger }))
         .to.eventually.be.rejectedWith(error)
@@ -245,34 +245,34 @@ describe('translate-swap', () => {
       })
 
       it('rejects if payment is `succeeded` without a preimage', () => {
-        setTimeout(() => stream.emit('data', succeededWithoutPreimage), 1)
+        process.nextTick(() => stream.emit('data', succeededWithoutPreimage))
         return expect(getPreimageIfPaymentExists(paymentHash, { client, logger }))
           .to.eventually.be.rejectedWith('No preimage associated with successful payment')
       })
 
       it('resolves with the preimage if the payment succeeded', async () => {
-        setTimeout(() => stream.emit('data', succeededPayment), 1)
+        process.nextTick(() => stream.emit('data', succeededPayment))
         const preimage = await getPreimageIfPaymentExists(paymentHash, { client, logger })
 
         expect(preimage).to.be.eql(succeededPayment.preimage)
       })
 
       it('rejects if payment failed from a timeout', () => {
-        setTimeout(() => stream.emit('data', failedTimeoutPayment), 1)
+        process.nextTick(() => stream.emit('data', failedTimeoutPayment))
 
         return expect(getPreimageIfPaymentExists(paymentHash, { client, logger }))
           .to.eventually.be.rejectedWith(`Payment failed for paymentHash: ${paymentHash}`)
       })
 
       it('rejects if payment failed with no route', () => {
-        setTimeout(() => stream.emit('data', failedNoRoutePayment), 1)
+        process.nextTick(() => stream.emit('data', failedNoRoutePayment))
 
         return expect(getPreimageIfPaymentExists(paymentHash, { client, logger }))
           .to.eventually.be.rejectedWith(`Payment failed for paymentHash: ${paymentHash}`)
       })
 
       it('rejects if the payment is in an unknown state', () => {
-        setTimeout(() => stream.emit('data', unknownPaymentState), 1)
+        process.nextTick(() => stream.emit('data', unknownPaymentState))
 
         return expect(getPreimageIfPaymentExists(paymentHash, { client, logger }))
           .to.eventually.be.rejectedWith('Unknown payment status')
@@ -280,14 +280,14 @@ describe('translate-swap', () => {
 
       it('rejects with an error if stream errors', () => {
         const error = new Error()
-        setTimeout(() => stream.emit('error', error), 1)
+        process.nextTick(() => stream.emit('error', error))
 
         return expect(getPreimageIfPaymentExists(paymentHash, { client, logger }))
           .to.eventually.be.rejectedWith(error)
       })
 
       it('rejects with an error if stream closes early', () => {
-        setTimeout(() => stream.emit('end'), 1)
+        process.nextTick(() => stream.emit('end'))
 
         return expect(getPreimageIfPaymentExists(paymentHash, { client, logger }))
           .to.eventually.be.rejectedWith('LND closed stream to track payment')
@@ -304,7 +304,7 @@ describe('translate-swap', () => {
         }
 
         it('removes on success', async () => {
-          setTimeout(() => stream.emit('data', succeededPayment), 1)
+          process.nextTick(() => stream.emit('data', succeededPayment))
           await getPreimageIfPaymentExists(paymentHash, { client, logger })
 
           const listenerCount = getAllListernersCount()
@@ -312,7 +312,7 @@ describe('translate-swap', () => {
         })
 
         it('removes if success state without preimage', async () => {
-          setTimeout(() => stream.emit('data', succeededWithoutPreimage), 1)
+          process.nextTick(() => stream.emit('data', succeededWithoutPreimage))
           try {
             await getPreimageIfPaymentExists(paymentHash, { client, logger })
           } catch (e) {
@@ -322,7 +322,7 @@ describe('translate-swap', () => {
         })
 
         it('removes if payment failed from a timeout', async () => {
-          setTimeout(() => stream.emit('data', failedTimeoutPayment), 1)
+          process.nextTick(() => stream.emit('data', failedTimeoutPayment))
           try {
             await getPreimageIfPaymentExists(paymentHash, { client, logger })
           } catch (e) {
@@ -332,7 +332,7 @@ describe('translate-swap', () => {
         })
 
         it('removes if payment failed with no route', async () => {
-          setTimeout(() => stream.emit('data', failedNoRoutePayment), 1)
+          process.nextTick(() => stream.emit('data', failedNoRoutePayment))
           try {
             await getPreimageIfPaymentExists(paymentHash, { client, logger })
           } catch (e) {
@@ -342,7 +342,7 @@ describe('translate-swap', () => {
         })
 
         it('removes if payment is in an unknown state', async () => {
-          setTimeout(() => stream.emit('data', unknownPaymentState), 1)
+          process.nextTick(() => stream.emit('data', unknownPaymentState))
           try {
             await getPreimageIfPaymentExists(paymentHash, { client, logger })
           } catch (e) {
@@ -352,7 +352,7 @@ describe('translate-swap', () => {
         })
 
         it('removes if stream errors', async () => {
-          setTimeout(() => stream.emit('error', new Error()), 1)
+          process.nextTick(() => stream.emit('error', new Error()))
           try {
             await getPreimageIfPaymentExists(paymentHash, { client, logger })
           } catch (e) {
@@ -362,7 +362,7 @@ describe('translate-swap', () => {
         })
 
         it('removes if stream ends', async () => {
-          setTimeout(() => stream.emit('end'), 1)
+          process.nextTick(() => stream.emit('end'))
           try {
             await getPreimageIfPaymentExists(paymentHash, { client, logger })
           } catch (e) {
@@ -374,7 +374,7 @@ describe('translate-swap', () => {
     })
   })
 
-  describe('integration tests', () => {
+  describe('translateSwap with getPreimageIfPaymentExists', () => {
     let reverts
     let engine
     let address
@@ -450,28 +450,28 @@ describe('translate-swap', () => {
     })
 
     it('returns the preimage if the payment exists', async () => {
-      setTimeout(() => stream.emit('data', succeededPayment), 1)
+      process.nextTick(() => stream.emit('data', succeededPayment))
       const result = await translateSwap.call(engine, address, swapHash, amount, maxTime)
 
       expect(result).to.be.eql(succeededPayment.preimage)
     })
 
     it('throws a permanent error if the payment exists and failed from timeout', () => {
-      setTimeout(() => stream.emit('data', failedTimeoutPayment), 1)
+      process.nextTick(() => stream.emit('data', failedTimeoutPayment))
 
       return expect(translateSwap.call(engine, address, swapHash, amount, maxTime))
         .to.eventually.be.rejectedWith(`Payment failed for paymentHash`)
     })
 
     it('throws a permanent error if the payment exists and failed from no route', () => {
-      setTimeout(() => stream.emit('data', failedNoRoutePayment), 1)
+      process.nextTick(() => stream.emit('data', failedNoRoutePayment))
 
       return expect(translateSwap.call(engine, address, swapHash, amount, maxTime))
         .to.eventually.be.rejectedWith(`Payment failed for paymentHash`)
     })
 
     it('throws an error for unknown states', () => {
-      setTimeout(() => stream.emit('data', unknownPaymentState), 1)
+      process.nextTick(() => stream.emit('data', unknownPaymentState))
 
       return expect(translateSwap.call(engine, address, swapHash, amount, maxTime))
         .to.eventually.be.rejectedWith('Unknown payment status')
@@ -480,7 +480,7 @@ describe('translate-swap', () => {
     it('calls sendPayment for gRPC NOT FOUND errors', async () => {
       const error = new Error()
       error.code = 5 // gRPC NOT FOUND
-      setTimeout(() => stream.emit('error', error), 1)
+      process.nextTick(() => stream.emit('error', error))
 
       await translateSwap.call(engine, address, swapHash, amount, maxTime)
       expect(sendPaymentStub).to.have.been.calledOnce()
