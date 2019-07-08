@@ -28,6 +28,7 @@ const listClosedChannels = require('./list-closed-channels')
 const getTransactions = require('./get-transactions')
 const changePassword = require('./change-password')
 const cancelInvoice = require('./cancel-invoice')
+const settleInvoice = require('./settle-invoice')
 
 module.exports = {
   addInvoice,
@@ -59,5 +60,6 @@ module.exports = {
   listClosedChannels,
   getTransactions,
   changePassword,
-  cancelInvoice
+  cancelInvoice,
+  settleInvoice
 }
