@@ -384,6 +384,7 @@ describe('translate-swap', () => {
     let client
     let stream
     let trackPaymentStub
+    let inFlightPayment
     let succeededPayment
     let failedTimeoutPayment
     let failedNoRoutePayment
@@ -412,6 +413,10 @@ describe('translate-swap', () => {
           error: sinon.stub(),
           debug: sinon.stub()
         }
+      }
+
+      inFlightPayment = {
+        state: 'IN_FLIGHT'
       }
 
       succeededPayment = {
@@ -449,52 +454,88 @@ describe('translate-swap', () => {
       reverts.forEach(revert => revert())
     })
 
-    it('returns the preimage if the payment exists', async () => {
-      process.nextTick(() => stream.emit('data', succeededPayment))
-      const result = await translateSwap.call(engine, address, swapHash, amount, maxTime)
+    context('payment exists with initial state in-flight', () => {
+      beforeEach(() => {
+        process.nextTick(() => stream.emit('data', inFlightPayment))
+      })
 
-      expect(result).to.be.eql(succeededPayment.preimage)
+      it('returns the preimage if the payment exists', async () => {
+        process.nextTick(() => stream.emit('data', succeededPayment))
+        const result = await translateSwap.call(engine, address, swapHash, amount, maxTime)
+
+        expect(result).to.be.eql(succeededPayment.preimage)
+      })
+
+      it('throws a permanent error if the payment exists and failed from timeout', () => {
+        process.nextTick(() => stream.emit('data', failedTimeoutPayment))
+
+        return expect(translateSwap.call(engine, address, swapHash, amount, maxTime))
+          .to.eventually.be.rejectedWith(PermanentSwapError)
+      })
+
+      it('throws a permanent error if the payment exists and failed from no route', () => {
+        process.nextTick(() => stream.emit('data', failedNoRoutePayment))
+
+        return expect(translateSwap.call(engine, address, swapHash, amount, maxTime))
+          .to.eventually.be.rejectedWith(PermanentSwapError)
+      })
+
+      it('throws an error for unknown states', () => {
+        process.nextTick(() => stream.emit('data', unknownPaymentState))
+
+        return expect(translateSwap.call(engine, address, swapHash, amount, maxTime))
+          .to.eventually.be.rejectedWith('Unknown payment status')
+      })
     })
 
-    it('throws a permanent error if the payment exists and failed from timeout', () => {
-      process.nextTick(() => stream.emit('data', failedTimeoutPayment))
+    context('payment exists with initial state NOT in-flight', () => {
+      it('returns the preimage if the payment exists', async () => {
+        process.nextTick(() => stream.emit('data', succeededPayment))
+        const result = await translateSwap.call(engine, address, swapHash, amount, maxTime)
 
-      return expect(translateSwap.call(engine, address, swapHash, amount, maxTime))
-        .to.eventually.be.rejectedWith(PermanentSwapError)
-    })
+        expect(result).to.be.eql(succeededPayment.preimage)
+      })
 
-    it('throws a permanent error if the payment exists and failed from no route', () => {
-      process.nextTick(() => stream.emit('data', failedNoRoutePayment))
+      it('throws a permanent error if the payment exists and failed from timeout', () => {
+        process.nextTick(() => stream.emit('data', failedTimeoutPayment))
 
-      return expect(translateSwap.call(engine, address, swapHash, amount, maxTime))
-        .to.eventually.be.rejectedWith(PermanentSwapError)
-    })
+        return expect(translateSwap.call(engine, address, swapHash, amount, maxTime))
+          .to.eventually.be.rejectedWith(PermanentSwapError)
+      })
 
-    it('throws an error for unknown states', () => {
-      process.nextTick(() => stream.emit('data', unknownPaymentState))
+      it('throws a permanent error if the payment exists and failed from no route', () => {
+        process.nextTick(() => stream.emit('data', failedNoRoutePayment))
 
-      return expect(translateSwap.call(engine, address, swapHash, amount, maxTime))
-        .to.eventually.be.rejectedWith('Unknown payment status')
-    })
+        return expect(translateSwap.call(engine, address, swapHash, amount, maxTime))
+          .to.eventually.be.rejectedWith(PermanentSwapError)
+      })
 
-    it('calls sendPayment for gRPC NOT FOUND errors', async () => {
-      const error = new Error()
-      error.code = 5 // gRPC NOT FOUND
-      process.nextTick(() => stream.emit('error', error))
+      it('throws an error for unknown states', () => {
+        process.nextTick(() => stream.emit('data', unknownPaymentState))
 
-      const result = await translateSwap.call(engine, address, swapHash, amount, maxTime)
-      expect(sendPaymentStub).to.have.been.calledOnce()
-      expect(sendPaymentStub).to.have.been.calledWith(
-        {
-          paymentHash: swapHash,
-          destString: pubKey,
-          amt: amount,
-          finalCltvDelta: 144,
-          cltvLimit: 288,
-          feeLimit: '0'
-        },
-        { client })
-      expect(result).to.be.eql(preimage)
+        return expect(translateSwap.call(engine, address, swapHash, amount, maxTime))
+          .to.eventually.be.rejectedWith('Unknown payment status')
+      })
+
+      it('calls sendPayment for gRPC NOT FOUND errors', async () => {
+        const error = new Error()
+        error.code = 5 // gRPC NOT FOUND
+        process.nextTick(() => stream.emit('error', error))
+
+        const result = await translateSwap.call(engine, address, swapHash, amount, maxTime)
+        expect(sendPaymentStub).to.have.been.calledOnce()
+        expect(sendPaymentStub).to.have.been.calledWith(
+          {
+            paymentHash: swapHash,
+            destString: pubKey,
+            amt: amount,
+            finalCltvDelta: 144,
+            cltvLimit: 288,
+            feeLimit: '0'
+          },
+          { client })
+        expect(result).to.be.eql(preimage)
+      })
     })
   })
 })
