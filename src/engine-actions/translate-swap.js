@@ -170,7 +170,8 @@ async function getPreimageIfPaymentExists (paymentHash, client, logger) {
           logger.error('Payment failed', { paymentHash })
 
           stream.removeAllListeners()
-          return reject(new PermanentSwapError(`Payment failed for paymentHash: ${paymentHash}`))
+          return reject(new PermanentSwapError(`Payment failed for paymentHash: ${paymentHash} ` +
+          `paymentState: ${state}`))
         }
 
         stream.removeAllListeners()
