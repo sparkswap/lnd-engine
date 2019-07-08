@@ -18,7 +18,7 @@ const MEMO_PREFIX = 'sparkswap-swap-pivot'
  * @param {Date} expiryTime - absolute payment request expiry time
  * @param {number} cltvExpiry - delta to use for the time-lock of the CLTV
  *                              extended to the final hop (in seconds)
- * @returns {string} paymentRequest - lightning invoice for a payment
+ * @returns {Promise<string>} paymentRequest - lightning invoice for a payment
  */
 async function prepareSwap (swapHash, value, expiryTime, cltvExpiry) {
   this.logger.info(`Preparing swap for ${swapHash}`, { value })
@@ -41,12 +41,12 @@ async function prepareSwap (swapHash, value, expiryTime, cltvExpiry) {
     }
     return paymentRequest
   } catch (e) {
-    const expiry = Math.floor((expiryTime - new Date()) / 1000)
+    const expiry = Math.floor((expiryTime.getTime() - (new Date()).getTime()) / 1000)
     const params = {
       memo: `${MEMO_PREFIX}`,
       hash: swapHash,
       value,
-      expiry,
+      expiry: expiry.toString(),
       cltvExpiry: cltvExpiryBlocks
     }
 

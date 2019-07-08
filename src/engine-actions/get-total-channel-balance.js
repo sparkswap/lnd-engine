@@ -4,7 +4,7 @@ const { listChannels } = require('../lnd-actions')
 /**
  * Get local balance of all channels for a specific daemon
  *
- * @returns {string} totalBalance (int64)
+ * @returns {Promise<string>} totalBalance (int64)
  */
 async function getTotalChannelBalance () {
   const { channels = [] } = await listChannels({ client: this.client })

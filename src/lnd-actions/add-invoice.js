@@ -1,18 +1,20 @@
 const { deadline } = require('../grpc-utils')
 
+/** @typedef {import('../lnd-setup').LndClient} LndClient */
+
 /**
  * Creates an invoice on lnd
  *
  * @see http://api.lightning.community/#addinvoice
  * @param {Object} params
  * @param {string} params.memo
- * @param {Int64} params.expiry - invoice expiry in seconds
- * @param {Int64} params.value
- * @param {boolean} params.externalPreimage - Whether the preimage is stored locally or on an external server
- * @param {string} params.rHash - Optional Base64 string of the hash for the invoice
+ * @param {string} params.expiry - invoice expiry in seconds
+ * @param {string} params.value
+ * @param {boolean} [params.externalPreimage] - Whether the preimage is stored locally or on an external server
+ * @param {string} [params.rHash] - Optional Base64 string of the hash for the invoice
  * @param {Object} opts
- * @param {grpc#client} opts.client
- * @returns {Promise<string>} rHash
+ * @param {LndClient} opts.client
+ * @returns {Promise<{rHash: string, paymentRequest: string}>}
  */
 function addInvoice ({ memo, expiry, value, externalPreimage, rHash }, { client }) {
   const params = {

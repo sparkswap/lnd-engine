@@ -1,5 +1,5 @@
 const path = require('path')
-const { currencies } = require('./config')
+const { currencies } = require('./config.json')
 const {
   ENGINE_STATUSES,
   CHANNEL_ROUNDING
@@ -39,6 +39,9 @@ const PUBLIC_CONFIG = [
   'maxPaymentSize'
 ]
 
+/** @typedef {Object} Logger */
+/** @typedef {Object} Engine */
+
 /**
  * The public interface for interaction with an LND instance
  */
@@ -51,8 +54,8 @@ class LndEngine {
    * @param {string} symbol - Common symbol of the currency this engine supports (e.g. `BTC`)
    * @param {Object} [options={}]
    * @param {Logger} [options.logger=console] - logger used by the engine
-   * @param {string} options.tlsCertPath - file path to the TLS certificate for LND
-   * @param {string} options.macaroonPath - file path to the macaroon file for LND
+   * @param {string} [options.tlsCertPath] - file path to the TLS certificate for LND
+   * @param {string} [options.macaroonPath] - file path to the macaroon file for LND
    */
   constructor (host, symbol, { logger = console, tlsCertPath, macaroonPath } = {}) {
     if (!host) {
@@ -70,9 +73,10 @@ class LndEngine {
 
     // Expose config publicly that we expect to be used by consumers
     PUBLIC_CONFIG.forEach((configKey) => {
-      if (!this.currencyConfig.hasOwnProperty(configKey)) {
+      if (this.currencyConfig && !this.currencyConfig.hasOwnProperty(configKey)) {
         throw new Error(`Currency config for ${this.symbol} is missing for '${configKey}'`)
       }
+      // @ts-ignore
       this[configKey] = this.currencyConfig[configKey]
     })
 
@@ -117,7 +121,7 @@ class LndEngine {
   /**
    * Validates and sets the current state of an engine
    *
-   * @returns {void}
+   * @returns {Promise<void>}
    */
   async validateEngine () {
     const payload = { symbol: this.symbol }
@@ -129,6 +133,7 @@ class LndEngine {
       this.client = generateLightningClient(this)
 
       // Returns a status `ENGINE_STATUS`
+      // @ts-ignore
       this.status = await this.getStatus()
 
       if (!this.validated) {

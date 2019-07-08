@@ -6,10 +6,10 @@ const {
 } = require('../lnd-actions')
 const { Big } = require('../utils')
 
+/** @typedef {string} TransactionType
+
 /**
- * @constant
- * @type {Object}
- * @default
+ * @enum {TransactionType}
  */
 const TRANSACTION_TYPES = Object.freeze({
   CHANNEL_OPEN: 'CHANNEL_OPEN',
@@ -22,7 +22,7 @@ const TRANSACTION_TYPES = Object.freeze({
 /**
  * Gets all opening and closing transaction ids from a list of channels.
  * @param {Object} channels
- * @returns {Set} channelTxIds
+ * @returns {Promise<Set<string>>} channelTxIds
  */
 async function getTxIdsForChannels (channels) {
   return channels.reduce((channelTxIds, { closingTxHash, channelPoint }) => {
@@ -41,7 +41,7 @@ async function getTxIdsForChannels (channels) {
 /**
  * Gets closing transaction fees from closed channel objects
  * @param {Object} closedChannels
- * @returns {Set} closedChannelFees
+ * @returns {Promise<Map<string, string>>} closedChannelFees
  */
 async function getFeesForClosedChannels (closedChannels) {
   return closedChannels.reduce((closedChannelFees, { closingTxHash, capacity, settledBalance }) => {
@@ -62,7 +62,7 @@ async function getFeesForClosedChannels (closedChannels) {
  * @param {string} amount
  * @param {boolean} isChannel
  * @param {boolean} isClosedChannel
- * @returns {TRANSACTION_TYPES} type
+ * @returns {TransactionType} - transaction type
  */
 function determineTransactionType (amount, isChannel, isClosedChannel) {
   // A channel close will have a positive balance as we are putting currency back
@@ -95,7 +95,7 @@ function determineTransactionType (amount, isChannel, isClosedChannel) {
 
 /**
  * Gets all on-chain transactions for the engine
- * @returns {Array<Object>} res
+ * @returns {Promise<Array<Object>>} res
  */
 async function getChainTransactions () {
   const { transactions } = await getTransactions({ client: this.client })

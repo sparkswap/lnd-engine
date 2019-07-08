@@ -2,7 +2,7 @@ const { walletBalance } = require('../lnd-actions')
 
 /**
  * Total balance of unspent funds
- * @returns {string} total
+ * @returns {Promise<string>} total
  */
 async function getUncommittedBalance () {
   const { confirmedBalance } = await walletBalance({ client: this.client })

@@ -118,7 +118,7 @@ describe('translate-swap', () => {
             amt: amount,
             finalCltvDelta: 144,
             cltvLimit: 288,
-            feeLimit: 0
+            feeLimit: '0'
           },
           { client })
       })
@@ -134,7 +134,7 @@ describe('translate-swap', () => {
             amt: amount,
             finalCltvDelta: 142,
             cltvLimit: 288,
-            feeLimit: 0
+            feeLimit: '0'
           },
           { client })
       })

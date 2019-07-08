@@ -1,11 +1,13 @@
 const { deadline } = require('../grpc-utils')
 
+/** @typedef {import('../lnd-setup').LndClient} LndClient */
+
 /**
  * Returns a list of closed channels
  * @see https://api.lightning.community/#closedchannels
  * @param {Object} opts
  * @param {LndClient} opts.client
- * @returns {Promise<Object>}
+ * @returns {Promise<{channels: Array}>}
  */
 function listClosedChannels ({ client }) {
   return new Promise((resolve, reject) => {

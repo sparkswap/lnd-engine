@@ -7,8 +7,8 @@ class CanceledSwapError extends Error {}
 /**
  * Waits for a swap to enter the ACCEPTED state and errors if it won't happen
  *
- * @param {Bytes} swapHash - hash for a swap
- * @returns {Date} - creation date of the HTLC
+ * @param {string} swapHash - hash for a swap
+ * @returns {Promise<Date>} - creation date of the HTLC
  */
 async function waitForSwapCommitment (swapHash) {
   return new Promise((resolve, reject) => {

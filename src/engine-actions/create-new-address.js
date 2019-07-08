@@ -16,7 +16,7 @@ const NESTED_WITNESS_ADDRESS_TYPE = 1
 /**
  * Creates a new wallet address
  *
- * @returns {string} address
+ * @returns {Promise<string>} address
  */
 async function createNewAddress () {
   const address = await newAddress(NESTED_WITNESS_ADDRESS_TYPE, { client: this.client })

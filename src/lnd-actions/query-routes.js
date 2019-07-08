@@ -1,5 +1,7 @@
 const { deadline } = require('../grpc-utils')
 
+/** @typedef {import('../lnd-setup').LndClient} LndClient */
+
 /**
  * @typedef {Object} FeeLimit
  * @property {String} fixed
@@ -16,7 +18,7 @@ const { deadline } = require('../grpc-utils')
  * @param {number}  params.finalCltvDelta - CLTV delta to be used for the final hop
  * @param {FeeLimit} params.feeLimit      - Int64 string of max number of satoshis to pay in fees
  * @param {Object} opts
- * @param {LndClient} opts.client         - LND client to use
+ * @param {LndClient} opts.client
  * @returns {Promise}
  */
 function queryRoutes ({ pubKey, amt, numRoutes, finalCltvDelta, feeLimit }, { client }) {

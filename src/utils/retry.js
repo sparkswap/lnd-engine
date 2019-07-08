@@ -1,5 +1,7 @@
 const delay = require('./delay')
 
+/** @typedef {import('..').Logger} Logger */
+
 /**
  * Delay in each retry attempt to validating an engine
  *
@@ -15,7 +17,7 @@ const RETRY_DELAY = 10000
  * @param {Function} callFunction
  * @param {Object} [payload={}] - information for error log during backoff failures
  * @param {Object} opts
- * @param {string} [opts.debugName=null]
+ * @param {?string} [opts.debugName=null]
  * @param {number} [opts.delayTime=RETRY_DELAY] - delay in milliseconds between calls
  * @param {Logger} [opts.logger=console]
  * @returns {Promise}

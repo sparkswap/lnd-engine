@@ -1,3 +1,5 @@
+/** @typedef {import('../lnd-setup').LndClient} LndClient */
+
 /**
  * @constant
  * @type {number}

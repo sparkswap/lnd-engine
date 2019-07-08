@@ -44,7 +44,7 @@ function parse (paymentChannelNetworkAddress) {
  * Serialize a public key and host into a standard payment channel network address
  * @param {Object} args
  * @param  {string} args.publicKey - public key of the node
- * @param  {string} args.host      - host of the node - if omitted, it will be ommitted from the address
+ * @param  {string} [args.host]    - host of the node - if omitted, it will be ommitted from the address
  * @returns {string} serialized payment channel network address
  */
 function serialize ({ publicKey, host }) {

@@ -12,7 +12,7 @@
   "scripts": {
     "build": "bash ./scripts/build.sh",
     "pretest": "npm run format",
-    "test": "npm run check-for-cycles && npm run check-unused && npm run test-engine",
+    "test": "npm run check-for-cycles && npm run check-unused && npm run typecheck && npm run test-engine",
     "test-engine": "NODE_PATH=. mocha 'src/**/*.spec.js'",
     "coverage": "nyc npm run test",
     "lint": "eslint src test --ext .js --max-warnings=0",
@@ -22,7 +22,8 @@
     "postdoc": "http-server docs",
     "ci-test": "npm run format && npm run test-engine",
     "check-for-cycles": "madge --circular src/",
-    "check-unused": "node ./scripts/check-unused.js"
+    "check-unused": "node ./scripts/check-unused.js",
+    "typecheck": "tsc --alwaysStrict --allowJs --checkJs --noEmit --resolveJsonModule --downlevelIteration --noImplicitReturns --noUnusedLocals --noUnusedParameters --strictFunctionTypes --strictNullChecks --target es2018 --moduleResolution node src/index.js"
   },
   "repository": {
     "type": "git",
@@ -65,7 +66,8 @@
     "sinon": "7.3.2",
     "sinon-chai": "3.3.0",
     "timekeeper": "2.2.0",
-    "timeout-as-promise": "1.0.0"
+    "timeout-as-promise": "1.0.0",
+    "typescript": "3.5.2"
   },
   "dependencies": {
     "@grpc/proto-loader": "0.5.0",

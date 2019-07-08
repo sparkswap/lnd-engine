@@ -1,5 +1,7 @@
 const { deadline } = require('../grpc-utils')
 
+/** @typedef {import('../lnd-setup').LndClient} LndClient */
+
 /**
  * Payment Status corresponding to the output of
  * LND's LookupPaymentStatus RPC
@@ -17,8 +19,8 @@ const PAYMENT_STATUSES = Object.freeze({
  * Checks a payment's status
  *
  * @param {string} paymentHash - Base64 encoded payment hash for the desired payment
- * @param {Object} options
- * @param {Object} options.client
+ * @param {Object} opts
+ * @param {LndClient} opts.client
  * @returns {Promise<Object>} response
  */
 function lookupPaymentStatus (paymentHash, { client }) {

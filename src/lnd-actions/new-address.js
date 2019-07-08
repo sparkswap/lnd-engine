@@ -1,13 +1,15 @@
 const { deadline } = require('../grpc-utils')
 
+/** @typedef {import('../lnd-setup').LndClient} LndClient */
+
 /**
  * Returns a new wallet address from a lnd instance
  *
  * @see http://api.lightning.community/#newAddress
- * @param {string} type - Wallet Address Type
+ * @param {number} type - Wallet Address Type
  * @param {Object} opts
  * @param {LndClient} opts.client
- * @returns {string} address
+ * @returns {Promise<string>} address
  */
 function newAddress (type, { client }) {
   return new Promise((resolve, reject) => {
