@@ -72,7 +72,7 @@ describe('translate-swap', () => {
         const result = await translateSwap.call(engine, address, swapHash, amount, maxTime)
 
         expect(getPreimageIfPaymentExists).to.have.been.calledOnce()
-        expect(getPreimageIfPaymentExists).to.have.been.calledWith(swapHash, engine.client, engine.logger)
+        expect(getPreimageIfPaymentExists).to.have.been.calledWith(swapHash, { client: engine.client, logger: engine.logger })
         expect(result).to.be.eql(preimage)
       })
     })
@@ -177,7 +177,7 @@ describe('translate-swap', () => {
 
     it('throws if the paymentHash is not defined', () => {
       paymentHash = null
-      expect(getPreimageIfPaymentExists(paymentHash)).to.eventually.be.rejectedWith('paymentHash must be defined')
+      expect(getPreimageIfPaymentExists(paymentHash, { client, logger })).to.eventually.be.rejectedWith('paymentHash must be defined')
     })
 
     it('tracks a payment', async () => {
@@ -187,7 +187,7 @@ describe('translate-swap', () => {
       }
       setTimeout(() => stream.emit('data', stateThatResolves), 1)
 
-      await getPreimageIfPaymentExists(paymentHash, client, logger)
+      await getPreimageIfPaymentExists(paymentHash, { client, logger })
       expect(trackPaymentStub).to.have.been.calledOnce()
       expect(trackPaymentStub).to.have.been.calledWith(paymentHash, { client })
     })
@@ -197,7 +197,7 @@ describe('translate-swap', () => {
       error.code = 5 // gRPC NOT FOUND
       setTimeout(() => stream.emit('error', error))
 
-      return expect(getPreimageIfPaymentExists(paymentHash, client, logger))
+      return expect(getPreimageIfPaymentExists(paymentHash, { client, logger }))
         .to.eventually.be.rejectedWith(error)
     })
 
@@ -240,19 +240,19 @@ describe('translate-swap', () => {
         setTimeout(() => stream.emit('data', inFlightPayment), 1)
         setTimeout(() => stream.emit('data', succeededPayment), 2)
 
-        const preimage = await getPreimageIfPaymentExists(paymentHash, client, logger)
+        const preimage = await getPreimageIfPaymentExists(paymentHash, { client, logger })
         expect(preimage).to.be.eql(succeededPayment.preimage)
       })
 
       it('rejects if payment is `succeeded` without a preimage', () => {
         setTimeout(() => stream.emit('data', succeededWithoutPreimage), 1)
-        return expect(getPreimageIfPaymentExists(paymentHash, client, logger))
+        return expect(getPreimageIfPaymentExists(paymentHash, { client, logger }))
           .to.eventually.be.rejectedWith('No preimage associated with successful payment')
       })
 
       it('resolves with the preimage if the payment succeeded', async () => {
         setTimeout(() => stream.emit('data', succeededPayment), 1)
-        const preimage = await getPreimageIfPaymentExists(paymentHash, client, logger)
+        const preimage = await getPreimageIfPaymentExists(paymentHash, { client, logger })
 
         expect(preimage).to.be.eql(succeededPayment.preimage)
       })
@@ -260,21 +260,21 @@ describe('translate-swap', () => {
       it('rejects if payment failed from a timeout', () => {
         setTimeout(() => stream.emit('data', failedTimeoutPayment), 1)
 
-        return expect(getPreimageIfPaymentExists(paymentHash, client, logger))
+        return expect(getPreimageIfPaymentExists(paymentHash, { client, logger }))
           .to.eventually.be.rejectedWith(`Payment failed for paymentHash: ${paymentHash}`)
       })
 
       it('rejects if payment failed with no route', () => {
         setTimeout(() => stream.emit('data', failedNoRoutePayment), 1)
 
-        return expect(getPreimageIfPaymentExists(paymentHash, client, logger))
+        return expect(getPreimageIfPaymentExists(paymentHash, { client, logger }))
           .to.eventually.be.rejectedWith(`Payment failed for paymentHash: ${paymentHash}`)
       })
 
       it('rejects if the payment is in an unknown state', () => {
         setTimeout(() => stream.emit('data', unknownPaymentState), 1)
 
-        return expect(getPreimageIfPaymentExists(paymentHash, client, logger))
+        return expect(getPreimageIfPaymentExists(paymentHash, { client, logger }))
           .to.eventually.be.rejectedWith('Unknown payment status')
       })
 
@@ -282,14 +282,14 @@ describe('translate-swap', () => {
         const error = new Error()
         setTimeout(() => stream.emit('error', error), 1)
 
-        return expect(getPreimageIfPaymentExists(paymentHash, client, logger))
+        return expect(getPreimageIfPaymentExists(paymentHash, { client, logger }))
           .to.eventually.be.rejectedWith(error)
       })
 
       it('rejects with an error if stream closes early', () => {
         setTimeout(() => stream.emit('end'), 1)
 
-        return expect(getPreimageIfPaymentExists(paymentHash, client, logger))
+        return expect(getPreimageIfPaymentExists(paymentHash, { client, logger }))
           .to.eventually.be.rejectedWith('LND closed stream to track payment')
       })
 
@@ -305,7 +305,7 @@ describe('translate-swap', () => {
 
         it('removes on success', async () => {
           setTimeout(() => stream.emit('data', succeededPayment), 1)
-          await getPreimageIfPaymentExists(paymentHash, client, logger)
+          await getPreimageIfPaymentExists(paymentHash, { client, logger })
 
           const listenerCount = getAllListernersCount()
           expect(listenerCount).to.be.eql(0)
@@ -314,7 +314,7 @@ describe('translate-swap', () => {
         it('removes if success state without preimage', async () => {
           setTimeout(() => stream.emit('data', succeededWithoutPreimage), 1)
           try {
-            await getPreimageIfPaymentExists(paymentHash, client, logger)
+            await getPreimageIfPaymentExists(paymentHash, { client, logger })
           } catch (e) {
             const listenerCount = getAllListernersCount()
             expect(listenerCount).to.be.eql(0)
@@ -324,7 +324,7 @@ describe('translate-swap', () => {
         it('removes if payment failed from a timeout', async () => {
           setTimeout(() => stream.emit('data', failedTimeoutPayment), 1)
           try {
-            await getPreimageIfPaymentExists(paymentHash, client, logger)
+            await getPreimageIfPaymentExists(paymentHash, { client, logger })
           } catch (e) {
             const listenerCount = getAllListernersCount()
             expect(listenerCount).to.be.eql(0)
@@ -334,7 +334,7 @@ describe('translate-swap', () => {
         it('removes if payment failed with no route', async () => {
           setTimeout(() => stream.emit('data', failedNoRoutePayment), 1)
           try {
-            await getPreimageIfPaymentExists(paymentHash, client, logger)
+            await getPreimageIfPaymentExists(paymentHash, { client, logger })
           } catch (e) {
             const listenerCount = getAllListernersCount()
             expect(listenerCount).to.be.eql(0)
@@ -344,7 +344,7 @@ describe('translate-swap', () => {
         it('removes if payment is in an unknown state', async () => {
           setTimeout(() => stream.emit('data', unknownPaymentState), 1)
           try {
-            await getPreimageIfPaymentExists(paymentHash, client, logger)
+            await getPreimageIfPaymentExists(paymentHash, { client, logger })
           } catch (e) {
             const listenerCount = getAllListernersCount()
             expect(listenerCount).to.be.eql(0)
@@ -354,7 +354,7 @@ describe('translate-swap', () => {
         it('removes if stream errors', async () => {
           setTimeout(() => stream.emit('error', new Error()), 1)
           try {
-            await getPreimageIfPaymentExists(paymentHash, client, logger)
+            await getPreimageIfPaymentExists(paymentHash, { client, logger })
           } catch (e) {
             const listenerCount = getAllListernersCount()
             expect(listenerCount).to.be.eql(0)
@@ -364,7 +364,7 @@ describe('translate-swap', () => {
         it('removes if stream ends', async () => {
           setTimeout(() => stream.emit('end'), 1)
           try {
-            await getPreimageIfPaymentExists(paymentHash, client, logger)
+            await getPreimageIfPaymentExists(paymentHash, { client, logger })
           } catch (e) {
             const listenerCount = getAllListernersCount()
             expect(listenerCount).to.be.eql(0)

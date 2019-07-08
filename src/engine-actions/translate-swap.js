@@ -57,7 +57,7 @@ async function translateSwap (takerAddress, swapHash, amount, maxTime, finalCltv
   // sendPayment will result in creating only one downstream payment for this swap
   try {
     // we await so rejections are handled within this function
-    const paymentPreimage = await getPreimageIfPaymentExists(swapHash, this.client, this.logger)
+    const paymentPreimage = await getPreimageIfPaymentExists(swapHash, { client: this.client, logger: this.logger })
 
     return paymentPreimage
   } catch (e) {
@@ -120,11 +120,12 @@ async function translateSwap (takerAddress, swapHash, amount, maxTime, finalCltv
  * in-flight, it will wait until the payment succeeds or is in a permanent
  * failure state.
  * @param {string} paymentHash - Base64 encoded payment hash
- * @param {LndClient} client
- * @param {Logger} logger
+ * @param {Object} opts
+ * @param {LndClient} opts.client
+ * @param {Logger} opts.logger
  * @returns {Promise<string>} - Base64 encoded string of the preimage
  */
-async function getPreimageIfPaymentExists (paymentHash, client, logger) {
+async function getPreimageIfPaymentExists (paymentHash, { client, logger }) {
   return new Promise((resolve, reject) => {
     try {
       if (!paymentHash) {
