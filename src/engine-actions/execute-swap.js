@@ -12,6 +12,13 @@ const {
 } = CLTV_DELTA
 
 /**
+ * Default fee limit for swap routes.
+ * We expect to route swaps through a fee-less hub.
+ * @todo Make this value dynamic.
+ */
+const DEFAULT_FEE_LIMIT = '0'
+
+/**
  * Executes a swap as the initiating (i.e. Taker) node
  *
  * For now, we assume that the swap path when returning back to the Taker will pass through the Maker and the
@@ -47,7 +54,9 @@ async function executeSwap (makerAddress, swapHash, amount) {
     destString: counterpartyPubKey,
     paymentHash: swapHash,
     amt: amount,
-    feeLimit: '0',
+    feeLimit: {
+      fixed: DEFAULT_FEE_LIMIT
+    },
     finalCltvDelta
   }
 
