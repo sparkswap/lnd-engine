@@ -81,12 +81,12 @@ async function translateSwap (takerAddress, swapHash, amount, maxTime, finalCltv
 
     // Translate seconds into blocks, rounding down to ensure we can stay atomic.
     // The LND api expects this to be an int32, which in javascript is a number.
-    const cltvLimit = parseInt(Big(timeFromNow).div(this.secondsPerBlock).round(3).toFixed(0), 10)
+    const cltvLimit = parseInt(Big(timeFromNow).div(this.secondsPerBlock).round(0, 3).toFixed(0), 10)
 
     // Translate seconds into blocks, rounding up so that we're sure the end
     // node will accept the payment. The LND api expects this to be an int32,
     // so we convert to a javascript number.
-    const finalCltvDelta = parseInt(Big(finalCltvDeltaSecs).div(this.secondsPerBlock).round(0).toFixed(0), 10)
+    const finalCltvDelta = parseInt(Big(finalCltvDeltaSecs).div(this.secondsPerBlock).round(0, 0).toFixed(0), 10)
 
     if (cltvLimit < finalCltvDelta) {
       throw new PermanentSwapError(`Timelock for total swap is shorter than final hop of payment. ` +

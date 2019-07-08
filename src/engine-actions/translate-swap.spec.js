@@ -117,7 +117,7 @@ describe('translate-swap', () => {
             destString: pubKey,
             amt: amount,
             finalCltvDelta: 144,
-            cltvLimit: 288,
+            cltvLimit: 289,
             feeLimit: '0'
           },
           { client })
@@ -132,8 +132,8 @@ describe('translate-swap', () => {
             paymentHash: swapHash,
             destString: pubKey,
             amt: amount,
-            finalCltvDelta: 142,
-            cltvLimit: 288,
+            finalCltvDelta: 141,
+            cltvLimit: 289,
             feeLimit: '0'
           },
           { client })
@@ -530,7 +530,7 @@ describe('translate-swap', () => {
             destString: pubKey,
             amt: amount,
             finalCltvDelta: 144,
-            cltvLimit: 288,
+            cltvLimit: 289,
             feeLimit: '0'
           },
           { client })
