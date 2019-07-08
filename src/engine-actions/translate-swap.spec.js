@@ -373,4 +373,127 @@ describe('translate-swap', () => {
       })
     })
   })
+
+  describe('integration tests', () => {
+    let reverts
+    let engine
+    let address
+    let swapHash
+    let amount
+    let maxTime
+    let client
+    let stream
+    let trackPaymentStub
+    let succeededPayment
+    let failedTimeoutPayment
+    let failedNoRoutePayment
+    let unknownPaymentState
+    let sendPaymentStub
+    let preimage
+    let networkAddressFormatter
+    let pubKey
+
+    beforeEach(() => {
+      reverts = []
+      address = 'fake address'
+      pubKey = 'fake pubkey'
+      swapHash = '9283479q8asfjsdfjoji=='
+      preimage = 'as9fd8uas9df8ya98sfy=='
+      amount = '100000'
+      timekeeper.freeze(new Date('2019-06-25T00:58:25.638Z'))
+      maxTime = new Date('2019-06-27T00:58:26.638Z')
+
+      client = 'fakeclient'
+      engine = {
+        client,
+        secondsPerBlock: 600,
+        logger: {
+          info: sinon.stub(),
+          error: sinon.stub(),
+          debug: sinon.stub()
+        }
+      }
+
+      succeededPayment = {
+        state: 'SUCCEEDED',
+        preimage: 'a-preimage'
+      }
+
+      failedTimeoutPayment = {
+        state: 'FAILED_TIMEOUT'
+      }
+
+      failedNoRoutePayment = {
+        state: 'FAILED_NO_ROUTE'
+      }
+
+      unknownPaymentState = {
+        state: 'unknown'
+      }
+
+      networkAddressFormatter = {
+        parse: sinon.stub().withArgs(address).returns({ publicKey: pubKey })
+      }
+
+      sendPaymentStub = sinon.stub().resolves({ paymentPreimage: preimage })
+
+      stream = new EventEmitter()
+      trackPaymentStub = sinon.stub().returns(stream)
+
+      reverts.push(translateSwapModule.__set__('networkAddressFormatter', networkAddressFormatter))
+      reverts.push(translateSwapModule.__set__('trackPayment', trackPaymentStub))
+      reverts.push(translateSwapModule.__set__('sendPayment', sendPaymentStub))
+    })
+
+    afterEach(() => {
+      reverts.forEach(revert => revert())
+    })
+
+    it('returns the preimage if the payment exists', async () => {
+      setTimeout(() => stream.emit('data', succeededPayment), 1)
+      const result = await translateSwap.call(engine, address, swapHash, amount, maxTime)
+
+      expect(result).to.be.eql(succeededPayment.preimage)
+    })
+
+    it('throws a permanent error if the payment exists and failed from timeout', () => {
+      setTimeout(() => stream.emit('data', failedTimeoutPayment), 1)
+
+      return expect(translateSwap.call(engine, address, swapHash, amount, maxTime))
+        .to.eventually.be.rejectedWith(`Payment failed for paymentHash`)
+    })
+
+    it('throws a permanent error if the payment exists and failed from no route', () => {
+      setTimeout(() => stream.emit('data', failedNoRoutePayment), 1)
+
+      return expect(translateSwap.call(engine, address, swapHash, amount, maxTime))
+        .to.eventually.be.rejectedWith(`Payment failed for paymentHash`)
+    })
+
+    it('throws an error for unknown states', () => {
+      setTimeout(() => stream.emit('data', unknownPaymentState), 1)
+
+      return expect(translateSwap.call(engine, address, swapHash, amount, maxTime))
+        .to.eventually.be.rejectedWith('Unknown payment status')
+    })
+
+    it('calls sendPayment for gRPC NOT FOUND errors', async () => {
+      const error = new Error()
+      error.code = 5 // gRPC NOT FOUND
+      setTimeout(() => stream.emit('error', error), 1)
+
+      await translateSwap.call(engine, address, swapHash, amount, maxTime)
+      expect(sendPaymentStub).to.have.been.calledOnce()
+      expect(sendPaymentStub).to.have.been.calledWith(
+        {
+          paymentHash: swapHash,
+          destString: pubKey,
+          amt: amount,
+          finalCltvDelta: 144,
+          cltvLimit: 288,
+          feeLimit: 0
+        },
+        { client })
+    })
+  })
 })
