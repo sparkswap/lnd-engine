@@ -65,7 +65,7 @@ async function translateSwap (takerAddress, swapHash, amount, maxTime, finalCltv
     // isn't an existing payment for the provided swapHash, so we can create a new
     // payment with a call to sendPayment
     if (e.code !== grpc.status.NOT_FOUND) {
-      throw new PermanentSwapError(e)
+      throw e
     }
 
     const { publicKey } = networkAddressFormatter.parse(takerAddress)

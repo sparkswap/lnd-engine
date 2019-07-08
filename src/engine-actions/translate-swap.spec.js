@@ -84,10 +84,10 @@ describe('translate-swap', () => {
         getPreimageIfPaymentExists.rejects(error)
       })
 
-      it('throws a permanent error for any error other than NOT FOUND', () => {
+      it('throws an error for any error other than NOT FOUND', () => {
         getPreimageIfPaymentExists.rejects()
 
-        return expect(translateSwap.call(engine, address, swapHash, amount, maxTime)).to.eventually.be.rejectedWith(PermanentSwapError)
+        return expect(translateSwap.call(engine, address, swapHash, amount, maxTime)).to.eventually.be.rejectedWith(Error)
       })
 
       it('throws a permanent error if the maxTime is in the past', () => {
