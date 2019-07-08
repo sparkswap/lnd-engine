@@ -6,12 +6,10 @@ const {
  * Given a payment request, it pays the invoices and returns a refund invoice
  *
  * @param {String} paymentRequest
- * @param {Object} options
- * @param {Number} expiry expiration of refund invoices
- * @return {String} paymentPreimage
+ * @return {Promise<string>} paymentPreimage
  */
 
-async function payInvoice (paymentRequest, options = {}) {
+async function payInvoice (paymentRequest) {
   const { paymentError, paymentPreimage } = await sendPayment({ paymentRequest }, { client: this.client })
 
   if (paymentError) {

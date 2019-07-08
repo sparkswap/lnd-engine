@@ -12,7 +12,7 @@ const {
  * @see {lnd-actions#lookupinvoice}
  * @see {lnd-actions#decodePaymentRequest}
  * @param {string} paymentRequest
- * @returns {boolean} true if the invoice is settled, false if not
+ * @returns {Promise<boolean>} true if the invoice is settled, false if not
  */
 async function isInvoicePaid (paymentRequest) {
   const { paymentHash } = await decodePaymentRequest(paymentRequest, { client: this.client })

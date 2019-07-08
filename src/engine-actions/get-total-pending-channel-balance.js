@@ -4,7 +4,7 @@ const { listPendingChannels } = require('../lnd-actions')
 /**
  * Get local balance of all pending channels for a specific daemon
  *
- * @returns {string} totalBalance (int64)
+ * @returns {Promise<string>} totalBalance (int64)
  */
 async function getTotalPendingChannelBalance () {
   const { pendingOpenChannels = [] } = await listPendingChannels({ client: this.client })

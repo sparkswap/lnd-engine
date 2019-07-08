@@ -4,9 +4,17 @@ const {
 } = require('../lnd-actions')
 const { networkAddressFormatter } = require('../utils')
 
+/** @typedef {Object} Channel
+ *  @property {string} chanId
+ *  @property {boolean} active
+ *  @property {string} remotePubkey
+ *  @property {string} channelPoint
+ *  @property {string} closingTxHash
+ *  @property {string} capacity
+ */
+
 /**
- * @typedef {NormalizedChannel}
- * @type {object}
+ * @typedef {Object} NormalizedChannel
  * @property {string}  channelId            Unique ID of the channel
  * @property {string}  remoteAddress     Payment Channel Network address of the peer with whom the channel exists
  * @property {string}  openTransaction   Transaction that represents the opening of the channel
@@ -17,7 +25,7 @@ const { networkAddressFormatter } = require('../utils')
 
 /**
  * Returns all channels, both open and closed (but not pending)
- * @returns {Array<NormalizedChannel>}
+ * @returns {Promise<Array<NormalizedChannel>>}
  */
 async function getChannels () {
   const { client } = this
@@ -42,7 +50,7 @@ async function getChannels () {
  * Get all open channels
  * @param {Object} options
  * @param {Object} options.client
- * @returns {Map<string, NormalizedChannel>} Map of channels by channel ID
+ * @returns {Promise<Map<string, NormalizedChannel>>} Map of channels by channel ID
  */
 async function getOpenChannels ({ client }) {
   const { channels } = await listChannels({ client })
@@ -54,7 +62,7 @@ async function getOpenChannels ({ client }) {
  * Get all closed channels
  * @param {Object} options
  * @param {Object} options.client
- * @returns {Map<string, NormalizedChannel>} Map of channels by channel ID
+ * @returns {Promise<Map<string, NormalizedChannel>>} Map of channels by channel ID
  */
 async function getClosedChannels ({ client }) {
   const { channels } = await listClosedChannels({ client })

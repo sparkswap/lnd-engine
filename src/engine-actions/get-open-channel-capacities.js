@@ -4,7 +4,7 @@ const { listChannels } = require('../lnd-actions')
 /**
  * Get local balance of all channels for a specific daemon
  *
- * @returns {Object} active and inactive balances
+ * @returns {Promise<Object>} active and inactive balances
  */
 async function getOpenChannelCapacities () {
   const { channels = [] } = await listChannels({ client: this.client })

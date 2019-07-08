@@ -48,7 +48,7 @@ describe('prepareSwap', () => {
       memo: 'sparkswap-swap-pivot',
       hash: swapHash,
       value,
-      expiry: 60,
+      expiry: '60',
       cltvExpiry: 6
     }, sinon.match({ client }))
   })

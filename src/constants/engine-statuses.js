@@ -3,7 +3,7 @@
  * lifecycle
  *
  * @constant
- * @type {Object<key, String>}
+ * @type {Object<string, string>}
  * @default
  */
 const ENGINE_STATUSES = Object.freeze({

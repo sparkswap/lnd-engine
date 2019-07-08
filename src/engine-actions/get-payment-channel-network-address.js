@@ -11,7 +11,7 @@ const HOST_DELIMITER = '@'
 /**
  * Returns the payment channel network address for this node
  *
- * @returns {string}
+ * @returns {Promise<string>}
  */
 async function getPaymentChannelNetworkAddress () {
   const {

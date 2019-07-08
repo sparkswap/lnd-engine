@@ -6,7 +6,7 @@ const getChannelsForRemoteAddress = require('./get-channels-for-remote-address')
  * @param {string} address
  * @param {Object} [options={}]
  * @param {boolean} [options.outbound=true] - outbound is true if checking outbound channels, false if inbound
- * @returns {string} totalBalance (int64)
+ * @returns {Promise<string>} totalBalance (int64)
  */
 async function getTotalBalanceForAddress (address, { outbound = true } = {}) {
   const channelsForAddress = await getChannelsForRemoteAddress.call(this, address)

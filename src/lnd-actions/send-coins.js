@@ -1,5 +1,7 @@
 const { deadline } = require('../grpc-utils')
 
+/** @typedef {import('../lnd-setup').LndClient} LndClient */
+
 /**
  * Sends coins from lnd wallet to address
  *

@@ -33,12 +33,13 @@ function getGrpcOptions (basePath) {
  * @function
  * @private
  * @param {string} basePath - lnrpc directory path
- * @param {string[]} relativePaths - path to proto file within basePath
+ * @param {ReadonlyArray<string>} relativePaths - path to proto file within basePath
  * @returns {Object}
  * @throws {Error} proto file not found
  */
 function loadProto (basePath, relativePaths) {
   const options = getGrpcOptions(basePath)
+  // @ts-ignore
   const packageDefinition = grpcProtoLoader.loadSync(relativePaths, options)
   return grpc.loadPackageDefinition(packageDefinition)
 }

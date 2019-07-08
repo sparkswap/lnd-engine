@@ -42,11 +42,11 @@ describe('getMaxChannel', () => {
     revertPendingChannels()
   })
 
-  it('returns empty if no channels exist', async () => {
+  it('returns zero if no channels exist', async () => {
     listChannelsStub.resolves({})
     listPendingChannelsStub.resolves({})
 
-    const expectedRes = {}
+    const expectedRes = { maxBalance: '0' }
     const res = await getMaxChannel()
     expect(logger.debug).to.have.been.calledWith('getMaxChannel: No open or pending channels exist')
     expect(res).to.eql(expectedRes)

@@ -1,9 +1,11 @@
 const { deadline } = require('../grpc-utils')
 
+/** @typedef {import('../lnd-setup').LndClient} LndClient */
+
 /**
  * Cancel a hold invoice
  *
- * @param {Bytes} paymentHash
+ * @param {string} paymentHash
  * @param {Object} opts
  * @param {LndClient} opts.client
  * @returns {Promise<Object>}

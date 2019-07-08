@@ -4,6 +4,9 @@ const {
   listPayments
 } = require('../lnd-actions')
 
+/** @typedef {import('..').Logger} Logger */
+/** @typedef {import('../lnd-setup').LndClient} LndClient */
+
 const PAYMENT_STATUSES = lookupPaymentStatus.STATUSES
 
 /**
@@ -17,8 +20,8 @@ const POLLING_INTERVAL = 10000
 
 /**
  * @typedef {Object} GetPaymentPreimageOutcome
- * @property {string} paymentPreimage Base64 string of the preimage for the paymentHash
- * @property {string} permanentError Error encountered that is permanent, and safe to cancel the upstream HTLC
+ * @property {string} [paymentPreimage] - Base64 string of the preimage for the paymentHash
+ * @property {string} [permanentError] - Error encountered that is permanent, and safe to cancel the upstream HTLC
  */
 
 /**
@@ -27,7 +30,7 @@ const POLLING_INTERVAL = 10000
  * then return the hash.
  *
  * @param  {string} paymentHash - Base64 encoded payment hash
- * @returns {GetPaymentPreimageOutcome}
+ * @returns {Promise<GetPaymentPreimageOutcome>}
  * @throws {Error} If payment is in an unknown status
  */
 async function getPaymentPreimage (paymentHash) {
@@ -60,7 +63,8 @@ async function getPaymentPreimage (paymentHash) {
  * @param  {string} paymentHash - Base64 encoded payment hash
  * @param  {Object} options
  * @param  {LndClient} options.client
- * @returns {string} Base64 encoded payment preimage associated with the hash
+ * @param  {Logger} options.logger
+ * @returns {Promise<string>} Base64 encoded payment preimage associated with the hash
  * @throws {Error} If payment is not completed
  */
 async function getCompletedPreimage (paymentHash, { logger, client }) {

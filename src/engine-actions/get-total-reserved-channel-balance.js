@@ -6,7 +6,7 @@ const { listChannels } = require('../lnd-actions')
  *
  * Note: For LND, the commitFee for an initiator is the only balance currently reserved.
  *
- * @returns {string} totalReservedChannelBalance (int64)
+ * @returns {Promise<string>} totalReservedChannelBalance (int64)
  */
 async function getTotalReservedChannelBalance () {
   const { channels = [] } = await listChannels({ client: this.client })

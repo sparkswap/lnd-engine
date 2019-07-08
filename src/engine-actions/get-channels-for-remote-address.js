@@ -4,7 +4,7 @@ const { listChannels, listPendingChannels } = require('../lnd-actions')
 /**
  * Get all channels to the given address
  * @param {string} address
- * @returns {Array} channels
+ * @returns {Promise<Array>} channels
  */
 async function getChannelsForRemoteAddress (address) {
   const [

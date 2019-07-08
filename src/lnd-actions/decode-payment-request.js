@@ -1,5 +1,7 @@
 const { deadline } = require('../grpc-utils')
 
+/** @typedef {import('../lnd-setup').LndClient} LndClient */
+
 /**
  * Given an lnd payment request hash, try to decode the hash w/ a specified
  * lnd node

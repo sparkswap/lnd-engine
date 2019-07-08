@@ -12,7 +12,7 @@ const {
  * We expect to route swaps through a fee-less hub.
  * @todo Make this value dynamic.
  */
-const DEFAULT_FEE_LIMIT = 0
+const DEFAULT_FEE_LIMIT = '0'
 
 /**
  * Translates a swap to a new payment channel network by making a payment
@@ -30,11 +30,11 @@ const DEFAULT_FEE_LIMIT = 0
  *                                         route.
  * @param {string} finalCltvDeltaSecs    - Int64 string of final hop time lock
  *                                         in seconds
- * @returns {string} Base64 string of the preimage for the swapHash
+ * @returns {Promise<string>} Base64 string of the preimage for the swapHash
  * @throws {PermanentSwapError} If an error is encountered while paying that we
  * are sure did not result in a still-active outbound HTLC for the swap hash.
  */
-async function translateSwap (takerAddress, swapHash, amount, maxTime, finalCltvDeltaSecs = DEFAULT_MIN_FINAL_DELTA) {
+async function translateSwap (takerAddress, swapHash, amount, maxTime, finalCltvDeltaSecs = DEFAULT_MIN_FINAL_DELTA.toString()) {
   this.logger.info(`Translating swap for ${swapHash} by sending to ${takerAddress}`,
     { amount, maxTime })
 
@@ -43,7 +43,7 @@ async function translateSwap (takerAddress, swapHash, amount, maxTime, finalCltv
   // Convert the maximum time into a time from now so we can convert it into
   // blocks of relative time. We round down to a whole number of seconds to
   // be conservative.
-  const timeFromNow = Math.floor((maxTime - new Date()) / 1000)
+  const timeFromNow = Math.floor((maxTime.getTime() - (new Date()).getTime()) / 1000)
 
   // Translate seconds into blocks, rounding down to ensure we can stay atomic.
   // The LND api expects this to be an int32, which in javascript is a number.

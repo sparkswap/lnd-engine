@@ -1,7 +1,9 @@
 const { deadline } = require('../grpc-utils')
 
+/** @typedef {import('../lnd-setup').LndClient} LndClient */
+
 /**
- * @typedef {Object} LND~ChannelGraph
+ * @typedef {Object} ChannelGraph
  * @property {Array} nodes List of Lightning Nodes in the graph
  * @property {Array} edges List of Channel Edges connecting Lightning Nodes in the graph
  */
@@ -11,7 +13,7 @@ const { deadline } = require('../grpc-utils')
  *
  * @param {Object} opts
  * @param {LndClient} opts.client
- * @returns {Promise<LND~ChannelGraph>}
+ * @returns {Promise<ChannelGraph>}
  */
 function describeGraph ({ client }) {
   return new Promise((resolve, reject) => {

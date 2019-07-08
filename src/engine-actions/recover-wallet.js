@@ -10,7 +10,7 @@ const RECOVERY_WINDOW_DEFAULT = 5000
 
 /**
  * @param {Array<string>} seed
- * @returns {boolean}
+ * @returns {Promise<boolean>}
  */
 async function isValidSeed (seed) {
   if (!Array.isArray(seed)) return false
@@ -24,10 +24,10 @@ async function isValidSeed (seed) {
  * @param {string} password - wallet password, used to unlock lnd wallet
  * @param {Array<string>} seed - 24 word cipher seed mnemonic
  * @param {Buffer} backup - Buffer of the LND static channel backup file
- * @param {number} recoveryWindow - number in blocks for look back
- * @returns {Array<string>} 24 word cipher seed mnemonic
+ * @param {?number} recoveryWindow - number in blocks for look back
+ * @returns {Promise<Array<string>>} 24 word cipher seed mnemonic
  */
-async function recoverWallet (password, seed, backup, recoveryWindow = undefined) {
+async function recoverWallet (password, seed, backup, recoveryWindow = null) {
   if (seed && !backup) {
     this.logger.warn('Recovering wallet without a backup file. ONLY on-chain funds will be recovered')
   }
