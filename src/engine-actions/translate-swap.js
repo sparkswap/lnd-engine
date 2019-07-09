@@ -142,7 +142,7 @@ async function getPreimageIfPaymentExists (paymentHash, { client, logger }) {
       const stream = trackPayment(paymentHash, { client })
 
       const errorListener = (err) => {
-        logger.error('Error from trackPayment stream', { paymentHash })
+        logger.debug('Error from trackPayment stream', { paymentHash, error: err.message })
         stream.removeAllListeners()
         return reject(err)
       }

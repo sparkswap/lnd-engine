@@ -25,7 +25,7 @@ RUN : "${COMMIT_SHA:?COMMIT_SHA Build argument needs to be set.}"
 RUN git clone https://github.com/lightningnetwork/lnd . \
 &&  git checkout ${COMMIT_SHA} \
 &&  make \
-&&  make install tags="signrpc walletrpc chainrpc invoicesrpc"
+&&  make install tags="signrpc walletrpc chainrpc invoicesrpc routerrpc"
 
 # Start a new, final image to reduce size.
 FROM alpine as final
