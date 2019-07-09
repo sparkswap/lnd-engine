@@ -118,7 +118,9 @@ describe('translate-swap', () => {
             amt: amount,
             finalCltvDelta: 144,
             cltvLimit: 288,
-            feeLimit: '0'
+            feeLimit: {
+              fixed: '0'
+            }
           },
           { client })
       })
@@ -134,7 +136,9 @@ describe('translate-swap', () => {
             amt: amount,
             finalCltvDelta: 142,
             cltvLimit: 288,
-            feeLimit: '0'
+            feeLimit: {
+              fixed: '0'
+            }
           },
           { client })
       })
@@ -531,7 +535,9 @@ describe('translate-swap', () => {
             amt: amount,
             finalCltvDelta: 144,
             cltvLimit: 288,
-            feeLimit: '0'
+            feeLimit: {
+              fixed: '0'
+            }
           },
           { client })
         expect(result).to.be.eql(preimage)
