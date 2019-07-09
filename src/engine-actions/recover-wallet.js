@@ -1,3 +1,5 @@
+const fs = require('fs')
+
 const { initWallet } = require('../lnd-actions')
 
 /**
@@ -19,44 +21,39 @@ async function isValidSeed (seed) {
 }
 
 /**
- * Creates a wallet
+ * Recover wallet funds (on-chain and channel backups)
  *
- * @param {string} password - wallet password, used to unlock lnd wallet
+ * @param {string} password - previous wallet password
  * @param {Array<string>} seed - 24 word cipher seed mnemonic
- * @param {Buffer} backup - Buffer of the LND static channel backup file
- * @param {?number} recoveryWindow - number in blocks for look back
- * @returns {Promise<Array<string>>} 24 word cipher seed mnemonic
+ * @param {boolean} useChannelBackup
+ * @param {number} [recoveryWindow=RECOVERY_WINDOW_DEFAULT] - number in blocks for look back
+ * @returns {Promise<void>} 24 word cipher seed mnemonic
  */
-async function recoverWallet (password, seed, backup, recoveryWindow = null) {
-  if (seed && !backup) {
+async function recoverWallet (password, seed, useChannelBackup, recoveryWindow = RECOVERY_WINDOW_DEFAULT) {
+  if (!password) throw new Error('Password must be provided to recover wallet')
+  if (!seed) throw new Error('Recovery seed must be provided to recover wallet')
+
+  if (seed && !useChannelBackup) {
     this.logger.warn('Recovering wallet without a backup file. ONLY on-chain funds will be recovered')
   }
 
-  // The seed is required if the user is using a backup file
-  if (!seed && backup) {
-    throw new Error('Must provide seed when trying to restore wallet with backup file')
-  }
+  let staticChannelBackup = null
 
-  if (!seed) {
-    throw new Error('No seed was provided. If you need to create a wallet, use `createWallet`')
+  if (useChannelBackup) {
+    staticChannelBackup = fs.readFileSync(this.currencyConfig.backupFilePath)
   }
 
   // Password must be converted to buffer in order for lnd to accept
-  // as it does not accept String password types at this time.
+  // as LND 0.7.0 does not accept String typed passwords
   const walletPassword = Buffer.from(password, 'utf8')
 
   // If the user has provided a seed, then we will try to recover the wallet
   // on creation
   await isValidSeed(seed)
 
-  // If a recovery window was not provided, then we will use a default value
-  recoveryWindow = recoveryWindow || RECOVERY_WINDOW_DEFAULT
-
   this.logger.debug(`Recovering wallet with recovery window: ${recoveryWindow}`)
 
-  await initWallet(walletPassword, seed, { backup, recoveryWindow, client: this.walletUnlocker })
-
-  return seed
+  await initWallet(walletPassword, seed, { backup: staticChannelBackup, recoveryWindow, client: this.walletUnlocker })
 }
 
 module.exports = recoverWallet
