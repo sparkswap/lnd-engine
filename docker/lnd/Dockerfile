@@ -24,6 +24,12 @@ RUN : "${COMMIT_SHA:?COMMIT_SHA Build argument needs to be set.}"
 
 RUN git clone https://github.com/lightningnetwork/lnd . \
 &&  git checkout ${COMMIT_SHA} \
+# Cherrypick a dep change that replaces `git.schwanenlied.me/yawning/bsaes.git`
+# with a mirror so we dont have to depend on external hosts for third-party
+# dependencies
+&&  git config --global user.email "dev@sparkswap.com" \
+&&  git config --global user.name "dev" \
+&&  git cherry-pick -m 1 d1d6c310e6a127678861fe91a14aab592a7dfe1e \
 &&  make \
 &&  make install tags="signrpc walletrpc chainrpc invoicesrpc routerrpc"
 
