@@ -6,9 +6,9 @@ const { deadline } = require('../grpc-utils')
  * Returns a list of invoices
  *
  * @param {boolean} pendingOnly - if true, returns only pending invoices
- * @param {Object} opts
+ * @param {object} opts
  * @param {LndClient} opts.client
- * @returns {Promise<Object>}
+ * @returns {Promise<object>}
  */
 function listInvoices (pendingOnly, { client }) {
   return new Promise((resolve, reject) => {

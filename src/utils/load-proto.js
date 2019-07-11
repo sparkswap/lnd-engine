@@ -12,7 +12,7 @@ const grpcProtoLoader = require('@grpc/proto-loader')
  *
  * @function
  * @param {string} basePath - path to lnrpc directory
- * @returns {Object}
+ * @returns {object}
  */
 function getGrpcOptions (basePath) {
   return {
@@ -34,7 +34,7 @@ function getGrpcOptions (basePath) {
  * @private
  * @param {string} basePath - lnrpc directory path
  * @param {ReadonlyArray<string>} relativePaths - path to proto file within basePath
- * @returns {Object}
+ * @returns {object}
  * @throws {Error} proto file not found
  */
 function loadProto (basePath, relativePaths) {

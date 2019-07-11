@@ -6,9 +6,9 @@ const { deadline } = require('../grpc-utils')
 * Settle a hold invoice
 *
 * @param {string} preimage - base64 preimage of the invoice hash
-* @param {Object} opts
+* @param {object} opts
 * @param {LndClient} opts.client
-* @returns {Promise<Object>}
+* @returns {Promise<object>}
 */
 function settleInvoice (preimage, { client }) {
   return new Promise((resolve, reject) => {

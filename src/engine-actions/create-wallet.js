@@ -3,14 +3,15 @@ const {
   initWallet
 } = require('../lnd-actions')
 
-/** @typedef { import('../lnd-setup').LndWalletUnlockerClient } WalletUnlocker */
+/** @typedef {import('../lnd-setup').LndWalletUnlockerClient} WalletUnlocker */
+/** @typedef {{walletUnlocker: WalletUnlocker}} WalletUnlockerObject */
 
 /**
  * Creates a wallet
  *
  * @param {string} password - wallet password, used to unlock lnd wallet
  * @returns {Promise<Array<string>>} 24 word cipher seed mnemonic
- * @this {{walletUnlocker: WalletUnlocker}}
+ * @this WalletUnlockerObject
  */
 async function createWallet (password) {
   const { cipherSeedMnemonic } = await genSeed({ client: this.walletUnlocker })

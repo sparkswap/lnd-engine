@@ -21,7 +21,7 @@ const TRANSACTION_TYPES = Object.freeze({
 
 /**
  * Gets all opening and closing transaction ids from a list of channels.
- * @param {Object} channels
+ * @param {object} channels
  * @returns {Promise<Set<string>>} channelTxIds
  */
 async function getTxIdsForChannels (channels) {
@@ -40,7 +40,7 @@ async function getTxIdsForChannels (channels) {
 
 /**
  * Gets closing transaction fees from closed channel objects
- * @param {Object} closedChannels
+ * @param {object} closedChannels
  * @returns {Promise<Map<string, string>>} closedChannelFees
  */
 async function getFeesForClosedChannels (closedChannels) {
@@ -95,7 +95,7 @@ function determineTransactionType (amount, isChannel, isClosedChannel) {
 
 /**
  * Gets all on-chain transactions for the engine
- * @returns {Promise<Array<Object>>} res
+ * @returns {Promise<Array<object>>} res
  */
 async function getChainTransactions () {
   const { transactions } = await getTransactions({ client: this.client })

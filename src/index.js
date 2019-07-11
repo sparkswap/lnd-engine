@@ -19,7 +19,7 @@ const {
 
 /**
  * @constant
- * @type {String}
+ * @type {string}
  * @default
  */
 const LND_PROTO_PATH = path.resolve(__dirname, '../proto/')
@@ -27,7 +27,7 @@ const LND_PROTO_PATH = path.resolve(__dirname, '../proto/')
 /**
  * Config properties that should be exposed directly on the engine
  * @constant
- * @type {Array<String>}
+ * @type {Array<string>}
  */
 const PUBLIC_CONFIG = [
   'chainName',
@@ -39,8 +39,8 @@ const PUBLIC_CONFIG = [
   'maxPaymentSize'
 ]
 
-/** @typedef {Object} Logger */
-/** @typedef {Object} Engine */
+/** @typedef {object} Logger */
+/** @typedef {object} Engine */
 
 /**
  * The public interface for interaction with an LND instance
@@ -52,7 +52,7 @@ class LndEngine {
    * @class
    * @param {string} host - host gRPC address
    * @param {string} symbol - Common symbol of the currency this engine supports (e.g. `BTC`)
-   * @param {Object} [options={}]
+   * @param {object} [options={}]
    * @param {Logger} [options.logger=console] - logger used by the engine
    * @param {string} [options.tlsCertPath] - file path to the TLS certificate for LND
    * @param {string} [options.macaroonPath] - file path to the macaroon file for LND

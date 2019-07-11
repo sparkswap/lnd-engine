@@ -5,9 +5,9 @@
  * Close a channel w/ LND
  * @see http://api.lightning.community/#closechannel
  *
- * @param {Object} channelPoint - { fundingTxidStr, outputIndex } to identify the channel to be closed
+ * @param {object} channelPoint - { fundingTxidStr, outputIndex } to identify the channel to be closed
  * @param {boolean} force - true if we want to force close the channel, false if not (defaults to false)
- * @param {Object} opts
+ * @param {object} opts
  * @param {LndClient} opts.client
  * @returns {ClientReadableStream}
  */

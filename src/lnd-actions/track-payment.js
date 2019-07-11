@@ -11,7 +11,7 @@
  *                   were no routes to the destination at all.
  *
  * @constant
- * @type {Object}
+ * @type {object}
  * @default
  */
 const PAYMENT_STATUSES = Object.freeze({
@@ -24,7 +24,7 @@ const PAYMENT_STATUSES = Object.freeze({
 /**
  * Tracks an existing payment
  * @param {string} paymentHash - Base64 encoded payment to track
- * @param {Object} opts
+ * @param {object} opts
  * @param {LndClient} opts.client
  * @returns {ClientReadableStream} Readable stream from grpc
  */

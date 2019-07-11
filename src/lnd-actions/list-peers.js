@@ -5,7 +5,7 @@ const { deadline } = require('../grpc-utils')
 /**
  * Returns a list of peers connected to the specified lnd instance
  *
- * @param {Object} opts
+ * @param {object} opts
  * @param {LndClient} opts.client
  * @returns {Promise<{peers: Array}>}
  */

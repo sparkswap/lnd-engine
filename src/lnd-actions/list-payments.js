@@ -6,9 +6,9 @@ const { deadline } = require('../grpc-utils')
  * Returns a list of completed payments
  *
  * @see https://api.lightning.community/#listpayments
- * @param {Object} opts
+ * @param {object} opts
  * @param {LndClient} opts.client
- * @returns {Promise<Object>}
+ * @returns {Promise<object>}
  */
 function listPayments ({ client }) {
   return new Promise((resolve, reject) => {

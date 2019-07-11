@@ -4,7 +4,7 @@ const { addInvoice } = require('../lnd-actions')
  * default expiry for swap hashes is 3600 seconds - 1 hour.
  * @todo Should this be changed to something shorter or be configurable
  * @constant
- * @type {String}
+ * @type {string}
  */
 const SWAP_EXPIRY = '3600'
 
@@ -14,7 +14,7 @@ const SWAP_EXPIRY = '3600'
  * "terminus".
  *
  * @constant
- * @type {String}
+ * @type {string}
  * @default
  */
 const MEMO_PREFIX = 'sparkswap-swap-terminus:'

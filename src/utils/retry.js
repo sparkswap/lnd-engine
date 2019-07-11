@@ -15,8 +15,8 @@ const RETRY_DELAY = 10000
  * Calls a function repeatedly until success
  *
  * @param {Function} callFunction
- * @param {Object} [payload={}] - information for error log during backoff failures
- * @param {Object} opts
+ * @param {object} [payload={}] - information for error log during backoff failures
+ * @param {object} opts
  * @param {?string} [opts.debugName=null]
  * @param {number} [opts.delayTime=RETRY_DELAY] - delay in milliseconds between calls
  * @param {Logger} [opts.logger=console]

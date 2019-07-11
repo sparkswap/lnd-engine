@@ -5,7 +5,7 @@ const { addHoldInvoice, lookupInvoice } = require('../lnd-actions')
  * in LND. In this case, the invoice is the pivot point of the swap
  * where it changes chains.
  * @constant
- * @type {String}
+ * @type {string}
  * @default
  */
 const MEMO_PREFIX = 'sparkswap-swap-pivot'

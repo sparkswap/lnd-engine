@@ -7,7 +7,7 @@ const { Big, networkAddressFormatter } = require('../utils')
  *
  * @param {string} paymentChannelNetworkAddress
  * @param {number} minValue - minimum value that needs to be in the channel
- * @param {Object} [options={}]
+ * @param {object} [options={}]
  * @param {boolean} [options.outbound=true] - outbound is true if checking outbound channels, false if inbound
  * @returns {Promise<boolean>} if a channel with sufficient funds exists
  */

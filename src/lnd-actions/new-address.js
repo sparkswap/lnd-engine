@@ -7,7 +7,7 @@ const { deadline } = require('../grpc-utils')
  *
  * @see http://api.lightning.community/#newAddress
  * @param {number} type - Wallet Address Type
- * @param {Object} opts
+ * @param {object} opts
  * @param {LndClient} opts.client
  * @returns {Promise<string>} address
  */

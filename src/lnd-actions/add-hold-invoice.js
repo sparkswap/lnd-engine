@@ -5,14 +5,14 @@ const { deadline } = require('../grpc-utils')
 /**
  * Creates a hold invoice on lnd
  *
- * @param {Object} params
+ * @param {object} params
  * @param {string} params.memo
  * @param {string} params.expiry - invoice expiry in seconds
  * @param {string} params.value
  * @param {string} params.hash - hash of the preimage
- * @param {Object} opts
+ * @param {object} opts
  * @param {LndClient} opts.client
- * @returns {Promise<Object>} lightning invoice
+ * @returns {Promise<object>} lightning invoice
  */
 function addHoldInvoice ({ memo, expiry, value, hash }, { client }) {
   const params = {

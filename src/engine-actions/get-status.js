@@ -12,7 +12,7 @@ const {
  *
  * @see {@link https://github.com/lightningnetwork/lnd/blob/master/walletunlocker/service.go}
  * @constant
- * @type {String}
+ * @type {string}
  * @default
  */
 const WALLET_EXISTS_ERROR_MESSAGE = 'wallet already exists'

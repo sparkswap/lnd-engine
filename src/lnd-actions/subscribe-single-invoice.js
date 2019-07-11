@@ -5,7 +5,7 @@
  * Subscribe to status updates for a single invoice
  *
  * @param {string} rHash
- * @param {Object} opts
+ * @param {object} opts
  * @param {LndClient} opts.client
  * @returns {ClientReadableStream}
  */

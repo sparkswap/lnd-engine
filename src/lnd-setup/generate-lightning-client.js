@@ -26,7 +26,7 @@ const PROTO_FILES = Object.freeze([
  * Generates a lnrpc.Lightning client which allows full functionality of the LND node
  *
  * @function
- * @param {Object} engine
+ * @param {object} engine
  * @param {string} engine.host
  * @param {string} engine.protoPath
  * @param {string} engine.tlsCertPath

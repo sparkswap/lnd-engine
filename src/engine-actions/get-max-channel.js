@@ -3,7 +3,7 @@ const { listChannels, listPendingChannels } = require('../lnd-actions')
 
 /**
  * Get maximum balance from all channels (inbound or outbound)
- * @param {Object} [options={}]
+ * @param {object} [options={}]
  * @param {boolean} [options.outbound=true] - outbound is true if checking outbound channels, false if inbound
  * @returns {Promise<{maxBalance: string}>} - the max balance in all open channels
  */

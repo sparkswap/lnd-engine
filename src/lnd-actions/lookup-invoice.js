@@ -6,10 +6,10 @@ const { deadline } = require('../grpc-utils')
  * Check's an invoice status
  *
  * @see http://api.lightning.community/#lookupInvoice
- * @param {Object} paymentHashObj
- * @param {Object} opts
+ * @param {object} paymentHashObj
+ * @param {object} opts
  * @param {LndClient} opts.client
- * @returns {Promise<Object>}
+ * @returns {Promise<object>}
  */
 function lookupInvoice (paymentHashObj, { client }) {
   return new Promise((resolve, reject) => {
