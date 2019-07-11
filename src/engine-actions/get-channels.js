@@ -4,7 +4,7 @@ const {
 } = require('../lnd-actions')
 const { networkAddressFormatter } = require('../utils')
 
-/** @typedef {Object} Channel
+/** @typedef {object} Channel
  *  @property {string} chanId
  *  @property {boolean} active
  *  @property {string} remotePubkey
@@ -14,7 +14,7 @@ const { networkAddressFormatter } = require('../utils')
  */
 
 /**
- * @typedef {Object} NormalizedChannel
+ * @typedef {object} NormalizedChannel
  * @property {string}  channelId            Unique ID of the channel
  * @property {string}  remoteAddress     Payment Channel Network address of the peer with whom the channel exists
  * @property {string}  openTransaction   Transaction that represents the opening of the channel
@@ -48,8 +48,8 @@ async function getChannels () {
 
 /**
  * Get all open channels
- * @param {Object} options
- * @param {Object} options.client
+ * @param {object} options
+ * @param {object} options.client
  * @returns {Promise<Map<string, NormalizedChannel>>} Map of channels by channel ID
  */
 async function getOpenChannels ({ client }) {
@@ -60,8 +60,8 @@ async function getOpenChannels ({ client }) {
 
 /**
  * Get all closed channels
- * @param {Object} options
- * @param {Object} options.client
+ * @param {object} options
+ * @param {object} options.client
  * @returns {Promise<Map<string, NormalizedChannel>>} Map of channels by channel ID
  */
 async function getClosedChannels ({ client }) {
@@ -87,7 +87,7 @@ function normalizeChannels (channels) {
  * Convert a channel from a returned value from LND into
  * a standard format.
  * @see https://api.lightning.community/#channel
- * @param {Object} channel - channel object from LND
+ * @param {object} channel - channel object from LND
  * @returns {NormalizedChannel} Channel with standard field names
  */
 function normalizeChannel (channel) {

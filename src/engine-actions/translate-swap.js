@@ -21,7 +21,7 @@ const DEFAULT_FEE_LIMIT = '0'
 /**
  * The different known status updates streamed from trackPayment
  * @constant
- * @type {Object}
+ * @type {object}
  * @default
  */
 const PAYMENT_STATUSES = trackPayment.STATUSES
@@ -118,7 +118,7 @@ async function translateSwap (takerAddress, swapHash, amount, maxTime, finalCltv
 
 /** @typedef {import('../lnd-setup').LndClient} LndClient */
 /** @typedef {import('grpc').ClientReadableStream} ClientReadableStream */
-/** @typedef {Object} Logger */
+/** @typedef {object} Logger */
 
 /**
  * Retrieve the preimage for the given payment hash. If no payment is found
@@ -126,7 +126,7 @@ async function translateSwap (takerAddress, swapHash, amount, maxTime, finalCltv
  * in-flight, it will wait until the payment succeeds or is in a permanent
  * failure state.
  * @param {string} paymentHash - Base64 encoded payment hash
- * @param {Object} opts
+ * @param {object} opts
  * @param {LndClient} opts.client
  * @param {Logger} opts.logger
  * @returns {Promise<string>} - Base64 encoded string of the preimage

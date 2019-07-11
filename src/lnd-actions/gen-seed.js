@@ -1,14 +1,14 @@
 const { deadline } = require('../grpc-utils')
 
-/** @typedef { import('../lnd-setup').LndWalletUnlockerClient } WalletUnlocker */
+/** @typedef {import('../lnd-setup').LndWalletUnlockerClient} WalletUnlocker */
 
 /**
  * Generates a mnuemonic seed used to recover a user's wallet
  *
  * @see http://api.lightning.community/#genSeed
- * @param {Object} opts
+ * @param {object} opts
  * @param {WalletUnlocker} opts.client
- * @returns {Promise<Object>}
+ * @returns {Promise<object>}
  */
 function genSeed ({ client }) {
   return new Promise((resolve, reject) => {

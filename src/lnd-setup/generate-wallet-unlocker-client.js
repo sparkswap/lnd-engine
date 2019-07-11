@@ -19,7 +19,7 @@ const PROTO_FILES = Object.freeze(['rpc.proto'])
  * Generates a lnrpc.WalletUnlocker client which is only used on initialization of the LND
  * node.
  *
- * @param {Object} args
+ * @param {object} args
  * @param {string} args.host
  * @param {string} args.protoPath
  * @param {string} args.tlsCertPath

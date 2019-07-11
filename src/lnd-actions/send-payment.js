@@ -11,7 +11,7 @@ const { deadline } = require('../grpc-utils')
 const SEND_PAYMENT_DEADLINE = 30
 
 // TODO: verify this against BOLT 11
-/** @typedef {Object} SendPaymentRequestFormatA
+/** @typedef {object} SendPaymentRequestFormatA
  * @property {string}  paymentOptions.paymentHash -
  *   Base64 string of the payment hash to use
  * @property {string}  paymentOptions.destString -
@@ -20,7 +20,7 @@ const SEND_PAYMENT_DEADLINE = 30
  *   Int64 string of number of satoshis to send
  * @property {number}  paymentOptions.finalCltvDelta -
  *   Delta from the current block height to be used for the final hop
- * @property {Object}  paymentOptions.feeLimit
+ * @property {object}  paymentOptions.feeLimit
  * @property {string} [paymentOptions.feeLimit.fixed] -
  *   Int64 string of maximum number of satoshis to pay in fees
  * @property {string} [paymentOptions.feeLimit.percent] -
@@ -29,7 +29,7 @@ const SEND_PAYMENT_DEADLINE = 30
  *   Maximum number of blocks in the route timelock
  */
 
-/** @typedef {Object} SendPaymentRequestFormatB
+/** @typedef {object} SendPaymentRequestFormatB
  * @property {string} paymentOptions.paymentRequest - LN Payment Request
  */
 
@@ -42,9 +42,9 @@ const SEND_PAYMENT_DEADLINE = 30
  *
  * @see http://api.lightning.community/#sendPaymentSync
  * @param {SendPaymentRequest} paymentOptions
- * @param {Object} opts
+ * @param {object} opts
  * @param {LndClient} opts.client
- * @returns {Promise<Object>} Resolves with the response from LND
+ * @returns {Promise<object>} Resolves with the response from LND
  */
 function sendPayment (paymentOptions, { client }) {
   return new Promise((resolve, reject) => {

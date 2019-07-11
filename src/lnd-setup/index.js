@@ -3,41 +3,41 @@ const generateLightningClient = require('./generate-lightning-client')
 
 /** @typedef {import('grpc').ClientReadableStream} ClientReadableStream */
 
-/** @typedef {Object} LndClient
- *  @property {(args: Object, opts: Object, cb: Function) => undefined} addInvoice
- *  @property {(args: Object) => ClientReadableStream} closeChannel
- *  @property {(args: Object, opts: Object, cb: Function) => undefined} connectPeer
- *  @property {(args: Object, opts: Object, cb: Function) => undefined} decodePayReq
- *  @property {(args: Object, opts: Object, cb: Function) => undefined} describeGraph
- *  @property {(args: Object, opts: Object, cb: Function) => undefined} getInfo
- *  @property {(args: Object, opts: Object, cb: Function) => undefined} getTransactions
- *  @property {(args: Object, opts: Object, cb: Function) => undefined} listChannels
- *  @property {(args: Object, opts: Object, cb: Function) => undefined} closedChannels
- *  @property {(args: Object, opts: Object, cb: Function) => undefined} listInvoices
- *  @property {(args: Object, opts: Object, cb: Function) => undefined} listPayments
- *  @property {(args: Object, opts: Object, cb: Function) => undefined} listPeers
- *  @property {(args: Object, opts: Object, cb: Function) => undefined} pendingChannels
- *  @property {(args: Object, opts: Object, cb: Function) => undefined} lookupInvoice
- *  @property {(args: Object, opts: Object, cb: Function) => undefined} lookupPaymentStatus
- *  @property {(args: Object, opts: Object, cb: Function) => undefined} newAddress
- *  @property {(args: Object, opts: Object, cb: Function) => undefined} openChannelSync
- *  @property {(args: Object, opts: Object, cb: Function) => undefined} queryRoutes
- *  @property {(args: Object, opts: Object, cb: Function) => undefined} sendCoins
- *  @property {(args: Object, opts: Object, cb: Function) => undefined} sendPaymentSync
- *  @property {(args: Object) => ClientReadableStream} sendToRoute
- *  @property {(args: Object, cb: Function) => undefined} updateChannelPolicy
- *  @property {(args: Object, opts: Object, cb: Function) => undefined} walletBalance
- *  @property {Object} invoices
- *  @property {(args: Object) => ClientReadableStream} subscribeSingleInvoice
- *  @property {Object} router
- *  @property {(args: Object) => ClientReadableStream} trackPayment
+/** @typedef {object} LndClient
+ *  @property {(args: object, opts: object, cb: Function) => undefined} addInvoice
+ *  @property {(args: object) => ClientReadableStream} closeChannel
+ *  @property {(args: object, opts: object, cb: Function) => undefined} connectPeer
+ *  @property {(args: object, opts: object, cb: Function) => undefined} decodePayReq
+ *  @property {(args: object, opts: object, cb: Function) => undefined} describeGraph
+ *  @property {(args: object, opts: object, cb: Function) => undefined} getInfo
+ *  @property {(args: object, opts: object, cb: Function) => undefined} getTransactions
+ *  @property {(args: object, opts: object, cb: Function) => undefined} listChannels
+ *  @property {(args: object, opts: object, cb: Function) => undefined} closedChannels
+ *  @property {(args: object, opts: object, cb: Function) => undefined} listInvoices
+ *  @property {(args: object, opts: object, cb: Function) => undefined} listPayments
+ *  @property {(args: object, opts: object, cb: Function) => undefined} listPeers
+ *  @property {(args: object, opts: object, cb: Function) => undefined} pendingChannels
+ *  @property {(args: object, opts: object, cb: Function) => undefined} lookupInvoice
+ *  @property {(args: object, opts: object, cb: Function) => undefined} lookupPaymentStatus
+ *  @property {(args: object, opts: object, cb: Function) => undefined} newAddress
+ *  @property {(args: object, opts: object, cb: Function) => undefined} openChannelSync
+ *  @property {(args: object, opts: object, cb: Function) => undefined} queryRoutes
+ *  @property {(args: object, opts: object, cb: Function) => undefined} sendCoins
+ *  @property {(args: object, opts: object, cb: Function) => undefined} sendPaymentSync
+ *  @property {(args: object) => ClientReadableStream} sendToRoute
+ *  @property {(args: object, cb: Function) => undefined} updateChannelPolicy
+ *  @property {(args: object, opts: object, cb: Function) => undefined} walletBalance
+ *  @property {object} invoices
+ *  @property {(args: object) => ClientReadableStream} subscribeSingleInvoice
+ *  @property {object} router
+ *  @property {(args: object) => ClientReadableStream} trackPayment
  */
 
-/** @typedef {Object} LndWalletUnlockerClient
- *  @property {(args: Object, opts: Object, cb: Function) => undefined} genSeed
- *  @property {(args: Object, opts: Object, cb: Function) => undefined} initWallet
- *  @property {(args: Object, opts: Object, cb: Function) => undefined} unlockWallet
- *  @property {(args: Object, opts: Object, cb: Function) => undefined} changePassword
+/** @typedef {object} LndWalletUnlockerClient
+ *  @property {(args: object, opts: object, cb: Function) => undefined} genSeed
+ *  @property {(args: object, opts: object, cb: Function) => undefined} initWallet
+ *  @property {(args: object, opts: object, cb: Function) => undefined} unlockWallet
+ *  @property {(args: object, opts: object, cb: Function) => undefined} changePassword
  */
 
 module.exports = {

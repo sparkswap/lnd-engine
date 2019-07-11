@@ -9,10 +9,10 @@ const DEFAULT_TIMELOCK_DELTA = 9
 
 /**
  *
- * @param {Object} chanPoint
+ * @param {object} chanPoint
  * @param {string} feeRate - number up to 6 decimal places
  * @param {number} [timeLockDelta=DEFAULT_TIMELOCK_DELTA]
- * @param {Object} opts
+ * @param {object} opts
  * @param {LndClient} opts.client
  * @returns {Promise} res
  */

@@ -5,7 +5,7 @@
  * Sends to a specified route
  *
  * @see https://github.com/lightningnetwork/lnd/blob/master/lnrpc/rpc.proto#L422
- * @param {Object} opts
+ * @param {object} opts
  * @param {LndClient} opts.client
  * @returns {ClientReadableStream}
  */

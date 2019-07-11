@@ -5,8 +5,8 @@ const {
 /**
  * Given a payment request, it pays the invoices and returns a refund invoice
  *
- * @param {String} paymentRequest
- * @return {Promise<string>} paymentPreimage
+ * @param {string} paymentRequest
+ * @returns {Promise<string>} paymentPreimage
  */
 
 async function payInvoice (paymentRequest) {

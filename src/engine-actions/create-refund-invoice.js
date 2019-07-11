@@ -4,14 +4,14 @@ const { addInvoice, decodePaymentRequest } = require('../lnd-actions')
  * DEFAULT_INVOICE_EXPIRY
  * Default value is 1 year expiry for invoices (in seconds)
  * @constant
- * @type {String}
+ * @type {string}
  * @default
  */
 const DEFAULT_INVOICE_EXPIRY = '31536000'
 
 /**
  * @constant
- * @type {String}
+ * @type {string}
  * @default
  */
 const REFUND_MEMO_PREFIX = 'REFUND:'

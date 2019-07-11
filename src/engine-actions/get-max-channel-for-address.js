@@ -4,7 +4,7 @@ const getChannelsForRemoteAddress = require('./get-channels-for-remote-address')
 /**
  * Get maximum balance from all channels (inbound or outbound) for a given address
  * @param {string} address
- * @param {Object} [options={}]
+ * @param {object} [options={}]
  * @param {boolean} [options.outbound=true] - outbound is true if checking outbound channels, false if inbound
  * @returns {Promise<{maxBalance: string}>} - the max balance in all open channels.
  */

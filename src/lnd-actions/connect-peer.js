@@ -8,7 +8,7 @@ const { deadline } = require('../grpc-utils')
  * connected
  *
  * @private
- * @param {Object} err
+ * @param {object} err
  * @param {number} err.code
  * @param {string} err.details
  * @returns {boolean}
@@ -22,10 +22,10 @@ function alreadyConnected (err) {
  *
  * @param {string} publicKey
  * @param {string} host
- * @param {Object} opts
+ * @param {object} opts
  * @param {LndClient} opts.client
  * @param {Logger} opts.logger
- * @returns {Promise<Object>}
+ * @returns {Promise<object>}
  */
 function connectPeer (publicKey, host, { client, logger }) {
   const addr = {

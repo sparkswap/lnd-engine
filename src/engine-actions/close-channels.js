@@ -8,8 +8,8 @@ const {
  * Closes active channels on the given engine. Will try to close inactive/pending channels
  * if `force` option is given
  *
- * @param {Object} options
- * @param {Object} [options.force=false] - force is true if you want to force close all channels, false if not
+ * @param {object} options
+ * @param {object} [options.force=false] - force is true if you want to force close all channels, false if not
  * @returns {Promise<void>} returns void on success
  * @throws {Error} Inactive/Pending channels exist and can not be closed unless 'force' is set to true
  */

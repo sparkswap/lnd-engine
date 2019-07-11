@@ -1,6 +1,6 @@
 const { deadline } = require('../grpc-utils')
 
-/** @typedef { import('../lnd-setup').LndWalletUnlockerClient } WalletUnlocker */
+/** @typedef {import('../lnd-setup').LndWalletUnlockerClient} WalletUnlocker */
 
 /**
  * Change the wallet password of an lnd wallet
@@ -8,7 +8,7 @@ const { deadline } = require('../grpc-utils')
  * @see http://api.lightning.community/#changePassword
  * @param {Buffer} currentPassword - Buffer or base64 string
  * @param {Buffer} newPassword - Buffer or base64 string
- * @param {Object} opts
+ * @param {object} opts
  * @param {WalletUnlocker} opts.client
  * @returns {Promise}
  */

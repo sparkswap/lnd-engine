@@ -6,7 +6,7 @@ const { deadline } = require('../grpc-utils')
  * Returns a list of all on-chain transactions for the engine
  *
  * @see http://api.lightning.community/#getTransactions
- * @param {Object} opts
+ * @param {object} opts
  * @param {LndClient} opts.client
  * @returns {Promise<{transactions: Array}>} response
  */

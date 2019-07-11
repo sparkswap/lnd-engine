@@ -6,9 +6,9 @@ const { deadline } = require('../grpc-utils')
  * Cancel a hold invoice
  *
  * @param {string} paymentHash
- * @param {Object} opts
+ * @param {object} opts
  * @param {LndClient} opts.client
- * @returns {Promise<Object>}
+ * @returns {Promise<object>}
  */
 function cancelInvoice (paymentHash, { client }) {
   return new Promise((resolve, reject) => {

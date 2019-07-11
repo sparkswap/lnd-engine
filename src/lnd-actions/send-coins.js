@@ -8,9 +8,9 @@ const { deadline } = require('../grpc-utils')
  * @see http://api.lightning.community/#sendCoins
  * @param {string} addr
  * @param {number} amount
- * @param {Object} opts
+ * @param {object} opts
  * @param {LndClient} opts.client
- * @returns {Object} response
+ * @returns {object} response
  */
 function sendCoins (addr, amount, { client }) {
   return new Promise((resolve, reject) => {
