@@ -28,12 +28,12 @@ echo "LND Engine Build starting..."
 echo ""
 echo ""
 
-LND_VERSION='v0.7.0-beta'
+LND_VERSION='master'
 
 # Downloads an LND proto file from the sparkswap/lnd fork
-LND_PROTO_URL="https://raw.githubusercontent.com/lightningnetwork/lnd/${LND_VERSION}/lnrpc/rpc.proto"
-INVOICES_PROTO_URL="https://raw.githubusercontent.com/lightningnetwork/lnd/${LND_VERSION}/lnrpc/invoicesrpc/invoices.proto"
-ROUTER_PROTO_URL="https://raw.githubusercontent.com/lightningnetwork/lnd/${LND_VERSION}/lnrpc/routerrpc/router.proto"
+LND_PROTO_URL="https://raw.githubusercontent.com/dannypaz/lnd/${LND_VERSION}/lnrpc/rpc.proto"
+INVOICES_PROTO_URL="https://raw.githubusercontent.com/dannypaz/lnd/${LND_VERSION}/lnrpc/invoicesrpc/invoices.proto"
+ROUTER_PROTO_URL="https://raw.githubusercontent.com/dannypaz/lnd/${LND_VERSION}/lnrpc/routerrpc/router.proto"
 
 rm -rf ./proto
 mkdir -p ./proto/invoicesrpc
