@@ -22,8 +22,18 @@ function initWallet (walletPassword, cipherSeedMnemonic, { backup, recoveryWindo
       recoveryWindow
     }
 
+    // initWallet is used in both the creation or recovery of a wallet. `backup`
+    // is only required when trying to use initWallet to recover in-channel funds
+    // from an engine
     if (backup) {
       params.backup = backup
+    }
+
+    // initWallet is used in both the creation or recovery of a wallet. recoveryWindow
+    // is only required when trying to use initWallet to recover on-chain funds
+    // from an engine
+    if (recoveryWindow) {
+      params.recoveryWindow = recoveryWindow
     }
 
     client.initWallet(params, { deadline: deadline() }, (err, res) => {
