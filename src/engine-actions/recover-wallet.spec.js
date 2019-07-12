@@ -14,6 +14,7 @@ describe('recover-wallet', () => {
     let bufferStub
     let validSeedStub
     let backup
+    let readFileSyncStub
 
     let reverts
 
@@ -21,6 +22,9 @@ describe('recover-wallet', () => {
       reverts = []
       validSeedStub = sinon.stub()
       engine = {
+        currencyConfig: {
+          backupFilePath: '/backup/backupFilePath.zip'
+        },
         walletUnlocker: sinon.stub(),
         logger: {
           debug: sinon.stub(),
@@ -53,21 +57,23 @@ describe('recover-wallet', () => {
         'buffalo',
         'catalog'
       ]
-      backup = Buffer.from('backup')
+      backup = false
       initWalletStub = sinon.stub().resolves(seed)
       bufferStub = sinon.stub().returns(buffer)
+      readFileSyncStub = sinon.stub().returns(buffer)
 
       reverts.push(recoverWallet.__set__('initWallet', initWalletStub))
       reverts.push(recoverWallet.__set__('Buffer', { from: bufferStub }))
       reverts.push(recoverWallet.__set__('isValidSeed', validSeedStub))
+      reverts.push(recoverWallet.__set__('fs', { readFileSync: readFileSyncStub }))
     })
 
-    beforeEach(() => {
+    it('throws an error if password is not provided', () => {
+      return expect(recoverWallet.call(engine, null, seed, backup)).to.eventually.be.rejectedWith('Password must be provided')
     })
 
-    it('throws an error if a backup file is provided but no seed exists', () => {
-      const backup = {}
-      return expect(recoverWallet.call(engine, password, null, backup)).to.eventually.be.rejectedWith('Must provide seed')
+    it('throws an error if seed is not provided', () => {
+      return expect(recoverWallet.call(engine, password, null, backup)).to.eventually.be.rejectedWith('Recovery seed must be provided')
     })
 
     it('checks if a seed is valid', async () => {
@@ -75,21 +81,22 @@ describe('recover-wallet', () => {
       expect(validSeedStub).to.have.been.calledWith(seed)
     })
 
+    it('reads a backup file if backup is true', async () => {
+      backup = true
+      await recoverWallet.call(engine, password, seed, backup)
+      expect(readFileSyncStub).to.have.been.calledWith(engine.currencyConfig.backupFilePath)
+    })
+
     it('uses a recovery window if it was provided', async () => {
       const recoveryWindow = 200
       await recoverWallet.call(engine, password, seed, backup, recoveryWindow)
-      expect(initWalletStub).to.have.been.calledWith(sinon.match.any, seed, sinon.match({ backup, recoveryWindow }))
+      expect(initWalletStub).to.have.been.calledWith(sinon.match.any, seed, sinon.match({ recoveryWindow }))
     })
 
     it('uses a default recovery window for initializing a wallet', async () => {
       const recoveryWindow = recoverWallet.__get__('RECOVERY_WINDOW_DEFAULT')
       await recoverWallet.call(engine, password, seed, backup)
-      expect(initWalletStub).to.have.been.calledWith(sinon.match.any, seed, sinon.match({ backup, recoveryWindow }))
-    })
-
-    it('returns the provided seed', async () => {
-      const res = await recoverWallet.call(engine, password, seed)
-      expect(res).to.be.eql(seed)
+      expect(initWalletStub).to.have.been.calledWith(sinon.match.any, seed, sinon.match({ recoveryWindow }))
     })
 
     it('warns a user if they only recover on-chain funds using a seed but no backup file', async () => {
