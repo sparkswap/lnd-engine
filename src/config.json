@@ -10,7 +10,7 @@
       "//1": "to prevent uneconomic channels",
       "minChannelBalance": "250000",
       "//2": "from bolt-0002, max channel size is 2^24 - 1 satoshis",
-      "maxChannelBalance": "100000000",
+      "maxChannelBalance": "10000000000",
       "//3": "LND specifies max payment size as UInt32 - 1 millisatohis (https://github.com/lightningnetwork/lnd/blob/v0.5.1-beta/rpcserver.go#L49-L58)",
       "maxPaymentSize": "4294967"
     },
@@ -24,7 +24,7 @@
       "//1": "to prevent uneconomic channels",
       "minChannelBalance": "15000000",
       "//2": "LND specifies max channel size as (2^24 - 1)*60 millilitoshis (https://github.com/lightningnetwork/lnd/blob/v0.5.1-beta/fundingmanager.go#L68)",
-      "maxChannelBalance": "9000000000",
+      "maxChannelBalance": "100000000000",
       "//3": "LND specifies max payment size as (UInt32 - 1)*60 millilitoshis (https://github.com/lightningnetwork/lnd/blob/v0.5.1-beta/rpcserver.go#L49-L58)",
       "maxPaymentSize": "257698037"
     }

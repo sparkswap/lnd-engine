@@ -64,12 +64,12 @@ ENGINE_VERSION=$(node -pe "require('./package.json').version")
 docker build -t sparkswap/lnd_btc:$ENGINE_VERSION ./docker/lnd \
   --build-arg NODE=$LND_BTC_NODE \
   --build-arg NETWORK=btc \
-  --build-arg COMMIT_SHA=$COMMIT_SHA
+  --build-arg COMMIT_SHA=$COMMIT_SHA --no-cache
 
 docker build -t sparkswap/lnd_ltc:$ENGINE_VERSION ./docker/lnd \
   --build-arg NODE=$LND_LTC_NODE \
   --build-arg NETWORK=ltc \
-  --build-arg COMMIT_SHA=$COMMIT_SHA
+  --build-arg COMMIT_SHA=$COMMIT_SHA --no-cache
 
 # Create bitcoind and litecoind images
 docker build -t sparkswap/bitcoind:$ENGINE_VERSION ./docker/bitcoind
