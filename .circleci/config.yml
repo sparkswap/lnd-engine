@@ -49,7 +49,7 @@ jobs:
             echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
             IMAGE_TAG=v0.6.0-beta-rc7
             docker tag $BTC_IMAGE_NAME:latest $BTC_IMAGE_NAME:$IMAGE_TAG
-            docker push $BTC_IMAGE_NAME:test
+            docker push $BTC_IMAGE_NAME:latest
             docker push $BTC_IMAGE_NAME:$IMAGE_TAG
 
   publish-litecoind:
