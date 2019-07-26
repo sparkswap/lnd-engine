@@ -1,5 +1,6 @@
 const getInvoices = require('./get-invoices')
 const getPublicKey = require('./get-public-key')
+const getNetwork = require('./get-network')
 const getUncommittedBalance = require('./get-uncommitted-balance')
 const getConfirmedBalance = require('./get-confirmed-balance')
 const getUnconfirmedBalance = require('./get-unconfirmed-balance')
@@ -91,6 +92,7 @@ module.exports = {
     createWallet,
     recoverWallet,
     getStatus,
+    getNetwork,
     unlockWallet,
     changeWalletPassword,
     waitForSwapCommitment
