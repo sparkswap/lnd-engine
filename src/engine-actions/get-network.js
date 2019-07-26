@@ -7,6 +7,10 @@ const { getInfo } = require('../lnd-actions')
  */
 async function getNetwork () {
   const { chains } = await getInfo({ client: this.client })
+  if (chains.length > 1) {
+    throw new Error('Cannot grab network from multiple chains.')
+  }
+
   const { network } = chains[0]
   return network
 }
