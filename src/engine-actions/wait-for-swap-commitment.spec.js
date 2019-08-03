@@ -11,7 +11,8 @@ describe('wait-for-swap-commitment', () => {
     const hash = '1234'
     const creationTimestamp = 1564789328
     const creationDate = new Date('2019-08-02T23:42:08.000Z')
-    const expirationDate = new Date('2019-08-02T23:42:19.000Z')
+    const shortExpirationDate = new Date('2019-08-02T23:42:19.000Z')
+    const longExpirationDate = new Date('2019-08-02T23:42:27.950Z')
     const openInvoice = {
       state: INVOICE_STATES.OPEN,
       creationDate: creationTimestamp,
@@ -32,14 +33,19 @@ describe('wait-for-swap-commitment', () => {
       creationDate: creationTimestamp,
       expiry: 10
     }
+    const expiringInvoice = {
+      state: INVOICE_STATES.OPEN,
+      creationDate: creationTimestamp,
+      expiry: 20
+    }
     const stream = new EventEmitter()
-    stream.cancel = sinon.stub()
+    stream.cancel = sinon.stub().callsFake(() => stream.emit('end'))
     const subscribeStub = sinon.stub().returns(stream)
     const reverts = []
 
     beforeEach(() => {
       reverts.push(waitForSwapCommitmentModule.__set__('subscribeSingleInvoice', subscribeStub))
-      timekeeper.freeze(expirationDate)
+      timekeeper.travel(shortExpirationDate)
     })
 
     afterEach(() => {
@@ -56,6 +62,16 @@ describe('wait-for-swap-commitment', () => {
 
     it('rejects on an expired invoice', () => {
       setTimeout(() => stream.emit('data', expiredInvoice), 1)
+      return expect(waitForSwapCommitment(hash))
+        .to.eventually.be.rejectedWith(CanceledSwapError)
+    })
+
+    it('rejects once an invoice expires', () => {
+      timekeeper.travel(longExpirationDate)
+      setTimeout(() => {
+        stream.emit('data', expiringInvoice)
+      }, 1)
+
       return expect(waitForSwapCommitment(hash))
         .to.eventually.be.rejectedWith(CanceledSwapError)
     })
