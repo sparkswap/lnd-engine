@@ -44,6 +44,7 @@ const cancelSwap = require('./cancel-swap')
 const settleSwap = require('./settle-swap')
 const { waitForSwapCommitment, SettledSwapError, CanceledSwapError } =
   require('./wait-for-swap-commitment.js')
+const initiateSwap = require('./initiate-swap')
 
 module.exports = {
   validationDependentActions: {
@@ -85,7 +86,8 @@ module.exports = {
     getChainTransactions,
     getTotalBalanceForAddress,
     cancelSwap,
-    settleSwap
+    settleSwap,
+    initiateSwap
   },
   validationIndependentActions: {
     createWallet,
