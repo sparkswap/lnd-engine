@@ -14,23 +14,33 @@ async function waitForSwapCommitment (swapHash) {
   return new Promise((resolve, reject) => {
     // subscribeSingleInvoice always sends out the initial invoice state
     const stream = subscribeSingleInvoice(swapHash, { client: this.client })
-    stream.on('end', () => reject(new Error(
-      'Stream ended while waiting for commitment on ' + swapHash)))
+    stream.on('end', () => {
+      stream.removeAllListeners()
+      reject(new Error('Stream ended while waiting for commitment on ' + swapHash))
+    })
     stream.on('data', function (invoice) {
       switch (invoice.state) {
         case INVOICE_STATES.OPEN:
+          const creationDate = new Date(invoice.creationDate * 1000)
+          const expirationDate = new Date(creationDate.getTime() + invoice.expiry * 1000)
+
+          // if the invoice is open but still expired, we consider it canceled
+          if (new Date() > expirationDate) {
+            reject(new CanceledSwapError(swapHash))
+            stream.cancel()
+          }
           break
         case INVOICE_STATES.SETTLED:
-          stream.removeAllListeners()
           reject(new SettledSwapError(swapHash))
+          stream.cancel()
           break
         case INVOICE_STATES.CANCELED:
-          stream.removeAllListeners()
           reject(new CanceledSwapError(swapHash))
+          stream.cancel()
           break
         case INVOICE_STATES.ACCEPTED:
-          stream.removeAllListeners()
           resolve(new Date(invoice.creationDate * 1000))
+          stream.cancel()
           break
       }
     })
