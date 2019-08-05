@@ -13,9 +13,7 @@ class ExpiredSwapError extends Error {}
  */
 async function waitForSwapCommitment (swapHash) {
   return new Promise((resolve, reject) => {
-    // we use an array for timers since an invoice can be
-    // trigger the stream in an OPEN state multiple times.
-    const timers = []
+    let timer
 
     // subscribeSingleInvoice always sends out the initial invoice state
     const stream = subscribeSingleInvoice(swapHash, { client: this.client })
@@ -23,8 +21,10 @@ async function waitForSwapCommitment (swapHash) {
       stream.removeAllListeners()
       reject(new Error('Stream ended while waiting for commitment on ' + swapHash))
 
-      // stop the timers on invoice expiration if they are still active
-      timers.forEach(clearTimeout)
+      // stop the timer on invoice expiration if it is still active
+      if (timer) {
+        clearTimeout(timer)
+      }
     })
     stream.on('data', function (invoice) {
       switch (invoice.state) {
@@ -42,10 +42,12 @@ async function waitForSwapCommitment (swapHash) {
             return
           }
           // once the invoice is expired, treat it as such
-          timers.push(setTimeout(() => {
-            reject(new ExpiredSwapError(`Swap with hash (${swapHash}) is expired.`))
-            stream.cancel()
-          }, expirationDate.getTime() - (new Date()).getTime()))
+          if (!timer) {
+            timer = setTimeout(() => {
+              reject(new ExpiredSwapError(`Swap with hash (${swapHash}) is expired.`))
+              stream.cancel()
+            }, expirationDate.getTime() - (new Date()).getTime())
+          }
           break
         case INVOICE_STATES.SETTLED:
           reject(new SettledSwapError(`Swap with hash (${swapHash}) is already settled.`))
