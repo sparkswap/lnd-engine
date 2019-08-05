@@ -3,8 +3,12 @@ const EventEmitter = require('events')
 const { expect, rewire, sinon, timekeeper } = require('test/test-helper')
 const { INVOICE_STATES } = require('../constants')
 const waitForSwapCommitmentModule = rewire(path.resolve(__dirname, 'wait-for-swap-commitment'))
-const { waitForSwapCommitment, SettledSwapError, CanceledSwapError } =
-  waitForSwapCommitmentModule
+const {
+  waitForSwapCommitment,
+  SettledSwapError,
+  CanceledSwapError,
+  ExpiredSwapError
+} = waitForSwapCommitmentModule
 
 describe('wait-for-swap-commitment', () => {
   describe('waitForSwapCommitment', () => {
@@ -63,7 +67,7 @@ describe('wait-for-swap-commitment', () => {
     it('rejects on an expired invoice', () => {
       setTimeout(() => stream.emit('data', expiredInvoice), 1)
       return expect(waitForSwapCommitment(hash))
-        .to.eventually.be.rejectedWith(CanceledSwapError)
+        .to.eventually.be.rejectedWith(ExpiredSwapError)
     })
 
     it('rejects once an invoice expires', () => {
@@ -73,7 +77,7 @@ describe('wait-for-swap-commitment', () => {
       }, 1)
 
       return expect(waitForSwapCommitment(hash))
-        .to.eventually.be.rejectedWith(CanceledSwapError)
+        .to.eventually.be.rejectedWith(ExpiredSwapError)
     })
 
     it('rejects on stream end', () => {

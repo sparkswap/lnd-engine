@@ -3,6 +3,7 @@ const { INVOICE_STATES } = require('../constants')
 
 class SettledSwapError extends Error {}
 class CanceledSwapError extends Error {}
+class ExpiredSwapError extends Error {}
 
 /**
  * Waits for a swap to enter the ACCEPTED state and errors if it won't happen
@@ -33,24 +34,25 @@ async function waitForSwapCommitment (swapHash) {
             creationDate.getTime() + (invoice.expiry * 1000)
           )
 
-          // if the invoice is open but expired, we consider it canceled
+          // if the invoice is open but expired, throw an error
+          // indicating that.
           if (new Date() > expirationDate) {
-            reject(new CanceledSwapError(swapHash))
+            reject(new ExpiredSwapError(`Swap with hash (${swapHash}) is expired.`))
             stream.cancel()
             return
           }
-          // once the invoice is expired, treat it as cancelled
+          // once the invoice is expired, treat it as such
           timers.push(setTimeout(() => {
-            reject(new CanceledSwapError(swapHash))
+            reject(new ExpiredSwapError(`Swap with hash (${swapHash}) is expired.`))
             stream.cancel()
           }, expirationDate.getTime() - (new Date()).getTime()))
           break
         case INVOICE_STATES.SETTLED:
-          reject(new SettledSwapError(swapHash))
+          reject(new SettledSwapError(`Swap with hash (${swapHash}) is already settled.`))
           stream.cancel()
           break
         case INVOICE_STATES.CANCELED:
-          reject(new CanceledSwapError(swapHash))
+          reject(new CanceledSwapError(`Swap with hash (${swapHash}) is canceled.`))
           stream.cancel()
           break
         case INVOICE_STATES.ACCEPTED:
@@ -65,5 +67,6 @@ async function waitForSwapCommitment (swapHash) {
 module.exports = {
   waitForSwapCommitment,
   SettledSwapError,
-  CanceledSwapError
+  CanceledSwapError,
+  ExpiredSwapError
 }
