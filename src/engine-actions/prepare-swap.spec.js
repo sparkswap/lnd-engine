@@ -54,7 +54,7 @@ describe('prepareSwap', () => {
   })
 
   it('is idempotent', async () => {
-    const lookupInvoiceStub2 = sinon.stub().resolves({
+    const lookupInvoiceStub2 = sinon.stub().withArgs({ rHash: swapHash }).resolves({
       paymentRequest: existingPaymentRequest,
       cltvExpiry: 6,
       value
