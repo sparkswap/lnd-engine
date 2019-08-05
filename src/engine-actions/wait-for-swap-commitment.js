@@ -33,7 +33,7 @@ async function waitForSwapCommitment (swapHash) {
             creationDate.getTime() + (invoice.expiry * 1000)
           )
 
-          // if the invoice is open but still expired, we consider it canceled
+          // if the invoice is open but expired, we consider it canceled
           if (new Date() > expirationDate) {
             reject(new CanceledSwapError(swapHash))
             stream.cancel()
