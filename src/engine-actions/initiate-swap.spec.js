@@ -43,43 +43,13 @@ describe('initiateSwap', () => {
     await initiateSwap.call(engine, address, swapHash, amount, maxTimeLock, finalDelta)
 
     expect(sendPayment).to.have.been.calledOnce()
-  })
-
-  it('sends using the client', async () => {
-    await initiateSwap.call(engine, address, swapHash, amount, maxTimeLock, finalDelta)
-
     expect(sendPayment).to.have.been.calledWith(sinon.match.any, { client })
-  })
-
-  it('sends to the counterparty\'s public key', async () => {
-    await initiateSwap.call(engine, address, swapHash, amount, maxTimeLock, finalDelta)
-
     expect(networkAddressFormatter.parse).to.have.been.calledOnce()
     expect(networkAddressFormatter.parse).to.have.been.calledWith(address)
     expect(sendPayment).to.have.been.calledWith(sinon.match({ destString: 'fake pubkey' }))
-  })
-
-  it('sends using the swap hash', async () => {
-    await initiateSwap.call(engine, address, swapHash, amount, maxTimeLock, finalDelta)
-
     expect(sendPayment).to.have.been.calledWith(sinon.match({ paymentHash: swapHash }))
-  })
-
-  it('sends the amount for the swap', async () => {
-    await initiateSwap.call(engine, address, swapHash, amount, maxTimeLock, finalDelta)
-
     expect(sendPayment).to.have.been.calledWith(sinon.match({ amt: amount }))
-  })
-
-  it('uses a final CLTV delta specified', async () => {
-    await initiateSwap.call(engine, address, swapHash, amount, maxTimeLock, finalDelta)
-
     expect(sendPayment).to.have.been.calledWith(sinon.match({ finalCltvDelta: 1 }))
-  })
-
-  it('uses the max time lock specified', async () => {
-    await initiateSwap.call(engine, address, swapHash, amount, maxTimeLock, finalDelta)
-
     expect(sendPayment).to.have.been.calledWith(sinon.match({ cltvLimit: 2 }))
   })
 
