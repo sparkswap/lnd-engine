@@ -49,7 +49,7 @@ describe('prepareSwap', () => {
       hash: swapHash,
       value,
       expiry: '60',
-      cltvExpiry: 6
+      cltvExpiry: '6'
     }, sinon.match({ client }))
   })
 
@@ -57,7 +57,7 @@ describe('prepareSwap', () => {
     addHoldInvoiceStub.throws(new Error('Invoice with hash already exists'))
     lookupInvoiceStub.withArgs({ rHash: swapHash }).resolves({
       paymentRequest: existingPaymentRequest,
-      cltvExpiry: 6,
+      cltvExpiry: '6',
       value
     })
     const res = await prepareSwap.call(engine, swapHash, value, expiryTime, cltvExpiry)
