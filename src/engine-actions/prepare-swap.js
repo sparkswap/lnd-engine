@@ -22,9 +22,12 @@ const MEMO_PREFIX = 'sparkswap-swap-pivot'
  */
 async function prepareSwap (swapHash, value, expiryTime, cltvExpiry) {
   this.logger.info(`Preparing swap for ${swapHash}`, { value })
-  // round up on number of blocks since a transaction that occurs right before
-  // the expiration time will get processed in the following block
-  const cltvExpiryBlocks = Math.ceil(cltvExpiry / this.secondsPerBlock)
+  // Round up on number of blocks since a transaction that occurs right before
+  // the expiration time will get processed in the following block.
+  // The gRPC endpoint expects an int64 number, so we need to to convert to a
+  // string prior to creating an invoice or comparing to an invoice.
+  const cltvExpiryBlocks = Math.ceil(cltvExpiry / this.secondsPerBlock).toString()
+
   // make prepareSwap idempotent by returning the existing invoice if one exists
   try {
     const {
