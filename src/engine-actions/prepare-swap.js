@@ -31,7 +31,7 @@ async function prepareSwap (swapHash, value, expiryTime, cltvExpiry) {
       paymentRequest,
       value: invoiceValue,
       cltvExpiry: invoiceCLTVExpiry
-    } = await lookupInvoice(swapHash, { client: this.client })
+    } = await lookupInvoice({ rHash: swapHash }, { client: this.client })
 
     if (invoiceValue !== value || invoiceCLTVExpiry !== cltvExpiryBlocks) {
       // if the invoice doesn't match, we log an error and  prepare a new invoice

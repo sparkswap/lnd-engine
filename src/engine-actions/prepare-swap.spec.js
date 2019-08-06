@@ -54,12 +54,12 @@ describe('prepareSwap', () => {
   })
 
   it('is idempotent', async () => {
-    const lookupInvoiceStub2 = sinon.stub().resolves({
+    addHoldInvoiceStub.throws(new Error('Invoice with hash already exists'))
+    lookupInvoiceStub.withArgs({ rHash: swapHash }).resolves({
       paymentRequest: existingPaymentRequest,
       cltvExpiry: 6,
       value
     })
-    prepareSwap.__set__('lookupInvoice', lookupInvoiceStub2)
     const res = await prepareSwap.call(engine, swapHash, value, expiryTime, cltvExpiry)
     expect(res).to.be.eql(existingPaymentRequest)
   })
