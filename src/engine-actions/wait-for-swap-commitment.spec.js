@@ -43,7 +43,11 @@ describe('wait-for-swap-commitment', () => {
       expiry: 20
     }
     const stream = new EventEmitter()
-    stream.cancel = sinon.stub().callsFake(() => stream.emit('end'))
+    stream.cancel = sinon.stub().callsFake(() => {
+      const err = new Error('CANCELLED')
+      err.code = waitForSwapCommitmentModule.__get__('grpc').status.CANCELLED
+      stream.emit('error', err)
+    })
     const subscribeStub = sinon.stub().returns(stream)
     const reverts = []
 
@@ -81,9 +85,16 @@ describe('wait-for-swap-commitment', () => {
     })
 
     it('rejects on stream end', () => {
-      setTimeout(() => stream.emit('end'), 1)
+      setTimeout(() => stream.emit('end'), new Error('fake error'))
       return expect(waitForSwapCommitment(hash))
-        .to.eventually.be.rejectedWith(Error)
+        .to.eventually.be.rejectedWith('Stream ended while waiting for commitment')
+    })
+
+    it('rejects on stream error', () => {
+      setTimeout(() => stream.emit('error', new Error('fake error')))
+
+      return expect(waitForSwapCommitment(hash))
+        .to.eventually.be.rejectedWith('fake error')
     })
 
     it('rejects on canceled invoice', () => {

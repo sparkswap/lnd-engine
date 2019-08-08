@@ -1,3 +1,4 @@
+const grpc = require('grpc')
 const { subscribeSingleInvoice } = require('../lnd-actions')
 const { INVOICE_STATES } = require('../constants')
 
@@ -17,16 +18,36 @@ async function waitForSwapCommitment (swapHash) {
 
     // subscribeSingleInvoice always sends out the initial invoice state
     const stream = subscribeSingleInvoice(swapHash, { client: this.client })
-    stream.on('end', () => {
-      stream.removeAllListeners()
-      reject(new Error('Stream ended while waiting for commitment on ' + swapHash))
 
+    const cleanup = () => {
+      stream.removeAllListeners()
       // stop the timer on invoice expiration if it is still active
       if (timer) {
         clearTimeout(timer)
       }
+    }
+
+    /**
+     * Error handler for gRPC stream
+     * @param   {import('grpc').ServiceError} e
+     */
+    const errHandler = (e) => {
+      // CANCELLED events get emitted when we call `stream.cancel()`
+      // so we want to handle those as expected, not errors
+      if (e.code !== grpc.status.CANCELLED) {
+        reject(e)
+      }
+      cleanup()
+    }
+
+    stream.on('error', errHandler)
+
+    stream.on('end', () => {
+      reject(new Error('Stream ended while waiting for commitment on ' + swapHash))
+      cleanup()
     })
-    stream.on('data', function (invoice) {
+
+    stream.on('data', (invoice) => {
       switch (invoice.state) {
         case INVOICE_STATES.OPEN:
           const creationDate = new Date(invoice.creationDate * 1000)
