@@ -5,6 +5,7 @@ const {
   getInfo,
   genSeed
 } = require('../lnd-actions')
+const { generateLightningClient } = require('../lnd-setup')
 
 /**
  * Error message that is returned from LND to let us identify if a wallet exists
@@ -22,7 +23,7 @@ const WALLET_EXISTS_ERROR_MESSAGE = 'wallet already exists'
  * @see {LndEngine#ENGINE_STATUS}
  * @returns {Promise<string>} status - ENGINE_STATUS
  */
-async function getStatus () {
+async function getStatusInternal () {
   // Make a call to getInfo to see if lnrpc is up on the current engine. If
   // this calls returns successful, then we will attempt to validate the node config.
   try {
@@ -81,6 +82,20 @@ async function getStatus () {
       return ENGINE_STATUSES.UNAVAILABLE
     }
   }
+}
+
+/**
+ * Sets the engine status and returns the state of the current lnd-engine.
+ * @see {LndEngine#ENGINE_STATUS}
+ * @returns {Promise<string>} status - ENGINE_STATUS
+ */
+async function getStatus () {
+  if (this.status === ENGINE_STATUSES.LOCKED) {
+    // LND seems to have a bug that makes it get stuck in the LOCKED state
+    this.client = generateLightningClient(this)
+  }
+  this.status = await getStatusInternal.call(this)
+  return this.status
 }
 
 module.exports = getStatus
