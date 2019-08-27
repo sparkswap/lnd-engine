@@ -149,6 +149,7 @@ class LndEngine {
       // on LND. Since an engine can become unlocked during any validation call, we
       // need to ensure that we are updating LndEngine's client in the situation that
       // a macaroon file becomes available (meaning an engine has been unlocked).
+      this.client.close()
       this.client = generateLightningClient(this)
 
       // Returns a status `ENGINE_STATUS`
