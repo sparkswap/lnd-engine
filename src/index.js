@@ -6,6 +6,7 @@ const {
 } = require('./constants')
 const {
   validationDependentActions,
+  unlockedDependentActions,
   validationIndependentActions,
   errors
 } = require('./engine-actions')
@@ -105,6 +106,17 @@ class LndEngine {
       }
     })
 
+    Object.entries(unlockedDependentActions).forEach(([name, action]) => {
+      this[name] = (...args) => {
+        if (!this.isUnlocked) {
+          throw new Error(`${symbol} Engine is not available and unlocked. ` +
+            `Engine Status: ${this.status}`)
+        }
+
+        return action.call(this, ...args)
+      }
+    })
+
     Object.entries(validationIndependentActions).forEach(([name, action]) => {
       this[name] = action.bind(this)
     })
@@ -112,6 +124,13 @@ class LndEngine {
 
   get validated () {
     return (this.status === ENGINE_STATUSES.VALIDATED)
+  }
+
+  get isUnlocked () {
+    const { UNLOCKED, NOT_SYNCED, VALIDATED } = ENGINE_STATUSES
+    return (this.status === UNLOCKED ||
+            this.status === NOT_SYNCED ||
+            this.status === VALIDATED)
   }
 
   get isLocked () {
