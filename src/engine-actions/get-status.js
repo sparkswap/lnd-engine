@@ -5,6 +5,10 @@ const {
   getInfo,
   genSeed
 } = require('../lnd-actions')
+const {
+  generateLightningClient,
+  generateWalletUnlockerClient
+} = require('../lnd-setup')
 
 /**
  * Error message that is returned from LND to let us identify if a wallet exists
@@ -22,7 +26,7 @@ const WALLET_EXISTS_ERROR_MESSAGE = 'wallet already exists'
  * @see {LndEngine#ENGINE_STATUS}
  * @returns {Promise<string>} status - ENGINE_STATUS
  */
-async function getStatus () {
+async function getStatusInternal () {
   // Make a call to getInfo to see if lnrpc is up on the current engine. If
   // this calls returns successful, then we will attempt to validate the node config.
   try {
@@ -81,6 +85,26 @@ async function getStatus () {
       return ENGINE_STATUSES.UNAVAILABLE
     }
   }
+}
+
+/**
+ * Sets the engine status and returns the state of the current lnd-engine.
+ * @see {LndEngine#ENGINE_STATUS}
+ * @returns {Promise<string>} status - ENGINE_STATUS
+ */
+async function getStatus () {
+  const { LOCKED, NEEDS_WALLET } = ENGINE_STATUSES
+  if (this.status === LOCKED || this.status === NEEDS_WALLET) {
+    // LND gets stuck in the LOCKED state due to the way the grpc library works
+    // regenerating the lightning client and wallet unlocker is a workaround
+    // see: https://github.com/grpc/grpc-node/issues/993
+    this.client.close()
+    this.walletUnlocker.close()
+    this.client = generateLightningClient(this)
+    this.walletUnlocker = generateWalletUnlockerClient(this)
+  }
+  this.status = await getStatusInternal.call(this)
+  return this.status
 }
 
 module.exports = getStatus

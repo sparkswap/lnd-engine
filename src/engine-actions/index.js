@@ -53,7 +53,6 @@ const initiateSwap = require('./initiate-swap')
 module.exports = {
   validationDependentActions: {
     getInvoices,
-    getPublicKey,
     getUncommittedBalance,
     getConfirmedBalance,
     getUnconfirmedBalance,
@@ -69,7 +68,6 @@ module.exports = {
     prepareSwap,
     executeSwap,
     createRefundInvoice,
-    getPaymentChannelNetworkAddress,
     translateSwap,
     getSettledSwapPreimage,
     numChannelsForAddress,
@@ -92,6 +90,10 @@ module.exports = {
     cancelSwap,
     settleSwap,
     initiateSwap
+  },
+  unlockedDependentActions: {
+    getPublicKey,
+    getPaymentChannelNetworkAddress
   },
   validationIndependentActions: {
     createWallet,

@@ -6,6 +6,7 @@ const {
 } = require('./constants')
 const {
   validationDependentActions,
+  unlockedDependentActions,
   validationIndependentActions,
   errors
 } = require('./engine-actions')
@@ -105,6 +106,17 @@ class LndEngine {
       }
     })
 
+    Object.entries(unlockedDependentActions).forEach(([name, action]) => {
+      this[name] = (...args) => {
+        if (!this.isUnlocked) {
+          throw new Error(`${symbol} Engine is not available and unlocked. ` +
+            `Engine Status: ${this.status}`)
+        }
+
+        return action.call(this, ...args)
+      }
+    })
+
     Object.entries(validationIndependentActions).forEach(([name, action]) => {
       this[name] = action.bind(this)
     })
@@ -112,6 +124,13 @@ class LndEngine {
 
   get validated () {
     return (this.status === ENGINE_STATUSES.VALIDATED)
+  }
+
+  get isUnlocked () {
+    // note that we don't include the UNLOCKED state because it means that
+    // there is a configuration problem
+    const { NOT_SYNCED, VALIDATED } = ENGINE_STATUSES
+    return (this.status === NOT_SYNCED || this.status === VALIDATED)
   }
 
   get isLocked () {
@@ -130,6 +149,9 @@ class LndEngine {
       // on LND. Since an engine can become unlocked during any validation call, we
       // need to ensure that we are updating LndEngine's client in the situation that
       // a macaroon file becomes available (meaning an engine has been unlocked).
+      if (this.client) {
+        this.client.close()
+      }
       this.client = generateLightningClient(this)
 
       // Returns a status `ENGINE_STATUS`
