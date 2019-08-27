@@ -127,10 +127,10 @@ class LndEngine {
   }
 
   get isUnlocked () {
-    const { UNLOCKED, NOT_SYNCED, VALIDATED } = ENGINE_STATUSES
-    return (this.status === UNLOCKED ||
-            this.status === NOT_SYNCED ||
-            this.status === VALIDATED)
+    // note that we don't include the UNLOCKED state because it means that
+    // there is a configuration problem
+    const { NOT_SYNCED, VALIDATED } = ENGINE_STATUSES
+    return (this.status === NOT_SYNCED || this.status === VALIDATED)
   }
 
   get isLocked () {
