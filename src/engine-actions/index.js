@@ -49,6 +49,7 @@ const {
   ExpiredSwapError
 } = require('./wait-for-swap-commitment.js')
 const initiateSwap = require('./initiate-swap')
+const getVersion = require('./get-version')
 
 module.exports = {
   validationDependentActions: {
@@ -93,7 +94,8 @@ module.exports = {
   },
   unlockedDependentActions: {
     getPublicKey,
-    getPaymentChannelNetworkAddress
+    getPaymentChannelNetworkAddress,
+    getVersion
   },
   validationIndependentActions: {
     createWallet,
