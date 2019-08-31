@@ -5,6 +5,8 @@ const { expect, rewire, sinon } = require('test/test-helper')
 const LndEngine = rewire(path.resolve(__dirname, '..', 'index'))
 const getStatus = rewire(path.resolve(__dirname, 'get-status'))
 
+const VERSION = '0.7.1-beta commit=v0.7.1-beta-rc1'
+
 describe('get-status', () => {
   describe('getStatus', () => {
     let reverts = []
@@ -18,12 +20,14 @@ describe('get-status', () => {
     beforeEach(() => {
       getInfoResponse = {
         chains: [{ chain: 'bitcoin', network: 'testnet' }],
+        version: VERSION,
         syncedToChain: true
       }
       getInfoStub = sinon.stub().resolves(getInfoResponse)
       genSeedStub = sinon.stub().resolves(true)
       statuses = LndEngine.__get__('ENGINE_STATUSES')
       engine = {
+        minVersion: '0.7.0-beta',
         client: sinon.stub(),
         walletUnlocker: sinon.stub(),
         logger: {
@@ -103,7 +107,9 @@ describe('get-status', () => {
           chains: [
             { chain: 'bitcoin', network: 'testnet' },
             { chain: 'litecoin', network: 'mainnet' }
-          ]
+          ],
+          version: VERSION,
+          syncedToChain: true
         })
         expect(await getStatus.call(engine)).to.be.eql(statuses.UNLOCKED)
       })
@@ -120,9 +126,21 @@ describe('get-status', () => {
       it('returns NOT_SYNCED if getInfo returns syncedToChain as false', async () => {
         getInfoStub.resolves({
           chains: [{ chain: 'bitcoin', network: 'testnet' }],
+          version: VERSION,
           syncedToChain: false
         })
         expect(await getStatus.call(engine)).to.be.eql(statuses.NOT_SYNCED)
+      })
+    })
+
+    context('engine is an old version', () => {
+      it('returns OLD_VERSION if getInfo returns an old version', async () => {
+        getInfoStub.resolves({
+          chains: [{ chain: 'bitcoin', network: 'testnet' }],
+          version: '0.6.0-beta',
+          syncedToChain: true
+        })
+        expect(await getStatus.call(engine)).to.be.eql(statuses.OLD_VERSION)
       })
     })
   })
