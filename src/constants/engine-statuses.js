@@ -16,6 +16,7 @@ const ENGINE_STATUSES = Object.freeze({
   LOCKED: 'LOCKED', // LightningRpc (lnrpc) is UNIMPLEMENTED, genSeeds throws "wallet already exists"
   UNLOCKED: 'UNLOCKED', // LightningRpc (lnrpc) getInfo does not throw an error
   NOT_SYNCED: 'NOT_SYNCED', // LightningRpc (lnrpc) getInfo synced_to_chain boolean is false
+  OLD_VERSION: 'OLD_VERSION', // LND version is older than the specified minVersion
   VALIDATED: 'VALIDATED' // LightningRpc (lnrpc) getInfo matches the engines configuration
 })
 

@@ -57,8 +57,9 @@ class LndEngine {
    * @param {Logger} [options.logger=console] - logger used by the engine
    * @param {string} [options.tlsCertPath] - file path to the TLS certificate for LND
    * @param {string} [options.macaroonPath] - file path to the macaroon file for LND
+   * @param {string} [options.minVersion] - minimum LND version required
    */
-  constructor (host, symbol, { logger = console, tlsCertPath, macaroonPath } = {}) {
+  constructor (host, symbol, { logger = console, tlsCertPath, macaroonPath, minVersion } = {}) {
     if (!host) {
       throw new Error('Host is required for lnd-engine initialization')
     }
@@ -66,6 +67,7 @@ class LndEngine {
     this.CHANNEL_ROUNDING = CHANNEL_ROUNDING
     this.host = host
     this.symbol = symbol
+    this.minVersion = minVersion
     this.currencyConfig = currencies.find(({ symbol }) => symbol === this.symbol)
 
     if (!this.currencyConfig) {

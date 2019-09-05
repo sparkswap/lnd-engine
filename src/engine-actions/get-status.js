@@ -1,4 +1,5 @@
 const grpc = require('grpc')
+const compareVersions = require('compare-versions')
 
 const { ENGINE_STATUSES } = require('../constants')
 const {
@@ -56,6 +57,12 @@ async function getStatusInternal () {
     if (!syncedToChain) {
       this.logger.error(`Wallet is not yet synced to the main chain`)
       return ENGINE_STATUSES.NOT_SYNCED
+    }
+
+    const version = info.version.split(' ')[0]
+    if (this.minVersion && compareVersions(version, this.minVersion) < 0) {
+      this.logger.error(`LND version is too old: ${version} < ${this.minVersion}`)
+      return ENGINE_STATUSES.OLD_VERSION
     }
 
     return ENGINE_STATUSES.VALIDATED
