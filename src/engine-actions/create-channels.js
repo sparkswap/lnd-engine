@@ -10,6 +10,12 @@ const {
 const getUncommittedBalance = require('./get-uncommitted-balance')
 const { CHANNEL_ROUNDING } = require('../constants')
 
+/**
+ * Default number of seconds before our first confirmation. (30 minutes)
+ * @type {number}
+ */
+const DEFAULT_CONFIRMATION_DELAY = 1800
+
 /** @typedef {import('..').Engine} Engine */
 
 /**
@@ -140,14 +146,22 @@ async function assertBalanceIsSufficient (engine, fundingAmount) {
  *
  * @param {string} paymentChannelNetworkAddress
  * @param {string} fundingAmount - int64 string
- * @param {string} roundBehavior - Behavior when encountering a channel that is too small
+ * @param {object} [options]
+ * @param {string} [options.roundBehavior=CHANNEL_ROUNDING.DOWN] - Behavior when encountering a channel that is too small
+ * @param {number} [options.targetTime=DEFAULT_CONFIRMATION_DELAY] - Estimated time to first confirmation in seconds (impacts the fee rate used to open channels)
+ * @param {boolean} [options.privateChan=false] - Whether to make channels private
  * @returns {Promise<void>} resolves void on success
  */
-async function createChannels (paymentChannelNetworkAddress, fundingAmount, roundBehavior = CHANNEL_ROUNDING.DOWN) {
+async function createChannels (paymentChannelNetworkAddress, fundingAmount, {
+  roundBehavior = CHANNEL_ROUNDING.DOWN,
+  targetTime = DEFAULT_CONFIRMATION_DELAY,
+  privateChan = false
+} = {}) {
   const {
     feeEstimate,
     minChannelBalance,
     maxChannelBalance,
+    secondsPerBlock,
     symbol,
     logger,
     client
@@ -168,6 +182,14 @@ async function createChannels (paymentChannelNetworkAddress, fundingAmount, roun
   if (!minChannelBalance) {
     throw new Error(`Currency configuration for ${symbol} has not been setup with a min channel balance`)
   }
+
+  if (!secondsPerBlock) {
+    throw new Error(`Currency configuration for ${symbol} has not been setup with a secondsPerBlock`)
+  }
+
+  // Minimum of one block, but target lower than the specified time. This specifies the fee that will
+  // be used to open the channel(s)
+  const targetConf = Math.max(Math.floor(targetTime / secondsPerBlock), 1)
 
   // modify our funding amount based on the number of channels we're opening and the desired rounding behavior
   let amount = getAmountForChannels(this, fundingAmount, roundBehavior)
@@ -201,7 +223,12 @@ async function createChannels (paymentChannelNetworkAddress, fundingAmount, roun
       channelNum: i + 1
     })
 
-    await openChannel(publicKey, channelAmount, { client })
+    await openChannel({
+      nodePubkey: publicKey,
+      localFundingAmount: channelAmount,
+      targetConf,
+      private: privateChan
+    }, { client })
   }
 
   logger.debug(`Successfully opened ${channelsToOpen} channels with: ${loggablePublicKey}`)
