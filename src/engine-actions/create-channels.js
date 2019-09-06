@@ -149,11 +149,13 @@ async function assertBalanceIsSufficient (engine, fundingAmount) {
  * @param {object} [options]
  * @param {string} [options.roundBehavior=CHANNEL_ROUNDING.DOWN] - Behavior when encountering a channel that is too small
  * @param {number} [options.targetTime=DEFAULT_CONFIRMATION_DELAY] - Estimated time to first confirmation in seconds
+ * @param {boolean} [options.privateChan=false] - Whether to make channels private
  * @returns {Promise<void>} resolves void on success
  */
 async function createChannels (paymentChannelNetworkAddress, fundingAmount, {
   roundBehavior = CHANNEL_ROUNDING.DOWN,
-  targetTime = DEFAULT_CONFIRMATION_DELAY
+  targetTime = DEFAULT_CONFIRMATION_DELAY,
+  privateChan = false
 } = {}) {
   const {
     feeEstimate,
@@ -223,7 +225,8 @@ async function createChannels (paymentChannelNetworkAddress, fundingAmount, {
     await openChannel({
       nodePubkey: publicKey,
       localFundingAmount: channelAmount,
-      targetConf
+      targetConf,
+      private: privateChan
     }, { client })
   }
 

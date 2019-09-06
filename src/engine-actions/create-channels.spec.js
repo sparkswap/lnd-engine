@@ -119,6 +119,12 @@ describe('createChannels', () => {
       expect(openChannelStub).to.have.been.calledWith(sinon.match({ targetConf: 1 }))
     })
 
+    it('uses a custom privacy setting', async () => {
+      await createChannels.call(engine, paymentChannelNetworkAddress, fundingAmount, { privateChan: true })
+
+      expect(openChannelStub).to.have.been.calledWith(sinon.match({ 'private': true }))
+    })
+
     it('ensures sufficient balance', async () => {
       await createChannels.call(engine, paymentChannelNetworkAddress, fundingAmount)
 
@@ -141,7 +147,7 @@ describe('createChannels', () => {
     it('opens a channel', async () => {
       await createChannels.call(engine, paymentChannelNetworkAddress, fundingAmount)
       expect(openChannelStub).to.have.been.calledOnce()
-      expect(openChannelStub).to.have.been.calledWith({ nodePubkey: publicKey, localFundingAmount: fundingAmount, targetConf: 3 }, sinon.match({ client: clientStub }))
+      expect(openChannelStub).to.have.been.calledWith({ nodePubkey: publicKey, localFundingAmount: fundingAmount, targetConf: 3, private: false }, sinon.match({ client: clientStub }))
     })
 
     it('opens multiple channels', async () => {
@@ -150,8 +156,8 @@ describe('createChannels', () => {
       await createChannels.call(engine, paymentChannelNetworkAddress, fundingAmount)
       expect(connectPeerStub).to.have.been.calledOnce()
       expect(openChannelStub).to.have.been.calledTwice()
-      expect(openChannelStub).to.have.been.calledWith({ nodePubkey: publicKey, localFundingAmount: '20000000', targetConf: 3 }, sinon.match({ client: clientStub }))
-      expect(openChannelStub).to.have.been.calledWith({ nodePubkey: publicKey, localFundingAmount: '10000000', targetConf: 3 }, sinon.match({ client: clientStub }))
+      expect(openChannelStub).to.have.been.calledWith({ nodePubkey: publicKey, localFundingAmount: '20000000', targetConf: 3, private: false }, sinon.match({ client: clientStub }))
+      expect(openChannelStub).to.have.been.calledWith({ nodePubkey: publicKey, localFundingAmount: '10000000', targetConf: 3, private: false }, sinon.match({ client: clientStub }))
     })
 
     it('returns void for successful channel creation', async () => {

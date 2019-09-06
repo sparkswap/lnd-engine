@@ -9,6 +9,7 @@ const { deadline } = require('../grpc-utils')
  * @param {string} params.nodePubkey - lnd public key to open channel with
  * @param {string} params.localFundingAmount - the amount to fund the channel w/
  * @param {number} params.targetConf - Number of blocks the channel opening transaction should be confirmed by
+ * @param {boolean} params.private - whether to make the channel private
  * @param {object} opts
  * @param {LndClient} opts.client
  * @returns {Promise}
