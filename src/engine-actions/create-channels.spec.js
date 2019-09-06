@@ -46,6 +46,7 @@ describe('createChannels', () => {
       maxChannelBalance: '20000000',
       minChannelBalance: '10000',
       quantumsPerCommon: '100000000',
+      secondsPerBlock: 600,
       logger: loggerStub,
       symbol: 'LTC'
     }
@@ -74,7 +75,7 @@ describe('createChannels', () => {
     })
 
     it('errors if the rounding behavior is invalid', () => {
-      return expect(createChannels.call(engine, paymentChannelNetworkAddress, fundingAmount, 'INVALID')).to.eventually.be.rejectedWith('Invalid round behavior')
+      return expect(createChannels.call(engine, paymentChannelNetworkAddress, fundingAmount, { roundBehavior: 'INVALID' })).to.eventually.be.rejectedWith('Invalid round behavior')
     })
 
     it('errors if the feeEstimate is not defined', () => {
@@ -106,10 +107,16 @@ describe('createChannels', () => {
     })
 
     it('calculcates the amount to open with specified rounding behavior', async () => {
-      await createChannels.call(engine, paymentChannelNetworkAddress, fundingAmount, CHANNEL_ROUNDING.UP)
+      await createChannels.call(engine, paymentChannelNetworkAddress, fundingAmount, { roundBehavior: CHANNEL_ROUNDING.UP })
 
       expect(getAmountForChannelsStub).to.have.been.calledOnce()
       expect(getAmountForChannelsStub).to.have.been.calledWith(engine, fundingAmount, CHANNEL_ROUNDING.UP)
+    })
+
+    it('uses a custom target confirmation time', async () => {
+      await createChannels.call(engine, paymentChannelNetworkAddress, fundingAmount, { targetTime: 600 })
+
+      expect(openChannelStub).to.have.been.calledWith(sinon.match({ targetConf: 1 }))
     })
 
     it('ensures sufficient balance', async () => {
@@ -134,7 +141,7 @@ describe('createChannels', () => {
     it('opens a channel', async () => {
       await createChannels.call(engine, paymentChannelNetworkAddress, fundingAmount)
       expect(openChannelStub).to.have.been.calledOnce()
-      expect(openChannelStub).to.have.been.calledWith(publicKey, fundingAmount, sinon.match({ client: clientStub }))
+      expect(openChannelStub).to.have.been.calledWith({ nodePubkey: publicKey, localFundingAmount: fundingAmount, targetConf: 3 }, sinon.match({ client: clientStub }))
     })
 
     it('opens multiple channels', async () => {
@@ -143,8 +150,8 @@ describe('createChannels', () => {
       await createChannels.call(engine, paymentChannelNetworkAddress, fundingAmount)
       expect(connectPeerStub).to.have.been.calledOnce()
       expect(openChannelStub).to.have.been.calledTwice()
-      expect(openChannelStub).to.have.been.calledWith(publicKey, '20000000', sinon.match({ client: clientStub }))
-      expect(openChannelStub).to.have.been.calledWith(publicKey, '10000000', sinon.match({ client: clientStub }))
+      expect(openChannelStub).to.have.been.calledWith({ nodePubkey: publicKey, localFundingAmount: '20000000', targetConf: 3 }, sinon.match({ client: clientStub }))
+      expect(openChannelStub).to.have.been.calledWith({ nodePubkey: publicKey, localFundingAmount: '10000000', targetConf: 3 }, sinon.match({ client: clientStub }))
     })
 
     it('returns void for successful channel creation', async () => {
