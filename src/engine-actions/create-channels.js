@@ -148,7 +148,7 @@ async function assertBalanceIsSufficient (engine, fundingAmount) {
  * @param {string} fundingAmount - int64 string
  * @param {object} [options]
  * @param {string} [options.roundBehavior=CHANNEL_ROUNDING.DOWN] - Behavior when encountering a channel that is too small
- * @param {number} [options.targetTime=DEFAULT_CONFIRMATION_DELAY] - Estimated time to first confirmation in seconds
+ * @param {number} [options.targetTime=DEFAULT_CONFIRMATION_DELAY] - Estimated time to first confirmation in seconds (impacts the fee rate used to open channels)
  * @param {boolean} [options.privateChan=false] - Whether to make channels private
  * @returns {Promise<void>} resolves void on success
  */
@@ -187,7 +187,8 @@ async function createChannels (paymentChannelNetworkAddress, fundingAmount, {
     throw new Error(`Currency configuration for ${symbol} has not been setup with a secondsPerBlock`)
   }
 
-  // Minimum of one block, but target lower than the specified time.
+  // Minimum of one block, but target lower than the specified time. This specifies the fee that will
+  // be used to open the channel(s)
   const targetConf = Math.max(Math.floor(targetTime / secondsPerBlock), 1)
 
   // modify our funding amount based on the number of channels we're opening and the desired rounding behavior
