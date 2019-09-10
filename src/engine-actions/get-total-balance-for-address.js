@@ -11,11 +11,6 @@ const getChannelsForRemoteAddress = require('./get-channels-for-remote-address')
 async function getTotalBalanceForAddress (address, { outbound = true } = {}) {
   const channelsForAddress = await getChannelsForRemoteAddress.call(this, address)
 
-  if (channelsForAddress.length === 0) {
-    this.logger.debug('getTotalBalanceForAddress: No open or pending channels exist', { symbol: this.symbol, address })
-    return Big(0).toString()
-  }
-
   const balanceType = outbound ? 'localBalance' : 'remoteBalance'
   const totalBalance = channelsForAddress.reduce((acc, c) => {
     return acc.plus(c[balanceType])
