@@ -15,7 +15,6 @@ async function getTotalReservedChannelBalance () {
   // a channel are calculated less commit fees when a party was the initiator. The rationale of
   // this calculation is to put the responsibility on the initiator to pay for a force-close
   const initiatorChannels = channels.filter(c => c.initiator)
-  this.logger.debug(`getTotalReservedChannelBalance: ${channels.length} channels exist, ${initiatorChannels.length} channels as initiator`)
 
   const totalReservedChannelBalance = initiatorChannels.reduce((acc, c) => {
     return acc.plus(c.commitFee)

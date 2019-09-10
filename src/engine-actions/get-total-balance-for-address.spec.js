@@ -48,7 +48,6 @@ describe('getTotalBalanceForAddress', () => {
 
     const expectedRes = '0'
     const res = await getTotalBalanceForAddress(address)
-    expect(logger.debug).to.have.been.calledWith('getTotalBalanceForAddress: No open or pending channels exist')
     expect(res).to.eql(expectedRes)
   })
 

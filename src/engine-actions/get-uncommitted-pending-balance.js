@@ -9,11 +9,6 @@ async function getUncommittedPendingBalance () {
   const { unconfirmedBalance } = await walletBalance({ client: this.client })
   const { pendingForceClosingChannels = [] } = await listPendingChannels({ client: this.client })
 
-  if (!pendingForceClosingChannels.length) {
-    this.logger.debug('getUncommittedPendingBalance: No pendingForceClosingChannels exist', { symbol: this.symbol })
-    return Big(unconfirmedBalance).toString()
-  }
-
   /**
    * When closing a channel, we were getting a duplicated pending unconfirmed balance.
    * This is because unconfirmedBalance for the wallet and waitingCloseChannels from listChannels contain the same information.
