@@ -146,6 +146,7 @@ class LndEngine {
    */
   async validateEngine () {
     const payload = { symbol: this.symbol }
+    const logger = this.logger
     const validationCall = async () => {
       // A macaroon file for lnd will only exist if lnrpc (Lightning RPC) has been started
       // on LND. Since an engine can become unlocked during any validation call, we
@@ -168,9 +169,9 @@ class LndEngine {
     // It can take an extended period time for the engines to be ready, due to blockchain
     // syncing or setup, so we use `retry` to retry validation until
     // it is successful
-    await retry(validationCall, payload, { debugName: 'validateEngine', logger: this.logger })
+    await retry(validationCall, payload, { debugName: 'validateEngine', logger })
 
-    this.logger.info(`Validated engine configuration for ${this.symbol}`)
+    logger.info(`Validated engine configuration for ${this.symbol}`)
   }
 }
 
