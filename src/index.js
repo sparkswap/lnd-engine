@@ -59,7 +59,8 @@ class LndEngine {
    * @param {string} [options.macaroonPath] - file path to the macaroon file for LND
    * @param {string} [options.minVersion] - minimum LND version required
    */
-  constructor (host, symbol, { logger = console, tlsCertPath, macaroonPath, minVersion } = {}) {
+  constructor (host, symbol, { logger = console, tlsCertPath, macaroonPath,
+    minVersion, outboundTimeLock, forwardTimeLockDelta } = {}) {
     if (!host) {
       throw new Error('Host is required for lnd-engine initialization')
     }
@@ -82,6 +83,9 @@ class LndEngine {
       // @ts-ignore
       this[configKey] = this.currencyConfig[configKey]
     })
+
+    this.outboundTimeLock = outboundTimeLock || 9 * this.secondsPerBlock
+    this.forwardTimeLockDelta = forwardTimeLockDelta || 144 * this.secondsPerBlock
 
     // Default status of the lnd-engine is unknown as we have not run any validations
     // up to this point. We need to define this BEFORE generating the Lightning client
