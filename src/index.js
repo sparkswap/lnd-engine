@@ -84,8 +84,14 @@ class LndEngine {
       this[configKey] = this.currencyConfig[configKey]
     })
 
+    // 90 minutes, from BOLT #2
+    // see https://github.com/lightningnetwork/lightning-rfc/blob/master/
+    //     02-peer-protocol.md#cltv_expiry_delta-selection
     this.outboundTimeLock = outboundTimeLock || 9 * this.secondsPerBlock
-    this.forwardTimeLockDelta = forwardTimeLockDelta || 144 * this.secondsPerBlock
+
+    // 7 hours, from LND
+    // see https://github.com/lightningnetwork/lnd/pull/2759
+    this.forwardTimeLockDelta = forwardTimeLockDelta || 40 * this.secondsPerBlock
 
     // Default status of the lnd-engine is unknown as we have not run any validations
     // up to this point. We need to define this BEFORE generating the Lightning client
