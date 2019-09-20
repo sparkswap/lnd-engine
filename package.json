@@ -19,7 +19,7 @@
     "format": "npm run lint -- --fix",
     "docs": "jsdoc -c .jsdoc.json",
     "postdoc": "http-server docs",
-    "ci-test": "npm run format && npm run test-engine",
+    "ci-test": "npm run typecheck && npm run format && npm run test-engine",
     "check-for-cycles": "madge --circular src/",
     "check-unused": "node ./scripts/check-unused.js",
     "typecheck": "tsc --alwaysStrict --allowJs --checkJs --noEmit --resolveJsonModule --downlevelIteration --noImplicitReturns --noUnusedLocals --noUnusedParameters --strictFunctionTypes --strictNullChecks --target es2018 --moduleResolution node src/index.js"

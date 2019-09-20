@@ -58,9 +58,18 @@ class LndEngine {
    * @param {string} [options.tlsCertPath] - file path to the TLS certificate for LND
    * @param {string} [options.macaroonPath] - file path to the macaroon file for LND
    * @param {string} [options.minVersion] - minimum LND version required
+   * @param {number} [options.outboundTimeLock] - value of property on engine
+   *   that suggests a time lock to use on outbound payment time locks
+   * @param {number} [options.retrieveWindowDuration] - value of property on
+   *   engine corresponding to the max expected time it might take to retrieve a
+   *   preimage, to be used to calculate the forwarding delta
+   * @param {number} [options.claimWindowDuration] - value of property on
+   *   engine corresponding the max expected time it might take to publish
+   *   a claim for a payment on the blockchain using a preimage, to be used to
+   *   calculate the forwarding delta
    */
   constructor (host, symbol, { logger = console, tlsCertPath, macaroonPath,
-    minVersion, outboundTimeLock, forwardTimeLockDelta } = {}) {
+    minVersion, outboundTimeLock, retrieveWindowDuration, claimWindowDuration } = {}) {
     if (!host) {
       throw new Error('Host is required for lnd-engine initialization')
     }
@@ -70,6 +79,7 @@ class LndEngine {
     this.symbol = symbol
     this.minVersion = minVersion
     this.currencyConfig = currencies.find(({ symbol }) => symbol === this.symbol)
+    this.secondsPerBlock = 600 // can be overridden by config.json setting
 
     if (!this.currencyConfig) {
       throw new Error(`${symbol} is not a valid symbol for this engine.`)
@@ -89,9 +99,11 @@ class LndEngine {
     //     02-peer-protocol.md#cltv_expiry_delta-selection
     this.outboundTimeLock = outboundTimeLock || 9 * this.secondsPerBlock
 
-    // 7 hours, from LND
+    // based on a forward time lock delta of 40 blocks from LND
     // see https://github.com/lightningnetwork/lnd/pull/2759
-    this.forwardTimeLockDelta = forwardTimeLockDelta || 40 * this.secondsPerBlock
+    this.retrieveWindowDuration =
+      retrieveWindowDuration || 10 * this.secondsPerBlock
+    this.claimWindowDuration = claimWindowDuration || 30 * this.secondsPerBlock
 
     // Default status of the lnd-engine is unknown as we have not run any validations
     // up to this point. We need to define this BEFORE generating the Lightning client
