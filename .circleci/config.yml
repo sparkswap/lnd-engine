@@ -4,7 +4,7 @@ version: 2.1
 executors:
   docker-publisher:
     environment:
-      - LND_COMMIT_SHA: "v0.7.0-beta-rc1"
+      - LND_COMMIT_SHA: "v0.7.1-beta"
       - BTC_IMAGE_NAME: sparkswap/bitcoind
       - LTC_IMAGE_NAME: sparkswap/litecoind
       - BTC_ENGINE_IMAGE_NAME: sparkswap/lnd_btc
