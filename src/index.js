@@ -94,15 +94,14 @@ class LndEngine {
       this[configKey] = this.currencyConfig[configKey]
     })
 
-    // 90 minutes, from BOLT #2
+    // ~9 blocks, from BOLT #2
     // see https://github.com/lightningnetwork/lightning-rfc/blob/master/
     //     02-peer-protocol.md#cltv_expiry_delta-selection
     this.outboundTimeLock = outboundTimeLock || 9 * this.secondsPerBlock
 
     // based on a forward time lock delta of 40 blocks from LND
     // see https://github.com/lightningnetwork/lnd/pull/2759
-    this.retrieveWindowDuration =
-      retrieveWindowDuration || 10 * this.secondsPerBlock
+    this.retrieveWindowDuration = retrieveWindowDuration || 6000
     this.claimWindowDuration = claimWindowDuration || 30 * this.secondsPerBlock
 
     // Default status of the lnd-engine is unknown as we have not run any validations
