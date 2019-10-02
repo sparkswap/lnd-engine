@@ -28,7 +28,6 @@ const getMaxChannel = require('./get-max-channel')
 const withdrawFunds = require('./withdraw-funds')
 const createWallet = require('./create-wallet')
 const unlockWallet = require('./unlock-wallet')
-const isPaymentPendingOrComplete = require('./is-payment-pending-or-complete')
 const getStatus = require('./get-status')
 const getChannels = require('./get-channels')
 const getTotalReservedChannelBalance = require('./get-total-reserved-channel-balance')
@@ -78,7 +77,6 @@ module.exports = {
     closeChannels,
     getMaxChannel,
     withdrawFunds,
-    isPaymentPendingOrComplete,
     getChannels,
     getTotalReservedChannelBalance,
     getMaxChannelForAddress,
