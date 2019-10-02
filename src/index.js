@@ -58,8 +58,9 @@ class LndEngine {
    * @param {string} [options.tlsCertPath] - file path to the TLS certificate for LND
    * @param {string} [options.macaroonPath] - file path to the macaroon file for LND
    * @param {string} [options.minVersion] - minimum LND version required
-   * @param {number} [options.outboundTimeLock] - value of property on engine
-   *   that suggests a time lock to use on outbound payment time locks
+   * @param {number} [options.finalHopTimeLock] - value of property on engine
+   *   that suggests a time lock to use on time locks for the final hop of a
+   *   payment
    * @param {number} [options.retrieveWindowDuration] - value of property on
    *   engine corresponding to the max expected time it might take to retrieve a
    *   preimage, to be used to calculate the forwarding delta
@@ -69,7 +70,7 @@ class LndEngine {
    *   calculate the forwarding delta
    */
   constructor (host, symbol, { logger = console, tlsCertPath, macaroonPath,
-    minVersion, outboundTimeLock, retrieveWindowDuration, claimWindowDuration } = {}) {
+    minVersion, finalHopTimeLock, retrieveWindowDuration, claimWindowDuration } = {}) {
     if (!host) {
       throw new Error('Host is required for lnd-engine initialization')
     }
@@ -97,7 +98,7 @@ class LndEngine {
     // ~9 blocks, from BOLT #2
     // see https://github.com/lightningnetwork/lightning-rfc/blob/master/
     //     02-peer-protocol.md#cltv_expiry_delta-selection
-    this.outboundTimeLock = outboundTimeLock || 9 * this.secondsPerBlock
+    this.finalHopTimeLock = finalHopTimeLock || 9 * this.secondsPerBlock
 
     // based on a forward time lock delta of 40 blocks from LND
     // see https://github.com/lightningnetwork/lnd/pull/2759
