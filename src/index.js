@@ -14,9 +14,6 @@ const {
   generateLightningClient,
   generateWalletUnlockerClient
 } = require('./lnd-setup')
-const {
-  retry
-} = require('./utils')
 
 /**
  * @constant
@@ -159,41 +156,6 @@ class LndEngine {
 
   get isLocked () {
     return (this.status === ENGINE_STATUSES.LOCKED)
-  }
-
-  /**
-   * Validates and sets the current state of an engine
-   *
-   * @returns {Promise<void>}
-   */
-  async validateEngine () {
-    const payload = { symbol: this.symbol }
-    const logger = this.logger
-    const validationCall = async () => {
-      // A macaroon file for lnd will only exist if lnrpc (Lightning RPC) has been started
-      // on LND. Since an engine can become unlocked during any validation call, we
-      // need to ensure that we are updating LndEngine's client in the situation that
-      // a macaroon file becomes available (meaning an engine has been unlocked).
-      if (this.client) {
-        this.client.close()
-      }
-      this.client = generateLightningClient(this)
-
-      // Returns a status `ENGINE_STATUS`
-      // @ts-ignore
-      this.status = await this.getStatus()
-
-      if (!this.validated) {
-        throw new Error(`Engine failed to validate. Current status: ${this.status}`)
-      }
-    }
-
-    // It can take an extended period time for the engines to be ready, due to blockchain
-    // syncing or setup, so we use `retry` to retry validation until
-    // it is successful
-    await retry(validationCall, payload, { debugName: 'validateEngine', logger })
-
-    logger.info(`Validated engine configuration for ${this.symbol}`)
   }
 }
 

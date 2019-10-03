@@ -3,7 +3,6 @@ const networkAddressFormatter = require('./network-address-formatter')
 const sha256 = require('./sha256')
 const CLTV_DELTA = require('./cltv-delta')
 const loadProto = require('./load-proto')
-const retry = require('./retry')
 const delay = require('./delay')
 const loggablePubKey = require('./loggable-pubkey')
 
@@ -14,6 +13,5 @@ module.exports = {
   CLTV_DELTA,
   loadProto,
   delay,
-  retry,
   loggablePubKey
 }
