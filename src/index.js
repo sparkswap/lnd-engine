@@ -104,12 +104,12 @@ class LndEngine {
     this.retrieveWindowDuration = retrieveWindowDuration || 6000
     this.claimWindowDuration = claimWindowDuration || 30 * this.secondsPerBlock
 
-    // The amount of time, in seconds, that we'd like to buffer any output timelock
-    // by to account for block ticks during a swap This is especially problematic on
-    // regtest where we mine blocks every 10 seconds and is a known issue on
-    // mainnet.
+    // The recipient requires a minimum number of blocks for the time lock on an inbound HTLC.
+    // If we use this exact value to create the HTLC on the sending side, there is a small chance
+    // that a block will be mined during the time it takes for the HTLC to be sent over the network
+    // to the recipient, and this will cause the recipient to reject the HTLC.
     // @see {@link https://github.com/lightningnetwork/lnd/issues/535}
-    this.blockBuffer = blockBuffer || 1200
+    this.blockBuffer = blockBuffer || 2 * this.secondsPerBlock
 
     // Default status of the lnd-engine is unknown as we have not run any validations
     // up to this point. We need to define this BEFORE generating the Lightning client
