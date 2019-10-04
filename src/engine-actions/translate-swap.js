@@ -1,4 +1,4 @@
-const { Big, networkAddressFormatter, CLTV_DELTA } = require('../utils')
+const { Big, networkAddressFormatter } = require('../utils')
 const {
   sendPayment,
   trackPayment
@@ -6,10 +6,6 @@ const {
 const grpc = require('grpc')
 
 class PermanentSwapError extends Error {}
-
-const {
-  DEFAULT_MIN_FINAL_DELTA
-} = CLTV_DELTA
 
 /**
  * Default fee limit for swap routes.
@@ -46,7 +42,7 @@ const PAYMENT_STATUSES = trackPayment.STATUSES
  * @throws {PermanentSwapError} If an error is encountered while paying that we
  * are sure did not result in a still-active outbound HTLC for the swap hash.
  */
-async function translateSwap (takerAddress, swapHash, amount, maxTime, finalCltvDeltaSecs = DEFAULT_MIN_FINAL_DELTA.toString()) {
+async function translateSwap (takerAddress, swapHash, amount, maxTime, finalCltvDeltaSecs) {
   this.logger.info(`Translating swap for ${swapHash} by sending to ${takerAddress}`,
     { amount, maxTime })
 
@@ -86,7 +82,7 @@ async function translateSwap (takerAddress, swapHash, amount, maxTime, finalCltv
     // Translate seconds into blocks, rounding up so that we're sure the end
     // node will accept the payment. The LND api expects this to be an int32,
     // so we convert to a javascript number.
-    const finalCltvDelta = parseInt(Big(finalCltvDeltaSecs).div(this.secondsPerBlock).round(0, 3).toFixed(0), 10)
+    const finalCltvDelta = parseInt(Big(finalCltvDeltaSecs || this.finalHopTimeLock).div(this.secondsPerBlock).round(0, 3).toFixed(0), 10)
 
     if (cltvLimit < finalCltvDelta) {
       throw new PermanentSwapError(`Timelock for total swap is shorter than final hop of payment. ` +

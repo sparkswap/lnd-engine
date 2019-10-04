@@ -65,9 +65,11 @@ class LndEngine {
    *   engine corresponding the max expected time it might take to publish
    *   a claim for a payment on the blockchain using a preimage, to be used to
    *   calculate the forwarding delta
+   * @param {number} [options.blockBuffer] - Buffer to apply to swaps to take
+   *   into account blocks being mined during swaps.
    */
   constructor (host, symbol, { logger = console, tlsCertPath, macaroonPath,
-    minVersion, finalHopTimeLock, retrieveWindowDuration, claimWindowDuration } = {}) {
+    minVersion, finalHopTimeLock, retrieveWindowDuration, claimWindowDuration, blockBuffer } = {}) {
     if (!host) {
       throw new Error('Host is required for lnd-engine initialization')
     }
@@ -101,6 +103,13 @@ class LndEngine {
     // see https://github.com/lightningnetwork/lnd/pull/2759
     this.retrieveWindowDuration = retrieveWindowDuration || 6000
     this.claimWindowDuration = claimWindowDuration || 30 * this.secondsPerBlock
+
+    // The recipient requires a minimum number of blocks for the time lock on an inbound HTLC.
+    // If we use this exact value to create the HTLC on the sending side, there is a small chance
+    // that a block will be mined during the time it takes for the HTLC to be sent over the network
+    // to the recipient, and this will cause the recipient to reject the HTLC.
+    // @see {@link https://github.com/lightningnetwork/lnd/issues/535}
+    this.blockBuffer = blockBuffer || 2 * this.secondsPerBlock
 
     // Default status of the lnd-engine is unknown as we have not run any validations
     // up to this point. We need to define this BEFORE generating the Lightning client

@@ -13,7 +13,6 @@ const isInvoicePaid = require('./is-invoice-paid')
 const isBalanceSufficient = require('./is-balance-sufficient')
 const payInvoice = require('./pay-invoice')
 const prepareSwap = require('./prepare-swap')
-const executeSwap = require('./execute-swap')
 const createRefundInvoice = require('./create-refund-invoice')
 const getPaymentChannelNetworkAddress = require('./get-payment-channel-network-address')
 const { translateSwap, PermanentSwapError } = require('./translate-swap')
@@ -65,7 +64,6 @@ module.exports = {
     isBalanceSufficient,
     payInvoice,
     prepareSwap,
-    executeSwap,
     createRefundInvoice,
     translateSwap,
     getSettledSwapPreimage,

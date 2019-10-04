@@ -54,6 +54,7 @@ describe('translate-swap', () => {
       engine = {
         client,
         secondsPerBlock: 600,
+        finalHopTimeLock: 5400,
         logger: {
           info: sinon.stub(),
           error: sinon.stub(),
@@ -116,7 +117,7 @@ describe('translate-swap', () => {
             paymentHash: swapHash,
             destString: pubKey,
             amt: amount,
-            finalCltvDelta: 144,
+            finalCltvDelta: 9,
             cltvLimit: 288,
             feeLimit: {
               fixed: '0'
@@ -412,6 +413,7 @@ describe('translate-swap', () => {
       engine = {
         client,
         secondsPerBlock: 600,
+        finalHopTimeLock: 5400,
         logger: {
           info: sinon.stub(),
           error: sinon.stub(),
@@ -533,7 +535,7 @@ describe('translate-swap', () => {
             paymentHash: swapHash,
             destString: pubKey,
             amt: amount,
-            finalCltvDelta: 144,
+            finalCltvDelta: 9,
             cltvLimit: 288,
             feeLimit: {
               fixed: '0'
