@@ -47,6 +47,7 @@ const {
   ExpiredSwapError
 } = require('./wait-for-swap-commitment.js')
 const initiateSwap = require('./initiate-swap')
+const getInvoice = require('./get-invoice')
 
 module.exports = {
   validationDependentActions: {
@@ -85,7 +86,8 @@ module.exports = {
     getTotalBalanceForAddress,
     cancelSwap,
     settleSwap,
-    initiateSwap
+    initiateSwap,
+    getInvoice
   },
   unlockedDependentActions: {
     getPublicKey,
