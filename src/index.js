@@ -77,6 +77,7 @@ class LndEngine {
     this.CHANNEL_ROUNDING = CHANNEL_ROUNDING
     this.host = host
     this.symbol = symbol
+    this.currentVersion = null
     this.minVersion = minVersion
     this.currencyConfig = currencies.find(({ symbol }) => symbol === this.symbol)
     this.secondsPerBlock = 600 // can be overridden by config.json setting

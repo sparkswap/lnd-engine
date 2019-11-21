@@ -60,10 +60,13 @@ async function getStatusInternal () {
     }
 
     const version = info.version.split(' ')[0]
+
     if (this.minVersion && compareVersions(version, this.minVersion) < 0) {
       this.logger.error(`LND version is too old: ${version} < ${this.minVersion}`)
       return ENGINE_STATUSES.OLD_VERSION
     }
+
+    this.currentVersion = version
 
     return ENGINE_STATUSES.VALIDATED
   } catch (e) {
