@@ -1,14 +1,5 @@
-const { deadline } = require('../grpc-utils')
-
 /** @typedef {import('../lnd-setup').LndClient} LndClient */
-
-/**
- * SendPayment deadline (in seconds)
- * @constant
- * @type {number}
- * @default
- */
-const SEND_PAYMENT_DEADLINE = 30
+/** @typedef {import('..').Logger} Logger */
 
 // TODO: verify this against BOLT 11
 /** @typedef {object} SendPaymentRequestFormatA
@@ -44,14 +35,26 @@ const SEND_PAYMENT_DEADLINE = 30
  * @param {SendPaymentRequest} paymentOptions
  * @param {object} opts
  * @param {LndClient} opts.client
+ * @param {Logger} opts.logger
  * @returns {Promise<object>} Resolves with the response from LND
  */
-function sendPayment (paymentOptions, { client }) {
+function sendPayment (paymentOptions, { client, logger }) {
   return new Promise((resolve, reject) => {
-    client.sendPaymentSync(paymentOptions, { deadline: deadline(SEND_PAYMENT_DEADLINE) }, (err, res) => {
-      if (err) return reject(err)
-      return resolve(res)
-    })
+    try {
+      const call = client.router.sendPayment(paymentOptions)
+
+      call.on('data', data => {
+        if (data.paymentError) {
+          return reject(data.paymentError)
+        }
+
+        return resolve(call.end())
+      })
+      call.on('status', status => logger.info(status))
+    } catch (error) {
+      logger.error('sendPayment rpc call failed')
+      return reject(error)
+    }
   })
 }
 

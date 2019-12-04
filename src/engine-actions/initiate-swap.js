@@ -42,7 +42,7 @@ async function initiateSwap (address, swapHash, amount, maxTimeLock, finalDelta 
     finalCltvDelta
   }
 
-  const { paymentError, paymentPreimage } = await sendPayment(request, { client: this.client })
+  const { paymentError, paymentPreimage } = await sendPayment(request, { client: this.client, logger: this.logger })
 
   if (paymentError) {
     this.logger.error('Failed to execute swap', { swapHash, address, paymentError })

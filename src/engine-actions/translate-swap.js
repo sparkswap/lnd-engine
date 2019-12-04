@@ -101,7 +101,7 @@ async function translateSwap (takerAddress, swapHash, amount, maxTime, finalCltv
       feeLimit: {
         fixed: DEFAULT_FEE_LIMIT
       }
-    }, { client: this.client })
+    }, { client: this.client, logger: this.logger })
 
     if (paymentError) {
       this.logger.error(`Payment error while sending to route`, { paymentError, swapHash })
