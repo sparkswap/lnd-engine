@@ -1,12 +1,10 @@
 
-/** @typedef {{[k: string]: string}} Dictionary */
-
 /**
  * List of statuses for an lnd-engine. Each status represents a step in an engine's
  * lifecycle
  *
  * @constant
- * @type {Dictionary}
+ * @type {object}
  * @default
  */
 const ENGINE_STATUSES = Object.freeze({
