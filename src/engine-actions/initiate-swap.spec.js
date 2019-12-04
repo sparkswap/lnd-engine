@@ -43,7 +43,7 @@ describe('initiateSwap', () => {
     await initiateSwap.call(engine, address, swapHash, amount, maxTimeLock, finalDelta)
 
     expect(sendPayment).to.have.been.calledOnce()
-    expect(sendPayment).to.have.been.calledWith(sinon.match.any, { client })
+    expect(sendPayment).to.have.been.calledWith(sinon.match.any, { client, logger: engine.logger })
     expect(networkAddressFormatter.parse).to.have.been.calledOnce()
     expect(networkAddressFormatter.parse).to.have.been.calledWith(address)
     expect(sendPayment).to.have.been.calledWith(sinon.match({ destString: 'fake pubkey' }))

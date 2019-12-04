@@ -123,7 +123,7 @@ describe('translate-swap', () => {
               fixed: '0'
             }
           },
-          { client })
+          { client, logger: engine.logger })
       })
 
       it('sends a payment using a custom final delta', async () => {
@@ -141,7 +141,7 @@ describe('translate-swap', () => {
               fixed: '0'
             }
           },
-          { client })
+          { client, logger: engine.logger })
       })
 
       it('throws a permanent error if there is a payment error', () => {
@@ -541,7 +541,7 @@ describe('translate-swap', () => {
               fixed: '0'
             }
           },
-          { client })
+          { client, logger: engine.logger })
         expect(result).to.be.eql(preimage)
       })
     })
