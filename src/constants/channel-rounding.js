@@ -1,12 +1,10 @@
 
-/** @typedef {{[k: string]: string}} Dictionary */
-
 /**
  * List of rounding behaviors when opening multiple channels and encountering a channel that
  * would be uneconomically small.
  *
  * @constant
- * @type {Dictionary}
+ * @type {object}
  * @default
  */
 const CHANNEL_ROUNDING = Object.freeze({
