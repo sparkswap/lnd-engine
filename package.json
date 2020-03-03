@@ -1,6 +1,6 @@
 {
   "name": "lnd-engine",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "description": "A Sparkswap Engine for LND lightning implementation",
   "main": "src/index.js",
   "nyc": {
