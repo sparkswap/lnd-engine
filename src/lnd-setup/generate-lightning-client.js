@@ -73,9 +73,16 @@ function generateLightningClient ({ host, protoPath, tlsCertPath, macaroonPath, 
     rpcCredentials = grpc.credentials.combineChannelCredentials(sslCredentials, macaroonCredentials)
   }
 
-  const client = new lnrpc.Lightning(host, rpcCredentials, {})
-  client.invoices = new invoicesrpc.Invoices(host, rpcCredentials, {})
-  client.router = new routerrpc.Router(host, rpcCredentials, {})
+  const interceptors = [
+    (options, nextCall) => {
+      console.log('Called LND at ${new Date()}')
+      return new grpc.InterceptingCall(nextCall(options))
+    }
+  ]
+
+  const client = new lnrpc.Lightning(host, rpcCredentials, { interceptors })
+  client.invoices = new invoicesrpc.Invoices(host, rpcCredentials, { interceptors })
+  client.router = new routerrpc.Router(host, rpcCredentials, { interceptors })
   return client
 }
 
