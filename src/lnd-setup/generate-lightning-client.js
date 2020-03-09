@@ -75,7 +75,7 @@ function generateLightningClient ({ host, protoPath, tlsCertPath, macaroonPath, 
 
   const interceptors = [
     (options, nextCall) => {
-      console.log('Called LND at ${new Date()}')
+      this.logger.info(`GRPC REQUEST RECEIVED: ${new Date().toISOString()}`)
       return new grpc.InterceptingCall(nextCall(options))
     }
   ]
